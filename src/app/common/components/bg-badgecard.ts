@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, input, Output } from '@angular/core';
 import { AUTO_STYLE, animate, state, style, transition, trigger } from '@angular/animations';
 import { FormControl, FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
@@ -26,15 +26,15 @@ import { HlmP } from '@spartan-ng/helm/typography';
 		class: 'tw-rounded-[10px] tw-h-max tw-max-w-[450px] tw-border-solid tw-border-purple tw-border tw-relative tw-p-4 tw-block tw-overflow-hidden oeb-badge-card',
 	},
 	template: `
-		@if (mostRelevantStatus && !showXIcon) {
+		@if (mostRelevantStatus() && !showXIcon()) {
 			<div class="tw-absolute tw-top-0 tw-right-0 tw-bg-purple tw-text-white tw-px-2 tw-py-1">
-				{{ 'General.' + mostRelevantStatus | translate }}
+				{{ 'General.' + mostRelevantStatus() | translate }}
 			</div>
 		}
 
 		<div class="tw-h-[100px]">
 			<div class="tw-flex tw-items-center tw-h-full">
-				@if (completed) {
+				@if (completed()) {
 					<div class="tw-absolute tw-top-[10px] tw-right-[10px] tw-flex tw-justify-center tw-items-center">
 						<div
 							class="tw-bg-white tw-inline-flex tw-rounded-full tw-justify-center tw-items-center tw-border-solid tw-border-purple tw-border-[2px] "
@@ -48,83 +48,89 @@ import { HlmP } from '@spartan-ng/helm/typography';
 					</div>
 				}
 				<img
-					class="oeb-badgeimage badgeimage-{{ mostRelevantStatus }}"
-					[loaded-src]="badgeImage"
+					class="oeb-badgeimage badgeimage-{{ mostRelevantStatus() }}"
+					[loaded-src]="badgeImage()"
 					[loading-src]="badgeLoadingImageUrl"
 					[error-src]="badgeFailedImageUrl"
 				/>
 				<div class="tw-flex tw-flex-col tw-flex-wrap tw-pl-4 tw-py-2">
-					@if (badgeSlug && !publicUrl && !imported) {
+					@if (badgeSlug() && !publicUrl() && !imported()) {
 						<a
 							class="tw-font-bold text-clamp title-clamp"
-							[title]="badgeTitle"
-							[routerLink]="['../earned-badge', badgeSlug]"
+							[title]="badgeTitle()"
+							[routerLink]="['../earned-badge', badgeSlug()]"
 							hlmP
 							size="sm"
-							>{{ badgeTitle }}</a
+							>{{ badgeTitle() }}</a
 						>
 					}
-					@if (badgeSlug && !publicUrl && imported) {
+					@if (badgeSlug() && !publicUrl() && imported()) {
 						<a
 							class="tw-font-bold text-clamp title-clamp"
-							[title]="badgeTitle"
-							[routerLink]="['../imported-badge', badgeSlug]"
+							[title]="badgeTitle()"
+							[routerLink]="['../imported-badge', badgeSlug()]"
 							hlmP
 							size="sm"
-							>{{ badgeTitle }}</a
+							>{{ badgeTitle() }}</a
 						>
 					}
-					@if (publicUrl) {
+					@if (publicUrl()) {
 						<a
 							class="tw-font-bold text-clamp title-clamp"
 							hlmP
 							size="sm"
-							[href]="publicUrl"
-							[attr.target]="useBlankHref ? '_blank' : null"
-							>{{ badgeTitle }}</a
+							[href]="publicUrl()"
+							[attr.target]="useBlankHref() ? '_blank' : null"
+							>{{ badgeTitle() }}</a
 						>
 					}
 
 					<div class="tw-pt-2 tw-flex tw-flex-col tw-flex-wrap">
-						@if (issuerSlug && useBlankHref) {
+						@if (issuerSlug() && useBlankHref()) {
 							<a
 								hlmP
 								size="sm"
 								variant="light"
 								class="badgecard-x-issuer text-clamp issuer-clamp"
-								[title]="issuerTitle"
-								[href]="publicIssuerUrl"
-								[target]="useBlankHref ? '_blank' : null"
-								>{{ issuerTitle }}</a
+								[title]="issuerTitle()"
+								[href]="publicIssuerUrl()"
+								[target]="useBlankHref() ? '_blank' : null"
+								>{{ issuerTitle() }}</a
 							>
-						} @else if (issuerSlug) {
+						} @else if (issuerSlug()) {
 							<a
 								hlmP
 								size="sm"
 								variant="light"
 								class="badgecard-x-issuer text-clamp issuer-clamp"
-								[title]="issuerTitle"
+								[title]="issuerTitle()"
 								[routerLink]="
-									network ? ['/public/networks', issuerSlug] : ['/public/issuers', issuerSlug]
+									network ? ['/public/networks', issuerSlug()] : ['/public/issuers', issuerSlug()]
 								"
-								[target]="useBlankHref ? '_blank' : null"
-								>{{ issuerTitle }}</a
+								[target]="useBlankHref() ? '_blank' : null"
+								>{{ issuerTitle() }}</a
 							>
 						} @else {
-							<div class="badgecard-x-issuer">{{ issuerTitle }}</div>
+							<div class="badgecard-x-issuer">{{ issuerTitle() }}</div>
 						}
-						<time [date]="badgeIssueDate" format="dd.MM.y"></time>
+						<time [date]="badgeIssueDate()" format="dd.MM.y"></time>
 					</div>
+
+					@if (this.category()) {
+						<span class="tw-pt-2 tw-text-purple">
+							{{ 'Badge.categories.' + this.category() | translate }}
+						</span>
+					}
 
 					<div class="tw-absolute tw-left-0 tw-bottom-2 tw-w-full">
 						<!-- Show Verify or Share Button unless public -->
 						<div class="tw-float-right tw-pr-4">
-							@if (verifyUrl) {
+							@if (verifyUrl()) {
 								<a
 									hlmP
 									size="sm"
 									class="tw-font-bold tw-text-purple tw-no-underline hover:!tw-text-buttonhover tw-cursor-pointer"
-									[href]="verifyUrl"
+									[href]="verifyUrl()"
 								>
 									{{ 'RecBadgeDetail.verify' | translate }}
 								</a>
@@ -135,17 +141,17 @@ import { HlmP } from '@spartan-ng/helm/typography';
 				<div
 					class="tw-float-right tw-relative tw-ml-auto tw-flex tw-items-center tw-flex-col tw-mr-2 tw-h-full"
 				>
-					@if (showCheckbox) {
+					@if (showCheckbox()) {
 						<oeb-checkbox
 							[noMargin]="true"
 							[(ngModel)]="checked"
 							(ngModelChange)="changeCheckbox($event)"
 						></oeb-checkbox>
 					}
-					@if (showXIcon) {
+					@if (showXIcon()) {
 						<ng-icon hlm name="lucideX" class="tw-w-8 tw-h-8" (click)="closeFn()"></ng-icon>
 					}
-					@if (competencies && competencies.length > 0 && !imported) {
+					@if (competencies() && competencies().length > 0 && !imported()) {
 						<div class="tw-absolute tw-bottom-0 tw-cursor-pointer" (click)="toggleCompetencies()">
 							<ng-icon
 								hlm
@@ -161,7 +167,7 @@ import { HlmP } from '@spartan-ng/helm/typography';
 		<div [@showCompetencies]="showCompetencies" [class.competencies-hidden]="!showCompetencies">
 			<div class="tw-pt-8">
 				@if (showCompetencies) {
-					@for (competency of competencies; track competency) {
+					@for (competency of competencies(); track competency) {
 						<div>
 							<competency-accordion
 								[name]="competency.name"
@@ -218,41 +224,43 @@ import { HlmP } from '@spartan-ng/helm/typography';
 export class BgBadgecard {
 	readonly badgeLoadingImageUrl = 'breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = 'breakdown/static/images/badge-failed.svg';
-	@Input() badgeSlug: string;
-	@Input() issuerSlug: string;
-	@Input() publicUrl: string;
-	@Input() publicIssuerUrl: string;
-	@Input() badgeImage: string;
-	@Input() badgeTitle: string;
-	@Input() badgeDescription: string;
-	@Input() badgeIssueDate: Date;
-	@Input() issuerTitle: string;
-	@Input() mostRelevantStatus: 'expired' | 'new' | 'pending' | 'imported' | undefined;
-	@Input() verifyUrl: string;
-	@Input() public = false;
-	@Input() network = false;
-	@Input() competencies?: any[];
-	@Input() checkboxControl?: FormControl;
-	@Input() showCheckbox = false;
-	@Input() completed: boolean = false;
+	badgeSlug = input<string>();
+	issuerSlug = input<string>();
+	publicUrl = input<string>();
+	publicIssuerUrl = input<string>();
+	badgeImage = input<string>();
+	badgeTitle = input<string>();
+	badgeDescription = input<string>();
+	badgeIssueDate = input<Date>();
+	issuerTitle = input<string>();
+	mostRelevantStatus = input<'expired' | 'new' | 'pending' | 'imported' | undefined>();
+	verifyUrl = input<string>();
+	public = input<boolean>(false);
+	network = input<boolean>(false);
+	category = input<string | undefined>();
+	competencies = input<any[]>();
+	checkboxControl = input<FormControl>();
+	showCheckbox = input<boolean>(false);
+	completed = input<boolean>(false);
+	tags = input<string[]>([]);
+	showXIcon = input<boolean>(false);
+	imported = input<boolean>(false);
+	useBlankHref = input<boolean>(false);
+
+	@Input() checked = false;
 	@Output() checkboxChange = new EventEmitter<boolean>();
 	@Output() closeEmit = new EventEmitter<any>();
-	@Input() checked: boolean = false;
-	@Input() tags: string[] = [];
-	@Input() showXIcon = false;
-	@Input() imported: boolean = false;
-	@Input() useBlankHref: boolean = false;
 
 	changeCheckbox(event: boolean) {
 		this.checkboxChange.emit(event);
 	}
 
 	closeFn() {
-		this.closeEmit.emit(this.badgeSlug);
+		this.closeEmit.emit(this.badgeSlug());
 	}
 
 	@HostBinding('class') get hostClasses(): string {
-		return this.checked || this.completed ? 'tw-bg-[var(--color-lightgreen)]' : 'tw-bg-white';
+		return this.checked || this.completed() ? 'tw-bg-[var(--color-lightgreen)]' : 'tw-bg-white';
 	}
 
 	showCompetencies = false;
