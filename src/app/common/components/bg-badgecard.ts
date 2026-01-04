@@ -53,10 +53,10 @@ import { HlmP } from '@spartan-ng/helm/typography';
 					[loading-src]="badgeLoadingImageUrl"
 					[error-src]="badgeFailedImageUrl"
 				/>
-				<div class="tw-flex tw-flex-col tw-flex-wrap tw-pl-4 tw-py-2">
+				<div class="tw-flex tw-flex-col tw-flex-wrap tw-pl-4 tw-py-2 tw-w-full">
 					@if (badgeSlug() && !publicUrl() && !imported()) {
 						<a
-							class="tw-font-bold text-clamp title-clamp"
+							class="tw-font-bold tw-text-oebblack text-clamp title-clamp"
 							[title]="badgeTitle()"
 							[routerLink]="['../earned-badge', badgeSlug()]"
 							hlmP
@@ -66,7 +66,7 @@ import { HlmP } from '@spartan-ng/helm/typography';
 					}
 					@if (badgeSlug() && !publicUrl() && imported()) {
 						<a
-							class="tw-font-bold text-clamp title-clamp"
+							class="tw-font-bold tw-text-oebblack text-clamp title-clamp"
 							[title]="badgeTitle()"
 							[routerLink]="['../imported-badge', badgeSlug()]"
 							hlmP
@@ -76,7 +76,7 @@ import { HlmP } from '@spartan-ng/helm/typography';
 					}
 					@if (publicUrl()) {
 						<a
-							class="tw-font-bold text-clamp title-clamp"
+							class="tw-font-bold tw-text-oebblack text-clamp title-clamp"
 							hlmP
 							size="sm"
 							[href]="publicUrl()"
@@ -91,7 +91,7 @@ import { HlmP } from '@spartan-ng/helm/typography';
 								hlmP
 								size="sm"
 								variant="light"
-								class="badgecard-x-issuer text-clamp issuer-clamp"
+								class="tw-text-oebblack text-clamp issuer-clamp"
 								[title]="issuerTitle()"
 								[href]="publicIssuerUrl()"
 								[target]="useBlankHref() ? '_blank' : null"
@@ -102,7 +102,7 @@ import { HlmP } from '@spartan-ng/helm/typography';
 								hlmP
 								size="sm"
 								variant="light"
-								class="badgecard-x-issuer text-clamp issuer-clamp"
+								class="tw-text-oebblack text-clamp issuer-clamp"
 								[title]="issuerTitle()"
 								[routerLink]="
 									network ? ['/public/networks', issuerSlug()] : ['/public/issuers', issuerSlug()]
@@ -111,15 +111,34 @@ import { HlmP } from '@spartan-ng/helm/typography';
 								>{{ issuerTitle() }}</a
 							>
 						} @else {
-							<div class="badgecard-x-issuer">{{ issuerTitle() }}</div>
+							<div class="tw-text-oebblack">{{ issuerTitle() }}</div>
 						}
-						<time [date]="badgeIssueDate()" format="dd.MM.y"></time>
+						<time class="tw-text-oebblack" [date]="badgeIssueDate()" format="dd.MM.y"></time>
 					</div>
 
-					@if (this.category()) {
-						<span class="tw-pt-2 tw-text-purple">
-							{{ 'Badge.categories.' + this.category() | translate }}
-						</span>
+					@if (category() || (competencies()?.length && !imported())) {
+						<div class="tw-flex tw-items-center tw-justify-between tw-min-h-8">
+							@if (category()) {
+								<span hlmP size="sm" class="tw-text-purple tw-uppercase">
+									{{ 'Badge.categories.' + category() | translate }}
+								</span>
+							}
+
+							@if (competencies()?.length && !imported()) {
+								<button
+									type="button"
+									class="tw-flex tw-items-center tw-cursor-pointer"
+									(click)="toggleCompetencies()"
+								>
+									<ng-icon
+										hlm
+										size="lg"
+										class="tw-text-oebblack"
+										[name]="showCompetencies ? 'lucideChevronUp' : 'lucideChevronDown'"
+									/>
+								</button>
+							}
+						</div>
 					}
 
 					<div class="tw-absolute tw-left-0 tw-bottom-2 tw-w-full">
@@ -150,16 +169,6 @@ import { HlmP } from '@spartan-ng/helm/typography';
 					}
 					@if (showXIcon()) {
 						<ng-icon hlm name="lucideX" class="tw-w-8 tw-h-8" (click)="closeFn()"></ng-icon>
-					}
-					@if (competencies() && competencies().length > 0 && !imported()) {
-						<div class="tw-absolute tw-bottom-0 tw-cursor-pointer" (click)="toggleCompetencies()">
-							<ng-icon
-								hlm
-								class="tw-block tw--mb-4"
-								size="lg"
-								[name]="showCompetencies ? 'lucideChevronUp' : 'lucideChevronDown'"
-							/>
-						</div>
 					}
 				</div>
 			</div>
