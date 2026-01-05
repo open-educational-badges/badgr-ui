@@ -95,10 +95,11 @@ type MatchOrProgressType = { match?: string; progress?: number };
 								</div>
 							</div>
 						} @else {
-							@if (progress === 0 || progress) {
+							@if (progress) {
 								<div class="tw-mb-4 tw-w-full tw-mt-6 tw-flex tw-justify-center tw-items-center">
 									<oeb-progress
 										class="tw-w-full tw-h-7 tw-relative tw-inline-flex tw-overflow-hidden tw-rounded-3xl tw-bg-white tw-items-center"
+										[variant]="'purple'"
 										[value]="progressValue"
 										[template]="requested ? requestedTemplate : progressTemplate"
 									></oeb-progress>
@@ -107,7 +108,7 @@ type MatchOrProgressType = { match?: string; progress?: number };
 						}
 						<ng-template #progressTemplate>
 							<div class="tw-absolute tw-w-full tw-text-left">
-								<span class="tw-ml-2 tw-text-sm tw-text-purple"
+								<span class="tw-ml-2 tw-text-sm tw-text-white"
 									>{{ 'General.learningPath' | translate }}
 									@if (!completed) {
 										<span>{{ progressValue }}%</span>
