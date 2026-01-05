@@ -123,7 +123,8 @@
 		"notNow": "Not Now",
 		"notFound": "Not found",
 		"start": "Start",
-		"end": "End"
+		"end": "End",
+		"archive": "archive"
 	},
 	"NavItems": {
 		"register": "Register",
@@ -1180,7 +1181,11 @@
 		"confirmDelete": "Are you sure you want to delete this learning path?",
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
-		"institutions": "institutions"
+		"institutions": "institutions",
+		"archive": "Archiving instead of deletion",
+		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
+		"canOnlyBeArchived": "It can therefore only be archived.",
+		"lpArchived": "We have archived the learning path."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",
