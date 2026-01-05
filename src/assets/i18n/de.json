@@ -1181,6 +1181,7 @@
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
 		"institutions": "Institutionen",
+		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen.",
 		"archive": "Archivierung statt Löschung",
 		"alreadyAwarded": "Mindestens eine Person hat den Micro Degree bereits erworben.",
 		"canOnlyBeArchived": "Er kann daher nur archiviert werden.",

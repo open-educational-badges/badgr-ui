@@ -1182,6 +1182,7 @@
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
 		"institutions": "institutions",
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded.",
 		"archive": "Archiving instead of deletion",
 		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
 		"canOnlyBeArchived": "It can therefore only be archived.",
