@@ -19,6 +19,7 @@ import { Issuer } from '~/issuer/models/issuer.model';
 import { Network } from '~/issuer/network.model';
 import { DialogComponent } from '~/components/dialog.component';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
+import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 
 @Component({
 	selector: 'oeb-learning-path',
@@ -65,6 +66,8 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 
 	learningPathEditLink;
 
+	dialogRef: BrnDialogRef<any> = null;
+
 	constructor() {
 		const router = inject(Router);
 		const route = inject(ActivatedRoute);
@@ -92,18 +95,28 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 		];
 	}
 
-	public deleteLearningPath(learningPathSlug, issuer) {
+	public deleteLearningPath() {
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				variant: 'danger',
 				content: this.archiveLpTemplate(),
 			},
 		});
+		this.dialogRef = dialogRef;
 	}
 
 	public archiveLearningPath() {
+		this.closeDialog();
 		this.learningPathApiService.archiveLearningPath(this.issuer.slug, this.learningPath.slug).then(() => {
-			this.router.navigate(['issuer/issuers']);
+			const dialogRef = this._hlmDialogService.open(SuccessDialogComponent, {
+				context: {
+					text: this.translate.instant('LearningPath.mdArchived'),
+					variant: 'success',
+				},
+			});
+			this.router.navigate(['issuer/issuers/', this.issuer.slug], {
+				queryParams: { tab: 'micro-degrees' },
+			});
 		});
 	}
 
@@ -178,5 +191,9 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 
 	get learningPathReverseBadges() {
 		return [...this.learningPath.badges].reverse();
+	}
+
+	closeDialog() {
+		this.dialogRef.close();
 	}
 }

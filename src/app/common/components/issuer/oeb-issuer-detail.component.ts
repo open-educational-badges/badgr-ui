@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter, ViewChild, inject, TemplateRef } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
@@ -76,6 +76,7 @@ import { environment } from 'src/environments/environment';
 })
 export class OebIssuerDetailComponent implements OnInit {
 	private router = inject(Router);
+	route = inject(ActivatedRoute);
 	translate = inject(TranslateService);
 	protected messageService = inject(MessageService);
 	protected title = inject(Title);
@@ -175,8 +176,12 @@ export class OebIssuerDetailComponent implements OnInit {
 	 * of an issuer. Therefore this remains null when public.
 	 */
 	get apiLearningPaths() {
-		return this.public ? null : (this.learningPaths as ApiLearningPath[]);
+		return this.public ? null : (this.learningPaths as ApiLearningPath[]).filter((lp) => !lp.archived);
 	}
+
+	// get archivedLearningPaths(): ApiLearningPath[] {
+	// 	return this.public ? null : (this.learningPaths as ApiLearningPath[]).filter((lp) => lp.archived);
+	// }
 
 	private async updateResults() {
 		this.badgeResults.length = 0;
@@ -422,6 +427,11 @@ export class OebIssuerDetailComponent implements OnInit {
 		await this.updateSharedNetworkResults();
 		await this.updateNetworkResults();
 
+		this.route.queryParams.subscribe((params) => {
+			if (params['tab']) {
+				this.activeTab = params['tab'];
+			}
+		});
 		// await Promise.all([this.updateResults(), this.updateNetworkResults(), this.updateSharedNetworkResults()]);
 		this.badgeTemplateTabs = [
 			{

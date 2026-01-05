@@ -1186,7 +1186,7 @@
 		"archive": "Archiving instead of deletion",
 		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
 		"canOnlyBeArchived": "It can therefore only be archived.",
-		"lpArchived": "We have archived the learning path."
+		"mdArchived": "We have archived the micro degree."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",

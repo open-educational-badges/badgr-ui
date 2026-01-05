@@ -52,7 +52,7 @@
 								[text]="'General.delete' | translate"
 								variant="secondary"
 								width="full_width"
-								(click)="deleteLearningPath(learningPath.slug, issuer)"
+								(click)="deleteLearningPath()"
 								[disabled-when-requesting]="true"
 								[disabled]="!issuer.canCreateBadge"
 								[class]="
