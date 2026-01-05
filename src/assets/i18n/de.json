@@ -123,7 +123,8 @@
 		"notNow": "Jetzt nicht",
 		"notFound": "Nicht gefunden",
 		"start": "Start",
-		"end": "Ende"
+		"end": "Ende",
+		"archive": "Archivieren"
 	},
 	"NavItems": {
 		"register": "Registrieren",
@@ -1179,7 +1180,11 @@
 		"confirmDelete": "Möchtest du diesen Lernpfad wirklich löschen?",
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
-		"institutions": "Institutionen"
+		"institutions": "Institutionen",
+		"archive": "Archivierung statt Löschung",
+		"alreadyAwarded": "Mindestens eine Person hat den Micro Degree bereits erworben.",
+		"canOnlyBeArchived": "Er kann daher nur archiviert werden.",
+		"lpArchived": "Wir haben den Lernpfad archiviert."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",
