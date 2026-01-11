@@ -4,11 +4,11 @@
 	// Component container
 }
 
-// KPI Card Grid - same as gender-competency-analysis
+// KPI Card Grid - same as overview (10px gap)
 .kpi-card-grid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 24px;
+	gap: 10px;
 	width: 100%;
 
 	// Single-column variant for residence detail
@@ -25,13 +25,13 @@
 	// Tablet: 2 columns
 	@media (max-width: 1024px) {
 		grid-template-columns: repeat(2, 1fr);
-		gap: 20px;
+		gap: 10px;
 	}
 
 	// Mobile: 1 column
 	@media (max-width: 640px) {
 		grid-template-columns: 1fr;
-		gap: 16px;
+		gap: 10px;
 	}
 }
 
