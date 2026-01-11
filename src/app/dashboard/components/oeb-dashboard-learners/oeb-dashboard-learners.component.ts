@@ -18,6 +18,8 @@ import {
 } from '../../models/network-dashboard-api.model';
 import { CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { InfoIcon } from '../../../common/components/info-icon.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideUserStar, lucideClock } from '@ng-icons/lucide';
 
 /**
  * Learner Residence Data Interface
@@ -53,7 +55,8 @@ export type LernendeViewState = 'overview' | 'gender-detail' | 'residence-detail
 @Component({
 	selector: 'app-oeb-dashboard-learners',
 	standalone: true,
-	imports: [CommonModule, TranslateModule, GenderCompetencyAnalysisComponent, ResidenceDetailComponent, HorizontalBarChartComponent, InfoIcon],
+	imports: [CommonModule, TranslateModule, GenderCompetencyAnalysisComponent, ResidenceDetailComponent, HorizontalBarChartComponent, InfoIcon, NgIcon],
+	providers: [provideIcons({ lucideUserStar, lucideClock })],
 	templateUrl: './oeb-dashboard-learners.component.html',
 	styleUrls: ['./oeb-dashboard-learners.component.scss']
 })

@@ -24,8 +24,9 @@
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      justify-content: center;
       gap: 8px;
-      padding-top: 4px;
+      margin-top: -6px;
     }
   }
 
@@ -69,6 +70,11 @@
     ::ng-deep ng-icon {
       width: 80px;
       height: 80px;
+
+      svg,
+      svg * {
+        stroke-width: 1.5px !important;
+      }
     }
   }
 

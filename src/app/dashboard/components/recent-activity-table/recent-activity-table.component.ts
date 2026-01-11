@@ -129,7 +129,7 @@ import { NetworkRecentActivityData } from '../../models/network-dashboard-api.mo
 		</ng-template>
 
 		<ng-template #recipientCellTemplate let-context>
-			<div class="tw-flex tw-items-center tw-h-10">
+			<div class="tw-flex tw-items-center tw-justify-center tw-h-10">
 				{{ context.getValue() }}
 			</div>
 		</ng-template>

@@ -59,9 +59,9 @@
 									<p style="font-family: 'Rubik', sans-serif; font-weight: 400; font-size: 12pt; color: #333;">{{ 'Dashboard.Competencies.totalHours' | translate }}</p>
 								</div>
 							</div>
-							@if (competencyHoursTrend()) {
+							@if (competencyHoursTrend() && competencyHoursTrend()!.trend === 'up' && competencyHoursTrend()!.trendValue > 0) {
 								<div class="tw-self-end tw-inline-flex tw-items-center tw-px-3 tw-py-1 tw-bg-white tw-rounded-md" style="font-family: 'Rubik', sans-serif; font-weight: 500; font-size: 10pt; color: #492E98;">
-									{{ competencyHoursTrend()!.trend === 'up' ? '+' : competencyHoursTrend()!.trend === 'down' ? '-' : '' }}{{ competencyHoursTrend()!.trendValue | number }}% {{ 'Network.Dashboard.trend.thisMonth' | translate }}
+									+{{ competencyHoursTrend()!.trendValue | number }}% {{ 'Network.Dashboard.trend.thisMonth' | translate }}
 								</div>
 							}
 						</div>
@@ -76,7 +76,7 @@
 						<div class="tw-h-full tw-flex tw-flex-col tw-justify-between">
 							<div class="tw-flex tw-items-start tw-gap-3">
 								<div class="tw-flex-shrink-0">
-									<ng-icon name="lucideTarget" size="80" style="color: #492E98;"></ng-icon>
+									<ng-icon name="lucideAward" size="80" style="color: #492E98;"></ng-icon>
 								</div>
 								<div class="tw-flex tw-flex-col tw-gap-1">
 									<p class="tw-font-black tw-leading-none" style="font-family: 'Rubik', sans-serif; font-size: 32pt; color: #492E98;">{{ totalCompetencies() | number }}</p>
@@ -90,7 +90,7 @@
 						<div class="tw-h-full tw-flex tw-flex-col tw-justify-between">
 							<div class="tw-flex tw-items-start tw-gap-3">
 								<div class="tw-flex-shrink-0">
-									<ng-icon name="lucideGraduationCap" size="80" style="color: #492E98;"></ng-icon>
+									<ng-icon name="lucideCircleSlash2" size="80" style="color: #492E98;"></ng-icon>
 								</div>
 								<div class="tw-flex tw-flex-col tw-gap-1">
 									<p class="tw-font-black tw-leading-none" style="font-family: 'Rubik', sans-serif; font-size: 32pt; color: #492E98;">{{ averageCompetencyHours() | number:'1.1-1' }}</p>
@@ -292,7 +292,7 @@
 					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
 						<div class="tw-flex tw-items-center tw-gap-3">
 							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
-								<ng-icon name="lucideMedal" size="60" style="color: var(--color-purple);"></ng-icon>
+								<ng-icon name="lucideAward" size="60" style="color: var(--color-purple);"></ng-icon>
 							</div>
 							<div class="tw-flex tw-flex-col tw-gap-1">
 								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetency.badgeCount | number }}</p>
@@ -304,7 +304,7 @@
 					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
 						<div class="tw-flex tw-items-center tw-gap-3">
 							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
-								<ng-icon name="lucideUsers" size="60" style="color: var(--color-purple);"></ng-icon>
+								<ng-icon name="lucideUserStar" size="60" style="color: var(--color-purple);"></ng-icon>
 							</div>
 							<div class="tw-flex tw-flex-col tw-gap-1">
 								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetency.userCount | number }}</p>
@@ -316,7 +316,7 @@
 					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
 						<div class="tw-flex tw-items-center tw-gap-3">
 							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
-								<ng-icon name="lucideBuilding2" size="60" style="color: var(--color-purple);"></ng-icon>
+								<ng-icon name="lucideSchool" size="60" style="color: var(--color-purple);"></ng-icon>
 							</div>
 							<div class="tw-flex tw-flex-col tw-gap-1">
 								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetency.institutionCount | number }}</p>
@@ -369,7 +369,7 @@
 															/>
 														} @else {
 															<div class="tw-w-10 tw-h-10 tw-rounded tw-flex tw-items-center tw-justify-center" style="background-color: #F5F5F5;">
-																<ng-icon name="lucideBuilding2" size="24" style="color: var(--color-purple);"></ng-icon>
+																<ng-icon name="lucideSchool" size="24" style="color: var(--color-purple);"></ng-icon>
 															</div>
 														}
 													</div>
@@ -422,7 +422,7 @@
 					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
 						<div class="tw-flex tw-items-center tw-gap-3">
 							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
-								<ng-icon name="lucideMedal" size="60" style="color: var(--color-purple);"></ng-icon>
+								<ng-icon name="lucideAward" size="60" style="color: var(--color-purple);"></ng-icon>
 							</div>
 							<div class="tw-flex tw-flex-col tw-gap-1">
 								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetencyArea.badgeCount | number }}</p>
@@ -434,7 +434,7 @@
 					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
 						<div class="tw-flex tw-items-center tw-gap-3">
 							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
-								<ng-icon name="lucideUsers" size="60" style="color: var(--color-purple);"></ng-icon>
+								<ng-icon name="lucideUserStar" size="60" style="color: var(--color-purple);"></ng-icon>
 							</div>
 							<div class="tw-flex tw-flex-col tw-gap-1">
 								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetencyArea.userCount | number }}</p>
@@ -446,7 +446,7 @@
 					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
 						<div class="tw-flex tw-items-center tw-gap-3">
 							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
-								<ng-icon name="lucideBuilding2" size="60" style="color: var(--color-purple);"></ng-icon>
+								<ng-icon name="lucideSchool" size="60" style="color: var(--color-purple);"></ng-icon>
 							</div>
 							<div class="tw-flex tw-flex-col tw-gap-1">
 								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetencyArea.institutionCount | number }}</p>
@@ -526,7 +526,7 @@
 															/>
 														} @else {
 															<div class="tw-w-10 tw-h-10 tw-rounded tw-flex tw-items-center tw-justify-center" style="background-color: #F5F5F5;">
-																<ng-icon name="lucideBuilding2" size="24" style="color: var(--color-purple);"></ng-icon>
+																<ng-icon name="lucideSchool" size="24" style="color: var(--color-purple);"></ng-icon>
 															</div>
 														}
 													</div>

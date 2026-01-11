@@ -20,7 +20,7 @@ import { InstitutionsTableComponent, InstitutionTableData } from '../institution
 import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-bar-chart/horizontal-bar-chart.component';
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideMedal, lucideBuilding2, lucideUsers, lucideClock, lucideClockFading } from '@ng-icons/lucide';
+import { lucideAward, lucideSchool, lucideUserStar, lucideClock, lucideClockFading } from '@ng-icons/lucide';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { BadgeDistributionPieChartComponent, PieChartSegment } from '../badge-distribution-pie-chart/badge-distribution-pie-chart.component';
 import { InfoIcon } from '../../../common/components/info-icon.component';
@@ -54,7 +54,7 @@ export interface Institution {
 		BadgeDistributionPieChartComponent,
 		InfoIcon,
 	],
-	providers: [provideIcons({ lucideMedal, lucideBuilding2, lucideUsers, lucideClock, lucideClockFading })],
+	providers: [provideIcons({ lucideAward, lucideSchool, lucideUserStar, lucideClock, lucideClockFading })],
 	templateUrl: './oeb-dashboard-socialspace.component.html',
 	styleUrls: ['./oeb-dashboard-socialspace.component.scss']
 })

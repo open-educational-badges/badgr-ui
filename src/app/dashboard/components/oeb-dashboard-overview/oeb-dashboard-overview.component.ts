@@ -612,15 +612,14 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 					tooltip: config.tooltipKey ? this.translate.instant(config.tooltipKey) : undefined
 				};
 
-				// Add growth indicator if trend data is available and KPI should show trend
-				if (kpi.trend && kpi.trendValue !== undefined && this.shouldShowTrend(kpi.id)) {
-					const isPositive = kpi.trend === 'up';
+				// Add growth indicator only if trend is positive ('up') and KPI should show trend
+				if (kpi.trend === 'up' && kpi.trendValue !== undefined && kpi.trendValue > 0 && this.shouldShowTrend(kpi.id)) {
 					const trendLabel = this.formatTrendLabelForKpi(kpi);
 
 					card.growth = {
 						percentage: kpi.trendValue,
 						label: trendLabel,
-						isPositive
+						isPositive: true
 					};
 				}
 

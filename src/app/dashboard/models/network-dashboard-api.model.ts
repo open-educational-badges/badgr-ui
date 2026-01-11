@@ -244,7 +244,7 @@ export interface KPIDisplayConfig {
 export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 	institutions_count: {
 		descriptionKey: 'Network.Dashboard.kpi.institutionsCount',
-		icon: 'Building2',
+		icon: 'School',
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
@@ -253,7 +253,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 	badges_created: {
 		descriptionKey: 'Network.Dashboard.kpi.badgesCreated',
 		unitKey: 'Network.Dashboard.unit.badges',
-		icon: 'Award',
+		icon: 'CircleStar',
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
@@ -262,7 +262,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 	badges_awarded: {
 		descriptionKey: 'Network.Dashboard.kpi.badgesAwarded',
 		unitKey: 'Network.Dashboard.unit.badges',
-		icon: 'Medal',
+		icon: 'Award',
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
@@ -305,7 +305,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 	learners_count: {
 		descriptionKey: 'Network.Dashboard.kpi.learnersCount',
 		unitKey: 'Network.Dashboard.unit.persons',
-		icon: 'Users',
+		icon: 'UserStar',
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
@@ -314,7 +314,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 	badges_per_month: {
 		descriptionKey: 'Network.Dashboard.kpi.badgesPerMonth',
 		unitKey: 'Network.Dashboard.unit.badges',
-		icon: 'TrendingUp',
+		icon: 'CircleSlash2',
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
@@ -323,7 +323,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 	learners_with_paths: {
 		descriptionKey: 'Network.Dashboard.kpi.learnersWithPaths',
 		unitKey: 'Network.Dashboard.unit.persons',
-		icon: 'MapPin',
+		icon: 'Route',
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
@@ -513,7 +513,7 @@ export interface BadgeTypeDisplayConfig {
  */
 export const BADGE_TYPE_DISPLAY_CONFIG: Record<string, BadgeTypeDisplayConfig> = {
 	participation: {
-		label: 'Teilnahme Badges',
+		label: 'Teilnahme-Badges',
 		color: '#E4FFE4',
 		borderColor: '#93F993'
 	},

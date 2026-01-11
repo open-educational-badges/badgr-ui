@@ -34,7 +34,7 @@
 						<div class="kpi-card__content">
 							<div class="kpi-card__top">
 								<div class="kpi-card__icon">
-									<ng-icon name="lucideUsers" size="80px" style="color: #492E98;" />
+									<ng-icon name="lucideUserStar" size="80px" style="color: #492E98;" />
 								</div>
 								<div class="kpi-card__main">
 									<div class="kpi-card__value">{{ data.learnerCount || 0 | number }}</div>
@@ -192,7 +192,7 @@
 						<div class="kpi-card__content">
 							<div class="kpi-card__top">
 								<div class="kpi-card__icon">
-									<ng-icon name="lucideUsers" size="80px" style="color: #492E98;" />
+									<ng-icon name="lucideUserStar" size="80px" style="color: #492E98;" />
 								</div>
 								<div class="kpi-card__main">
 									<div class="kpi-card__value">{{ data.learnerCount || 0 | number }}</div>
@@ -212,7 +212,7 @@
 						<div class="kpi-card__content">
 							<div class="kpi-card__top">
 								<div class="kpi-card__icon">
-									<ng-icon name="lucideMedal" size="80px" style="color: #492E98;" />
+									<ng-icon name="lucideAward" size="80px" style="color: #492E98;" />
 								</div>
 								<div class="kpi-card__main">
 									<div class="kpi-card__value">{{ data.totalBadges | number }}</div>
@@ -226,7 +226,7 @@
 						<div class="kpi-card__content">
 							<div class="kpi-card__top">
 								<div class="kpi-card__icon">
-									<ng-icon name="lucideBuilding2" size="80px" style="color: #492E98;" />
+									<ng-icon name="lucideSchool" size="80px" style="color: #492E98;" />
 								</div>
 								<div class="kpi-card__main">
 									<div class="kpi-card__value">{{ data.institutions | number }}</div>
@@ -318,7 +318,7 @@
 																<img [src]="inst.image" [alt]="inst.name" class="tw-w-12 tw-h-12 tw-object-contain tw-rounded">
 															} @else {
 																<div class="tw-w-12 tw-h-12 tw-bg-gray-200 tw-rounded tw-flex tw-items-center tw-justify-center">
-																	<ng-icon name="lucideBuilding2" size="24px" style="color: #492E98;" />
+																	<ng-icon name="lucideSchool" size="24px" style="color: #492E98;" />
 																</div>
 															}
 														</div>
@@ -355,9 +355,7 @@
 				<div class="kpi-card__content">
 					<div class="kpi-card__top">
 						<div class="kpi-card__icon">
-							<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#492E98" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-							</svg>
+							<ng-icon name="lucideSchool" size="80px" style="color: #492E98;" />
 						</div>
 						<div class="kpi-card__main">
 							<div class="kpi-card__value">{{ totalInstitutions | number }}</div>

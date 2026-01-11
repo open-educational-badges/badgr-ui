@@ -94,19 +94,5 @@
 				</line>
 			}
 		</svg>
-		<!-- Center circle for donut effect with total -->
-		<div class="badge-pie-chart__center"
-			[class.badge-pie-chart__center--small]="size === 'small'"
-			[class.badge-pie-chart__center--medium]="size === 'medium'"
-			[class.badge-pie-chart__center--large]="size === 'large'">
-			<p class="badge-pie-chart__total">{{ total }}</p>
-			<p class="badge-pie-chart__total-label">
-				@if (translateTotalLabel) {
-					{{ totalLabel | translate }}
-				} @else {
-					{{ totalLabel }}
-				}
-			</p>
-		</div>
 	</div>
 </div>

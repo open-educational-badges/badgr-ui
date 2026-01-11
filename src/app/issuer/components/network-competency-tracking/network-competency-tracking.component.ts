@@ -20,7 +20,7 @@ import { RecipientSkillVisualisationComponent } from '../../../recipient/compone
 import { GenderCompetencyAnalysisComponent } from '../../../dashboard/components/gender-competency-analysis/gender-competency-analysis.component';
 import { ApiRootSkill } from '../../../common/model/ai-skills.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideBookOpen, lucideUsers, lucideClock, lucideTarget, lucideGraduationCap, lucideClockFading, lucideAward, lucideBuilding2, lucideMedal } from '@ng-icons/lucide';
+import { lucideArrowLeft, lucideBookOpen, lucideUserStar, lucideClock, lucideClockFading, lucideAward, lucideSchool, lucideCircleSlash2 } from '@ng-icons/lucide';
 import { InfoIcon } from '../../../common/components/info-icon.component';
 import {
 	NetworkStrengthenedCompetencyData,
@@ -107,7 +107,7 @@ interface CompetencyAreaDetailData {
 		NgIcon,
 		InfoIcon,
 	],
-	providers: [provideIcons({ lucideArrowLeft, lucideBookOpen, lucideUsers, lucideClock, lucideTarget, lucideGraduationCap, lucideClockFading, lucideAward, lucideBuilding2, lucideMedal })],
+	providers: [provideIcons({ lucideArrowLeft, lucideBookOpen, lucideUserStar, lucideClock, lucideClockFading, lucideAward, lucideSchool, lucideCircleSlash2 })],
 	templateUrl: './network-competency-tracking.component.html',
 	styleUrls: ['./network-competency-tracking.component.scss'],
 })
