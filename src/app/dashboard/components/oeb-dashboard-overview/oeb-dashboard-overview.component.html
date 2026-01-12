@@ -67,45 +67,46 @@
 				</button>
 			</div>
 			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
-				<div class="tw-flex tw-flex-col tw-gap-6">
-				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
-					<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.topCompetencyAreas' | translate }}</h3>
-					@if (skillVisualisationData.length > 0) {
-						<recipient-skill-visualisation
-							[skills]="skillVisualisationData"
-							[showIntroText]="false"
-							[showHelpText]="false"
-							[showLegend]="false"
-							[enableAreaClick]="true"
-							(areaClick)="onCompetencyAreaClick($event)">
-						</recipient-skill-visualisation>
-					} @else {
-						<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
-							{{ 'Dashboard.noDataAvailable' | translate }}
-						</div>
-					}
-				</div>
+				<div class="tw-flex tw-flex-row tw-gap-6">
+					<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple); width: 40%;">
+						<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.topCompetencyAreas' | translate }}</h3>
+						@if (skillVisualisationData.length > 0) {
+							<recipient-skill-visualisation
+								[skills]="skillVisualisationData"
+								[showIntroText]="false"
+								[showHelpText]="false"
+								[showLegend]="false"
+								[enableAreaClick]="true"
+								[compactMode]="true"
+								(areaClick)="onCompetencyAreaClick($event)">
+							</recipient-skill-visualisation>
+						} @else {
+							<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+								{{ 'Dashboard.noDataAvailable' | translate }}
+							</div>
+						}
+					</div>
 
-				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
-					<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.mostStrengthenedCompetencies' | translate }}</h3>
-					@if (individualCompetencyData.length === 0) {
-						<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
-							{{ 'Dashboard.noDataAvailable' | translate }}
-						</div>
-					} @else {
-						<app-horizontal-bar-chart
-							[items]="getCompetencyBarItems()"
-							[labelWidthPercent]="40"
-							barContentType="hours"
-							barValueSuffix="h"
-							[showBarIcon]="true"
-							barIconName="lucideClockFading"
-							[showEscoLink]="true"
-							[clickable]="true"
-							(itemClick)="onCompetencyBarClick($event)">
-						</app-horizontal-bar-chart>
-					}
-				</div>
+					<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple); width: 60%;">
+						<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.mostStrengthenedCompetencies' | translate }}</h3>
+						@if (individualCompetencyData.length === 0) {
+							<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+								{{ 'Dashboard.noDataAvailable' | translate }}
+							</div>
+						} @else {
+							<app-horizontal-bar-chart
+								[items]="getCompetencyBarItems()"
+								[labelWidthPercent]="40"
+								barContentType="hours"
+								barValueSuffix="h"
+								[showBarIcon]="true"
+								barIconName="lucideClockFading"
+								[showEscoLink]="true"
+								[clickable]="true"
+								(itemClick)="onCompetencyBarClick($event)">
+							</app-horizontal-bar-chart>
+						}
+					</div>
 				</div>
 			</div>
 		</div>

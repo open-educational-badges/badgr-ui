@@ -175,6 +175,13 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	enableAreaClick = input<boolean>(false);
 
 	/**
+	 * Compact mode: only shows top-level area bubbles without hover expansion.
+	 * Useful for dashboard overview where space is limited.
+	 * Default: false (full visualization with hover effects)
+	 */
+	compactMode = input<boolean>(false);
+
+	/**
 	 * Emitted when a top-level competency area bubble is clicked
 	 * (only when enableAreaClick is true).
 	 * Contains the area data including all ESCO URIs of child competencies.
@@ -424,11 +431,14 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	}
 
 	initD3() {
-		const width = this.mobile ? 540 : 1144;
-		const height = width;
+		// Compact mode uses smaller canvas optimized for only top-level bubbles
+		// This makes the bubbles fill more of the available space percentage-wise
+		const width = this.compactMode() ? 320 : (this.mobile ? 540 : 1144);
+		const height = this.compactMode() ? 320 : width;
 
-		const nodeBaseSize = this.showSingleNode ? 100 : 60;
-		const nodeMaxAdditionalSize = 100;
+		// Larger relative node sizes in compact mode to fill available space
+		const nodeBaseSize = this.compactMode() ? 50 : (this.showSingleNode ? 100 : 60);
+		const nodeMaxAdditionalSize = this.compactMode() ? 45 : 100;
 		const topLevelSkills = this.getTopLevelSkills();
 		const maxStudyLoad = topLevelSkills.reduce((current, d) => Math.max(current, d.studyLoad), 0);
 		const minStudyLoad = topLevelSkills.reduce(
@@ -467,7 +477,11 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		// so that re-evaluating this cell produces the same result.
 		let links = [];
 		let nodes = [];
-		if (!this.mobile) {
+		// compactMode: only show top-level (depth 1) nodes without links
+		if (this.compactMode()) {
+			nodes = this.d3data.nodes.filter((d) => d.depth == 1).map((d) => ({ ...d }));
+			// No links in compact mode
+		} else if (!this.mobile) {
 			links = this.d3data.links.map((d) => ({ ...d }));
 			nodes = this.d3data.nodes.map((d) => ({ ...d }));
 		} else {
@@ -479,16 +493,21 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		}
 
 		// Create a simulation with several forces.
+		// Compact mode: tighter packing, stronger center force, smaller boundary
+		const boundaryFactor = this.compactMode() ? 0.42 : 0.46;
+		const chargeStrength = this.compactMode() ? -300 : -1000;
+		const collisionMultiplier = this.compactMode() ? 1.05 : 1.1;
+
 		const simulation = d3
 			.forceSimulation(nodes)
 			// center all nodes on the middle
-			.force('center', d3.forceCenter(0, 0).strength(1))
+			.force('center', d3.forceCenter(0, 0).strength(this.compactMode() ? 1.5 : 1))
 			// keep nodes inside SVG bounds
 			.force(
 				'bounds',
-				d3ForceBoundary(width * -0.46, height * -0.46, width * 0.46, height * 0.46)
-					.strength(0.1)
-					.border(10),
+				d3ForceBoundary(width * -boundaryFactor, height * -boundaryFactor, width * boundaryFactor, height * boundaryFactor)
+					.strength(this.compactMode() ? 0.2 : 0.1)
+					.border(this.compactMode() ? 5 : 10),
 			)
 			// force between links
 			.force(
@@ -503,13 +522,13 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			.force(
 				'charge',
 				d3.forceManyBody().strength((d) => {
-					return (d as ExtendedApiSkill).depth == 1 ? -1000 : -500;
+					return (d as ExtendedApiSkill).depth == 1 ? chargeStrength : -500;
 				}),
 			)
 			// prevent overlapping nodes
 			.force(
 				'collide',
-				d3.forceCollide((d) => nodeRadius(d) * 1.1),
+				d3.forceCollide((d) => nodeRadius(d) * collisionMultiplier),
 			)
 			// forces nodes into "rings", basically creating a ring of nodes for each depth level
 			// which helps keeping distances uniform
@@ -564,6 +583,8 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		node.append('circle').attr('r', (d) => nodeRadius(d));
 
 		// add foreignObject for text styling / positioning
+		// Compact mode uses slightly smaller font for tighter layout
+		const fontSizeMultiplier = this.compactMode() ? 0.16 : 0.175;
 		const nodeText = node
 			.append('foreignObject')
 			.attr('x', (d) => nodeRadius(d) * -1)
@@ -574,7 +595,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			.append('xhtml:div')
 			// DEBUG: output studyload if not 0
 			// .text(d => { return d.name.replace("/", " / ") + (d.studyLoad !== 0 ? ` (${d.studyLoad} min)` : '') })
-			.attr('style', (d) => `font-size: ${nodeRadius(d) * 0.175}px;`)
+			.attr('style', (d) => `font-size: ${nodeRadius(d) * fontSizeMultiplier}px;`)
 			.attr('class', 'name');
 
 		if (this.mobile) {
@@ -754,8 +775,11 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
 				for (const n of descriptionNodes) n.classList.remove('show-description');
 			}
-		})
-			.on('mouseenter', (e, d) => {
+		});
+
+		// Only add hover effects if not in compactMode
+		if (!this.compactMode()) {
+			node.on('mouseenter', (e, d) => {
 				// find all node parents and links to toggle show
 				let ancestors = [d.id];
 				if (d.depth > 1) {
@@ -779,32 +803,33 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 					});
 				});
 			})
-			.on('mouseout', (e, d) => {
-				let ancestors = [d.id];
-				if (d.depth > 1) {
-					ancestors = Array.from(d.ancestors.values());
-				}
-				ancestors.forEach((id) => {
-					d = this.skillTree.get(id);
-					const children = svg
-						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-						.filter((d2) => d2.ancestors.has(d.id));
-					const linkedIds = [d.id, ...children.data().map((c) => c.id)];
-					children.nodes().forEach((n) => {
-						n.classList.remove('show');
+				.on('mouseout', (e, d) => {
+					let ancestors = [d.id];
+					if (d.depth > 1) {
+						ancestors = Array.from(d.ancestors.values());
+					}
+					ancestors.forEach((id) => {
+						d = this.skillTree.get(id);
+						const children = svg
+							.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+							.filter((d2) => d2.ancestors.has(d.id));
+						const linkedIds = [d.id, ...children.data().map((c) => c.id)];
+						children.nodes().forEach((n) => {
+							n.classList.remove('show');
+						});
+						const links = svg
+							.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
+							.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
+						links.nodes().forEach((n) => {
+							n.classList.remove('show');
+						});
 					});
-					const links = svg
-						.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-						.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
-					links.nodes().forEach((n) => {
-						n.classList.remove('show');
-					});
-				});
 
-				// hide all descriptions
-				const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
-				for (const n of descriptionNodes) n.classList.remove('show-description');
-			});
+					// hide all descriptions
+					const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
+					for (const n of descriptionNodes) n.classList.remove('show-description');
+				});
+		}
 
 		// clear previous versions (on mobile change)
 		const d3canvas = this.d3canvas();

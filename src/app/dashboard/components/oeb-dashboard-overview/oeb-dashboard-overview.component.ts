@@ -171,9 +171,9 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	badgeTypes: { value: string; label: string }[] = [
 		{ value: 'all', label: 'Alle Typen' },
-		{ value: 'competency', label: 'Teilnahmezertifikat' },
-		{ value: 'participation', label: 'Badge' },
-		{ value: 'learningpath', label: 'Micro Degrees' }
+		{ value: 'competency', label: 'Kompetenz-Badges' },
+		{ value: 'participation', label: 'Teilnahme-Badges' },
+		{ value: 'learningpath', label: 'Micro Degrees (Lernpfade)' }
 	];
 
 	// Loading and error states (using signals for reactive UI)
