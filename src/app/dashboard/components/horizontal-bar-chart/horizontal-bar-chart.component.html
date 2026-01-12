@@ -29,7 +29,9 @@
 						class="tw-h-8 tw-flex tw-items-center tw-justify-end tw-pl-3 tw-pr-2 tw-transition-opacity"
 						[class.tw-cursor-pointer]="clickable()"
 						[class.hover:tw-opacity-90]="clickable()"
-						style="background-color: #F5F5F5; border: 1px solid var(--color-purple); border-radius: 3px; min-width: 50px;"
+						[style.background-color]="variant() === 'neutral' ? '#c5d1ff' : '#F5F5F5'"
+						[style.border]="variant() === 'neutral' ? '1px solid #6a6a6a' : '1px solid var(--color-purple)'"
+						style="border-radius: 3px; min-width: 50px;"
 						[style.width.%]="getBarWidth(item.value)"
 						(click)="onBarClick(item)"
 						[attr.role]="clickable() ? 'button' : null"
@@ -41,11 +43,12 @@
 							<ng-icon
 								[name]="barIconName()"
 								size="14px"
-								style="color: var(--color-purple); margin-right: 4px;" />
+								[style.color]="variant() === 'neutral' ? '#2c2c2c' : 'var(--color-purple)'"
+								style="margin-right: 4px;" />
 						}
 						<span
 							class="tw-text-xs tw-font-normal tw-whitespace-nowrap"
-							style="color: var(--color-purple);">
+							[style.color]="variant() === 'neutral' ? '#2c2c2c' : 'var(--color-purple)'">
 							{{ getBarDisplayValue(item) }}
 						</span>
 					</div>
@@ -54,7 +57,7 @@
 					@if (showAfterBarText() && (item.afterBarText || afterBarTranslationKey())) {
 						<span
 							class="tw-text-xs tw-font-normal tw-whitespace-nowrap"
-							style="color: var(--color-purple);">
+							[style.color]="variant() === 'neutral' ? '#2c2c2c' : 'var(--color-purple)'">
 							@if (item.afterBarText) {
 								{{ item.afterBarText }}
 							}

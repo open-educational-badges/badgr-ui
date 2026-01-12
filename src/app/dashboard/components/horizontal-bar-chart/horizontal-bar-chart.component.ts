@@ -30,6 +30,13 @@ export interface HorizontalBarItem {
 export type BarContentType = 'percentage' | 'hours' | 'value' | 'custom';
 
 /**
+ * Visual variant for the bar chart
+ * - 'default': Purple border and text (for competency charts)
+ * - 'neutral': Gray border, light blue fill, dark text (for distribution charts)
+ */
+export type BarChartVariant = 'default' | 'neutral';
+
+/**
  * Reusable Horizontal Bar Chart Component
  *
  * This component displays a list of horizontal bars with labels and optional features:
@@ -136,6 +143,14 @@ export class HorizontalBarChartComponent {
 	 * @default false
 	 */
 	showEscoLink = input<boolean>(false);
+
+	/**
+	 * Visual variant for the bar chart
+	 * - 'default': Purple border and text (for competency charts)
+	 * - 'neutral': Gray border (#6a6a6a), light blue fill (#c5d1ff), dark text (#2c2c2c)
+	 * @default 'default'
+	 */
+	variant = input<BarChartVariant>('default');
 
 	/**
 	 * Minimum bar width percentage to ensure visibility of small values
