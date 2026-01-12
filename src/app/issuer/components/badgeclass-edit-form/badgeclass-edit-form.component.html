@@ -1018,6 +1018,74 @@
 					</div>
 				</cdk-step>
 
+				<!-- Adding for tags functionality 11.01.26 - Andres -->
+
+				<cdk-step label="Bereich" [optional]="true" errorMessage="Bitte Bereich auswählen">
+					<div class="section tw-text-oebblack tw-mt-6">
+						<div>
+							<h2 hlmH2 class="tw-font-bold">{{ selectedStep + 1 + '.' }} Bereich hinzufügen</h2>
+						</div>
+						<p class="tw-italic tw-text-purple tw-mt-2">
+							Bereiche helfen bei der Kategorisierung von Badges (z.B. Technologie, Bildung).
+						</p>
+						<div class="formsection-x-body tw-mt-4">
+							<div class="tw-flex tw-gap-4 tw-items-center tw-mb-2">
+								<span class="tw-font-semibold tw-text-lg tw-text-oebblack tw-uppercase">Bereich</span>
+
+								<div class="ng-autocomplete">
+									<ng-autocomplete
+										name="addarea"
+										id="addarea"
+										#newAreaInput
+										[data]="existingAreas"
+										maxlength="50"
+										[isLoading]="existingAreasLoading"
+										searchKeyword="name"
+										placeholder="Neuer Bereich"
+										(keypress)="handleAreaInputKeyPress($event)"
+										[itemTemplate]="itemTemplate"
+										[notFoundTemplate]="notFoundTemplate"
+									>
+									</ng-autocomplete>
+
+									<ng-template #itemTemplate let-item>
+										<a [innerHTML]="item.name"></a>
+									</ng-template>
+
+									<ng-template #notFoundTemplate let-notFound>
+										<div>Bereich existiert noch nicht</div>
+									</ng-template>
+								</div>
+
+								<oeb-button
+									[id]="'add-area-btn'"
+									size="sm"
+									type="button"
+									(click)="addArea()"
+									text="{{ 'General.add' | translate }}"
+								>
+								</oeb-button>
+							</div>
+							@if (areas.size > 0) {
+								<div class="tw-flex tw-flex-wrap tw-gap-4 tw-w-[70%] tw-ml-[3.2rem]">
+									@for (area of areas; track area) {
+										<div class="tw-flex tw-items-center tw-rounded-full tw-py-1 tw-mb-2">
+											<oeb-button
+												variant="secondary"
+												size="xxs"
+												(click)="removeArea(area)"
+												icon="lucideCircleX"
+												text="{{ area }}"
+											>
+											</oeb-button>
+										</div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</cdk-step>
+
 				<cdk-step [label]="'CreateBadge.closing' | translate">
 					<h2 hlmH2 class="tw-pt-1 tw-px-1 tw-mr-auto !tw-text-oebblack !tw-font-bold">
 						{{ 'CreateBadge.optionalBadgeDetails' | translate }}
