@@ -37,6 +37,26 @@ export class CatalogService extends BaseHttpApiService {
 		this.messageService = messageService;
 	}
 
+
+	async getBadgeAreas(): Promise<string[]> {
+		try {
+			// Replicating the logic from getBadgeTags, but targeting the 'areas' endpoint
+			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/badges/areas`);
+
+			if (response.ok) {
+				return response.body;
+			} else {
+				console.warn(
+					`Request for badge areas did not return ok, got ${response.status}: ${response.statusText}`,
+				);
+				return [];
+			}
+		} catch (e) {
+			console.warn(e);
+			return [];
+		}
+	}
+
 	/**
 	 * Gets a list of tags, whose entries may be used as input for
 	 * the tags parameter of the {@link getBadges} method
@@ -58,6 +78,7 @@ export class CatalogService extends BaseHttpApiService {
 			return [];
 		}
 	}
+
 
 	/**
 	 * Gets a paginated list of badges, optionally filtered by name and/or tags.

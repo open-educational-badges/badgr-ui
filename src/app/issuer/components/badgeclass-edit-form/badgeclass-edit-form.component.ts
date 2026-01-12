@@ -414,6 +414,13 @@ export class BadgeClassEditFormComponent
 	@ViewChild('newTagInput')
 	newTagInput: ElementRef<HTMLInputElement>;
 
+	// Define the reference for the new autocomplete input
+	@ViewChild('newAreaInput') newAreaInput: any;
+
+	// Define the data storage for areas
+	areas = new Set<string>();
+	existingAreas: any[] = []; // This will hold the autocomplete suggestions
+	existingAreasLoading = false;
 	@ViewChild('formElem')
 	formElem: ElementRef<HTMLFormElement>;
 
@@ -949,6 +956,31 @@ export class BadgeClassEditFormComponent
 	removeTag(tag: string) {
 		this.tags.delete(tag);
 	}
+
+
+// --- Bereich (Area) Logic ---
+
+addArea() {
+    // Access the query from the newAreaInput template reference
+    const value = this.newAreaInput.query;
+    if (value && value.trim()) {
+        this.areas.add(value.trim());
+        this.newAreaInput.clear();
+    }
+}
+
+removeArea(area: string) {
+    // Remove the specific string from the Set
+    this.areas.delete(area);
+}
+
+handleAreaInputKeyPress(event: KeyboardEvent) {
+    // Trigger addArea when the user presses Enter
+    if (event.key === 'Enter') {
+        this.addArea();
+    }
+}
+
 
 	enableAlignments() {
 		this.alignmentsEnabled = true;

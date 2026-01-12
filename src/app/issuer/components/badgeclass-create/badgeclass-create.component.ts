@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
@@ -23,6 +23,7 @@ import { Network } from '~/issuer/network.model';
 	imports: [BgBreadcrumbsComponent, HlmH1, BgAwaitPromises, BadgeClassEditFormComponent, TranslatePipe],
 })
 export class BadgeClassCreateComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
+
 	protected title = inject(Title);
 	protected messageService = inject(MessageService);
 	protected issuerManager = inject(IssuerManager);
@@ -46,7 +47,9 @@ export class BadgeClassCreateComponent extends BaseAuthenticatedRoutableComponen
 	badgesLoaded: Promise<unknown>;
 	badges: BadgeClass[] = null;
 
-	@ViewChild('badgeimage') badgeImage;
+	@ViewChild('badgeimage') badgeImage; // Delete or rename
+	@ViewChild('formElem') formElem: ElementRef;
+	@ViewChild('imageSection') imageSection: ElementRef;
 
 	navigationState: any;
 
@@ -118,10 +121,16 @@ export class BadgeClassCreateComponent extends BaseAuthenticatedRoutableComponen
 
 	@HostListener('window:scroll')
 	onWindowScroll() {
-		var top = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-		this.scrolled = this.badgeImage && top > this.badgeImage.componentElem.nativeElement.offsetTop;
-	}
+		// Use '?' to safely check if things exist before reading nativeElement
+		if (!this.formElem?.nativeElement || !this.badgeImage?.componentElem?.nativeElement) {
+			return;
+		}
 
+		const top = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+
+		// The logic only runs if the elements above were found
+		this.scrolled = top > this.badgeImage.componentElem.nativeElement.offsetTop;
+	}
 	// copyBadge() {
 	// 	this.dialogService.copyBadgeDialog
 	// 		.openDialog(this.badges)

@@ -419,9 +419,23 @@
 														{{ tag }}
 													</div>
 												}
+
 											</dd>
 										</div>
 									}
+									@if (config.areas && config.areas.length > 0) {
+									<div class="tw-flex tw-items-start tw-flex-col tw-mt-4">
+										<dt class="tw-text-darkgray md:tw-py-2 md:tw-mr-2 tw-mb-1">Bereich</dt>
+										<dd class="tw-text-darkgray tw-flex tw-flex-wrap">
+											@for (area of config.areas; track area) {
+												<div class="tag tw-border-purple tw-text-purple tw-mx-2 tw-ml-0 tw-max-w-max tw-px-2">
+													{{ area }}
+												</div>
+											}
+										</dd>
+									</div>
+								}
+
 								</dl>
 							</div>
 						</div>

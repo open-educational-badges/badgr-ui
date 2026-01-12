@@ -451,6 +451,10 @@ export class BadgeClassDetailComponent
 	}
 
 	loadConfig(badgeClass: BadgeClass) {
+		console.log('--- DEBUG START ---');
+    console.log('Full BadgeClass Object:', badgeClass);
+    console.log('Areas Data:', badgeClass.areas);
+    console.log('--- DEBUG END ---');
 		this.config = {
 			crumbs: this.crumbs,
 			badgeTitle: badgeClass.name,
@@ -474,6 +478,7 @@ export class BadgeClassDetailComponent
 			duration: badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad,
 			category: badgeClass.extension['extensions:CategoryExtension']?.Category,
 			tags: badgeClass.tags,
+			areas: badgeClass.areas || [],
 			issuerName: badgeClass.issuerName,
 			issuerImagePlacholderUrl: this.issuerImagePlacholderUrl,
 			issuerImage: this.issuer.image,
@@ -521,7 +526,9 @@ export class BadgeClassDetailComponent
 			this.config.headerButton = null;
 			this.config.qrCodeButton.show = false;
 		}
+
 	}
+
 
 	async loadNetworkQrCodes(networkSlug: string, badgeSlug: string) {
 		try {

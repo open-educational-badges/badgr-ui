@@ -1,9 +1,9 @@
 import {
-	ApiBadgeClass,
-	ApiBadgeClassAlignment,
-	BadgeClassCopyPermissions,
-	BadgeClassRef,
-	BadgeClassUrl,
+  ApiBadgeClass,
+  ApiBadgeClassAlignment,
+  BadgeClassCopyPermissions,
+  BadgeClassRef,
+  BadgeClassUrl,
 } from './badgeclass-api.model';
 import { IssuerUrl } from './issuer-api.model';
 import { ManagedEntity } from '../../common/model/managed-entity';
@@ -11,235 +11,249 @@ import { ApiEntityRef } from '../../common/model/entity-ref';
 import { CommonEntityManager } from '../../entity-manager/services/common-entity-manager.service';
 
 export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
-	get badgeUrl(): BadgeClassUrl {
-		return this.apiModel.json.id;
-	}
+  /**
+   * AREAS PROPERTY (Added)
+   */
+  get areas(): string[] {
+    return this.apiModel['areas'] || [];
+  }
 
-	get issuerUrl(): IssuerUrl {
-		return this.apiModel.issuer;
-	}
+  set areas(areas: string[]) {
+    this.apiModel['areas'] = areas;
+  }
 
-	get name(): string {
-		return this.apiModel.name;
-	}
-	set name(name: string) {
-		this.apiModel.name = name;
-	}
+  /**
+   * BADGE URL PROPERTY (Restored to fix TS2339)
+   */
+  get badgeUrl(): BadgeClassUrl {
+    return this.apiModel.json.id;
+  }
 
-	get slug(): string {
-		return this.apiModel.slug;
-	}
+  get issuerUrl(): IssuerUrl {
+    return this.apiModel.issuer;
+  }
 
-	get description(): string {
-		return this.apiModel.description;
-	}
-	set description(description: string) {
-		this.apiModel.json.description = description;
-		this.apiModel.description = description;
-	}
+  get name(): string {
+    return this.apiModel.name;
+  }
+  set name(name: string) {
+    this.apiModel.name = name;
+  }
 
-	get image(): string {
-		return this.apiModel.image;
-	}
-	set image(image: string) {
-		this.apiModel.image = image;
-	}
+  get slug(): string {
+    return this.apiModel.slug;
+  }
 
-	get imageFrame(): boolean {
-		return this.apiModel.imageFrame !== undefined ? this.apiModel.imageFrame : true;
-	}
-	set imageFrame(imageFrame: boolean) {
-		this.apiModel.imageFrame = imageFrame;
-	}
+  get description(): string {
+    return this.apiModel.description;
+  }
+  set description(description: string) {
+    this.apiModel.json.description = description;
+    this.apiModel.description = description;
+  }
 
-	get createdAt(): Date {
-		return new Date(this.apiModel.created_at);
-	}
+  get image(): string {
+    return this.apiModel.image;
+  }
+  set image(image: string) {
+    this.apiModel.image = image;
+  }
 
-	get updatedAt(): Date {
-		return new Date(this.apiModel.updated_at);
-	}
+  get imageFrame(): boolean {
+    return this.apiModel.imageFrame !== undefined ? this.apiModel.imageFrame : true;
+  }
+  set imageFrame(imageFrame: boolean) {
+    this.apiModel.imageFrame = imageFrame;
+  }
 
-	get createdBy(): string {
-		return this.apiModel.created_by;
-	}
+  get createdAt(): Date {
+    return new Date(this.apiModel.created_at);
+  }
 
-	get recipientCount(): number {
-		return this.apiModel.recipient_count;
-	}
+  get updatedAt(): Date {
+    return new Date(this.apiModel.updated_at);
+  }
 
-	set recipientCount(count: number) {
-		this.apiModel.recipient_count = count;
-	}
+  get createdBy(): string {
+    return this.apiModel.created_by;
+  }
 
-	get courseUrl(): string {
-		return this.apiModel.course_url;
-	}
+  get recipientCount(): number {
+    return this.apiModel.recipient_count;
+  }
 
-	set courseUrl(c: string) {
-		this.apiModel.course_url = c;
-	}
+  set recipientCount(count: number) {
+    this.apiModel.recipient_count = count;
+  }
 
-	get criteria_text(): string {
-		return this.apiModel.criteria_text;
-	}
-	set criteria_text(criteriaText: string) {
-		this.apiModel.json.criteria_text = criteriaText;
-		this.apiModel.criteria_text = criteriaText;
-	}
+  get courseUrl(): string {
+    return this.apiModel.course_url;
+  }
 
-	get criteria_url(): string {
-		return this.apiModel.criteria_url;
-	}
-	set criteria_url(criteriaUrl: string) {
-		this.apiModel.json.criteriaUrl = criteriaUrl;
-		this.apiModel.criteria_url = criteriaUrl;
-	}
+  set courseUrl(c: string) {
+    this.apiModel.course_url = c;
+  }
 
-	get criteria(): Array<{ name: string; description: string }> {
-		return this.apiModel.criteria;
-	}
+  get criteria_text(): string {
+    return this.apiModel.criteria_text;
+  }
+  set criteria_text(criteriaText: string) {
+    this.apiModel.json.criteria_text = criteriaText;
+    this.apiModel.criteria_text = criteriaText;
+  }
 
-	set criteria(criteria: Array<{ name: string; description: string }>) {
-		this.apiModel.criteria = criteria;
-	}
+  get criteria_url(): string {
+    return this.apiModel.criteria_url;
+  }
+  set criteria_url(criteriaUrl: string) {
+    this.apiModel.json.criteriaUrl = criteriaUrl;
+    this.apiModel.criteria_url = criteriaUrl;
+  }
 
-	get tags(): string[] {
-		return this.apiModel.tags;
-	}
-	set tags(tags: string[]) {
-		this.apiModel.tags = tags;
-	}
+  get criteria(): Array<{ name: string; description: string }> {
+    return this.apiModel.criteria;
+  }
 
-	get extension() {
-		return this.apiModel.extensions;
-	}
+  set criteria(criteria: Array<{ name: string; description: string }>) {
+    this.apiModel.criteria = criteria;
+  }
 
-	set extension(extensions: object) {
-		this.apiModel.extensions = extensions;
-	}
+  get tags(): string[] {
+    return this.apiModel.tags;
+  }
+  set tags(tags: string[]) {
+    this.apiModel.tags = tags;
+  }
 
-	get source_url() {
-		return this.apiModel.source_url;
-	}
+  get extension() {
+    return this.apiModel.extensions;
+  }
 
-	get issuerVerified() {
-		return this.apiModel.issuerVerified;
-	}
+  set extension(extensions: object) {
+    this.apiModel.extensions = extensions;
+  }
 
-	hasExtension(extensionName: string) {
-		return this.apiModel.extensions && extensionName in this.apiModel.extensions;
-	}
+  get source_url() {
+    return this.apiModel.source_url;
+  }
 
-	get expiration(): number {
-		return this.apiModel.expiration;
-	}
+  get issuerVerified() {
+    return this.apiModel.issuerVerified;
+  }
 
-	set expiration(days: number | undefined) {
-		this.apiModel.expiration = days ?? undefined;
-	}
+  hasExtension(extensionName: string) {
+    return this.apiModel.extensions && extensionName in this.apiModel.extensions;
+  }
 
-	get issuerSlug(): string {
-		return BadgeClass.issuerSlugFromUrl(this.issuerUrl);
-	}
+  get expiration(): number {
+    return this.apiModel.expiration;
+  }
 
-	get issuerOwnerAcceptedTos(): boolean {
-		return this.apiModel.issuerOwnerAcceptedTos;
-	}
+  set expiration(days: number | undefined) {
+    this.apiModel.expiration = days ?? undefined;
+  }
 
-	get isNetworkBadge(): boolean {
-		return this.apiModel.isNetworkBadge;
-	}
+  get issuerSlug(): string {
+    return BadgeClass.issuerSlugFromUrl(this.issuerUrl);
+  }
 
-	get networkName(): string {
-		return this.apiModel.networkName;
-	}
+  get issuerOwnerAcceptedTos(): boolean {
+    return this.apiModel.issuerOwnerAcceptedTos;
+  }
 
-	get networkImage(): string {
-		return this.apiModel.networkImage;
-	}
+  get isNetworkBadge(): boolean {
+    return this.apiModel.isNetworkBadge;
+  }
 
-	get sharedOnNetwork(): { slug: string; name: string; image: string | null; description: string | null } | null {
-		return this.apiModel.sharedOnNetwork;
-	}
+  get networkName(): string {
+    return this.apiModel.networkName;
+  }
 
-	get alignments() {
-		return this.apiModel.alignment;
-	}
-	set alignments(alignments: ApiBadgeClassAlignment[]) {
-		this.apiModel.alignment = alignments;
-	}
+  get networkImage(): string {
+    return this.apiModel.networkImage;
+  }
 
-	get copyPermissions(): BadgeClassCopyPermissions[] {
-		return this.apiModel.copy_permissions;
-	}
-	set copyPermissions(permissions: BadgeClassCopyPermissions[]) {
-		this.apiModel.copy_permissions = permissions;
-	}
+  get sharedOnNetwork(): { slug: string; name: string; image: string | null; description: string | null } | null {
+    return this.apiModel.sharedOnNetwork;
+  }
 
-	canCopy(key: BadgeClassCopyPermissions) {
-		return this.copyPermissions.indexOf(key) !== -1;
-	}
+  get alignments() {
+    return this.apiModel.alignment;
+  }
+  set alignments(alignments: ApiBadgeClassAlignment[]) {
+    this.apiModel.alignment = alignments;
+  }
 
-	get issuer() {
-		return this.apiModel.issuer;
-	}
-	get issuerName() {
-		return this.apiModel.issuerName;
-	}
+  get copyPermissions(): BadgeClassCopyPermissions[] {
+    return this.apiModel.copy_permissions;
+  }
+  set copyPermissions(permissions: BadgeClassCopyPermissions[]) {
+    this.apiModel.copy_permissions = permissions;
+  }
 
-	// TODO: The API should give us the issuer slug for a badge, and we should not need to parse the URL.
-	static issuerSlugForApiBadge(apiBadge: ApiBadgeClass) {
-		return BadgeClass.issuerSlugFromUrl(apiBadge.issuer);
-	}
+  canCopy(key: BadgeClassCopyPermissions) {
+    return this.copyPermissions.indexOf(key) !== -1;
+  }
 
-	private static issuerSlugFromUrl(issuerUrl: string) {
-		return (issuerUrl.match(/\/public\/issuers\/([^\/]+)/) || [])[1] || null;
-	}
-	constructor(
-		commonManager: CommonEntityManager,
-		initialEntity: ApiBadgeClass = null,
-		onUpdateSubscribed: () => void = undefined,
-	) {
-		super(commonManager, onUpdateSubscribed);
+  get issuer() {
+    return this.apiModel.issuer;
+  }
+  get issuerName() {
+    return this.apiModel.issuerName;
+  }
 
-		if (initialEntity != null) {
-			this.applyApiModel(initialEntity);
-		}
-	}
+  // TODO: The API should give us the issuer slug for a badge, and we should not need to parse the URL.
+  static issuerSlugForApiBadge(apiBadge: ApiBadgeClass) {
+    return BadgeClass.issuerSlugFromUrl(apiBadge.issuer);
+  }
 
-	protected buildApiRef(): ApiEntityRef {
-		return {
-			'@id': this.badgeUrl,
-			slug: this.apiModel.slug,
-		};
-	}
-	clearExpires(): void {
-		this.apiModel.expiration = undefined;
-	}
+  private static issuerSlugFromUrl(issuerUrl: string) {
+    return (issuerUrl.match(/\/public\/issuers\/([^\/]+)/) || [])[1] || null;
+  }
+  constructor(
+    commonManager: CommonEntityManager,
+    initialEntity: ApiBadgeClass = null,
+    onUpdateSubscribed: () => void = undefined,
+  ) {
+    super(commonManager, onUpdateSubscribed);
 
-	expirationDateRelative(issuedOn?: Date): Date | undefined {
-		if (this.apiModel.expiration) {
-			const baseDate = issuedOn ? new Date(issuedOn) : new Date();
-			baseDate.setDate(baseDate.getDate() + this.apiModel.expiration);
-			return baseDate;
-		}
-		return undefined;
-	}
+    if (initialEntity != null) {
+      this.applyApiModel(initialEntity);
+    }
+  }
 
-	update(): Promise<this> {
-		return this.badgeManager.badgeClassApi
-			.getBadgeForIssuerSlugAndBadgeSlug(this.issuerSlug, this.slug)
-			.then((apiBadge) => this.applyApiModel(apiBadge));
-	}
+  protected buildApiRef(): ApiEntityRef {
+    return {
+      '@id': this.badgeUrl,
+      slug: this.apiModel.slug,
+    };
+  }
+  clearExpires(): void {
+    this.apiModel.expiration = undefined;
+  }
 
-	save(): Promise<this> {
-		return this.badgeManager.badgeClassApi
-			.updateBadgeClass(this.issuerSlug, this.apiModel)
-			.catch((e) => {
-				this.revertChanges();
-				throw e;
-			})
-			.then((apiBadge) => this.applyApiModel(apiBadge));
-	}
+  expirationDateRelative(issuedOn?: Date): Date | undefined {
+    if (this.apiModel.expiration) {
+      const baseDate = issuedOn ? new Date(issuedOn) : new Date();
+      baseDate.setDate(baseDate.getDate() + this.apiModel.expiration);
+      return baseDate;
+    }
+    return undefined;
+  }
+
+  update(): Promise<this> {
+    return this.badgeManager.badgeClassApi
+      .getBadgeForIssuerSlugAndBadgeSlug(this.issuerSlug, this.slug)
+      .then((apiBadge) => this.applyApiModel(apiBadge));
+  }
+
+  save(): Promise<this> {
+    return this.badgeManager.badgeClassApi
+      .updateBadgeClass(this.issuerSlug, this.apiModel)
+      .catch((e) => {
+        this.revertChanges();
+        throw e;
+      })
+      .then((apiBadge) => this.applyApiModel(apiBadge));
+  }
 }

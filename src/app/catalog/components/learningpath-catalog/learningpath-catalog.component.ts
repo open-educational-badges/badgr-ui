@@ -89,6 +89,7 @@ export class LearningPathsCatalogComponent extends BaseRoutableComponent impleme
 	issuersWithLps: string[] = [];
 	baseUrl: string;
 	tags: string[] = [];
+	areas: string[] = [];
 	issuers: Issuer[] = null;
 	selectedTag: string = null;
 	loggedIn = false;
@@ -316,25 +317,40 @@ export class LearningPathsCatalogComponent extends BaseRoutableComponent impleme
 		this.selectedTag = this.selectedTag == tag ? null : tag;
 		this.updatePaginatedResults();
 	}
-
 	async loadLearningPaths() {
 		return new Promise(async (resolve, reject) => {
 			this.learningPathService.allPublicLearningPaths$.subscribe(
 				(lps) => {
 					this.learningPaths = lps.filter((lp) => lp.issuerOwnerAcceptedTos);
+
 					lps.forEach((lp) => {
+						// --- Tags Logic ---
 						lp.tags.forEach((tag) => {
 							this.tags.push(tag);
 						});
+
+						// --- Bereich (Area) Logic (Matches Tags Exactly) ---
+						if (lp.areas) {
+							lp.areas.forEach((area) => {
+								this.areas.push(area);
+							});
+						}
+
 						this.issuersWithLps = this.issuersWithLps.concat(lp.issuer_id);
 					});
+
 					this.tags = sortUnique(this.tags);
+
+					// --- Unique Areas Logic ---
+					this.areas = sortUnique(this.areas);
+
 					this.issuersWithLps = sortUnique(this.issuersWithLps);
 					this.updatePaginatedResults();
 					resolve(lps);
 				},
 				(error) => {
 					this.messageService.reportAndThrowError('Failed to load learningPaths', error);
+					reject(error);
 				},
 			);
 		});

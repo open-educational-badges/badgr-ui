@@ -4,6 +4,7 @@ import { ApiEntityRef } from '../../common/model/entity-ref';
 import { CommonEntityManager } from '../../entity-manager/services/common-entity-manager.service';
 
 export class LearningPath extends ManagedEntity<ApiLearningPath, LearningPathRef> {
+	areas: any;
 	get name(): string {
 		return this.apiModel.name;
 	}
