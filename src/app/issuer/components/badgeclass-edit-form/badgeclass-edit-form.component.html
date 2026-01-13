@@ -1043,6 +1043,7 @@
 										searchKeyword="name"
 										placeholder="Neuer Bereich"
 										(keypress)="handleAreaInputKeyPress($event)"
+<<<<<<< HEAD
 										[itemTemplate]="areaItemTemplate"
 										[notFoundTemplate]="areaNotFoundTemplate"
 									>
@@ -1053,6 +1054,18 @@
 									</ng-template>
 
 									<ng-template #areaNotFoundTemplate let-notFound>
+=======
+										[itemTemplate]="itemTemplate"
+										[notFoundTemplate]="notFoundTemplate"
+									>
+									</ng-autocomplete>
+
+									<ng-template #itemTemplate let-item>
+										<a [innerHTML]="item.name"></a>
+									</ng-template>
+
+									<ng-template #notFoundTemplate let-notFound>
+>>>>>>> 7df6844ee8ec87caa5298400a912080debebeaff
 										<div>Bereich existiert noch nicht</div>
 									</ng-template>
 								</div>
