@@ -27,7 +27,6 @@ import { LearningPathV3 } from '~/issuer/models/learningpathv3.model';
 import { ApiIssuer } from '~/issuer/models/issuer-api.model';
 import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observer';
 import { appearAnimation } from '~/common/animations/animations';
-import { ITag } from '../badge-catalog/badge-catalog.component';
 import { FormMessageComponent } from '~/common/components/form-message.component';
 import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { CountUpModule } from 'ngx-countup';
@@ -404,4 +403,9 @@ export class LearningPathsCatalogComponent extends BaseRoutableComponent impleme
 	onLoadMoreClicked(): void {
 		this.currentPage.update((p) => p + 1);
 	}
+}
+
+interface ITag {
+	label: string;
+	value: string;
 }
