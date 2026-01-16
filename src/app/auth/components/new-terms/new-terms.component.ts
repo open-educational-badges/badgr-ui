@@ -38,9 +38,14 @@ export class NewTermsComponent extends BaseRoutableComponent {
 		if (!this.confirmed) {
 			this.openErrorDialog();
 		} else {
-			this.router.navigate(['public/about/newsletter']);
 			this.profileManager.userProfilePromise.then((profile) => {
-				profile.agreeToLatestTerms();
+				profile.agreeToLatestTerms().then(() => {
+					this.router.navigate(['public/about/newsletter']);
+				}).catch((error) => {
+					console.error('Failed to agree to terms:', error);
+				});
+			}).catch((error) => {
+				console.error('Failed to get profile:', error);
 			});
 		}
 	}

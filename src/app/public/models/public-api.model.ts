@@ -238,6 +238,7 @@ export interface PublicApiLearningPath {
 	badges: PublicApiBadgeClass[];
 	slug: string;
 	tags: string[];
+	area?: string[]; //added area field as it was failing in the learning cad component
 	issuer_id: string;
 	issuer_name?: string;
 	completed_at?: Date | null;

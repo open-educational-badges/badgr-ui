@@ -92,7 +92,8 @@ export class IssuerListComponent
 
 	Array = Array;
 
-	issuers: Issuer[] = null;
+	// issuers: Issuer[] = null;
+	issuers: Issuer[] = [];
 	networks = signal<Network[]>([]);
 	badges: BadgeClass[] = null;
 
