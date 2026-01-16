@@ -1179,7 +1179,8 @@
 		"confirmDelete": "Möchtest du diesen Lernpfad wirklich löschen?",
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
-		"institutions": "Institutionen"
+		"institutions": "Institutionen",
+		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",

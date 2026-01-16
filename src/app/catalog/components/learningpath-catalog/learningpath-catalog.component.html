@@ -1,38 +1,37 @@
 <form-message></form-message>
 
 <div class="oeb page-padding">
-	<ng-template [showLoader]="true" [bgAwaitPromises]="[learningPathsLoaded, issuersLoaded]">
-		<div class="oeb-section-sm">
-			<div class="oeb-headline-container tw-relative">
-				<div class="tw-z-10 tw-relative">
-					<oeb-header-text [text1]="'LearningPath.catalogHeadline'" [text2Template]="text2Template" />
-					<ng-template #text2Template>
-						@if (learningPaths.length === 0) {
-							{{ 'General.noLearningPaths' | translate }}
-						} @else {
-							<span [countUp]="learningPaths.length">{{ learningPaths.length }}</span>
-							{{
-								learningPaths.length === 1
-									? ('General.learningPath' | translate)
-									: ('General.learningPaths' | translate)
-							}}
-							in <span [countUp]="issuersWithLps.length">{{ issuersWithLps.length }}</span>
-							{{
-								issuersWithLps.length === 1
-									? ('LearningPath.institution' | translate)
-									: ('LearningPath.institutions' | translate)
-							}}
-						}
-					</ng-template>
-				</div>
-			</div>
-		</div>
+	<div class="oeb-section-sm">
+		<header class="oeb-headline-container tw-relative tw-flex tw-flex-col">
+			<oeb-header-text [text1]="'LearningPath.catalogHeadline'" [text2Template]="text2Template" />
+			<ng-template #text2Template>
+				<ng-template [showLoader]="false" [bgAwaitPromises]="[pageReadyPromise]">
+					@if (totalLearningPathCount() === 0) {
+						{{ 'General.noLearningPaths' | translate }}
+					} @else {
+						<span [countUp]="totalLearningPathCount()">{{ totalLearningPathCount() }}</span>
+						<span>
+							{{ learningPathsPluralWord() }}
+							@if (issuers().length > 0) {
+								in
+								@if (issuers().length > 1) {
+									<span [countUp]="issuers().length">{{ issuers().length }}</span>
+								}
+								{{ issuersPluralWord() }}
+							}
+						</span>
+					}
+				</ng-template>
+			</ng-template>
+		</header>
+	</div>
 
+	<ng-template [showLoader]="true" [bgAwaitPromises]="pageReadyPromise">
 		<div class="tw-relative">
 			<section class="">
 				<div class="tw-flex tw-items-center tw-rounded-lg tw-p-4 tw-bg-[#ECFEED] tw-mb-4 tw-gap-6">
 					<div
-						class="tw-flex tw-flex-col tw-gap-4 tw-w-full min-[880px]:tw-flex-row min-[880px]:tw-items-center"
+						class="tw-flex tw-flex-col tw-justify-between tw-gap-4 tw-w-full min-[880px]:tw-flex-row min-[880px]:tw-items-center"
 					>
 						<div class="tw-flex tw-flex-col min-[880px]:tw-flex-row min-[880px]:tw-items-center tw-gap-6">
 							<div class="tw-flex tw-relative tw-items-center">
@@ -42,7 +41,8 @@
 									changeOrder
 									class="!tw-bg-white tw-w-full tw-border-1 tw-border-purple min-[880px]:tw-w-96 tw-border-solid tw-h-12 tw-rounded-lg tw-p-2"
 									placeholder="{{ 'LearningPath.searchLearningPaths' | translate }}"
-									[(ngModel)]="searchQuery"
+									[ngModel]="searchQuery()"
+									(ngModelChange)="onSearchQueryChange($event)"
 									hlmInput
 								/>
 								<ng-icon
@@ -52,6 +52,7 @@
 								></ng-icon>
 							</div>
 						</div>
+
 						<oeb-global-sort-select
 							placeholder="{{ 'Badge.sortBy' | translate }}"
 							class="oeb tw-w-[12rem]"
@@ -59,80 +60,75 @@
 							[control]="sortControl"
 						>
 						</oeb-global-sort-select>
+
+						<oeb-select
+							[actionBar]="true"
+							placeholder="Tags"
+							class="oeb tw-w-[12rem]"
+							[options]="tagsOptions()"
+							[control]="tagsControl"
+							[autofocus]="true"
+							[noTopMargin]="true"
+							[multiple]="true"
+							[dropdownMaxHeight]="250"
+						></oeb-select>
 					</div>
 				</div>
-				<div class="tw-grid-cols-2 tw-grid tw-items-center subtitle-wrapper">
-					<div class="tags-wrapper oeb-standard-padding-bottom">
-						@for (tag of tags; track tag; let last = $last) {
-							<div
-								(click)="filterByTag(tag)"
-								class="tag tag-wrapper tag-button"
-								[class.tag-button-pressed]="selectedTag === tag"
-							>
+				<div class="subtitle-wrapper">
+					<ul class="tags-wrapper oeb-standard-padding-bottom">
+						@for (tag of tagsControl.value | sort; track tag) {
+							<li class="tag tag-close tag-delete tag-button tw-mr-2" (click)="removeTag(tag)">
 								{{ tag }}
-							</div>
+							</li>
 						}
-					</div>
+					</ul>
 				</div>
-				@if (!groupByInstitution) {
-					<div class="tw-grid min-[450px]:tw-grid-cols-learningpaths tw-gap-6 tw-items-center" [@stagger]>
-						@for (lp of learningPathResults; track lp) {
-							<bg-learningpathcard
-								@appearAnimation
-								[badgeImage]="lp.participationBadgeImage"
-								[name]="lp.name"
-								[issuerTitle]="lp.issuer_name"
-								[description]="lp.description"
-								[tags]="lp.tags"
-								[slug]="lp.slug"
-								[studyLoad]="calculateStudyLoad(lp)"
-								[completed]="checkCompleted(lp)"
-								[requested]="lp.requested"
-								[progress]="lp.progress"
-								[matchOrProgress]="calculateLearningPathStatus(lp)"
-							></bg-learningpathcard>
-						}
-					</div>
-				}
-			</section>
-		</div>
-		@if (groupByInstitution) {
-			@for (issuerGroup of learningPathResultsByIssuer; track issuerGroup) {
-				<h3 class="u-text-h3-semibold u-margin-bottom2x u-margin-top6x u-text-dark1">
-					{{ issuerGroup.issuerName }}
-					<span class="u-text-small-semibold-caps u-text-dark4 u-margin-left2x"
-						>{{ issuerGroup.learningpaths.length }}
-						{{ issuerGroup.learningpaths.length === 1 ? 'LearningPath' : 'LearningPaths' }}</span
-					>
-				</h3>
-				<div class="tw-grid min-[450px]:tw-grid-cols-learningpaths tw-gap-6 tw-items-center">
-					@for (lp of issuerGroup.learningpaths; track lp) {
+				<div class="tw-grid min-[450px]:tw-grid-cols-learningpaths tw-gap-6 tw-items-center" [@stagger]>
+					@for (lp of learningPaths(); track lp.slug) {
 						<bg-learningpathcard
-							[badgeImage]="lp.participationBadgeImage"
+							@appearAnimation
+							[badgeImage]="lp.participationBadge_image"
 							[name]="lp.name"
 							[issuerTitle]="lp.issuer_name"
 							[description]="lp.description"
 							[tags]="lp.tags"
 							[slug]="lp.slug"
 							[studyLoad]="calculateStudyLoad(lp)"
-							[progress]="lp.progress"
-							[requested]="lp.requested"
-							[matchOrProgress]="calculateLearningPathStatus(lp)"
 							[completed]="checkCompleted(lp)"
+							[requested]="lp.requested"
+							[progress]="lp.progress"
+							[matchOrProgress]="calculateLearningPathStatus(lp)"
 						></bg-learningpathcard>
 					}
 				</div>
-			}
-		}
-		@if (learningPathResults.length >= 20 || (currentPage === totalPages && currentPage !== 1)) {
-			<div class="tw-mt-8">
-				<oeb-numbered-pagination
-					[totalProducts]="isFiltered() ? filteredMicroDegrees.length : learningPaths.length"
-					[(page)]="currentPage"
-					[(pageSize)]="microDegreesPerPage"
-				>
-				</oeb-numbered-pagination>
-			</div>
-		}
+				@if (!learningPaths().length && !hasNext()) {
+					<p
+						class="tw-m-auto tw-max-w-[300px] tw-p-4 tw-border-solid tw-border-[1px] tw-border-[var(--color-blue)] tw-rounded-lg tw-bg-[var(--color-lightpurple)] tw-text-center"
+					>
+						{{ 'General.noResults' | translate }}
+					</p>
+				}
+			</section>
+		</div>
 	</ng-template>
+	<div #loadMore class="oeb-section-sm">
+		<ng-template [showLoader]="false" [bgAwaitPromises]="pageReadyPromise">
+			@if (hasNext()) {
+				@if (!observeScrolling()) {
+					<loading-dots />
+				} @else {
+					<oeb-button
+						variant="secondary"
+						size="sm"
+						type="button"
+						text="{{ 'General.loadMore' | translate }}"
+						(click)="onLoadMoreClicked()"
+						class="tw-mx-auto tw-block tw-w-max"
+					/>
+				}
+			} @else {
+				<h4 hlmH4 class="tw-text-oebblack tw-text-center">{{ 'LearningPath.catalogAllLoaded' | translate }}</h4>
+			}
+		</ng-template>
+	</div>
 </div>
