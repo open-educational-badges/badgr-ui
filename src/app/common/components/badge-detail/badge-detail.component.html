@@ -312,6 +312,16 @@
 											</dd>
 										</div>
 									}
+									@if (config.areas?.length > 0) {
+										<div class="tw-flex tw-text-sm tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
+											<dt class="tw-text-darkgray">
+												{{ 'RecBadgeDetail.area' | translate }}
+											</dt>
+											<dd class="tw-text-oebblack tw-font-medium md:tw-ml-2">
+										      {{ config.areas.join(', ') }}
+											</dd>
+										</div>
+									}
 									@if (config.activity_start_date) {
 										<dt class="tw-text-sm tw-text-darkgray tw-mt-1 tw-pt-1">
 											{{ 'RecBadge.courseDateShort' | translate }}
@@ -497,6 +507,7 @@
 											[description]="lp.description"
 											[slug]="lp.slug"
 											[tags]="lp.tags"
+											[areas]="lp.areas"
 											[studyLoad]="calculateStudyLoad(lp)"
 											[progress]="lp.progress"
 											[matchOrProgress]="calculateLearningPathStatus(lp)"
