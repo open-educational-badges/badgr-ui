@@ -74,12 +74,17 @@
 			@if (badgesDisplay === 'grid') {
 				<div class="tw-grid sm:tw-grid-cols-issuer tw-gap-6 tw-w-full" [@stagger]>
 					@for (issuer of issuers(); track issuer.slug) {
-						<oeb-issuer-card
+						<oeb-unified-card
+							[variant]="'issuer'"
+							[entity]="issuer"
+							(navigate)="navigateToIssuer(issuer)"
+						></oeb-unified-card>
+						<!-- <oeb-issuer-card
 							@appearAnimation
 							[plural]="plural"
 							[issuer]="issuer"
 							(navigate)="navigateToIssuer(issuer)"
-						></oeb-issuer-card>
+						></oeb-issuer-card> -->
 					}
 				</div>
 

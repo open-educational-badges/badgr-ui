@@ -36,6 +36,7 @@ export interface IIssuerV3 {
 	lon?: number;
 
 	linkedin_id?: string;
+	current_user_issuer_role: string;
 
 	json: { id: string };
 }
@@ -67,6 +68,7 @@ export class IssuerV3 implements IIssuerV3 {
 	lat?: number;
 	lon?: number;
 	linkedin_id?: string;
+	current_user_issuer_role: string;
 	staff_count?: number;
 	json: { id: string };
 

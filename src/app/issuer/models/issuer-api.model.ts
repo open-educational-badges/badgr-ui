@@ -56,6 +56,8 @@ export interface ApiIssuer extends ApiBaseIssuer {
 	lat?: number;
 	lon?: number;
 
+	current_user_issuer_role: IssuerStaffRoleSlug | null;
+
 	networks: ApiNetwork[];
 }
 

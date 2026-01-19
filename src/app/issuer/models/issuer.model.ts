@@ -231,6 +231,10 @@ export class Issuer extends ManagedEntity<ApiIssuer, IssuerRef> {
 		}
 	}
 
+	get current_user_issuer_role(): IssuerStaffRoleSlug | null {
+		return this.apiModel.current_user_issuer_role;
+	}
+
 	static urlFromApiModel(apiIssuer: ApiIssuer): IssuerUrl {
 		return apiIssuer.json.id;
 	}

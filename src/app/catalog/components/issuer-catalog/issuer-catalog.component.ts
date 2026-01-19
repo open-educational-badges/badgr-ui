@@ -43,6 +43,7 @@ import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observer';
+import { OebUnifiedCard } from '~/components/oeb-unified-card';
 
 @Component({
 	selector: 'app-issuer-catalog',
@@ -65,6 +66,7 @@ import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observ
 		BgAwaitPromises,
 		HlmInput,
 		HlmIcon,
+		OebUnifiedCard,
 	],
 })
 export class IssuerCatalogComponent extends BaseRoutableComponent implements OnInit, AfterViewInit, OnDestroy {
