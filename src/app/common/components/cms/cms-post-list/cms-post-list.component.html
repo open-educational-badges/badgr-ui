@@ -13,9 +13,9 @@
 	</div>
 
 	@if (posts && posts[0]) {
-		<div class="md:tw-flex tw-items-end tw-gap-[24px] tw-text-black">
+		<div class="md:tw-flex tw-items-stretch tw-gap-[24px] tw-text-black oeb-main">
 			@if (posts[0].post_thumbnail) {
-				<img class="md:tw-w-[50%] tw-aspect-[1.22]" [src]="posts[0].post_thumbnail" alt="posts[0].post_title" />
+				<img class="md:tw-w-[50%] oeb-main__image" [src]="posts[0].post_thumbnail" alt="posts[0].post_title" />
 			}
 			<div class="tw-flex tw-flex-1 tw-flex-col tw-justify-bottom tw-mt-8 md:tw-mt-0">
 				@if (posts[0].post_tags) {
