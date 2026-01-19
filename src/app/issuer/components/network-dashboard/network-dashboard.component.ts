@@ -1,14 +1,4 @@
-import {
-	AfterContentInit,
-	Component,
-	ElementRef,
-	inject,
-	OnInit,
-	output,
-	signal,
-	TemplateRef,
-	ViewChild,
-} from '@angular/core';
+import { AfterContentInit, Component, ElementRef, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SessionService } from '../../../common/services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,12 +14,9 @@ import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src
 import { DialogComponent } from '../../../components/dialog.component';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { NgIcon } from '@ng-icons/core';
-import { NgModel, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Issuer } from '../../../issuer/models/issuer.model';
-import { PublicApiService } from '../../../public/services/public-api.service';
-import { MessageService } from '../../../common/services/message.service';
 import { NgStyle, NgClass } from '@angular/common';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormFieldSelectOption } from '../../../components/select.component';
 import { NetworkApiService } from '../../../issuer/services/network-api.service';
 import { HlmH1 } from '@spartan-ng/helm/typography';
@@ -69,8 +56,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
-	private publicApiService = inject(PublicApiService);
-	private messageService = inject(MessageService);
 	private networkApiService = inject(NetworkApiService);
 
 	networkLoaded: Promise<unknown>;
@@ -79,18 +64,11 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	tabs: Tab[] = undefined;
 	activeTab = 'overview';
 	dialogRef: BrnDialogRef<any> = null;
-	issuerSearchQuery = '';
-	selectedIssuers: Issuer[] = [];
 
 	network = signal<Network | null>(null);
 	partnerIssuers = signal<Issuer[]>([]);
 
 	networkInvites = signal<ApiNetworkInvitation[]>([]);
-
-	issuersShowResults = false;
-	issuersLoading = false;
-	issuerSearchLoaded = false;
-	issuerSearchResults = [];
 
 	rightsAndRolesExpanded = false;
 	networkBadges: ApiBadgeClass[] = [];
@@ -110,8 +88,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	@ViewChild('inviteSuccessContent')
 	inviteSuccessContent: TemplateRef<void>;
-
-	@ViewChild('issuerSearchInputModel') issuerSearchInputModel: NgModel;
 
 	constructor() {
 		const loginService = inject(SessionService);
@@ -181,13 +157,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		this.activeTab = tab;
 	}
 
-	issuerSearchInputFocusOut() {
-		// delay hiding for click event
-		setTimeout(() => {
-			this.issuersShowResults = false;
-		}, 200);
-	}
-
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	public openDialog() {
@@ -201,16 +170,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			},
 		});
 		this.dialogRef = dialogRef;
-
-		setTimeout(() => {
-			if (this.issuerSearchInputModel) {
-				this.issuerSearchInputModel.valueChanges
-					.pipe(debounceTime(500), distinctUntilChanged())
-					.subscribe(() => {
-						this.issuerSearchChange();
-					});
-			}
-		});
 	}
 
 	onInstitutionsInvited() {
@@ -220,20 +179,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		this.activeTab = 'partners';
 		if (this.dialogRef) {
 			this.dialogRef.close();
-		}
-	}
-
-	async issuerSearchChange() {
-		if (this.issuerSearchQuery.length >= 3) {
-			this.issuersLoading = true;
-			try {
-				this.issuerSearchResults = [];
-				this.issuerSearchResults = await this.publicApiService.searchIssuers(this.issuerSearchQuery);
-			} catch (error) {
-				this.messageService.reportAndThrowError(`Failed to issuers: ${error.message}`, error);
-			}
-			this.issuersLoading = false;
-			this.issuerSearchLoaded = true;
 		}
 	}
 
@@ -259,15 +204,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			return rect.height + 2;
 		}
 		return null;
-	}
-
-	selectIssuerFromDropdown(issuer) {
-		this.selectedIssuers.push(issuer);
-	}
-
-	removeSelectedissuer(issuer) {
-		const index = this.selectedIssuers.indexOf(issuer);
-		this.selectedIssuers.splice(index, 1);
 	}
 
 	collapseRoles() {
