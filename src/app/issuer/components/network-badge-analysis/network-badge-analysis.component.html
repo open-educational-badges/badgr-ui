@@ -236,12 +236,6 @@
 												}
 											}
 										</svg>
-										<div class="tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-center">
-											<div class="tw-bg-white tw-rounded-full tw-flex tw-flex-col tw-items-center tw-justify-center" style="width: 62%; height: 62%;">
-												<p class="tw-text-xl tw-font-bold tw-text-black">{{ deliveryMethodStats.online.count + deliveryMethodStats.inPerson.count }}</p>
-												<p class="tw-text-xs tw-text-gray-500">{{ 'Dashboard.total' | translate }}</p>
-											</div>
-										</div>
 									</div>
 
 									<div class="tw-flex tw-flex-col tw-gap-3 tw-w-full">
@@ -319,12 +313,6 @@
 												</line>
 											}
 										</svg>
-										<div class="tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-center">
-											<div class="tw-bg-white tw-rounded-full tw-flex tw-flex-col tw-items-center tw-justify-center" style="width: 62%; height: 62%;">
-												<p class="tw-text-xl tw-font-bold tw-text-black">{{ totalBadges }}</p>
-												<p class="tw-text-xs tw-text-gray-500">Badge Classes</p>
-											</div>
-										</div>
 									</div>
 
 									<div class="tw-flex tw-flex-col tw-gap-3 tw-w-full">
@@ -409,51 +397,51 @@
 					</div>
 				</div>
 
-				@if (monthlyBadges && monthlyBadges.length > 0) {
-					<div class="tw-mb-6">
-						<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
-							{{ 'Dashboard.badgesAwardedLastMonth' | translate }} ({{ totalMonthlyBadges }})
-						</h2>
-						<div>
-							<table hlmTable oeb-table class="tw-table-fixed tw-w-full">
-								<thead hlmTHead>
-									@for (headerRow of monthlyBadgesTable.getHeaderGroups(); track headerRow.id) {
-										<tr hlmTr>
-											@for (headerCell of headerRow.headers; track headerCell.id) {
-												@if (!headerCell.isPlaceholder) {
-													<th hlmTh
-														[class.tw-text-right]="headerCell.id === 'General.count'"
-														[class.tw-w-40]="headerCell.id === 'Badge.createdOn'"
-														[class.tw-whitespace-nowrap]="headerCell.id === 'Badge.createdOn'"
-														[class.tw-w-28]="headerCell.id === 'General.count'"
-														[class.tw-whitespace-nowrap]="headerCell.id === 'General.count'"
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.badgesAwardedLastMonth' | translate }} ({{ totalMonthlyBadges }})
+					</h2>
+					<div>
+						<table hlmTable oeb-table class="tw-table-fixed tw-w-full">
+							<thead hlmTHead>
+								@for (headerRow of monthlyBadgesTable.getHeaderGroups(); track headerRow.id) {
+									<tr hlmTr>
+										@for (headerCell of headerRow.headers; track headerCell.id) {
+											@if (!headerCell.isPlaceholder) {
+												<th hlmTh
+													[class.tw-text-right]="headerCell.id === 'General.count'"
+													[class.tw-w-40]="headerCell.id === 'Badge.createdOn'"
+													[class.tw-whitespace-nowrap]="headerCell.id === 'Badge.createdOn'"
+													[class.tw-w-28]="headerCell.id === 'General.count'"
+													[class.tw-whitespace-nowrap]="headerCell.id === 'General.count'"
+												>
+													<div
+														class="tw-flex tw-flex-row tw-items-center tw-gap-2 [&[data-sortable='true']]:tw-cursor-pointer"
+														[class.tw-justify-end]="headerCell.id === 'General.count'"
+														(click)="headerCell.column.toggleSorting()"
+														[attr.data-sortable]="headerCell.column.getCanSort()"
 													>
-														<div
-															class="tw-flex tw-flex-row tw-items-center tw-gap-2 [&[data-sortable='true']]:tw-cursor-pointer"
-															[class.tw-justify-end]="headerCell.id === 'General.count'"
-															(click)="headerCell.column.toggleSorting()"
-															[attr.data-sortable]="headerCell.column.getCanSort()"
-														>
-															<div>
-																{{ headerCell.id | translate }}
-															</div>
-															@if (headerCell.column.getIsSorted()) {
-																@if (headerCell.column.getNextSortingOrder() === 'asc') {
-																	<ng-icon hlm size="base" name="lucideChevronDown" />
-																} @else {
-																	<ng-icon hlm size="base" name="lucideChevronUp" />
-																}
-															} @else if (headerCell.column.getCanSort()) {
-																<ng-icon hlm size="base" name="lucideChevronsUpDown" />
-															}
+														<div>
+															{{ headerCell.id | translate }}
 														</div>
-													</th>
-												}
+														@if (headerCell.column.getIsSorted()) {
+															@if (headerCell.column.getNextSortingOrder() === 'asc') {
+																<ng-icon hlm size="base" name="lucideChevronDown" />
+															} @else {
+																<ng-icon hlm size="base" name="lucideChevronUp" />
+															}
+														} @else if (headerCell.column.getCanSort()) {
+															<ng-icon hlm size="base" name="lucideChevronsUpDown" />
+														}
+													</div>
+												</th>
 											}
-										</tr>
-									}
-								</thead>
-								<tbody hlmTBody>
+										}
+									</tr>
+								}
+							</thead>
+							<tbody hlmTBody>
+								@if (monthlyBadges && monthlyBadges.length > 0) {
 									@for (row of monthlyBadgesTable.getRowModel().rows; track row.id) {
 										<tr hlmTr>
 											<td hlmTd class="tw-whitespace-nowrap tw-w-40 tw-align-top">
@@ -490,16 +478,14 @@
 														@if (row.original.skills && row.original.skills.length > 0) {
 															<div class="tw-flex tw-flex-wrap tw-gap-1">
 																@for (skill of row.original.skills; track skill.name) {
-																	<span class="tw-text-xs tw-px-2 tw-py-0.5 tw-rounded-full tw-inline-flex tw-items-center tw-gap-1" style="background-color: var(--color-lavender); color: var(--color-purple);">
-																		<span class="tw-break-words">{{ skill.name }}</span>&nbsp;<a
+																	<span class="tw-text-xs tw-px-2 tw-py-0.5 tw-rounded-full" style="background-color: #f2f2f2; color: #000000;">{{ skill.name }}&nbsp;<a
 																			[href]="skill.escoUri"
 																			target="_blank"
 																			rel="noopener noreferrer"
-																			class="hover:tw-underline tw-flex-shrink-0"
+																			class="hover:tw-underline"
 																			style="color: #1400FF;"
 																			title="ESCO Kompetenz öffnen"
-																		>(E)</a>
-																	</span>
+																		>(E)</a></span>
 																}
 															</div>
 														}
@@ -513,11 +499,17 @@
 											</td>
 										</tr>
 									}
-								</tbody>
-							</table>
-						</div>
+								} @else {
+									<tr hlmTr>
+										<td hlmTd colspan="3" class="tw-text-center tw-py-8 tw-text-gray-500">
+											{{ 'Dashboard.noDataAvailable' | translate }}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
 					</div>
-				}
+				</div>
 				}
 			</div>
 		</ng-template>

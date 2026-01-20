@@ -29,6 +29,7 @@
 		"more": "Mehr",
 		"edit": "Bearbeiten",
 		"editS": "Bearbeiten",
+		"exportData": "Daten exportieren",
 		"delete": "Löschen",
 		"view": "ansehen",
 		"contact": "Kontakt",
@@ -534,7 +535,27 @@
 				"title": "BADGE-VERTEILUNG"
 			},
 			"badgeTimeline": {
-				"title": "BADGE-ZEITVERLAUF"
+				"title": "BADGE-ZEITVERLAUF",
+				"filter": {
+					"allTypes": "Alle Typen",
+					"competencyBadges": "Kompetenz-Badges",
+					"participationBadges": "Teilnahme-Badges",
+					"learningPaths": "Micro Degrees (Lernpfade)"
+				},
+				"months": {
+					"january": { "label": "Januar", "short": "JAN" },
+					"february": { "label": "Februar", "short": "FEBR" },
+					"march": { "label": "März", "short": "MÄRZ" },
+					"april": { "label": "April", "short": "APRIL" },
+					"may": { "label": "Mai", "short": "MAI" },
+					"june": { "label": "Juni", "short": "JUNI" },
+					"july": { "label": "Juli", "short": "JULI" },
+					"august": { "label": "August", "short": "AUG" },
+					"september": { "label": "September", "short": "SEPT" },
+					"october": { "label": "Oktober", "short": "OKT" },
+					"november": { "label": "November", "short": "NOV" },
+					"december": { "label": "Dezember", "short": "DEZ" }
+				}
 			},
 			"socialspace": {
 				"tabTitle": "Sozialraum",
@@ -1520,7 +1541,7 @@
 			"back": "Zurück",
 			"viewDetails": "Details anzeigen",
 			"clickForDetails": "Klick für Details",
-			"clickZipCodeForDetails": "Klick auf PLZ-Bereiche für detaillierte Kennzahlen",
+			"clickLocationForDetails": "Klick auf Orte für detaillierte Kennzahlen",
 			"showDetailsFor": "Details anzeigen für"
 		},
 		"zipCodeOverview": {

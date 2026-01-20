@@ -302,8 +302,9 @@
 									<app-dashboard-top-badges
 										[top3Badges]="top3Institutions()"
 										[countLabelKey]="'Dashboard.zipCodeDetail.badgesCount'"
-										[enableRouting]="true"
-										[routePrefix]="'/issuer/issuers'"
+										[enableRouting]="false"
+										[clickable]="true"
+										(itemClick)="onInstitutionRankingClick($event)"
 										[useOctagonFrame]="true">
 									</app-dashboard-top-badges>
 

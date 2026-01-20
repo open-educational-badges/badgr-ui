@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
 import { AppConfigService } from '../../../common/app-config.service';
+import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 import {
 	SocialspaceInstitution,
 	SocialspaceCityDetailResponse,
@@ -86,16 +87,44 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 
 	showLearnerDetail = signal<boolean>(false);
 
+	/** User's issuers for checking membership */
+	private userIssuerSlugs: Set<string> = new Set();
+
 	constructor(
 		private networkDashboardApi: NetworkDashboardApiService,
 		private configService: AppConfigService,
 		private router: Router,
 		private translate: TranslateService,
+		private issuerManager: IssuerManager,
 	) {}
 
 	ngOnInit(): void {
+		// Load user's issuers to check membership for institution clicks
+		this.issuerManager.myIssuers$
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(issuers => {
+				this.userIssuerSlugs = new Set(issuers.map(i => i.slug));
+			});
+
 		this.loadInstitutions();
 		this.loadCities();
+	}
+
+	/**
+	 * Handle click on institution in the ranking - navigate to institution page
+	 * If user is a member of the institution, show member view; otherwise show public view
+	 */
+	onInstitutionRankingClick(item: Top3Badge): void {
+		if (item.id) {
+			// Check if user is a member of this institution
+			if (this.userIssuerSlugs.has(item.id)) {
+				// User is a member - navigate to member view
+				this.router.navigate(['/issuer/issuers', item.id]);
+			} else {
+				// User is not a member - navigate to public view
+				this.router.navigate(['/public/issuers', item.id]);
+			}
+		}
 	}
 
 	ngOnDestroy(): void {

@@ -29,6 +29,7 @@
 		"more": "More",
 		"edit": "Edit",
 		"editS": "Edit",
+		"exportData": "Export data",
 		"delete": "Delete",
 		"view": "View",
 		"contact": "Contact",
@@ -523,7 +524,27 @@
 				"title": "BADGE DISTRIBUTION"
 			},
 			"badgeTimeline": {
-				"title": "BADGE TIMELINE"
+				"title": "BADGE TIMELINE",
+				"filter": {
+					"allTypes": "All Types",
+					"competencyBadges": "Competency Badges",
+					"participationBadges": "Participation Badges",
+					"learningPaths": "Micro Degrees (Learning Paths)"
+				},
+				"months": {
+					"january": { "label": "January", "short": "JAN" },
+					"february": { "label": "February", "short": "FEB" },
+					"march": { "label": "March", "short": "MAR" },
+					"april": { "label": "April", "short": "APR" },
+					"may": { "label": "May", "short": "MAY" },
+					"june": { "label": "June", "short": "JUN" },
+					"july": { "label": "July", "short": "JUL" },
+					"august": { "label": "August", "short": "AUG" },
+					"september": { "label": "September", "short": "SEP" },
+					"october": { "label": "October", "short": "OCT" },
+					"november": { "label": "November", "short": "NOV" },
+					"december": { "label": "December", "short": "DEC" }
+				}
 			},
 			"socialspace": {
 				"tabTitle": "Social Area",
@@ -1484,7 +1505,7 @@
 			"back": "Back",
 			"viewDetails": "View Details",
 			"clickForDetails": "Click for details",
-			"clickZipCodeForDetails": "Click on ZIP code areas for detailed metrics",
+			"clickLocationForDetails": "Click on locations for detailed metrics",
 			"showDetailsFor": "Show details for"
 		},
 		"legend": {

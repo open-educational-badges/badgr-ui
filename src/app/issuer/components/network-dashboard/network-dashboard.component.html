@@ -39,16 +39,23 @@
 					</div>
 				}
 				@if (network().current_user_network_role !== 'staff' && !(activeTab === 'learners' && (learnerSubView?.state === 'gender-detail' || learnerSubView?.state === 'residence-detail'))) {
-					<div class="tw-ml-auto">
+					<div class="tw-ml-auto tw-relative tw-z-50">
 						@switch (activeTab) {
 							@case ('overview') {
-								<oeb-button
-									[variant]="partnerIssuers().length ? 'secondary' : 'default'"
-									(click)="openDialog()"
-									[text]="'Network.inviteInstitutions' | translate"
-									[disabled]="network().current_user_network_role !== 'owner'"
+								<oeb-dropdown
+									[trigger]="dropdownTrigger"
+									[menuItems]="networkActionsMenuItems()"
+									class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
 								>
-								</oeb-button>
+								</oeb-dropdown>
+								<ng-template #dropdownTrigger>
+									<svg
+										class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[62px] md:tw-h-[62px]"
+										fill="var(--color-purple)"
+										icon="icon_more"
+									></svg>
+									<span class="visuallyhidden">Mehr</span>
+								</ng-template>
 							}
 							@case ('badges') {
 								@if (network().badgeClassCount) {

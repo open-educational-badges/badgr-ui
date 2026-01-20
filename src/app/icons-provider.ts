@@ -65,6 +65,9 @@ import {
 	lucideCircleStar,
 	lucideUserStar,
 	lucideCircleSlash2,
+	lucideFolderInput,
+	lucideSquarePen,
+	lucideHousePlus,
 } from '@ng-icons/lucide';
 
 export const IconsProvider = provideIcons({
@@ -133,4 +136,7 @@ export const IconsProvider = provideIcons({
 	lucideCircleStar,
 	lucideUserStar,
 	lucideCircleSlash2,
+	lucideFolderInput,
+	lucideSquarePen,
+	lucideHousePlus,
 });

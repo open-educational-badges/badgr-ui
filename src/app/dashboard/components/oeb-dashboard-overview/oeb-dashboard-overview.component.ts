@@ -41,6 +41,7 @@ import { ApiRootSkill } from '../../../common/model/ai-skills.model';
 import { AppConfigService } from '../../../common/app-config.service';
 import { BadgeDistributionPieChartComponent, PieChartSegment } from '../badge-distribution-pie-chart/badge-distribution-pie-chart.component';
 import { BadgesYearlyLineChartComponent } from '../badges-yearly-line-chart/badges-yearly-line-chart.component';
+import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 
 // Individual competency data interface
 export interface CompetencyData {
@@ -154,26 +155,14 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	selectedBadgeType: string = 'all';
 	// Dynamic year list including current year
 	availableYears: number[] = [this.currentYear - 2, this.currentYear - 1, this.currentYear];
-	availableMonths: { value: number; label: string; shortLabel: string }[] = [
-		{ value: 1, label: 'Januar', shortLabel: 'JAN' },
-		{ value: 2, label: 'Februar', shortLabel: 'FEBR' },
-		{ value: 3, label: 'März', shortLabel: 'MÄRZ' },
-		{ value: 4, label: 'April', shortLabel: 'APRIL' },
-		{ value: 5, label: 'Mai', shortLabel: 'MAI' },
-		{ value: 6, label: 'Juni', shortLabel: 'JUNI' },
-		{ value: 7, label: 'Juli', shortLabel: 'JULI' },
-		{ value: 8, label: 'August', shortLabel: 'AUG' },
-		{ value: 9, label: 'September', shortLabel: 'SEPT' },
-		{ value: 10, label: 'Oktober', shortLabel: 'OKT' },
-		{ value: 11, label: 'November', shortLabel: 'NOV' },
-		{ value: 12, label: 'Dezember', shortLabel: 'DEZ' }
-	];
+	availableMonths: { value: number; label: string; shortLabel: string }[] = [];
 
-	badgeTypes: { value: string; label: string }[] = [
-		{ value: 'all', label: 'Alle Typen' },
-		{ value: 'competency', label: 'Kompetenz-Badges' },
-		{ value: 'participation', label: 'Teilnahme-Badges' },
-		{ value: 'learningpath', label: 'Micro Degrees (Lernpfade)' }
+	badgeTypes: { value: string; label: string }[] = [];
+
+	/** Month keys for translation lookup */
+	private readonly monthKeys = [
+		'january', 'february', 'march', 'april', 'may', 'june',
+		'july', 'august', 'september', 'october', 'november', 'december'
 	];
 
 	// Loading and error states (using signals for reactive UI)
@@ -183,16 +172,31 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	errorState = signal(false);
 	errorMessage = signal<string>('');
 
+	/** User's issuers for checking membership */
+	private userIssuerSlugs: Set<string> = new Set();
+
 	constructor(
 		private router: Router,
 		private dataSourceService: DashboardDataSourceService,
 		private overviewApiService: DashboardOverviewApiService,
 		private networkDashboardApi: NetworkDashboardApiService,
 		private translate: TranslateService,
-		private configService: AppConfigService
+		private configService: AppConfigService,
+		private issuerManager: IssuerManager
 	) {}
 
 	ngOnInit(): void {
+		// Initialize badge types and months with translations
+		this.initializeBadgeTypes();
+		this.initializeMonths();
+
+		// Load user's issuers to check membership for institution clicks
+		this.issuerManager.myIssuers$
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(issuers => {
+				this.userIssuerSlugs = new Set(issuers.map(i => i.slug));
+			});
+
 		// Load initial data
 		this.loadDashboardData();
 
@@ -210,6 +214,29 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		if (changes['networkSlug'] && !changes['networkSlug'].firstChange) {
 			this.loadDashboardData();
 		}
+	}
+
+	/**
+	 * Initialize badge types with translated labels
+	 */
+	private initializeBadgeTypes(): void {
+		this.badgeTypes = [
+			{ value: 'all', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.allTypes') },
+			{ value: 'competency', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.competencyBadges') },
+			{ value: 'participation', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.participationBadges') },
+			{ value: 'learningpath', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.learningPaths') }
+		];
+	}
+
+	/**
+	 * Initialize month labels from translations
+	 */
+	private initializeMonths(): void {
+		this.availableMonths = this.monthKeys.map((key, index) => ({
+			value: index + 1,
+			label: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.label`),
+			shortLabel: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.short`)
+		}));
 	}
 
 	ngAfterViewInit(): void {
@@ -761,10 +788,18 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	/**
 	 * Handle click on institution in the ranking - navigate to institution page
+	 * If user is a member of the institution, show member view; otherwise show public view
 	 */
 	onInstitutionRankingClick(item: Top3Badge): void {
 		if (item.id) {
-			this.router.navigate(['/issuer/issuers', item.id]);
+			// Check if user is a member of this institution
+			if (this.userIssuerSlugs.has(item.id)) {
+				// User is a member - navigate to member view
+				this.router.navigate(['/issuer/issuers', item.id]);
+			} else {
+				// User is not a member - navigate to public view
+				this.router.navigate(['/public/issuers', item.id]);
+			}
 		}
 	}
 

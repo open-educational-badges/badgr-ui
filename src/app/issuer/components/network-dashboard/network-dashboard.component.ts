@@ -1,6 +1,7 @@
 import {
 	AfterContentInit,
 	Component,
+	computed,
 	ElementRef,
 	inject,
 	OnInit,
@@ -20,6 +21,8 @@ import { AppConfigService } from '../../../common/app-config.service';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { OebTabsComponent, Tab } from '../../../components/oeb-tabs.component';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
+import { OebDropdownComponent } from '../../../components/oeb-dropdown.component';
+import type { MenuItem } from '../../../common/components/badge-detail/badge-detail.component.types';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { DialogComponent } from '../../../components/dialog.component';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
@@ -46,6 +49,7 @@ import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
 import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
 import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
 import { OebDashboardSocialspaceComponent } from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
+import { SvgIconComponent } from '~/common/components/svg-icon.component';
 @Component({
 	selector: 'network-dashboard',
 	templateUrl: './network-dashboard.component.html',
@@ -54,6 +58,7 @@ import { OebDashboardSocialspaceComponent } from '~/dashboard/components/oeb-das
 		BgAwaitPromises,
 		OebTabsComponent,
 		OebButtonComponent,
+		OebDropdownComponent,
 		NgIcon,
 		FormsModule,
 		NgStyle,
@@ -68,6 +73,7 @@ import { OebDashboardSocialspaceComponent } from '~/dashboard/components/oeb-das
 		OebDashboardOverviewComponent,
 		OebDashboardLearnersComponent,
 		OebDashboardSocialspaceComponent,
+		SvgIconComponent,
 	],
 })
 export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit, AfterContentInit {
@@ -358,5 +364,49 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		} else {
 			return this.network().current_user_network_role;
 		}
+	}
+
+	/**
+	 * Menu items for the network actions dropdown (computed signal for stable reference)
+	 */
+	networkActionsMenuItems = computed<MenuItem[]>(() => {
+		const items: MenuItem[] = [
+			{
+				title: 'General.exportData',
+				icon: 'lucideFolderInput',
+				action: () => this.exportData(),
+			},
+		];
+
+		// Only show "Institution hinzufügen" and "Bearbeiten" for owners
+		if (this.network()?.current_user_network_role === 'owner') {
+			items.push({
+				title: 'Network.addInstitutions',
+				icon: 'lucideHousePlus',
+				action: () => this.openDialog(),
+			});
+			items.push({
+				title: 'General.edit',
+				icon: 'lucideSquarePen',
+				action: () => this.navigateToEditNetwork(),
+			});
+		}
+
+		return items;
+	});
+
+	/**
+	 * Export data (placeholder - functionality not implemented)
+	 */
+	exportData(): void {
+		// TODO: Implement export functionality
+		console.log('Export data clicked - functionality not yet implemented');
+	}
+
+	/**
+	 * Navigate to network edit page
+	 */
+	navigateToEditNetwork(): void {
+		this.router.navigate(['/issuer/networks', this.networkSlug, 'edit']);
 	}
 }

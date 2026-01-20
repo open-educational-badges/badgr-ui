@@ -73,23 +73,29 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 	private pendingRenderTimeout: any = null;
 	private resizeListener: (() => void) | null = null;
 
-	/** Month labels for chart axis - EXACT as in NetworkBadgeAnalysisComponent with shortLabel */
-	availableMonths: MonthOption[] = [
-		{ value: 1, label: 'Januar', shortLabel: 'JAN' },
-		{ value: 2, label: 'Februar', shortLabel: 'FEBR' },
-		{ value: 3, label: 'März', shortLabel: 'MÄRZ' },
-		{ value: 4, label: 'April', shortLabel: 'APRIL' },
-		{ value: 5, label: 'Mai', shortLabel: 'MAI' },
-		{ value: 6, label: 'Juni', shortLabel: 'JUNI' },
-		{ value: 7, label: 'Juli', shortLabel: 'JULI' },
-		{ value: 8, label: 'August', shortLabel: 'AUG' },
-		{ value: 9, label: 'September', shortLabel: 'SEPT' },
-		{ value: 10, label: 'Oktober', shortLabel: 'OKT' },
-		{ value: 11, label: 'November', shortLabel: 'NOV' },
-		{ value: 12, label: 'Dezember', shortLabel: 'DEZ' }
+	/** Month labels for chart axis - initialized from translations */
+	availableMonths: MonthOption[] = [];
+
+	/** Month keys for translation lookup */
+	private readonly monthKeys = [
+		'january', 'february', 'march', 'april', 'may', 'june',
+		'july', 'august', 'september', 'october', 'november', 'december'
 	];
 
-	constructor(private translate: TranslateService) {}
+	constructor(private translate: TranslateService) {
+		this.initializeMonths();
+	}
+
+	/**
+	 * Initialize month labels from translations
+	 */
+	private initializeMonths(): void {
+		this.availableMonths = this.monthKeys.map((key, index) => ({
+			value: index + 1,
+			label: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.label`),
+			shortLabel: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.short`)
+		}));
+	}
 
 	ngAfterViewInit(): void {
 		this.viewInitialized = true;
