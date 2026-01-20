@@ -109,7 +109,6 @@ export class PublicBadgeClassComponent implements OnInit {
 					category: badge['extensions:CategoryExtension']?.Category,
 					duration: badge['extensions:StudyLoadExtension'].StudyLoad,
 					tags: badge.tags,
-					areas: badge.areas,
 					issuerName: badge.issuer.name,
 					issuerImagePlacholderUrl: this.issuerImagePlaceholderUrl,
 					issuerImage: badge.issuer.image,

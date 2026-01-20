@@ -131,7 +131,6 @@ export class RecipientBadgeApiService extends BaseHttpApiService {
 						email: importedBadge.json.badge.issuer.email,
 					},
 					tags: [],
-					areas: [],
 					slug: '',
 					alignment: [],
 				},

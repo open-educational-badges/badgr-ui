@@ -80,7 +80,6 @@ export interface PageConfig {
 	activity_city?: string;
 	category: string;
 	tags: string[];
-	areas: string[];
 	issuerName: string;
 	issuerImagePlacholderUrl: string;
 	issuerImage: string;

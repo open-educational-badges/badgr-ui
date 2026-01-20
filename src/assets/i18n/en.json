@@ -637,15 +637,10 @@
 		"durationPositive": "Please enter a positive number or 0",
 		"valuePositive": "Please enter a positive number",
 		"optionalBadgeDetails": "Optional badge details",
-		"tagsAndAreaStep": "Tags and areas",
 		"addTags": "Add tags",
 		"newTag": "Enter a tag...",
 		"tagDoesNotExist": "This tag does not exist yet",
 		"tagInfo": "Tags help categorize {{items}} and help learners on OEB search for {{items2}} on specific topics.",
-		"addAreas": "Add areas",
-		"newArea": "Enter an area...",
-		"areaDoesNotExist": "This area does not exist yet",
-		"areaInfo": "Areas help learners to categorize their {{items}}.",
 		"removeAlignment": "Remove link",
 		"removeAlignmentInfo": "Are you sure you want to remove the link(s)? ",
 		"irreversibleAction": "This action cannot be undone.",
@@ -942,8 +937,7 @@
 		"downloadMicroDegree": "Download Micro Degree",
 		"pdfDownload": "Download PDF-Certificate",
 		"place": "Place",
-		"expiryAfter": "Validity from Date of Award",
-		"area": "Areas"
+		"expiryAfter": "Validity from Date of Award"
 	},
 	"BadgeCollection": {
 		"addCollection": "Add collection",
@@ -1155,7 +1149,6 @@
 		"dragDropInfo": "You can use <span class='tw-font-bold'>drag & drop</span> to arrange your selected badges here in the order they should appear within the learning path.",
 		"lpDerivedData": "We have adopted the following data:",
 		"addTag": "Add tag",
-		"addArea": "Add area",
 		"createdSuccessfully": "Your learning path has been created successfully.",
 		"savedSuccessfully": "Your changes have been saved successfully",
 		"title": "Learning path title",
@@ -1187,7 +1180,8 @@
 		"confirmDelete": "Are you sure you want to delete this learning path?",
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
-		"institutions": "institutions"
+		"institutions": "institutions",
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",

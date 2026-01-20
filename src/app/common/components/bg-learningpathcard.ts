@@ -158,7 +158,6 @@ export class BgLearningPathCard {
 	@Input() badgeClass: string;
 	@Input() issuerTitle: string;
 	@Input() tags: string[];
-	@Input() areas: string[];
 	@Input() public = true;
 	@Input() studyLoad: number;
 	@Input() completed: boolean = false;

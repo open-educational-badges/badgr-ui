@@ -636,15 +636,10 @@
 		"durationPositive": "Bitte gib eine positive Zahl oder 0 ein",
 		"valuePositive": "Bitte gib eine positive Zahl ein",
 		"optionalBadgeDetails": "Optionale Badge-Details",
-		"tagsAndAreaStep": "Tags and Bereiche",
 		"addTags": "Tags hinzufügen",
 		"newTag": "Einen Tag eingeben...",
 		"tagDoesNotExist": "Dieser Tag existiert noch nicht",
 		"tagInfo": "Tags verschlagworten {{items}} und helfen Lernenden auf OEB bei der Suche von {{items2}} zu bestimmten Themen.",
-		"addAreas": "Bereiche hinzufügen",
-		"newArea": "Einen Bereich eingeben...",
-		"areaDoesNotExist": "Dieser Bereich existiert noch nicht",
-		"areaInfo": "Bereiche helfen Lernenden {{items}} nach Bereichen zu kategorisieren.",
 		"removeAlignment": "Verknpüfung entfernen",
 		"removeAlignmentInfo": "Bist du sicher, dass du die Verknpüfung(en) entfernen möchtest? ",
 		"irreversibleAction": "Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -941,8 +936,7 @@
 		"pdfDownload": "PDF-Zertifikat herunterladen",
 		"downloadMicroDegree": "Micro Degree herunterladen",
 		"place": "Ort",
-		"expiryAfter": "Gültigkeit ab Vergabe",
-		"area": "Bereiche"
+		"expiryAfter": "Gültigkeit ab Vergabe"
 	},
 	"BadgeCollection": {
 		"addCollection": "Sammlung hinzufügen",
@@ -1154,7 +1148,6 @@
 		"dragDropInfo": "Mittels <span class='tw-font-bold'>Drag & Drop</span> kannst du deine ausgewählten Badges hier in die Reihenfolge bringen, in der sie innerhalb des Lernpfads angezeigt werden sollen.",
 		"lpDerivedData": "Folgende Daten haben wir übernommen:",
 		"addTag": "Tag hinzufügen",
-		"addArea": "Bereich hinzufügen",
 		"createdSuccessfully": "Dein Lernpfad wurde erfolgreich erstellt.",
 		"savedSuccessfully": "Deine Änderungen wurden erfolgreich gespeichert",
 		"title": "Lernpfad-Titel",
@@ -1186,7 +1179,8 @@
 		"confirmDelete": "Möchtest du diesen Lernpfad wirklich löschen?",
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
-		"institutions": "Institutionen"
+		"institutions": "Institutionen",
+		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",

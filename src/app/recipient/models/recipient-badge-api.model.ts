@@ -83,7 +83,6 @@ export interface ApiRecipientBadgeClass {
 	criteria_text?: string;
 	criteria_url?: string;
 	tags: string[];
-	areas: string[];
 	issuer: ApiRecipientBadgeIssuer;
 	slug?: string;
 }

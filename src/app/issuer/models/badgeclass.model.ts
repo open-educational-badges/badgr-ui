@@ -111,13 +111,6 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		this.apiModel.tags = tags;
 	}
 
-	get areas(): string[] {
-		return this.apiModel.areas;
-	}
-	set areas(areas: string[]) {
-		this.apiModel.areas = areas;
-	}
-
 	get extension() {
 		return this.apiModel.extensions;
 	}
