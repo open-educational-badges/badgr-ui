@@ -22,8 +22,6 @@ import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { ApiLearningPath } from '~/common/model/learningpath-api.model';
 import { RecipientBackpack } from '../recipient-backpack/recipient-backpack.component';
 
-export const VISUALISATION_BREAKPOINT_MAX_WIDTH: number = 768;
-
 @Component({
 	selector: 'recipient-earned-badge-list',
 	templateUrl: './recipient-earned-badge-list.component.html',

@@ -9,7 +9,7 @@ import { NgIcon } from '@ng-icons/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { CompetencyAccordionComponent } from '../../../components/accordion.component';
 import { HourPipe } from '../../../common/pipes/hourPipe';
-import { VISUALISATION_BREAKPOINT_MAX_WIDTH } from '../recipient-earned-badge-list/recipient-earned-badge-list.component';
+import { VISUALISATION_BREAKPOINT_MAX_WIDTH } from '../../constants/visualisation.constants';
 import { lucideClockFading } from '@ng-icons/lucide';
 import {
 	lucideLifeBuoy,
