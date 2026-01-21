@@ -308,14 +308,21 @@ export class NetworkBadgesComponent {
 		}
 	}
 
-	routeToBadgeDetail(badge, issuerSlug, focusRequests: boolean = false) {
+	routeToBadgeDetail(badge: BadgeClass, issuerSlug: string, focusRequests: boolean = false) {
 		const extras = focusRequests
 			? {
 					queryParams: { focusRequests: 'true' },
 				}
 			: {};
 
-		this.router.navigate(['/issuer/issuers/', issuerSlug, 'badges', badge.slug], extras);
+		this.issuerManager.myIssuers$.subscribe((issuers) => {
+			if (issuers.some((i) => issuerSlug == i.slug)) {
+				this.router.navigate(['/issuer/issuers/', issuerSlug, 'badges', badge.slug], extras);
+			} else {
+				// TODO: should we redirect at all?
+				this.router.navigate(['/public/badges', badge.slug]);
+			}
+		});
 	}
 
 	routeToBadgeCreation(issuer: Issuer) {
