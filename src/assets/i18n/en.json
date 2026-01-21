@@ -444,6 +444,10 @@
 		"partners": "Network members",
 		"noInstitutionAddedYet": "You have not yet added any institutions to your network.",
 		"addInstitutionToIssue": "The network itself does not award badges. Add institutions to your network to award badges.",
+		"emptyDashboard": {
+			"title": "No statistics available yet",
+			"description": "Add institutions to your network to see statistics and analytics."
+		},
 		"partnerIssuers": "Partners",
 		"notifiedIssuerOwners": "We have notified the owners of the institutions by email.",
 		"visibleAfterConfirmation": "Once they have confirmed the invitation, they will be visible on the partner page.",

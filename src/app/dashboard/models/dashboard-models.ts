@@ -134,6 +134,8 @@ export interface BadgeAwardData {
 	year: number;
 	/** Month number (1-12) */
 	month: number;
+	/** Day of month (1-31), optional - used for daily granularity */
+	day?: number;
 	/** Type of badge awarded (can be 'all' when aggregated) */
 	type: BadgeTypeExtended;
 	/** Number of badges awarded in this period */

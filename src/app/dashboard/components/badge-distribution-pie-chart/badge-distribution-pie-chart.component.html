@@ -3,11 +3,11 @@
 	[class.badge-pie-chart--left]="labelPosition === 'left'"
 	[class.badge-pie-chart--bottom]="labelPosition === 'bottom'">
 
-	<!-- Legend (configurable position) -->
+	<!-- Legend (configurable position) - shows all segments including 0% -->
 	<div class="badge-pie-chart__legend"
 		[class.badge-pie-chart__legend--left]="labelPosition === 'left'"
 		[class.badge-pie-chart__legend--bottom]="labelPosition === 'bottom'">
-		@for (segment of activeSegments; track segment.id) {
+		@for (segment of allSegments; track segment.id) {
 			<div class="badge-pie-chart__legend-item"
 				[class.badge-pie-chart__legend-item--clickable]="labelsClickable"
 				(click)="onLabelClick(segment)"
@@ -35,8 +35,8 @@
 		[class.badge-pie-chart__chart--medium]="size === 'medium'"
 		[class.badge-pie-chart__chart--large]="size === 'large'">
 		<svg viewBox="-3 -3 313 313" class="badge-pie-chart__svg">
-			<!-- Donut segments (fill color) with gap -->
-			@for (segment of activeSegments; let i = $index; track segment.id) {
+			<!-- Donut segments (fill color) with gap - renders all segments including 0% -->
+			@for (segment of allSegments; let i = $index; track segment.id) {
 				<circle
 					cx="153.5"
 					cy="153.5"
@@ -49,7 +49,7 @@
 				</circle>
 			}
 			<!-- Border arcs for each segment (outer, inner, and radial lines) -->
-			@for (segment of activeSegments; let i = $index; track segment.id) {
+			@for (segment of allSegments; let i = $index; track segment.id) {
 				<!-- Outer arc border -->
 				<circle
 					cx="153.5"

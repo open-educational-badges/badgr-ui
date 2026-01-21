@@ -233,6 +233,7 @@ export class NetworkBadgeAnalysisComponent
 
 	private currentYear: number = new Date().getFullYear();
 	selectedYear: number = this.currentYear;
+	selectedMonth: number | null = null;
 	selectedBadgeType: string = 'all';
 
 	availableYears: number[] = [this.currentYear - 2, this.currentYear - 1, this.currentYear];
@@ -450,14 +451,17 @@ export class NetworkBadgeAnalysisComponent
 
 	/**
 	 * Transform badge awards timeline from API to legacy BadgeAwardData format
+	 * @param timeline - API timeline entries
+	 * @param selectedMonth - If provided, include day in the result for daily view
 	 */
-	private transformTimelineToLegacyFormat(timeline: NetworkBadgeAwardTimelineEntry[]): BadgeAwardData[] {
+	private transformTimelineToLegacyFormat(timeline: NetworkBadgeAwardTimelineEntry[], selectedMonth?: number | null): BadgeAwardData[] {
 		const result: BadgeAwardData[] = [];
 
 		for (const entry of timeline) {
 			const date = new Date(entry.date);
 			const year = date.getFullYear();
 			const month = date.getMonth() + 1;
+			const day = selectedMonth ? date.getDate() : undefined;
 
 			if (entry.byType) {
 				if (entry.byType.participation > 0) {
@@ -465,6 +469,7 @@ export class NetworkBadgeAnalysisComponent
 						date,
 						year,
 						month,
+						day,
 						type: 'participation',
 						count: entry.byType.participation
 					});
@@ -474,6 +479,7 @@ export class NetworkBadgeAnalysisComponent
 						date,
 						year,
 						month,
+						day,
 						type: 'competency',
 						count: entry.byType.competency
 					});
@@ -483,6 +489,7 @@ export class NetworkBadgeAnalysisComponent
 						date,
 						year,
 						month,
+						day,
 						type: 'learningpath',
 						count: entry.byType.learningpath
 					});
@@ -492,6 +499,7 @@ export class NetworkBadgeAnalysisComponent
 					date,
 					year,
 					month,
+					day,
 					type: 'all',
 					count: entry.count
 				});
@@ -551,32 +559,53 @@ export class NetworkBadgeAnalysisComponent
 
 	onYearChange(year: number): void {
 		this.selectedYear = year;
+		this.selectedMonth = null; // Reset month when year changes
 
-		this.loadBadgeAwardsTimelineForYear(year);
+		this.loadBadgeAwardsTimeline(year, null);
+	}
+
+	onMonthChange(month: number | null): void {
+		this.selectedMonth = month;
+
+		this.loadBadgeAwardsTimeline(this.selectedYear, month);
 	}
 
 	/**
-	 * Load badge awards timeline for a specific year
+	 * Load badge awards timeline for a specific year and optionally a month
 	 */
-	private loadBadgeAwardsTimelineForYear(year: number): void {
+	private loadBadgeAwardsTimeline(year: number, month: number | null): void {
 		if (!this.networkSlug) return;
 
 		this.isLoadingTimeline = true;
 
-		this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, {
-			year: year,
-			groupBy: 'month'
-		}).pipe(
+		const groupBy = month ? 'day' : 'month';
+
+		// Build params - if month is selected, use startDate/endDate for the month range
+		const params: { year?: number; startDate?: string; endDate?: string; groupBy: 'day' | 'month' } = {
+			groupBy: groupBy
+		};
+
+		if (month) {
+			// Calculate start and end dates for the selected month
+			const startDate = new Date(year, month - 1, 1);
+			const endDate = new Date(year, month, 0); // Last day of the month
+			params.startDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+			params.endDate = endDate.toISOString().split('T')[0]; // YYYY-MM-DD
+		} else {
+			params.year = year;
+		}
+
+		this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, params).pipe(
 			takeUntil(this.destroy$),
 			catchError((error) => {
-				console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge awards timeline for year:', year, error);
+				console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge awards timeline:', { year, month }, error);
 				this.isLoadingTimeline = false;
 				return EMPTY;
 			})
 		).subscribe({
 			next: (response) => {
 				const timeline = response?.timeline || [];
-				this._badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline);
+				this._badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline, month);
 				this.isLoadingTimeline = false;
 			}
 		});

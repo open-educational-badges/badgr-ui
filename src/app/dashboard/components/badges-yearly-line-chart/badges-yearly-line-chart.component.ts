@@ -38,6 +38,9 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 	/** Currently selected badge type filter */
 	@Input() selectedBadgeType: string = 'all';
 
+	/** Currently selected month filter (0 or null = all months, 1-12 = specific month) */
+	@Input() selectedMonth: number | null = null;
+
 	/** Available years for filter dropdown */
 	@Input() availableYears: number[] = [];
 
@@ -46,6 +49,9 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 
 	/** Whether to show the year filter dropdown */
 	@Input() showYearFilter: boolean = true;
+
+	/** Whether to show the month filter dropdown */
+	@Input() showMonthFilter: boolean = true;
 
 	/** Whether to show the badge type filter dropdown */
 	@Input() showTypeFilter: boolean = true;
@@ -64,6 +70,9 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 
 	/** Event emitted when selected year changes */
 	@Output() yearChange = new EventEmitter<number>();
+
+	/** Event emitted when selected month changes */
+	@Output() monthChange = new EventEmitter<number | null>();
 
 	/** Event emitted when selected badge type changes */
 	@Output() typeChange = new EventEmitter<string>();
@@ -135,7 +144,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			return;
 		}
 
-		if (changes['data'] || changes['selectedYear'] || changes['selectedBadgeType']) {
+		if (changes['data'] || changes['selectedYear'] || changes['selectedMonth'] || changes['selectedBadgeType']) {
 			if (this.isVisible) {
 				this.renderChartWhenReady();
 			}
@@ -226,8 +235,19 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 		this.yearChange.emit(year);
 	}
 
+	onMonthChange(month: number | null): void {
+		this.monthChange.emit(month);
+	}
+
 	onBadgeTypeChange(type: string): void {
 		this.typeChange.emit(type);
+	}
+
+	/**
+	 * Get number of days in a given month
+	 */
+	private getDaysInMonth(year: number, month: number): number {
+		return new Date(year, month, 0).getDate();
 	}
 
 	private getFilteredBadgeAwards(): BadgeAwardData[] {
@@ -236,6 +256,11 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 		}
 
 		let filtered = this.data.filter(award => award.year === +this.selectedYear);
+
+		// Filter by month if a specific month is selected
+		if (this.selectedMonth && this.selectedMonth > 0) {
+			filtered = filtered.filter(award => award.month === this.selectedMonth);
+		}
 
 		if (this.selectedBadgeType !== 'all') {
 			filtered = filtered.filter(award =>
@@ -283,6 +308,20 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			return;
 		}
 
+		// Check if we're in monthly view (showing days) or yearly view (showing months)
+		const isMonthlyView = this.selectedMonth && this.selectedMonth > 0;
+
+		if (isMonthlyView) {
+			this.renderDailyChart(svg, filteredData, width, height, margin);
+		} else {
+			this.renderMonthlyChart(svg, filteredData, width, height, margin);
+		}
+	}
+
+	/**
+	 * Render monthly chart (x-axis shows months JAN-DEC)
+	 */
+	private renderMonthlyChart(svg: d3.Selection<SVGSVGElement, unknown, null, undefined>, filteredData: BadgeAwardData[], width: number, height: number, margin: { top: number; right: number; bottom: number; left: number }): void {
 		// Group data by month for line chart
 		const monthlyData = d3.group(filteredData, d => d.month);
 
@@ -374,7 +413,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 					.style('visibility', 'visible')
 					.style('display', 'block')
 					.style('opacity', 1);
-				this.showTooltip(event, d);
+				this.showMonthlyTooltip(event, d);
 			})
 			.on('mouseout', (event, d) => {
 				// Hide the visible dot
@@ -400,11 +439,140 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.style('pointer-events', 'none')
 			.style('opacity', 0)
 			.style('display', 'none')
-			.style('visibility', 'hidden'); // Triple-layer hiding: opacity, display, visibility
+			.style('visibility', 'hidden');
 	}
 
-	/** Show tooltip on hover */
-	private showTooltip(event: any, data: any): void {
+	/**
+	 * Render daily chart (x-axis shows days 1-28/29/30/31)
+	 */
+	private renderDailyChart(svg: d3.Selection<SVGSVGElement, unknown, null, undefined>, filteredData: BadgeAwardData[], width: number, height: number, margin: { top: number; right: number; bottom: number; left: number }): void {
+		const daysInMonth = this.getDaysInMonth(this.selectedYear, this.selectedMonth!);
+
+		// Group data by day for line chart
+		const dailyData = d3.group(filteredData, d => d.day || 1);
+
+		// Create chart data for all days in the month
+		const chartData = Array.from({ length: daysInMonth }, (_, i) => {
+			const day = i + 1;
+			const items = dailyData.get(day) || [];
+			const total = items.reduce((sum, item) => sum + item.count, 0);
+			return {
+				day,
+				total
+			};
+		});
+
+		// Create scales
+		const xScale = d3.scaleLinear()
+			.domain([1, daysInMonth])
+			.range([0, width]);
+
+		const maxValue = d3.max(chartData, d => d.total) || 10;
+
+		const yScale = d3.scaleLinear()
+			.domain([0, maxValue * 1.1]) // Add 10% padding at top
+			.nice()
+			.range([height, 0]);
+
+		// Create chart group
+		const g = svg.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		// Add grid lines
+		g.append('g')
+			.attr('class', 'grid')
+			.attr('opacity', 0.1)
+			.call(d3.axisLeft(yScale)
+				.tickSize(-width)
+				.tickFormat(() => ''));
+
+		// Add axes - show day numbers
+		// Determine tick count based on days in month (show every day, every 2nd, or every 5th)
+		const tickCount = daysInMonth <= 15 ? daysInMonth : (daysInMonth <= 20 ? Math.ceil(daysInMonth / 2) : Math.ceil(daysInMonth / 3));
+
+		g.append('g')
+			.attr('transform', `translate(0,${height})`)
+			.call(d3.axisBottom(xScale)
+				.ticks(tickCount)
+				.tickFormat(d => String(Math.round(+d))))
+			.selectAll('text')
+			.style('text-anchor', 'middle')
+			.style('font-size', '11px')
+			.style('font-weight', 'normal');
+
+		g.append('g')
+			.call(d3.axisLeft(yScale))
+			.selectAll('text')
+			.style('font-size', '12px')
+			.style('font-weight', 'normal');
+
+		// Single line generator in OEB Blue
+		const lineGenerator = d3.line<any>()
+			.defined(d => d.total >= 0)
+			.x(d => xScale(d.day))
+			.y(d => yScale(d.total))
+			.curve(d3.curveMonotoneX);
+
+		// Draw single solid line in OEB Blue
+		g.append('path')
+			.datum(chartData)
+			.attr('fill', 'none')
+			.attr('stroke', '#492E98')
+			.attr('stroke-width', 3)
+			.attr('d', lineGenerator);
+
+		// Draw larger invisible hover areas for better interaction
+		g.selectAll('.hover-area')
+			.data(chartData)
+			.enter()
+			.append('circle')
+			.attr('class', 'hover-area')
+			.attr('cx', d => xScale(d.day))
+			.attr('cy', d => yScale(d.total))
+			.attr('r', 15)
+			.attr('fill', 'none')
+			.attr('stroke', 'none')
+			.style('opacity', 0)
+			.style('visibility', 'hidden')
+			.style('cursor', 'pointer')
+			.style('pointer-events', 'all')
+			.on('mouseover', (event, d) => {
+				// Show the visible dot
+				g.select(`.dot-${d.day}`)
+					.style('visibility', 'visible')
+					.style('display', 'block')
+					.style('opacity', 1);
+				this.showDailyTooltip(event, d);
+			})
+			.on('mouseout', (event, d) => {
+				// Hide the visible dot
+				g.select(`.dot-${d.day}`)
+					.style('opacity', 0)
+					.style('display', 'none')
+					.style('visibility', 'hidden');
+				this.hideTooltip();
+			});
+
+		// Draw visible dots (hidden by default, shown on hover)
+		g.selectAll('.dot')
+			.data(chartData)
+			.enter()
+			.append('circle')
+			.attr('class', d => `dot dot-${d.day}`)
+			.attr('cx', d => xScale(d.day))
+			.attr('cy', d => yScale(d.total))
+			.attr('r', 6)
+			.attr('fill', '#492E98')
+			.attr('stroke', 'white')
+			.attr('stroke-width', 2)
+			.style('pointer-events', 'none')
+			.style('opacity', 0)
+			.style('display', 'none')
+			.style('visibility', 'hidden');
+	}
+
+	/** Show tooltip on hover for monthly view */
+	private showMonthlyTooltip(event: any, data: any): void {
 		if (!this.chartTooltip || !this.tooltipDate || !this.tooltipContent) return;
 
 		const monthLabel = this.availableMonths[data.month - 1]?.label || '';
@@ -414,6 +582,26 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 		this.tooltipDate.nativeElement.textContent = monthLabel;
 		this.tooltipContent.nativeElement.textContent = this.translate.instant('Dashboard.badgesTooltip', { count });
 
+		this.positionTooltip(event);
+	}
+
+	/** Show tooltip on hover for daily view */
+	private showDailyTooltip(event: any, data: any): void {
+		if (!this.chartTooltip || !this.tooltipDate || !this.tooltipContent) return;
+
+		const monthLabel = this.availableMonths[this.selectedMonth! - 1]?.label || '';
+		const dayLabel = `${data.day}. ${monthLabel}`;
+		const count = data.total;
+
+		// Set day and month on top, badge count below
+		this.tooltipDate.nativeElement.textContent = dayLabel;
+		this.tooltipContent.nativeElement.textContent = this.translate.instant('Dashboard.badgesTooltip', { count });
+
+		this.positionTooltip(event);
+	}
+
+	/** Position tooltip near mouse with boundary checking */
+	private positionTooltip(event: any): void {
 		const tooltip = this.chartTooltip.nativeElement;
 		tooltip.classList.remove('tw-hidden');
 

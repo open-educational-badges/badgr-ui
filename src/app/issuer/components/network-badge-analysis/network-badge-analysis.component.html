@@ -351,15 +351,18 @@
 								<app-badges-yearly-line-chart
 									[data]="badgeAwardsByTime"
 									[selectedYear]="selectedYear"
+									[selectedMonth]="selectedMonth"
 									[selectedBadgeType]="selectedBadgeType"
 									[availableYears]="availableYears"
 									[badgeTypes]="badgeTypes"
 									[showYearFilter]="true"
+									[showMonthFilter]="true"
 									[showTypeFilter]="true"
 									[chartHeight]="400"
 									[isVisible]="currentView === 'default'"
 									[isLoading]="isLoadingTimeline"
 									(yearChange)="onYearChange($event)"
+									(monthChange)="onMonthChange($event)"
 									(typeChange)="onBadgeTypeChange($event)">
 								</app-badges-yearly-line-chart>
 							</div>

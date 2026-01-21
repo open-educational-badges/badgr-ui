@@ -130,7 +130,14 @@ export class BadgeDistributionPieChartComponent {
 	}
 
 	/**
-	 * Filter segments to only show those with count > 0
+	 * All segments for legend display (including 0 count, limited to 3)
+	 */
+	get allSegments(): PieChartSegment[] {
+		return this.segments.slice(0, 3);
+	}
+
+	/**
+	 * Filter segments to only show those with count > 0 for the pie chart
 	 */
 	get activeSegments(): PieChartSegment[] {
 		return this.segments.filter(s => s.count > 0).slice(0, 3);
@@ -162,7 +169,7 @@ export class BadgeDistributionPieChartComponent {
 		const circumference = 2 * Math.PI * radius;
 		let offset = 0;
 		for (let i = 0; i < index; i++) {
-			offset += (this.activeSegments[i].percentage / 100) * circumference;
+			offset += (this.allSegments[i].percentage / 100) * circumference;
 		}
 		return -(offset + this.SEGMENT_GAP / 2);
 	}
@@ -180,10 +187,10 @@ export class BadgeDistributionPieChartComponent {
 
 		let anglePercent = 0;
 		for (let i = 0; i < index; i++) {
-			anglePercent += this.activeSegments[i].percentage;
+			anglePercent += this.allSegments[i].percentage;
 		}
 		if (isEnd) {
-			anglePercent += this.activeSegments[index].percentage;
+			anglePercent += this.allSegments[index].percentage;
 		}
 
 		// Adjust for gap

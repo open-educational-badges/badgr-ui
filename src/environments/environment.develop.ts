@@ -7,7 +7,7 @@ export const environment: BadgrEnvironment = {
 	enableErrorInterceptor: true,
 	config: {
 		api: {
-			baseUrl: 'https://oeb-backend.algebra-ec.dev',
+			baseUrl: 'https://api.develop.openbadges.education',
 		},
 		theme: {
 			welcomeMessage: 'Willkommen auf Open Educational Badges',

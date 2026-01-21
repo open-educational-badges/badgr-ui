@@ -151,7 +151,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	// Line chart filter state
 	private currentYear: number = new Date().getFullYear();
 	selectedYear: number = this.currentYear;
-	selectedMonth: number = 0; // 0 = all months
+	selectedMonth: number | null = null; // null = all months, 1-12 = specific month
 	selectedBadgeType: string = 'all';
 	// Dynamic year list including current year
 	availableYears: number[] = [this.currentYear - 2, this.currentYear - 1, this.currentYear];
@@ -466,8 +466,10 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	/**
 	 * Transform badge awards timeline from API to legacy BadgeAwardData format
+	 * @param timeline - API timeline entries
+	 * @param selectedMonth - If provided, include day in the result for daily view
 	 */
-	private transformTimelineToLegacyFormat(timeline: NetworkBadgeAwardTimelineEntry[]): BadgeAwardData[] {
+	private transformTimelineToLegacyFormat(timeline: NetworkBadgeAwardTimelineEntry[], selectedMonth?: number | null): BadgeAwardData[] {
 		if (!timeline || timeline.length === 0) {
 			return [];
 		}
@@ -478,6 +480,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 			const date = new Date(entry.date);
 			const year = date.getFullYear();
 			const month = date.getMonth() + 1;
+			const day = selectedMonth ? date.getDate() : undefined;
 
 			// If we have type breakdown, create separate entries for each type
 			if (entry.byType) {
@@ -486,6 +489,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 						date,
 						year,
 						month,
+						day,
 						type: 'participation',
 						count: entry.byType.participation
 					});
@@ -495,6 +499,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 						date,
 						year,
 						month,
+						day,
 						type: 'competency',
 						count: entry.byType.competency
 					});
@@ -504,6 +509,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 						date,
 						year,
 						month,
+						day,
 						type: 'learningpath',
 						count: entry.byType.learningpath
 					});
@@ -514,6 +520,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 					date,
 					year,
 					month,
+					day,
 					type: 'all',
 					count: entry.count
 				});
@@ -525,18 +532,43 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	/**
 	 * Transform badge type distribution from API to BadgeTypeStatsExtended for pie chart
+	 * Ensures all three badge types are always present, even with 0 count
 	 */
 	private transformBadgeTypeDistribution(distribution: NetworkBadgeTypeDistributionEntry[]): BadgeTypeStatsExtended[] {
-		return distribution.map((entry) => {
-			const displayConfig = getBadgeTypeDisplayConfig(entry.type);
-			return {
-				type: entry.type,
-				label: displayConfig.label,
-				count: entry.count,
-				percentage: entry.percentage,
-				color: displayConfig.color,
-				borderColor: displayConfig.borderColor
-			};
+		// Define all badge types that should always be shown
+		const allBadgeTypes: Array<'participation' | 'competency' | 'learningpath'> = ['participation', 'competency', 'learningpath'];
+
+		// Create a map of existing distribution data
+		const distributionMap = new Map<string, NetworkBadgeTypeDistributionEntry>();
+		for (const entry of distribution) {
+			distributionMap.set(entry.type, entry);
+		}
+
+		// Ensure all badge types are present
+		return allBadgeTypes.map((type) => {
+			const entry = distributionMap.get(type);
+			const displayConfig = getBadgeTypeDisplayConfig(type);
+
+			if (entry) {
+				return {
+					type: entry.type as 'participation' | 'competency' | 'learningpath',
+					label: displayConfig.label,
+					count: entry.count,
+					percentage: entry.percentage,
+					color: displayConfig.color,
+					borderColor: displayConfig.borderColor
+				};
+			} else {
+				// Badge type not in API response - add with 0 count
+				return {
+					type: type,
+					label: displayConfig.label,
+					count: 0,
+					percentage: 0,
+					color: displayConfig.color,
+					borderColor: displayConfig.borderColor
+				};
+			}
 		});
 	}
 
@@ -1140,6 +1172,8 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 */
 	onYearChange(year: number): void {
 		this.selectedYear = year;
+		// Reset month filter when year changes
+		this.selectedMonth = null;
 
 		// In network mode, reload timeline data from API for the selected year
 		if (this.networkSlug) {
@@ -1149,29 +1183,62 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	}
 
 	/**
+	 * Handle month change for line chart
+	 */
+	onMonthChange(month: number | null): void {
+		this.selectedMonth = month;
+		// Reload data with appropriate granularity (daily for month view, monthly for year view)
+		if (this.networkSlug) {
+			this.loadBadgeAwardsTimeline(this.selectedYear, month);
+		}
+	}
+
+	/**
 	 * Load badge awards timeline for a specific year (network mode only)
+	 * @deprecated Use loadBadgeAwardsTimeline instead
 	 */
 	private loadBadgeAwardsTimelineForYear(year: number): void {
+		this.loadBadgeAwardsTimeline(year, null);
+	}
+
+	/**
+	 * Load badge awards timeline for a specific year and optionally a month (network mode only)
+	 */
+	private loadBadgeAwardsTimeline(year: number, month: number | null): void {
 		if (!this.networkSlug) return;
 
 		this.isLoadingTimeline = true;
 
-		this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, {
-			year: year,
-			groupBy: 'month'
-		}).pipe(
+		const groupBy = month ? 'day' : 'month';
+
+		// Build params - if month is selected, use startDate/endDate for the month range
+		const params: { year?: number; startDate?: string; endDate?: string; groupBy: 'day' | 'month' } = {
+			groupBy: groupBy
+		};
+
+		if (month) {
+			// Calculate start and end dates for the selected month
+			const startDate = new Date(year, month - 1, 1);
+			const endDate = new Date(year, month, 0); // Last day of the month
+			params.startDate = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+			params.endDate = endDate.toISOString().split('T')[0]; // YYYY-MM-DD
+		} else {
+			params.year = year;
+		}
+
+		this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, params).pipe(
 			takeUntil(this.destroy$),
 			catchError((error) => {
-				console.error('[OEB-OVERVIEW] Error loading badge awards timeline for year:', year, error);
+				console.error('[OEB-OVERVIEW] Error loading badge awards timeline:', { year, month }, error);
 				this.isLoadingTimeline = false;
 				return EMPTY;
 			})
 		).subscribe({
 			next: (response) => {
-				// Always update the data - even if empty - to ensure chart reflects current year
+				// Always update the data - even if empty - to ensure chart reflects current selection
 				const timeline = response?.timeline || [];
 				this.badgeAwardsTimeline = timeline;
-				this.badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline);
+				this.badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline, month);
 				this.isLoadingTimeline = false;
 				// Chart rendering is now handled by the reusable BadgesYearlyLineChartComponent
 			}
