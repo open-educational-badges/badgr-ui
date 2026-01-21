@@ -448,6 +448,10 @@
 			"title": "No statistics available yet",
 			"description": "Add institutions to your network to see statistics and analytics."
 		},
+		"noAccessDashboard": {
+			"title": "No access to dashboard",
+			"description": "You don't have permission to view the dashboard. Please contact a network administrator."
+		},
 		"partnerIssuers": "Partners",
 		"notifiedIssuerOwners": "We have notified the owners of the institutions by email.",
 		"visibleAfterConfirmation": "Once they have confirmed the invitation, they will be visible on the partner page.",

@@ -448,6 +448,10 @@
 			"title": "Noch keine Statistiken verfügbar",
 			"description": "Füge Institutionen zu deinem Netzwerk hinzu, um Statistiken und Analysen zu sehen."
 		},
+		"noAccessDashboard": {
+			"title": "Kein Zugriff auf das Dashboard",
+			"description": "Du hast keine Berechtigung, das Dashboard anzuzeigen. Bitte wende dich an einen Netzwerk-Administrator."
+		},
 		"partnerIssuers": "Partner:innen",
 		"notifiedIssuerOwners": "Wir haben die Eigentümer:innen der Institutionen per E-Mail benachrichtigt.",
 		"visibleAfterConfirmation": "Sobald sie die Einladung bestätigt haben, sind sie auf der Partner:innen-Seite sichtbar.",
