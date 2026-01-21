@@ -29,7 +29,7 @@ import { NetworkRecentActivityData } from '../../models/network-dashboard-api.mo
 	],
 	providers: [
 		provideHlmTableConfig({
-			table: 'tw-min-w-max tw-w-full tw-mb-8 tw-text-lg tw-text-left tw-rounded-lg tw-border tw-border-solid tw-border-purple tw-border-separate tw-bg-purple',
+			table: 'tw-min-w-max tw-w-full tw-text-lg tw-text-left tw-rounded-lg tw-border tw-border-solid tw-border-purple tw-border-separate tw-bg-purple',
 			thead: 'tw-font-semibold tw-text-white',
 			tbody: 'tw-bg-white',
 			tr: '[&:last-child_td]:tw-border-none [&:last-child_th:first-child]:tw-rounded-bl-lg [&:last-child_th:last-child]:tw-rounded-br-lg',
@@ -41,7 +41,7 @@ import { NetworkRecentActivityData } from '../../models/network-dashboard-api.mo
 		class: 'tw-block tw-overflow-x-auto',
 	},
 	template: `
-		<table hlmTable oeb-table class="tw-w-full">
+		<table hlmTable oeb-table class="tw-w-full !tw-mb-0">
 			<thead hlmTHead>
 				@for (headerRow of activityTable.getHeaderGroups(); track headerRow.id) {
 					<tr hlmTr>

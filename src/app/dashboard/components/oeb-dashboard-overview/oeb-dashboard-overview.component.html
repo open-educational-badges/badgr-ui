@@ -41,7 +41,7 @@
 
 	@else {
 		@if (networkSlug && recentActivities.length > 0) {
-			<div class="tw-mt-6">
+			<div style="margin-top: 45px;">
 				<h2 class="tw-text-[22px] tw-font-bold tw-mb-6" style="color: var(--color-purple);">
 					{{ 'Network.Dashboard.recentActivity.title' | translate }}
 				</h2>
@@ -51,7 +51,7 @@
 			</div>
 		}
 
-		<div class="tw-mt-6">
+		<div style="margin-top: 45px;">
 			<div class="tw-flex tw-items-center tw-gap-3 tw-mb-4">
 				<h2 class="tw-text-[22px] tw-font-bold" style="color: var(--color-purple);">
 					{{ 'Network.Dashboard.competencyTracking.title' | translate }}
@@ -69,7 +69,7 @@
 			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
 				<div class="tw-flex tw-flex-row tw-gap-6">
 					<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple); width: 40%;">
-						<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.topCompetencyAreas' | translate }}</h3>
+						<h3 class="tw-text-xl tw-font-semibold tw-mb-10" style="color: var(--color-black);">{{ 'Dashboard.topCompetencyAreas' | translate }}</h3>
 						@if (skillVisualisationData.length > 0) {
 							<recipient-skill-visualisation
 								[skills]="skillVisualisationData"
@@ -111,7 +111,7 @@
 			</div>
 		</div>
 
-		<div class="tw-mt-6">
+		<div style="margin-top: 45px;">
 			<div class="tw-flex tw-items-center tw-gap-3 tw-mb-4">
 				<h2 class="tw-text-[22px] tw-font-bold" style="color: var(--color-purple);">
 					{{ 'Network.Dashboard.badgeAnalysis.title' | translate }}
