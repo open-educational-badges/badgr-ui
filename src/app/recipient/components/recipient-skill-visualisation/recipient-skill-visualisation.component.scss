@@ -4,7 +4,7 @@
 
 		foreignObject {
 			pointer-events: none;
-			overflow: hidden; // Changed from visible to hidden to prevent text overflow
+			overflow: visible;
 
 			> div {
 				display: flex;
