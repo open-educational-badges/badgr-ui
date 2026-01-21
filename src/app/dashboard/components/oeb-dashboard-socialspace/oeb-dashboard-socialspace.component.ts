@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -40,6 +40,9 @@ export interface Institution {
 	image?: string;
 }
 
+/** View state for socialspace component */
+export type SocialspaceViewState = 'overview' | 'city-detail' | 'city-learner-detail' | 'city-competency-detail';
+
 @Component({
 	selector: 'app-oeb-dashboard-socialspace',
 	standalone: true,
@@ -64,6 +67,9 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 
 	/** Network slug for API calls */
 	@Input() networkSlug: string = '';
+
+	/** Emit view state changes to parent for hiding tabs */
+	@Output() viewStateChange = new EventEmitter<{ state: SocialspaceViewState; city?: string }>();
 
 	institutions: SocialspaceInstitution[] = [];
 	institutionsTableData: InstitutionTableData[] = [];
@@ -228,6 +234,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	onCityClick(city: string): void {
 		this.selectedCity.set(city);
 		this.loadCityData(city);
+		this.viewStateChange.emit({ state: 'city-detail', city });
 	}
 
 	/**
@@ -245,10 +252,12 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	goBackToOverview(): void {
 		if (this.showCompetencyDetail()) {
 			this.showCompetencyDetail.set(false);
+			this.viewStateChange.emit({ state: 'city-detail', city: this.selectedCity() || undefined });
 			return;
 		}
 		if (this.showLearnerDetail()) {
 			this.showLearnerDetail.set(false);
+			this.viewStateChange.emit({ state: 'city-detail', city: this.selectedCity() || undefined });
 			return;
 		}
 		this.selectedCity.set(null);
@@ -257,6 +266,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 		this.cityCompetenciesData.set(null);
 		this.top3Institutions.set([]);
 		this.additionalInstitutions.set([]);
+		this.viewStateChange.emit({ state: 'overview' });
 	}
 
 	/**
@@ -264,6 +274,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	 */
 	navigateToCompetencyDetail(): void {
 		this.showCompetencyDetail.set(true);
+		this.viewStateChange.emit({ state: 'city-competency-detail', city: this.selectedCity() || undefined });
 	}
 
 	/**
@@ -271,6 +282,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	 */
 	goBackFromCompetencyDetail(): void {
 		this.showCompetencyDetail.set(false);
+		this.viewStateChange.emit({ state: 'city-detail', city: this.selectedCity() || undefined });
 	}
 
 	/**
@@ -278,6 +290,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	 */
 	navigateToLearnerDetail(): void {
 		this.showLearnerDetail.set(true);
+		this.viewStateChange.emit({ state: 'city-learner-detail', city: this.selectedCity() || undefined });
 	}
 
 	/**
@@ -285,6 +298,14 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	 */
 	goBackFromLearnerDetail(): void {
 		this.showLearnerDetail.set(false);
+		this.viewStateChange.emit({ state: 'city-detail', city: this.selectedCity() || undefined });
+	}
+
+	/**
+	 * Go back from any detail view to overview (called by parent component)
+	 */
+	onBackFromDetailView(): void {
+		this.goBackToOverview();
 	}
 
 	/**

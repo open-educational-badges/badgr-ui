@@ -99,7 +99,6 @@
 		"@commitlint/config-angular": "^19.8.1",
 		"@eslint/eslintrc": "^3.3.1",
 		"@eslint/js": "^9.37.0",
-		"@playwright/test": "^1.57.0",
 		"@spartan-ng/cli": "^0.0.1-alpha.498",
 		"@testing-library/angular": "^18.1.0",
 		"@testing-library/dom": "^10.0.0",

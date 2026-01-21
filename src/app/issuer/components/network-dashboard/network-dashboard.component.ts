@@ -48,7 +48,7 @@ import { Network } from '~/issuer/network.model';
 import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
 import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
 import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
-import { OebDashboardSocialspaceComponent } from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
+import { OebDashboardSocialspaceComponent, SocialspaceViewState } from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
 import { SvgIconComponent } from '~/common/components/svg-icon.component';
 @Component({
 	selector: 'network-dashboard',
@@ -113,6 +113,9 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	/** Current learner sub-view state for breadcrumb extension */
 	learnerSubView: { state: string; gender?: string; residence?: { city: string } } | null = null;
 
+	/** Current socialspace sub-view state for hiding tabs */
+	socialspaceSubView: { state: SocialspaceViewState; city?: string } | null = null;
+
 	private _networkStaffRoleOptions: FormFieldSelectOption[];
 
 	@ViewChild('overviewTemplate', { static: true }) overviewTemplate: ElementRef;
@@ -135,6 +138,9 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	/** Reference to the learners component for controlling its view state */
 	@ViewChild('learnersComponentRef') learnersComponentRef: OebDashboardLearnersComponent;
+
+	/** Reference to the socialspace component for controlling its view state */
+	@ViewChild('socialspaceComponentRef') socialspaceComponentRef: OebDashboardSocialspaceComponent;
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -216,8 +222,9 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	onTabChange(tab) {
 		this.activeTab = tab;
-		// Reset breadcrumbs when changing tabs
+		// Reset sub-views when changing tabs
 		this.learnerSubView = null;
+		this.socialspaceSubView = null;
 		this.updateBreadcrumbs();
 	}
 
@@ -263,6 +270,43 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		}
 		this.learnerSubView = null;
 		this.updateBreadcrumbs();
+	}
+
+	/**
+	 * Handle socialspace sub-view state changes for hiding tabs
+	 */
+	onSocialspaceViewStateChange(event: { state: SocialspaceViewState; city?: string }) {
+		if (event.state === 'overview') {
+			this.socialspaceSubView = null;
+		} else {
+			this.socialspaceSubView = event;
+		}
+		this.updateBreadcrumbs();
+	}
+
+	/**
+	 * Navigate back from socialspace sub-view to socialspace overview
+	 */
+	onBackFromSocialspaceSubView(): void {
+		if (this.socialspaceComponentRef) {
+			this.socialspaceComponentRef.onBackFromDetailView();
+		}
+		// Note: socialspaceSubView will be reset by the viewStateChange event from the component
+	}
+
+	/**
+	 * Check if currently in any sub-view that should hide tabs
+	 */
+	isInDetailSubView(): boolean {
+		// Learner detail views
+		if (this.activeTab === 'learners' && (this.learnerSubView?.state === 'gender-detail' || this.learnerSubView?.state === 'residence-detail')) {
+			return true;
+		}
+		// Socialspace detail views (any view that's not overview)
+		if (this.activeTab === 'socialspace' && this.socialspaceSubView && this.socialspaceSubView.state !== 'overview') {
+			return true;
+		}
+		return false;
 	}
 
 	issuerSearchInputFocusOut() {

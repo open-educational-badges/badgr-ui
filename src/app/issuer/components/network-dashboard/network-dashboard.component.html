@@ -28,17 +28,17 @@
 						}}</span
 					>
 				</div>
-				<!-- Back button for learner sub-views (gender detail or residence detail) -->
-				@if (activeTab === 'learners' && (learnerSubView?.state === 'gender-detail' || learnerSubView?.state === 'residence-detail')) {
+				<!-- Back button for sub-views (learner detail or socialspace detail) -->
+				@if (isInDetailSubView()) {
 					<div class="tw-ml-auto">
 						<oeb-button
 							variant="secondary"
-							(click)="onBackFromLearnerSubView()"
+							(click)="activeTab === 'learners' ? onBackFromLearnerSubView() : onBackFromSocialspaceSubView()"
 							[text]="'General.back' | translate">
 						</oeb-button>
 					</div>
 				}
-				@if (network().current_user_network_role !== 'staff' && !(activeTab === 'learners' && (learnerSubView?.state === 'gender-detail' || learnerSubView?.state === 'residence-detail'))) {
+				@if (network().current_user_network_role !== 'staff' && !isInDetailSubView()) {
 					<div class="tw-ml-auto tw-relative tw-z-50">
 						@switch (activeTab) {
 							@case ('overview') {
@@ -103,6 +103,7 @@
 				(onTabChanged)="onTabChange($event)"
 				[activeTab]="activeTab"
 				[tabs]="tabs"
+				[hideTabBar]="isInDetailSubView()"
 			>
 			</oeb-tabs>
 		</ng-template>
@@ -181,7 +182,7 @@
 
 <ng-template #socialspaceTemplate>
 	<div class="page-padding">
-		<app-oeb-dashboard-socialspace [networkSlug]="network().slug"></app-oeb-dashboard-socialspace>
+		<app-oeb-dashboard-socialspace #socialspaceComponentRef [networkSlug]="network().slug" (viewStateChange)="onSocialspaceViewStateChange($event)"></app-oeb-dashboard-socialspace>
 	</div>
 </ng-template>
 

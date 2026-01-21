@@ -20,7 +20,10 @@ export type Tab = {
 	selector: 'oeb-tabs',
 	imports: [HlmTabsModule, HlmTabsTrigger, NgTemplateOutlet, TranslateModule, NgIcon],
 	template: `<hlm-tabs class="tw-block tw-w-full" [tab]="activeTab()" (tabActivated)="onTabChange($event)">
-		<hlm-tabs-list class="tw-w-full tw-max-w-[600px] tw-flex tw-justify-between" aria-label="tabs">
+		<hlm-tabs-list
+			class="tw-w-full tw-max-w-[600px] tw-flex tw-justify-between"
+			[class.tw-hidden]="hideTabBar()"
+			aria-label="tabs">
 			@for (tab of tabs(); track tab) {
 				<button
 					class="tw-grow tw-px-6 tw-py-2"
@@ -65,6 +68,8 @@ export class OebTabsComponent {
 	variant = input<TabsVariants['variant']>('default');
 	width = input<TabsVariants['width']>('default');
 	countStyle = input<'rounded' | 'parentheses'>('rounded');
+	/** When true, hides the tab bar but still renders the active tab content */
+	hideTabBar = input<boolean>(false);
 	onTabChanged = output<string>();
 
 	onTabChange(tab: string) {
