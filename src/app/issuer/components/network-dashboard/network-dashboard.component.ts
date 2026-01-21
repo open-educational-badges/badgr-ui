@@ -191,7 +191,8 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	public openDialog() {
-		if (this.network().current_user_network_role != 'owner') return;
+		const role = this.network().current_user_network_role;
+		if (!(role === 'owner' || role === 'creator')) return;
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				headerTemplate: this.headerTemplate,
