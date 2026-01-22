@@ -430,7 +430,7 @@ export class BadgeClassDetailComponent
 
 				this.groupedPartnerInstances = grouped.map((group) => ({
 					...group,
-					instances: group.instances.map((apiInst) => new BadgeInstance(tempSet, apiInst)),
+					instances: group.instances.map((apiInst) => new BadgeInstanceV3(apiInst)),
 				}));
 				this.loadConfig(this.badgeClass);
 			});
