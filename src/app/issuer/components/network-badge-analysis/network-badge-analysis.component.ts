@@ -252,12 +252,7 @@ export class NetworkBadgeAnalysisComponent
 
 	availableYears: number[] = [this.currentYear - 2, this.currentYear - 1, this.currentYear];
 
-	badgeTypes: BadgeTypeOption[] = [
-		{ value: 'all', label: 'Alle Typen' },
-		{ value: 'competency', label: 'Teilnahmezertifikat' },
-		{ value: 'participation', label: 'Badge' },
-		{ value: 'learningpath', label: 'Micro Degrees' },
-	];
+	badgeTypes: BadgeTypeOption[] = [];
 
 	monthlyBadges: MonthlyBadgeData[] = [];
 
@@ -330,7 +325,20 @@ export class NetworkBadgeAnalysisComponent
 	}
 
 	ngOnInit(): void {
+		this.initializeBadgeTypes();
 		this.loadNetworkData();
+	}
+
+	/**
+	 * Initialize badge types with translated labels
+	 */
+	private initializeBadgeTypes(): void {
+		this.badgeTypes = [
+			{ value: 'all', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.allTypes') },
+			{ value: 'participation', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.participationBadges') },
+			{ value: 'competency', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.competencyBadges') },
+			{ value: 'learningpath', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.learningPaths') }
+		];
 	}
 
 	/**

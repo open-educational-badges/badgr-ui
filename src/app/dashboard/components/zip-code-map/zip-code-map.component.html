@@ -3,10 +3,10 @@
 	<div class="tw-grid tw-grid-cols-5 tw-auto-rows-fr tw-gap-2 tw-mb-6">
 		@for (region of zipCodeRegions; track region.code; let idx = $index) {
 			<div
-				[class]="'tw-p-3 tw-rounded-lg tw-border-2 tw-border-white tw-text-center tw-cursor-pointer hover:tw-opacity-80 hover:tw-scale-105 tw-transition-all tw-flex tw-flex-col tw-items-center tw-justify-center tw-overflow-hidden ' + getGridSize(idx)"
+				[class]="'tw-p-3 tw-rounded-lg tw-border-2 tw-border-white tw-text-center tw-transition-all tw-flex tw-flex-col tw-items-center tw-justify-center tw-overflow-hidden ' + getGridSize(idx) + (region.count > 0 ? ' tw-cursor-pointer hover:tw-opacity-80 hover:tw-scale-105' : ' tw-cursor-default tw-opacity-60')"
 				[style.background-color]="getColorIntensity(region.percentage)"
-				[title]="region.name + ': ' + region.count + ' Badges - ' + ('Dashboard.action.clickForDetails' | translate)"
-				(click)="onZipCodeClick(region.code)">
+				[title]="region.count > 0 ? (region.name + ': ' + region.count + ' Badges - ' + ('Dashboard.action.clickForDetails' | translate)) : (region.name + ': ' + region.count + ' Badges')"
+				(click)="region.count > 0 && onZipCodeClick(region.code)">
 				<div class="tw-text-white tw-font-bold tw-text-sm tw-mb-1 tw-leading-tight tw-break-words tw-w-full tw-hyphens-auto" lang="de">{{ region.name }}</div>
 				<div class="tw-text-white tw-text-xs tw-mt-1 tw-whitespace-nowrap">{{ region.count }} Badges</div>
 			</div>
