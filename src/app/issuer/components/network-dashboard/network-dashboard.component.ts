@@ -173,7 +173,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			},
 		];
 
-		if (this.role === 'owner') {
+		if (this.role === 'owner' || this.role === 'creator') {
 			this.networkActionsMenuItems.push({
 				title: 'Network.addInstitutions',
 				icon: 'lucideHousePlus',
@@ -335,7 +335,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	public openDialog() {
-		if (this.network().current_user_network_role != 'owner') return;
+		if (this.role !== 'owner' && this.role !== 'creator') return;
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				headerTemplate: this.headerTemplate,
@@ -419,11 +419,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	}
 
 	get role() {
-		if (this.network().currentUserStaffMember) {
-			return this.network().currentUserStaffMember.roleSlug;
-		} else {
-			return this.network().current_user_network_role;
-		}
+		return this.network()?.current_user_network_role;
 	}
 
 	exportData(): void {
