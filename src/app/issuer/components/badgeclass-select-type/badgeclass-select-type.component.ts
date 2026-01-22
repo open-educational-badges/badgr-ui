@@ -11,12 +11,22 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { HlmH1, HlmP, HlmH2 } from '@spartan-ng/helm/typography';
 import { Network } from '~/issuer/network.model';
 import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 
 @Component({
 	selector: 'badgeclass-select-type',
 	templateUrl: 'badgeclass-select-type.component.html',
 	styleUrls: ['./badgeclass-select-type.component.scss'],
-	imports: [BgBreadcrumbsComponent, HlmH1, HlmP, HlmH2, RouterLink, TranslatePipe, BgAwaitPromises],
+	imports: [
+		BgBreadcrumbsComponent,
+		HlmH1,
+		HlmP,
+		HlmH2,
+		RouterLink,
+		TranslatePipe,
+		BgAwaitPromises,
+		QuotaInformationComponent,
+	],
 })
 export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComponent {
 	protected title = inject(Title);

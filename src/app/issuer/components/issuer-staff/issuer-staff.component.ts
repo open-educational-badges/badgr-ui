@@ -45,6 +45,7 @@ import {
 import { TitleCasePipe } from '@angular/common';
 import { UserProfileManager } from '~/common/services/user-profile-manager.service';
 import { UserProfile } from '~/common/model/user-profile.model';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 
 @Component({
 	templateUrl: './issuer-staff.component.html',
@@ -84,6 +85,7 @@ import { UserProfile } from '~/common/model/user-profile.model';
 		FlexRenderDirective,
 		TranslatePipe,
 		TitleCasePipe,
+		QuotaInformationComponent,
 	],
 })
 export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent implements OnInit {

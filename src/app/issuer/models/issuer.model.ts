@@ -7,6 +7,7 @@ import {
 	IssuerStaffRoleSlug,
 	IssuerUrl,
 	ApiNetwork,
+	ApiQuotas,
 } from './issuer-api.model';
 import { ManagedEntity } from '../../common/model/managed-entity';
 import { ApiEntityRef } from '../../common/model/entity-ref';
@@ -120,6 +121,10 @@ export class Issuer extends ManagedEntity<ApiIssuer, IssuerRef> {
 
 	get is_network(): boolean {
 		return this.apiModel.is_network;
+	}
+
+	get quotas(): ApiQuotas {
+		return this.apiModel.quotas;
 	}
 
 	get badgeClassCount(): number {

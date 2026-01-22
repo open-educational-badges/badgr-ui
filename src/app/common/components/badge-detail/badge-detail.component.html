@@ -17,65 +17,67 @@
 							{{ config.badgeTitle }}
 						</h1>
 
-						<div class="headerMenuGrid">
-							@if (config.headerButton) {
-								@if (config.headerButton.routerLink) {
+						<div>
+							<div class="headerMenuGrid">
+								@if (config.headerButton) {
+									@if (config.headerButton.routerLink) {
+										<oeb-button
+											class="tw-whitespace-nowrap main-action"
+											[text]="config.headerButton.title | translate"
+											width="full_width"
+											[routerLink]="config.headerButton.routerLink"
+											[disabled-when-requesting]="true"
+										></oeb-button>
+									}
+									@if (config.headerButton.action) {
+										<oeb-button
+											class="tw-whitespace-nowrap main-action"
+											width="full_width"
+											(click)="config.headerButton.action()"
+											[disabled-when-requesting]="true"
+											[disabled]="config.headerButton.disabled"
+											[text]="config.headerButton.title | translate"
+										></oeb-button>
+									}
+								}
+								@if (config.shareButton && badge) {
 									<oeb-button
+										hlmBtn
 										class="tw-whitespace-nowrap main-action"
-										[text]="config.headerButton.title | translate"
 										width="full_width"
-										[routerLink]="config.headerButton.routerLink"
-										[disabled-when-requesting]="true"
+										[text]="'RecBadgeDetail.shareBadge' | translate"
+										(click)="shareBadge()"
 									></oeb-button>
 								}
-
-								@if (config.headerButton.action) {
+								@if (config.menuitems) {
+									<oeb-dropdown
+										[trigger]="svgTrigger"
+										class="overflow-menu tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[10px]"
+										[menuItems]="config.menuitems"
+									></oeb-dropdown>
+									<ng-template #svgTrigger>
+										<svg
+											class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[62px] md:tw-h-[62px]"
+											fill="var(--color-purple)"
+											icon="icon_more"
+										></svg>
+										<span class="visuallyhidden">Mehr</span>
+									</ng-template>
+								}
+								@if (config.qrCodeButton?.show) {
 									<oeb-button
-										class="tw-whitespace-nowrap main-action"
+										class="secondary"
 										width="full_width"
-										(click)="config.headerButton.action()"
-										[disabled-when-requesting]="true"
-										[disabled]="config.headerButton.disabled"
-										[text]="config.headerButton.title | translate"
+										variant="secondary"
+										[text]="config.qrCodeButton?.title | translate"
+										(click)="config.qrCodeButton?.action()"
 									></oeb-button>
 								}
-							}
-
-							@if (config.shareButton && badge) {
-								<oeb-button
-									hlmBtn
-									class="tw-whitespace-nowrap main-action"
-									width="full_width"
-									[text]="'RecBadgeDetail.shareBadge' | translate"
-									(click)="shareBadge()"
-								></oeb-button>
-							}
-
-							@if (config.menuitems) {
-								<oeb-dropdown
-									[trigger]="svgTrigger"
-									class="overflow-menu tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[10px]"
-									[menuItems]="config.menuitems"
-								></oeb-dropdown>
-								<ng-template #svgTrigger>
-									<svg
-										class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[62px] md:tw-h-[62px]"
-										fill="var(--color-purple)"
-										icon="icon_more"
-									></svg>
-									<span class="visuallyhidden">Mehr</span>
-								</ng-template>
-							}
-
-							@if (config.qrCodeButton?.show) {
-								<oeb-button
-									class="secondary"
-									width="full_width"
-									variant="secondary"
-									[text]="config.qrCodeButton?.title | translate"
-									(click)="config.qrCodeButton?.action()"
-								></oeb-button>
-							}
+							</div>
+							<quota-information
+								quotas="BADGE_AWARD"
+								class="tw-block tw-mt-4 tw-text-right tw-text-[18px]/[1.3em]"
+							/>
 						</div>
 					</div>
 				</div>

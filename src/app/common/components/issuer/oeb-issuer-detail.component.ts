@@ -46,6 +46,7 @@ interface NetworkBadgeGroup {
 import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { environment } from 'src/environments/environment';
+import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -72,6 +73,7 @@ import { environment } from 'src/environments/environment';
 		TranslatePipe,
 		TranslateModule,
 		NgTemplateOutlet,
+		QuotaInformationComponent,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit {

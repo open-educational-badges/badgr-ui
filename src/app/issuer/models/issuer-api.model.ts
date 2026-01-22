@@ -57,6 +57,8 @@ export interface ApiIssuer extends ApiBaseIssuer {
 	lon?: number;
 
 	networks: ApiNetwork[];
+
+	quotas: ApiQuotas;
 }
 
 export interface ApiNetwork extends ApiBaseIssuer {
@@ -65,6 +67,23 @@ export interface ApiNetwork extends ApiBaseIssuer {
 	current_user_network_role: IssuerStaffRoleSlug | null;
 	learningPathCount: number;
 	partnerBadgesCount: number;
+}
+export interface ApiQuotasNumberQuota {
+	used: number;
+	quota: number;
+	max: number;
+}
+export interface ApiQuotasBooleanQuota {
+	quota: boolean;
+}
+
+export interface ApiQuotas {
+	BADGE_CREATE: ApiQuotasNumberQuota;
+	BADGE_AWARD: ApiQuotasNumberQuota;
+	LEARNINGPATH_CREATE: ApiQuotasNumberQuota;
+	ACCOUNTS_ADMIN: ApiQuotasNumberQuota;
+	AISKILLS_REQUESTS: ApiQuotasNumberQuota;
+	PDFEDITOR: ApiQuotasBooleanQuota;
 }
 
 export type ApiAnyIssuer = ApiIssuer | ApiNetwork;

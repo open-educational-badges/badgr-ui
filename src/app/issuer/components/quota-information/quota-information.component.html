@@ -1,0 +1,13 @@
+@for (quota of quotaKeys; track $index) {
+	<p [class]="quotaWarning(quotaValues[$index]) ? 'tw-text-red' : ''">
+		<span>
+			{{ quotaValues[$index]['used'] }} {{ 'General.of' | translate }} {{ quotaValues[$index]['max'] }}
+			{{ 'Quotas.Info_' + quota | translate }}</span
+		>
+		@if ($index < quotaKeys.length - 1) {
+			<span> / </span>
+		} @else {
+			<span>. <a href="#" class="tw-text-link tw-underline">Info</a></span>
+		}
+	</p>
+}

@@ -67,6 +67,7 @@ import { Network } from '~/issuer/network.model';
 import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-integer-or-null.validator';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { CatalogService } from '~/catalog/catalog.service';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -100,6 +101,7 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		DecimalPipe,
 		TranslatePipe,
 		TranslateModule,
+		QuotaInformationComponent,
 	],
 })
 export class BadgeClassEditFormComponent

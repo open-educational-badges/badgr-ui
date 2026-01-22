@@ -29,12 +29,20 @@
 
 		transition: all 0.1s ease;
 
+		justify-content: space-between;
+
 		img {
 			max-width: 136px;
 			margin-bottom: 12px;
 		}
 
-		> strong {
+		> div {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		strong {
 			color: var(--color-purple);
 		}
 

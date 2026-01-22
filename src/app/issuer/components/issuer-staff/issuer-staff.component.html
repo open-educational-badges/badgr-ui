@@ -26,6 +26,10 @@
 				(click)="openDialog(this.translate.instant('Issuer.addMember'))"
 			></oeb-button>
 		</div>
+		<quota-information
+			[quotas]="['ACCOUNTS_ADMIN', 'ACCOUNTS_MEMBER']"
+			class="tw-block tw-mt-8 tw-text-[18px]/[1.3em]"
+		/>
 		<section class="tw-mt-8">
 			<h2 hlmH2 class="!tw-text-oebblack tw-mb-2">{{ 'Issuer.openStaffRequests' | translate }}</h2>
 			@if (staffRequests().length === 0) {

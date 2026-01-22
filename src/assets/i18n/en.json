@@ -1202,5 +1202,13 @@
 		"searchIcon": "Search Icon",
 		"loading": "Loading...",
 		"noIconsFoundFor": "No icons found for"
+	},
+	"Quotas": {
+		"Info_BADGE_CREATE": "Participation and competency Badges created",
+		"Info_BADGE_AWARD": "Badges awarded",
+		"Info_LEARNINGPATH_CREATE": "Micro Degrees created",
+		"Info_ACCOUNTS_ADMIN": "Admin Accounts (Owners, Editors)",
+		"Info_ACCOUNTS_MEMBER": "Staff Accounts used",
+		"Info_AISKILLS_REQUESTS": "Queries used"
 	}
 }
