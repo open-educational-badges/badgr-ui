@@ -28,7 +28,6 @@
 						}}</span
 					>
 				</div>
-				<!-- Back button for sub-views (learner detail or socialspace detail) -->
 				@if (isInDetailSubView()) {
 					<div class="tw-ml-auto">
 						<oeb-button
@@ -112,7 +111,6 @@
 				@if (partnerIssuers().length > 0) {
 					<app-oeb-dashboard-overview [networkSlug]="network().slug"></app-oeb-dashboard-overview>
 				} @else {
-					<!-- Empty state when no issuers have been added to the network -->
 					<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
 						<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
 							<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +132,6 @@
 					</div>
 				}
 			} @else {
-				<!-- Staff role - no access to dashboard -->
 				<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
 					<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
 						<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
