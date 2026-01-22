@@ -307,6 +307,10 @@ export class BadgeClassDetailComponent
 							this.qrCodeAwards = qrCodes;
 						});
 					this.loadInstances();
+					// load badgeinstances in the network to show issuers that awarded
+					if (this.badgeClass.sharedOnNetwork) {
+						this.loadPartnerInstances();
+					}
 				}
 			})
 			.catch((error) => {
@@ -418,20 +422,20 @@ export class BadgeClassDetailComponent
 
 		this.badgeInstancesLoaded = this.badgeInstanceApiService
 			.listNetworkBadgeInstances(this.issuer.slug, this.badgeClass.slug)
-			.then((res: Record<string, groupedInstances[]>) => {
+			.then(async (res: Record<string, groupedInstances[]>) => {
 				const grouped = Object.values(res)[0] as groupedInstances[];
-
-				// convert ApiBadgeInstance[] to BadgeInstance[]
-				const tempSet = new BadgeClassInstances(
-					this.badgeInstanceManager,
-					this.issuerSlug,
-					this.badgeClass.slug,
-				);
 
 				this.groupedPartnerInstances = grouped.map((group) => ({
 					...group,
-					instances: group.instances.map((apiInst) => new BadgeInstance(tempSet, apiInst)),
+					instances: group.instances.map((apiInst) => new BadgeInstanceV3(apiInst)),
 				}));
+
+				const issuerSlugs = grouped
+					.filter((group) => group.instance_count > 0)
+					.map((group) => group.issuer.slug);
+
+				this.awardingIssuers = await this.issuerManager.issuersBySlugs(issuerSlugs);
+
 				this.loadConfig(this.badgeClass);
 			});
 	}
@@ -570,9 +574,6 @@ export class BadgeClassDetailComponent
 				this.recipients.set(instances);
 				if (this.totalInstanceCount === 0) this.totalInstanceCount = result.count;
 				this.recipientCount = result.count;
-
-				const issuerUrls = tempSet.entities.map((i) => i.issuerUrl);
-				this.awardingIssuers = await this.issuerManager.issuersByUrls(issuerUrls);
 
 				this.loadConfig(this.badgeClass);
 
