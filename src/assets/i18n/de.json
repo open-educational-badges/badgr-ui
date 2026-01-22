@@ -570,7 +570,8 @@
 		"networkAssertionsGetTracked": "Alle Vergaben des Badges fliessen in die Daten-Auswertung des Netzwerks ein.",
 		"cantRemoveFromNetwork": "Der Badge kann NICHT wieder aus dem Netzwerk entfernt werden.",
 		"shareBadgeOnNetwork": "Badge für Netzwerk freigeben",
-		"alreadyShared": "Der Badge wurde bereits für ein Netzwerk freigegeben."
+		"alreadyShared": "Der Badge wurde bereits für ein Netzwerk freigegeben.",
+		"unknownRecipient": "Empfänger:in unbekannt"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Kategorie wählen",

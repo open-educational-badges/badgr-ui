@@ -287,6 +287,16 @@ export class PublicBadgeAssertionComponent {
 					networkName: assertion.badge.networkName,
 					sharedOnNetwork: assertion.badge.sharedOnNetwork,
 					awardingIssuers: this.awardingIssuers,
+					crumbs: [
+						{
+							title:
+								assertion['extensions:recipientProfile'] &&
+								assertion['extensions:recipientProfile'].name
+									? assertion['extensions:recipientProfile'].name
+									: this.translate.instant('Badge.unknownRecipient'),
+						},
+						{ title: assertion.badge.name },
+					],
 				};
 				if (assertion['extensions:recipientProfile'] && assertion['extensions:recipientProfile'].name) {
 					this.awardedToDisplayName = assertion['extensions:recipientProfile'].name;
