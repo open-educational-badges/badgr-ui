@@ -268,6 +268,22 @@ export class BadgeClassEditFormComponent
 
 	tagOptions: FormFieldSelectOption[];
 
+	// Add area properties following the same logic as tags: 11.01.26 - Andres
+
+	/* Indicates whether the existing areas are currently being loaded */
+
+	existingAreasLoading: boolean;
+
+	/* The already existing areas for other badges,
+	for the autocomplete to show */
+
+	existingAreas: {
+		id: number;
+		name: string;
+	}[];
+
+	areaOptions: FormFieldSelectOption[];
+
 	/**
 	 * The description of the competencies entered by the user
 	 * for the AI tool
@@ -414,6 +430,9 @@ export class BadgeClassEditFormComponent
 	@ViewChild('newTagInput')
 	newTagInput: ElementRef<HTMLInputElement>;
 
+	@ViewChild('newAreaInput') // added for Area functionality 11.01.26 - Andres
+	newAreaInput: ElementRef<HTMLInputElement>;
+
 	@ViewChild('formElem')
 	formElem: ElementRef<HTMLFormElement>;
 
@@ -454,6 +473,10 @@ export class BadgeClassEditFormComponent
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Tags
 	tags = new Set<string>();
+
+	// Adding areas for task 11.01
+
+	areas = new Set<string>();
 
 	collapsedCompetenciesOpen = false;
 
@@ -612,12 +635,18 @@ export class BadgeClassEditFormComponent
 		this.tags = new Set();
 		this.badgeClass.tags.forEach((t) => this.tags.add(t));
 
+		this.areas = new Set();
+		if (this.badgeClass.area) {
+			this.badgeClass.area.forEach((a) => this.areas.add(a));
+		}
+
 		this.alignmentsEnabled = this.badgeClass.alignments.length > 0;
 	}
 
 	ngOnInit() {
 		super.ngOnInit();
 		this.fetchTags();
+		this.fetchAreas(); //added for area functionality for test 11.01 - Andres
 
 		this.durationOptions = getDurationOptions(this.translate);
 
@@ -948,6 +977,55 @@ export class BadgeClassEditFormComponent
 
 	removeTag(tag: string) {
 		this.tags.delete(tag);
+	}
+
+	//Gets the areas from the catalog service: 11.01 - Andres
+
+	fetchAreas() {
+		this.existingAreas = [];
+		this.existingAreasLoading = true;
+		this.catalogService.getBadgeAreas().then(
+			//new to add getBadgeAreas in catalog service
+			(areas) => {
+				this.existingAreas = areas.map((area, index) => ({
+					id: index,
+					name: area,
+				}));
+				this.areaOptions = this.existingAreas.map(
+					(area) =>
+						({
+							value: area.name,
+							label: area.name,
+						}) as FormFieldSelectOption,
+				);
+				this.existingAreasLoading = false;
+			},
+			(err) => {
+				console.error(`Couldn't fetch areas: ${err}`);
+				this.existingAreasLoading = false;
+			},
+		);
+	}
+
+	addArea() {
+		const newArea = (this.newAreaInput['query'] || '').trim().toLowerCase();
+
+		if (newArea.length > 0) {
+			this.areas.add(newArea);
+			this.newAreaInput['query'] = '';
+		}
+	}
+
+	handleAreaInputKeyPress(event: KeyboardEvent) {
+		if (event.keyCode === 13 /* Enter */) {
+			this.addArea();
+			this.newAreaInput.nativeElement.focus();
+			event.preventDefault();
+		}
+	}
+
+	removeArea(area: string) {
+		this.areas.delete(area);
 	}
 
 	enableAlignments() {
@@ -1371,6 +1449,7 @@ export class BadgeClassEditFormComponent
 				this.existingBadgeClass.imageFrame = imageFrame;
 				this.existingBadgeClass.alignments = this.alignmentsEnabled ? formState.alignments : [];
 				this.existingBadgeClass.tags = Array.from(this.tags);
+				this.existingBadgeClass.area = Array.from(this.areas); //added for area functionality for test 11.01 - Andres
 				this.existingBadgeClass.courseUrl = formState.courseUrl;
 				this.existingBadgeClass.criteria = formState.criteria;
 				this.existingBadgeClass.expiration = expirationDays;
@@ -1427,6 +1506,7 @@ export class BadgeClassEditFormComponent
 					image: !imageFrame ? formState.badge_image : null,
 					imageFrame: imageFrame,
 					tags: Array.from(this.tags),
+					area: Array.from(this.areas), //added for area functionality for test 11.01 - Andres
 					alignment: this.alignmentsEnabled ? formState.alignments : [],
 					expiration: expirationDays,
 					criteria: formState.criteria,

@@ -59,6 +59,29 @@ export class CatalogService extends BaseHttpApiService {
 		}
 	}
 
+	//Adding getBadgeAreas() 11.01.26 - Andres
+
+	// Idea is to get a list of areas, whose entries may be used as input for filtering badges..
+	// This should return an array of aras to filter badges by when done properly
+
+	async getBadgeAreas(): Promise<string[]> {
+		try {
+			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/badges/areas`);
+
+			if (response.ok) {
+				return response.body;
+			} else {
+				console.warn(
+					`Request for badge areas did not return ok, got ${response.status}: ${response.statusText}`,
+				);
+				return [];
+			}
+		} catch (error) {
+			console.warn(error);
+			return [];
+		}
+	}
+
 	/**
 	 * Gets a list of tags, whose entries may be used as input for
 	 * the tags parameter of the {@link getBadges} method

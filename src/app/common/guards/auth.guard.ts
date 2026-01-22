@@ -20,7 +20,7 @@ export class AuthGuard {
 		// Not using but worth knowing about
 		next: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot,
-	) {
+	): boolean | Promise<boolean> {
 		// Ignore the auth module
 		if (state.url.startsWith('/auth') && !state.url.includes('welcome')) return true;
 
@@ -34,7 +34,7 @@ export class AuthGuard {
 			this.router.navigate(['/auth/oauth2/authorize']);
 			return false;
 		} else {
-			this.userProfileApiService.getProfile().then((profile) => {
+			return this.userProfileApiService.getProfile().then((profile) => {
 				if (profile.agreed_terms_version !== profile.latest_terms_version) {
 					this.router.navigate(['/auth/new-terms']);
 					return false;
@@ -42,8 +42,8 @@ export class AuthGuard {
 					this.router.navigate(['/auth/new-password']);
 					return false;
 				}
+				return true;
 			});
-			return true;
 		}
 	}
 }

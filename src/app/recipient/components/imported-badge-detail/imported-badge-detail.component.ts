@@ -154,6 +154,7 @@ export class ImportedBadgeDetailComponent extends BaseAuthenticatedRoutableCompo
 						)
 					: null,
 				tags: [],
+				area: [],
 				issuerName: this.badge.json.badge.issuer.name,
 				issuerImagePlacholderUrl: this.issuerImagePlacholderUrl,
 				issuerImage: this.badge.json.badge.issuer.image,
