@@ -67,9 +67,9 @@ export interface Top3Badge extends PodiumItem {
 	imports: [CommonModule, TranslatePipe, RouterLink],
 	template: `
 		<!-- Podium Display - Dynamic based on item count -->
-		@if (top3Badges.length === 0) {
-			<!-- Case: No items - Show empty state -->
-			<div class="tw-flex tw-items-center tw-justify-center tw-h-48 tw-text-gray-500">
+		@if (!hasData) {
+			<!-- Case: No items or all counts are 0 - Show empty state -->
+			<div class="tw-flex tw-flex-1 tw-items-center tw-justify-center tw-min-h-48 tw-text-gray-500">
 				{{ 'Dashboard.noDataAvailable' | translate }}
 			</div>
 		} @else {
@@ -493,6 +493,13 @@ export class DashboardTopBadgesComponent {
 	 * Event emitted when an item is clicked (only when clickable=true and enableRouting=false)
 	 */
 	@Output() itemClick = new EventEmitter<Top3Badge>();
+
+	/**
+	 * Check if there is any data to display (array not empty AND at least one item has count > 0)
+	 */
+	get hasData(): boolean {
+		return this.top3Badges.length > 0 && this.top3Badges.some(item => item.count > 0);
+	}
 
 	/**
 	 * Get the ID for routing - supports both 'id' and legacy 'badgeId'

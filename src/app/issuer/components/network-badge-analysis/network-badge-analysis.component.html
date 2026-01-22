@@ -260,7 +260,7 @@
 								}
 							</div>
 
-							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid tw-flex tw-flex-col" style="border-width: 1px; border-color: var(--color-purple);">
 								<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.badgeDistributionByType' | translate }}</h3>
 
 								@if (hasBadgeTypeData) {
@@ -335,7 +335,7 @@
 									</div>
 								</div>
 								} @else {
-									<div class="tw-flex tw-items-center tw-justify-center tw-h-48 tw-text-gray-500">
+									<div class="tw-flex tw-flex-1 tw-items-center tw-justify-center tw-min-h-48 tw-text-gray-500">
 										{{ 'Dashboard.noDataAvailable' | translate }}
 									</div>
 								}
@@ -516,7 +516,7 @@
 									}
 								} @else {
 									<tr hlmTr>
-										<td hlmTd colspan="3" class="tw-text-center tw-py-8 tw-text-gray-500">
+										<td hlmTd colspan="3" class="tw-text-center tw-py-8 tw-text-sm tw-text-gray-500">
 											{{ 'Dashboard.noDataAvailable' | translate }}
 										</td>
 									</tr>

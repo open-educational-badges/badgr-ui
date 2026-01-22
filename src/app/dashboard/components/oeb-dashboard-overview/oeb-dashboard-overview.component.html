@@ -152,10 +152,11 @@
 			</div>
 
 			<div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-6">
-				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid tw-flex tw-flex-col" style="border-width: 1px; border-color: var(--color-purple);">
 					<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.badgeDistributionByType' | translate }}</h3>
 
 					<app-badge-distribution-pie-chart
+						class="tw-flex-1 tw-flex tw-flex-col"
 						[segments]="badgeTypePieChartSegments"
 						[total]="totalBadges"
 						totalLabel="Badge Classes"
@@ -166,9 +167,10 @@
 					</app-badge-distribution-pie-chart>
 				</div>
 
-				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid tw-flex tw-flex-col" style="border-width: 1px; border-color: var(--color-purple);">
 					<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.institutionsRanking' | translate }}</h3>
 					<app-dashboard-top-badges
+						class="tw-flex-1 tw-flex tw-flex-col"
 						[top3Badges]="top3Institutions"
 						[clickable]="true"
 						[enableRouting]="false"

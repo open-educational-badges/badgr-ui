@@ -302,7 +302,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 				.attr('y', height / 2 + margin.top)
 				.attr('text-anchor', 'middle')
 				.attr('fill', '#6B7280')
-				.style('font-size', '16px')
+				.style('font-size', '14px')
 				.style('font-weight', 'normal')
 				.text(this.translate.instant('Dashboard.noDataAvailable') || 'Keine Daten verfügbar');
 			return;
