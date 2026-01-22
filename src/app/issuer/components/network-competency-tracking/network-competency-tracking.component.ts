@@ -219,10 +219,8 @@ export class NetworkCompetencyTrackingComponent
 	}
 
 	ngOnInit(): void {
-		// Check role access after network is loaded
 		this.networkLoaded.then(() => {
 			if (!this.hasDashboardAccess()) {
-				// Redirect users without dashboard access back to network page
 				this.router.navigate(['/issuer/networks', this.networkSlug]);
 				return;
 			}
@@ -230,9 +228,6 @@ export class NetworkCompetencyTrackingComponent
 		});
 	}
 
-	/**
-	 * Check if user has access to dashboard features (owner, creator, or editor)
-	 */
 	private hasDashboardAccess(): boolean {
 		const userRole = this.network()?.current_user_network_role;
 		return userRole === 'owner' || userRole === 'creator' || userRole === 'editor';

@@ -1,11 +1,9 @@
 import {
 	AfterContentInit,
 	Component,
-	computed,
 	ElementRef,
 	inject,
 	OnInit,
-	output,
 	signal,
 	TemplateRef,
 	ViewChild,
@@ -106,6 +104,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	rightsAndRolesExpanded = false;
 	networkBadges: ApiBadgeClass[] = [];
+	networkActionsMenuItems: MenuItem[] = [];
 
 	/** Base breadcrumbs (without sub-view extensions) */
 	baseCrumbs: LinkEntry[] = [];
@@ -174,12 +173,34 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				{ title: this.network().name, routerLink: ['/issuer/network/' + this.network().slug] },
 			];
 			this.crumbs = [...this.baseCrumbs];
-			// Initialize tabs after network data is loaded
-			// Only if templates are already ready (ngAfterContentInit has run)
+			this.initializeMenuItems();
 			if (this.templatesReady) {
 				this.initializeTabs();
 			}
 		});
+	}
+
+	private initializeMenuItems(): void {
+		this.networkActionsMenuItems = [
+			{
+				title: 'General.exportData',
+				icon: 'lucideFolderInput',
+				action: () => this.exportData(),
+			},
+		];
+
+		if (this.role === 'owner') {
+			this.networkActionsMenuItems.push({
+				title: 'Network.addInstitutions',
+				icon: 'lucideHousePlus',
+				action: () => this.openDialog(),
+			});
+			this.networkActionsMenuItems.push({
+				title: 'General.edit',
+				icon: 'lucideSquarePen',
+				action: () => this.navigateToEditNetwork(),
+			});
+		}
 	}
 
 	ngOnInit(): void {
@@ -194,22 +215,15 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	ngAfterContentInit() {
 		this.templatesReady = true;
-		// If network is already loaded, initialize tabs now
-		// Otherwise, tabs will be initialized when network loads
 		if (this.network()) {
 			this.initializeTabs();
 		}
 	}
 
-	/**
-	 * Initialize tabs based on user role
-	 * Dashboard tabs (Overview, Socialspace, Learners) are only visible for owner, creator, and editor roles
-	 */
 	private initializeTabs(): void {
 		const userRole = this.network()?.current_user_network_role;
 		const hasDashboardAccess = userRole === 'owner' || userRole === 'creator' || userRole === 'editor';
 
-		// Base tabs available for all roles
 		const baseTabs: Tab[] = [
 			{
 				key: 'partners',
@@ -228,7 +242,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			},
 		];
 
-		// Dashboard tabs only for owner, creator, editor
 		const dashboardTabs: Tab[] = [
 			{
 				key: 'overview',
@@ -248,17 +261,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		];
 
 		if (hasDashboardAccess) {
-			// Full access: Overview first, then base tabs, then dashboard tabs
 			this.tabs = [
-				dashboardTabs[0], // Overview
+				dashboardTabs[0],
 				...baseTabs,
-				dashboardTabs[1], // Socialspace
-				dashboardTabs[2], // Learners
+				dashboardTabs[1],
+				dashboardTabs[2],
 			];
 		} else {
-			// Limited access: Only base tabs, start with partners
 			this.tabs = baseTabs;
-			// Set default tab to partners for staff users
 			if (this.activeTab === 'overview' || this.activeTab === 'socialspace' || this.activeTab === 'learners') {
 				this.activeTab = 'partners';
 			}
@@ -455,46 +465,10 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		}
 	}
 
-	/**
-	 * Menu items for the network actions dropdown (computed signal for stable reference)
-	 */
-	networkActionsMenuItems = computed<MenuItem[]>(() => {
-		const items: MenuItem[] = [
-			{
-				title: 'General.exportData',
-				icon: 'lucideFolderInput',
-				action: () => this.exportData(),
-			},
-		];
-
-		// Only show "Institution hinzufügen" and "Bearbeiten" for owners
-		if (this.network()?.current_user_network_role === 'owner') {
-			items.push({
-				title: 'Network.addInstitutions',
-				icon: 'lucideHousePlus',
-				action: () => this.openDialog(),
-			});
-			items.push({
-				title: 'General.edit',
-				icon: 'lucideSquarePen',
-				action: () => this.navigateToEditNetwork(),
-			});
-		}
-
-		return items;
-	});
-
-	/**
-	 * Export data (placeholder - functionality not implemented)
-	 */
 	exportData(): void {
-		// TODO: Implement export functionality
-		console.log('Export data clicked - functionality not yet implemented');
+		console.log('Export data clicked');
 	}
 
-	/**
-	 * Navigate to network edit page
-	 */
 	navigateToEditNetwork(): void {
 		this.router.navigate(['/issuer/networks', this.networkSlug, 'edit']);
 	}
