@@ -66,9 +66,14 @@
 		align-items: center;
 		justify-content: center;
 
-		svg {
+		::ng-deep ng-icon {
 			width: 80px;
 			height: 80px;
+
+			svg,
+			svg * {
+				stroke-width: 1.5px !important;
+			}
 		}
 	}
 

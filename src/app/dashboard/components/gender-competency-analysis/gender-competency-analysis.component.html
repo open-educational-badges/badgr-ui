@@ -1,7 +1,4 @@
-<!-- Gender Competency Analysis Component - Sub-component of Lernende -->
-<!-- Note: Back button is positioned in the network-dashboard header (next to network name) -->
 <div class="gender-competency-analysis">
-	<!-- Loading State -->
 	@if (loading) {
 		<div class="tw-flex tw-items-center tw-justify-center tw-p-12">
 			<div class="tw-flex tw-flex-col tw-items-center tw-space-y-4">
@@ -12,32 +9,28 @@
 	}
 
 	@if (!loading && data) {
-		<!-- KPI Cards Section - 1 KPI -->
 		<div class="kpi-card-grid kpi-card-grid--one tw-mb-8">
-			<!-- Total Badges KPI Card -->
 			<div class="kpi-card">
 				<div class="kpi-card__content">
 					<div class="kpi-card__top">
 						<div class="kpi-card__icon">
-							<ng-icon name="lucideMedal" size="80px" style="color: #492E98;" />
+							<ng-icon name="lucideAward" size="80px" style="color: #492E98;" />
 						</div>
 						<div class="kpi-card__main">
 							<div class="kpi-card__value">{{ data.totalBadges | number }}</div>
-							<div class="kpi-card__description">{{ 'Dashboard.genderDetail.totalBadges' | translate }}</div>
+							<div class="kpi-card__description">{{ 'Network.Dashboard.kpi.badgesAwarded' | translate }}</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<!-- Top Kompetenzbereiche - Using skill visualisation component (like recipient badges) -->
 		<div class="tw-mb-6">
 			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
 				{{ 'Dashboard.genderDetail.topCompetencyAreas' | translate }}
 			</h2>
 			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
 				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
-					<!-- Use skill visualisation for ESCO data -->
 					@if (skillVisualisationData.length > 0) {
 						<recipient-skill-visualisation
 							[skills]="skillVisualisationData"
@@ -54,7 +47,6 @@
 			</div>
 		</div>
 
-		<!-- Top Einzelkompetenzen - Bar View -->
 		<div class="tw-mb-6">
 			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
 				{{ 'Dashboard.genderDetail.topIndividualCompetencies' | translate }}
@@ -81,7 +73,6 @@
 			</div>
 		</div>
 
-		<!-- Top Badges - Podium View (like Badge-Analyse) -->
 		<div class="tw-mb-6">
 			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
 				{{ 'Dashboard.genderDetail.topBadges' | translate }}
@@ -89,22 +80,18 @@
 			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
 				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
 					@if (top3BadgesForDisplay.length > 0) {
-						<!-- Top 3 Badges in Podium Style -->
 						<app-dashboard-top-badges
 							[top3Badges]="top3BadgesForDisplay">
 						</app-dashboard-top-badges>
 
-						<!-- Additional Badges (4th place and beyond) -->
 						@if (additionalBadges.length > 0) {
 							<div class="tw-mt-6 tw-pt-6 tw-border-t tw-border-gray-200">
 								<div class="tw-space-y-3">
 									@for (badge of additionalBadges; track badge.name; let i = $index) {
 										<div class="tw-flex tw-items-center tw-gap-4 tw-p-3 tw-rounded-lg" style="background-color: #F5F5F5; border: 1px solid #492E98;">
-											<!-- Rank Number -->
 											<div class="tw-flex-shrink-0 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded-full tw-font-normal tw-text-sm" style="background-color: #DEDEDE; color: #492E98;">
 												{{ i + 4 }}
 											</div>
-											<!-- Badge Image -->
 											<div class="tw-flex-shrink-0">
 												@if (badge.image) {
 													<img [src]="badge.image" [alt]="badge.name" class="tw-w-12 tw-h-12 tw-object-contain tw-rounded">
@@ -114,7 +101,6 @@
 													</div>
 												}
 											</div>
-											<!-- Badge Name (clickable link) -->
 											<div class="tw-flex-grow tw-min-w-0">
 												<a [routerLink]="['/public/badges', badge.badgeId]"
 													class="tw-font-normal tw-truncate tw-block tw-no-underline hover:tw-underline"
@@ -122,7 +108,6 @@
 													{{ badge.name }}
 												</a>
 											</div>
-											<!-- Badge Count -->
 											<div class="tw-flex-shrink-0 tw-text-right">
 												<span class="tw-font-normal" style="color: #492E98;">{{ badge.count }}</span>
 												<span class="tw-text-xs tw-text-gray-600 tw-ml-1">{{ 'Dashboard.badgesAwarded' | translate }}</span>

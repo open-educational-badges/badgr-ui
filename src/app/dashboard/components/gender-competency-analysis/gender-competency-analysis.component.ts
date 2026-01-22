@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideClockFading } from '@ng-icons/lucide';
+import { lucideClockFading, lucideAward } from '@ng-icons/lucide';
 import { Subject, of, forkJoin } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
@@ -79,7 +79,7 @@ export interface GenderCompetencyData {
 		RecipientSkillVisualisationComponent,
 		HorizontalBarChartComponent,
 	],
-	providers: [provideIcons({ lucideClockFading })],
+	providers: [provideIcons({ lucideClockFading, lucideAward })],
 	templateUrl: './gender-competency-analysis.component.html',
 	styleUrls: ['./gender-competency-analysis.component.scss'],
 })
