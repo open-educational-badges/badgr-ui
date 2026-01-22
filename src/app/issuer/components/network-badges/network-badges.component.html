@@ -90,7 +90,7 @@
 		<div class="tw-mt-12">
 			<network-shared-badges-datatable
 				[badges]="sharedBadgeResults"
-				(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, $event.issuerSlug, $event.focusRequests)"
+				(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, network().slug, $event.focusRequests)"
 				(directBadgeAward)="routeToBadgeAward($event)"
 				(qrCodeAward)="routeToQRCodeAward($event)"
 			></network-shared-badges-datatable>
