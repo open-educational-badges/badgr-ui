@@ -502,7 +502,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 		return [
 			{
 				type: 'participation' as const,
-				label: this.translate.instant('Dashboard.zipCodeDetail.participation'),
+				label: this.translate.instant('Dashboard.zipCodeDetail.participationBadges'),
 				count: data.badgesByType.participation || 0,
 				percentage: Math.round(((data.badgesByType.participation || 0) / total) * 100 * 10) / 10,
 				color: '#E4FFE4',
@@ -510,7 +510,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 			},
 			{
 				type: 'competency' as const,
-				label: this.translate.instant('Dashboard.zipCodeDetail.competency'),
+				label: this.translate.instant('Dashboard.zipCodeDetail.competencyBadges'),
 				count: data.badgesByType.competency || 0,
 				percentage: Math.round(((data.badgesByType.competency || 0) / total) * 100 * 10) / 10,
 				color: '#F1F0FF',
@@ -518,7 +518,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 			},
 			{
 				type: 'learningpath' as const,
-				label: this.translate.instant('Dashboard.zipCodeDetail.learningPath'),
+				label: this.translate.instant('Dashboard.zipCodeDetail.learningPathBadges'),
 				count: data.badgesByType.learningpath || 0,
 				percentage: Math.round(((data.badgesByType.learningpath || 0) / total) * 100 * 10) / 10,
 				color: '#FFEAEA',
