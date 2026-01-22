@@ -211,6 +211,7 @@ export class BadgeclassIssueBulkAwardConformation
 			'https://api.openbadges.education/static/extensions/recipientProfile/context.json';
 
 		const formState = this.optionalDetailsForm.rawControl.getRawValue();
+		const cleanedEvidence = formState.evidence_items.filter((e) => e.narrative !== '' || e.evidence_url !== '');
 		const activityStartDate = formState.activity_start_date
 			? new Date(formState.activity_start_date).toISOString()
 			: null;
@@ -240,7 +241,7 @@ export class BadgeclassIssueBulkAwardConformation
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
-				evidence_items: formState.evidence_items,
+				evidence_items: cleanedEvidence,
 				course_url: formState.courseUrl,
 			};
 			assertions.push(assertion);
