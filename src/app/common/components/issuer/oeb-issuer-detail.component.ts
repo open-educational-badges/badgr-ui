@@ -274,7 +274,8 @@ export class OebIssuerDetailComponent implements OnInit {
 						continue;
 					}
 
-					const requestCount = requestMap.get(badgeClass.slug)?.length ?? 0;
+					const requestCount =
+						requestMap.get(badgeClass.slug)?.reduce((sum, qr) => sum + qr.request_count, 0) ?? 0;
 
 					const awardedCount = networkBadgeClass.awarded_count ?? 0;
 
