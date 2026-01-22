@@ -181,13 +181,47 @@
 </ng-template>
 
 <ng-template #socialspaceTemplate>
-	<div class="page-padding">
-		<app-oeb-dashboard-socialspace #socialspaceComponentRef [networkSlug]="network().slug" (viewStateChange)="onSocialspaceViewStateChange($event)"></app-oeb-dashboard-socialspace>
-	</div>
+	@if (network().current_user_network_role === 'owner' || network().current_user_network_role === 'creator' || network().current_user_network_role === 'editor') {
+		<div class="page-padding">
+			<app-oeb-dashboard-socialspace #socialspaceComponentRef [networkSlug]="network().slug" (viewStateChange)="onSocialspaceViewStateChange($event)"></app-oeb-dashboard-socialspace>
+		</div>
+	} @else {
+		<!-- Staff role - no access to dashboard -->
+		<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
+			<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
+				<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+				</svg>
+			</div>
+			<h2 class="tw-text-2xl tw-font-bold tw-mb-3" style="color: var(--color-purple);">
+				{{ 'Network.noAccessDashboard.title' | translate }}
+			</h2>
+			<p class="tw-text-gray-600 tw-text-lg tw-max-w-md">
+				{{ 'Network.noAccessDashboard.description' | translate }}
+			</p>
+		</div>
+	}
 </ng-template>
 
 <ng-template #learnersTemplate>
-	<div class="page-padding">
-		<app-oeb-dashboard-learners #learnersComponentRef [networkSlug]="network().slug" (viewStateChange)="onLearnerViewStateChange($event)"></app-oeb-dashboard-learners>
-	</div>
+	@if (network().current_user_network_role === 'owner' || network().current_user_network_role === 'creator' || network().current_user_network_role === 'editor') {
+		<div class="page-padding">
+			<app-oeb-dashboard-learners #learnersComponentRef [networkSlug]="network().slug" (viewStateChange)="onLearnerViewStateChange($event)"></app-oeb-dashboard-learners>
+		</div>
+	} @else {
+		<!-- Staff role - no access to dashboard -->
+		<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
+			<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
+				<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+				</svg>
+			</div>
+			<h2 class="tw-text-2xl tw-font-bold tw-mb-3" style="color: var(--color-purple);">
+				{{ 'Network.noAccessDashboard.title' | translate }}
+			</h2>
+			<p class="tw-text-gray-600 tw-text-lg tw-max-w-md">
+				{{ 'Network.noAccessDashboard.description' | translate }}
+			</p>
+		</div>
+	}
 </ng-template>

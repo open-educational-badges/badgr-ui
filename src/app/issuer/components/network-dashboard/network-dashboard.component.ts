@@ -174,6 +174,11 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				{ title: this.network().name, routerLink: ['/issuer/network/' + this.network().slug] },
 			];
 			this.crumbs = [...this.baseCrumbs];
+			// Initialize tabs after network data is loaded
+			// Only if templates are already ready (ngAfterContentInit has run)
+			if (this.templatesReady) {
+				this.initializeTabs();
+			}
 		});
 	}
 
@@ -185,13 +190,27 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		});
 	}
 
+	private templatesReady = false;
+
 	ngAfterContentInit() {
-		this.tabs = [
-			{
-				key: 'overview',
-				title: 'General.overview',
-				component: this.overviewTemplate,
-			},
+		this.templatesReady = true;
+		// If network is already loaded, initialize tabs now
+		// Otherwise, tabs will be initialized when network loads
+		if (this.network()) {
+			this.initializeTabs();
+		}
+	}
+
+	/**
+	 * Initialize tabs based on user role
+	 * Dashboard tabs (Overview, Socialspace, Learners) are only visible for owner, creator, and editor roles
+	 */
+	private initializeTabs(): void {
+		const userRole = this.network()?.current_user_network_role;
+		const hasDashboardAccess = userRole === 'owner' || userRole === 'creator' || userRole === 'editor';
+
+		// Base tabs available for all roles
+		const baseTabs: Tab[] = [
 			{
 				key: 'partners',
 				title: 'Network.partnerIssuers',
@@ -207,6 +226,15 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				title: 'LearningPath.learningpathsPlural',
 				component: this.learningPathsTemplate,
 			},
+		];
+
+		// Dashboard tabs only for owner, creator, editor
+		const dashboardTabs: Tab[] = [
+			{
+				key: 'overview',
+				title: 'General.overview',
+				component: this.overviewTemplate,
+			},
 			{
 				key: 'socialspace',
 				title: 'Network.Dashboard.socialspace.tabTitle',
@@ -218,6 +246,23 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				component: this.learnersTemplate,
 			},
 		];
+
+		if (hasDashboardAccess) {
+			// Full access: Overview first, then base tabs, then dashboard tabs
+			this.tabs = [
+				dashboardTabs[0], // Overview
+				...baseTabs,
+				dashboardTabs[1], // Socialspace
+				dashboardTabs[2], // Learners
+			];
+		} else {
+			// Limited access: Only base tabs, start with partners
+			this.tabs = baseTabs;
+			// Set default tab to partners for staff users
+			if (this.activeTab === 'overview' || this.activeTab === 'socialspace' || this.activeTab === 'learners') {
+				this.activeTab = 'partners';
+			}
+		}
 	}
 
 	onTabChange(tab) {
