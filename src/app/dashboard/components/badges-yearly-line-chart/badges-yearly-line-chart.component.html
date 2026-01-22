@@ -1,7 +1,7 @@
 <div class="badges-yearly-line-chart">
 	<!-- Filters Row - Year, Month and optional Badge Type filter -->
 	@if ((showYearFilter && availableYears.length > 0) || showMonthFilter || (showTypeFilter && badgeTypes.length > 0)) {
-		<div class="tw-flex tw-items-center tw-justify-end tw-gap-4 tw-mb-4">
+		<div class="tw-flex tw-items-center tw-justify-end tw-gap-4 tw-mb-4 tw-relative">
 			<!-- Year Filter -->
 			@if (showYearFilter && availableYears.length > 0) {
 				<select
@@ -32,6 +32,7 @@
 			<!-- Badge Type Filter -->
 			@if (showTypeFilter && badgeTypes.length > 0) {
 				<select
+					#badgeTypeSelect
 					[ngModel]="selectedBadgeType"
 					(ngModelChange)="onBadgeTypeChange($event)"
 					class="tw-px-3 tw-py-1.5 tw-rounded-lg tw-text-sm tw-font-bold tw-bg-white tw-cursor-pointer tw-appearance-none tw-pr-8"
@@ -40,6 +41,8 @@
 						<option [value]="type.value">{{ type.label }}</option>
 					}
 				</select>
+				<!-- Hidden span for measuring text width -->
+				<span #badgeTypeTextMeasure class="tw-absolute tw-invisible tw-whitespace-nowrap tw-text-sm tw-font-bold" style="padding: 0 12px;">{{ getSelectedBadgeTypeLabel() }}</span>
 			}
 		</div>
 	}

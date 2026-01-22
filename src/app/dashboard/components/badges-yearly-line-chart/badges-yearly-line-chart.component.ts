@@ -28,6 +28,8 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 	@ViewChild('chartTooltip') chartTooltip!: ElementRef<HTMLDivElement>;
 	@ViewChild('tooltipDate') tooltipDate!: ElementRef<HTMLDivElement>;
 	@ViewChild('tooltipContent') tooltipContent!: ElementRef<HTMLDivElement>;
+	@ViewChild('badgeTypeSelect') badgeTypeSelect!: ElementRef<HTMLSelectElement>;
+	@ViewChild('badgeTypeTextMeasure') badgeTypeTextMeasure!: ElementRef<HTMLSpanElement>;
 
 	/** Badge award time series data */
 	@Input() data: BadgeAwardData[] = [];
@@ -121,6 +123,9 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 		if (this.isVisible && !this.isLoading) {
 			this.renderChartWhenReady();
 		}
+
+		// Adjust badge type select width to fit selected text
+		setTimeout(() => this.adjustBadgeTypeSelectWidth(), 0);
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
@@ -148,6 +153,11 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			if (this.isVisible) {
 				this.renderChartWhenReady();
 			}
+		}
+
+		// Adjust badge type select width when badge types or selection changes
+		if (changes['badgeTypes'] || changes['selectedBadgeType']) {
+			setTimeout(() => this.adjustBadgeTypeSelectWidth(), 0);
 		}
 
 		if (changes['isVisible']?.currentValue === true && !changes['isVisible']?.previousValue) {
@@ -241,6 +251,32 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 
 	onBadgeTypeChange(type: string): void {
 		this.typeChange.emit(type);
+		// Adjust select width after change
+		setTimeout(() => this.adjustBadgeTypeSelectWidth(), 0);
+	}
+
+	/**
+	 * Get the label of the currently selected badge type
+	 */
+	getSelectedBadgeTypeLabel(): string {
+		const selected = this.badgeTypes.find(t => t.value === this.selectedBadgeType);
+		return selected?.label || '';
+	}
+
+	/**
+	 * Adjust the badge type select width to fit the selected text
+	 */
+	private adjustBadgeTypeSelectWidth(): void {
+		if (!this.badgeTypeSelect?.nativeElement || !this.badgeTypeTextMeasure?.nativeElement) return;
+
+		const measureSpan = this.badgeTypeTextMeasure.nativeElement;
+		const select = this.badgeTypeSelect.nativeElement;
+
+		// Get the width of the text plus some padding for the dropdown arrow
+		const textWidth = measureSpan.offsetWidth;
+		const arrowPadding = 28; // Space for the dropdown arrow icon
+
+		select.style.width = `${textWidth + arrowPadding}px`;
 	}
 
 	/**
