@@ -21,7 +21,7 @@ export interface Institution {
 	standalone: true,
 	imports: [CommonModule, TranslatePipe, ZipCodeMapComponent],
 	templateUrl: './oeb-dashboard-institutions.component.html',
-	styleUrls: ['./oeb-dashboard-institutions.component.scss']
+	styleUrls: ['./oeb-dashboard-institutions.component.scss'],
 })
 export class OebDashboardInstitutionsComponent implements OnInit {
 	institutions: Institution[] = [];
@@ -38,7 +38,7 @@ export class OebDashboardInstitutionsComponent implements OnInit {
 	}
 
 	isNewInstitution(institution: Institution): boolean {
-		return this.newInstitutions.some(newInst => newInst.id === institution.id);
+		return this.newInstitutions.some((newInst) => newInst.id === institution.id);
 	}
 
 	formatDate(dateString: string): string {
@@ -46,7 +46,7 @@ export class OebDashboardInstitutionsComponent implements OnInit {
 		return date.toLocaleDateString('de-DE', {
 			day: '2-digit',
 			month: '2-digit',
-			year: 'numeric'
+			year: 'numeric',
 		});
 	}
 

@@ -5,9 +5,27 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil, forkJoin, of, EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { lucideTrophy, lucideMedal, lucideAward, lucideChevronUp, lucideChevronDown, lucideChevronsUpDown, lucideMonitor, lucideMapPin, lucideUsers, lucideClock, lucideArrowLeft, lucideTarget } from '@ng-icons/lucide';
+import {
+	lucideTrophy,
+	lucideMedal,
+	lucideAward,
+	lucideChevronUp,
+	lucideChevronDown,
+	lucideChevronsUpDown,
+	lucideMonitor,
+	lucideMapPin,
+	lucideUsers,
+	lucideClock,
+	lucideArrowLeft,
+	lucideTarget,
+} from '@ng-icons/lucide';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { BadgeTypeStats, BadgeAwardData, BadgeDeliveryMethod, PlzStatisticsData } from '../../../dashboard/models/dashboard-models';
+import {
+	BadgeTypeStats,
+	BadgeAwardData,
+	BadgeDeliveryMethod,
+	PlzStatisticsData,
+} from '../../../dashboard/models/dashboard-models';
 import { HlmTableImports } from '../../../components/spartan/ui-table-helm/src';
 import { OebTableImports } from '../../../components/oeb-table';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
@@ -30,14 +48,26 @@ import { Network } from '../../../issuer/network.model';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { HlmH1 } from '@spartan-ng/helm/typography';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { DashboardTopBadgesComponent, Top3Badge } from '../../../dashboard/components/dashboard-stats-bar/dashboard-top-badges.component';
-import { RecipientSkillVisualisationComponent, CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
+import {
+	DashboardTopBadgesComponent,
+	Top3Badge,
+} from '../../../dashboard/components/dashboard-stats-bar/dashboard-top-badges.component';
+import {
+	RecipientSkillVisualisationComponent,
+	CompetencyAreaClickData,
+} from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { ApiRootSkill } from '../../../common/model/ai-skills.model';
 import { ESCORootSkill } from '../../../dashboard/models/network-dashboard-api.model';
 import { NetworkDashboardApiService } from '../../../dashboard/services/network-dashboard-api.service';
 import { OebTabsComponent, Tab } from '../../../components/oeb-tabs.component';
-import { BadgesYearlyLineChartComponent, BadgeTypeOption } from '../../../dashboard/components/badges-yearly-line-chart/badges-yearly-line-chart.component';
-import { HorizontalBarChartComponent, HorizontalBarItem } from '../../../dashboard/components/horizontal-bar-chart/horizontal-bar-chart.component';
+import {
+	BadgesYearlyLineChartComponent,
+	BadgeTypeOption,
+} from '../../../dashboard/components/badges-yearly-line-chart/badges-yearly-line-chart.component';
+import {
+	HorizontalBarChartComponent,
+	HorizontalBarItem,
+} from '../../../dashboard/components/horizontal-bar-chart/horizontal-bar-chart.component';
 import {
 	NetworkBadgeAwardTimelineEntry,
 	NetworkBadgeTypeDistributionEntry,
@@ -51,7 +81,7 @@ import {
 	getBadgeRankDisplayConfig,
 	getBadgeTypeDisplayConfig,
 	getCompetencyAreaDisplayConfig,
-	BadgeTypeStatsExtended
+	BadgeTypeStatsExtended,
 } from '../../../dashboard/models/network-dashboard-api.model';
 
 // Re-export Top3Badge from dashboard component for consistency
@@ -101,12 +131,12 @@ export interface MonthlyBadgeData {
 	badgeKey: string;
 	title: string;
 	image?: string;
-	issuerId?: string;  // Issuer slug for navigation
+	issuerId?: string; // Issuer slug for navigation
 	categoryKey: string;
 	category: string;
 	badgeType: 'participation' | 'competency' | 'learningpath';
 	competencyAreas: string[];
-	skills?: EscoSkill[];  // Individual competencies with ESCO links
+	skills?: EscoSkill[]; // Individual competencies with ESCO links
 	value: number;
 	date: string;
 }
@@ -135,7 +165,22 @@ export interface MonthlyBadgeData {
 		FlexRenderDirective,
 		HlmIconModule,
 	],
-	providers: [provideIcons({ lucideTrophy, lucideMedal, lucideAward, lucideChevronUp, lucideChevronDown, lucideChevronsUpDown, lucideMonitor, lucideMapPin, lucideUsers, lucideClock, lucideArrowLeft, lucideTarget })],
+	providers: [
+		provideIcons({
+			lucideTrophy,
+			lucideMedal,
+			lucideAward,
+			lucideChevronUp,
+			lucideChevronDown,
+			lucideChevronsUpDown,
+			lucideMonitor,
+			lucideMapPin,
+			lucideUsers,
+			lucideClock,
+			lucideArrowLeft,
+			lucideTarget,
+		}),
+	],
 	templateUrl: './network-badge-analysis.component.html',
 	styleUrls: ['./network-badge-analysis.component.scss'],
 })
@@ -162,12 +207,12 @@ export class NetworkBadgeAnalysisComponent
 	skillVisualisationData: ApiRootSkill[] = [];
 
 	private lucideIcons: { [key: string]: string } = {
-		'Monitor': 'M20 14H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2ZM8 21h8M12 17v4',
-		'Users': 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
-		'Globe': 'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10ZM2 12h20',
-		'Wrench': 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
-		'BarChart3': 'M3 3v18h18M18 17V9M13 17V5M8 17v-3',
-		'MapPin': 'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z'
+		Monitor: 'M20 14H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2ZM8 21h8M12 17v4',
+		Users: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+		Globe: 'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10ZM2 12h20',
+		Wrench: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
+		BarChart3: 'M3 3v18h18M18 17V9M13 17V5M8 17v-3',
+		MapPin: 'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z',
 	};
 	networkLoaded: Promise<unknown>;
 	network = signal<Network | null>(null);
@@ -195,7 +240,7 @@ export class NetworkBadgeAnalysisComponent
 	 * Check if badge type chart has any data (any badge type > 0)
 	 */
 	get hasBadgeTypeData(): boolean {
-		return this.badgeTypeStats.some(stat => stat.count > 0);
+		return this.badgeTypeStats.some((stat) => stat.count > 0);
 	}
 
 	badgeDensity: number = 0;
@@ -211,10 +256,17 @@ export class NetworkBadgeAnalysisComponent
 		inPerson: { count: number; percentage: number; color: string };
 	} = {
 		online: { count: 0, percentage: 50, color: '#F1F0FF' },
-		inPerson: { count: 0, percentage: 50, color: '#E4FFE4' }
+		inPerson: { count: 0, percentage: 50, color: '#E4FFE4' },
 	};
 
-	get deliveryMethodChartData(): { type: string; label: string; count: number; percentage: number; color: string; borderColor: string }[] {
+	get deliveryMethodChartData(): {
+		type: string;
+		label: string;
+		count: number;
+		percentage: number;
+		color: string;
+		borderColor: string;
+	}[] {
 		return [
 			{
 				type: 'online',
@@ -222,7 +274,7 @@ export class NetworkBadgeAnalysisComponent
 				count: this.deliveryMethodStats.online.count,
 				percentage: this.deliveryMethodStats.online.percentage,
 				color: '#F1F0FF',
-				borderColor: '#CCD7FF'
+				borderColor: '#CCD7FF',
 			},
 			{
 				type: 'inPerson',
@@ -230,8 +282,8 @@ export class NetworkBadgeAnalysisComponent
 				count: this.deliveryMethodStats.inPerson.count,
 				percentage: this.deliveryMethodStats.inPerson.percentage,
 				color: '#E4FFE4',
-				borderColor: '#93F993'
-			}
+				borderColor: '#93F993',
+			},
 		];
 	}
 
@@ -256,9 +308,7 @@ export class NetworkBadgeAnalysisComponent
 
 	monthlyBadges: MonthlyBadgeData[] = [];
 
-	readonly monthlyBadgesSorting = signal<SortingState>([
-		{ id: 'Badge.createdOn', desc: true }
-	]);
+	readonly monthlyBadgesSorting = signal<SortingState>([{ id: 'Badge.createdOn', desc: true }]);
 
 	private readonly monthlyBadgesColumnDefs: ColumnDef<MonthlyBadgeData>[] = [
 		{
@@ -309,7 +359,7 @@ export class NetworkBadgeAnalysisComponent
 		this.networkLoaded = this.networkManager.networkBySlug(this.networkSlug).then((network) => {
 			this.network.set(network);
 			this.title.setTitle(
-				`Badge-Analyse - ${this.network().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`
+				`Badge-Analyse - ${this.network().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
 			);
 			this.crumbs = [
 				{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
@@ -343,9 +393,18 @@ export class NetworkBadgeAnalysisComponent
 	private initializeBadgeTypes(): void {
 		this.badgeTypes = [
 			{ value: 'all', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.allTypes') },
-			{ value: 'participation', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.participationBadges') },
-			{ value: 'competency', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.competencyBadges') },
-			{ value: 'learningpath', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.learningPaths') }
+			{
+				value: 'participation',
+				label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.participationBadges'),
+			},
+			{
+				value: 'competency',
+				label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.competencyBadges'),
+			},
+			{
+				value: 'learningpath',
+				label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.learningPaths'),
+			},
 		];
 	}
 
@@ -362,98 +421,109 @@ export class NetworkBadgeAnalysisComponent
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading competency skills:', error);
 					return of({ skills: [] });
-				})
+				}),
 			),
 			topBadges: this.networkDashboardApi.getTopBadges(this.networkSlug, 3).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading network top badges:', error);
 					return of({ badges: [] });
-				})
+				}),
 			),
-			badgeAwardsTimeline: this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, {
-				year: this.selectedYear,
-				groupBy: 'month'
-			}).pipe(
-				catchError((error) => {
-					console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge awards timeline:', error);
-					return of({ timeline: [] });
+			badgeAwardsTimeline: this.networkDashboardApi
+				.getBadgeAwardsTimeline(this.networkSlug, {
+					year: this.selectedYear,
+					groupBy: 'month',
 				})
-			),
+				.pipe(
+					catchError((error) => {
+						console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge awards timeline:', error);
+						return of({ timeline: [] });
+					}),
+				),
 			badgeTypeDistribution: this.networkDashboardApi.getBadgeTypeDistribution(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge type distribution:', error);
 					return of({ distribution: [] });
-				})
+				}),
 			),
 			recentBadgeAwards: this.networkDashboardApi.getRecentBadgeAwards(this.networkSlug, { limit: 50 }).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading recent badge awards:', error);
 					return of({ awards: [] });
-				})
+				}),
 			),
 			deliveryMethodDistribution: this.networkDashboardApi.getDeliveryMethodDistribution(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading delivery method distribution:', error);
 					return of({ total: 0, online: { value: 0, percentage: 0 }, inPerson: { value: 0, percentage: 0 } });
-				})
-			)
-		}).pipe(takeUntil(this.destroy$)).subscribe({
-			next: ({ competencySkills, topBadges, badgeAwardsTimeline, badgeTypeDistribution, recentBadgeAwards, deliveryMethodDistribution }) => {
-				if (competencySkills?.skills?.length > 0) {
-					this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
-				} else {
-					this.skillVisualisationData = [];
-				}
+				}),
+			),
+		})
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: ({
+					competencySkills,
+					topBadges,
+					badgeAwardsTimeline,
+					badgeTypeDistribution,
+					recentBadgeAwards,
+					deliveryMethodDistribution,
+				}) => {
+					if (competencySkills?.skills?.length > 0) {
+						this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
+					} else {
+						this.skillVisualisationData = [];
+					}
 
-				if (topBadges?.badges && topBadges.badges.length > 0) {
-					this.top3Badges = topBadges.badges.map((badge) => {
-						const displayConfig = getBadgeRankDisplayConfig(badge.rank);
-						return {
-							rank: badge.rank as 1 | 2 | 3,
-							name: badge.badgeTitle,
-							count: badge.count,
-							image: badge.image,
-							icon: displayConfig.icon,
-							color: displayConfig.color,
-							id: badge.badgeId,
+					if (topBadges?.badges && topBadges.badges.length > 0) {
+						this.top3Badges = topBadges.badges.map((badge) => {
+							const displayConfig = getBadgeRankDisplayConfig(badge.rank);
+							return {
+								rank: badge.rank as 1 | 2 | 3,
+								name: badge.badgeTitle,
+								count: badge.count,
+								image: badge.image,
+								icon: displayConfig.icon,
+								color: displayConfig.color,
+								id: badge.badgeId,
+							};
+						});
+					}
+
+					if (badgeAwardsTimeline?.timeline && badgeAwardsTimeline.timeline.length > 0) {
+						this._badgeAwardsByTime = this.transformTimelineToLegacyFormat(badgeAwardsTimeline.timeline);
+					}
+
+					if (badgeTypeDistribution?.distribution && badgeTypeDistribution.distribution.length > 0) {
+						this.badgeTypeStats = this.transformBadgeTypeDistribution(badgeTypeDistribution.distribution);
+					}
+
+					if (recentBadgeAwards?.awards && recentBadgeAwards.awards.length > 0) {
+						this.monthlyBadges = this.transformRecentBadgeAwardsToMonthlyBadges(recentBadgeAwards.awards);
+					}
+
+					if (deliveryMethodDistribution) {
+						this.deliveryMethodStats = {
+							online: {
+								count: deliveryMethodDistribution.online?.value || 0,
+								percentage: deliveryMethodDistribution.online?.percentage || 0,
+								color: '#F1F0FF',
+							},
+							inPerson: {
+								count: deliveryMethodDistribution.inPerson?.value || 0,
+								percentage: deliveryMethodDistribution.inPerson?.percentage || 0,
+								color: '#E4FFE4',
+							},
 						};
-					});
-				}
+					}
 
-				if (badgeAwardsTimeline?.timeline && badgeAwardsTimeline.timeline.length > 0) {
-					this._badgeAwardsByTime = this.transformTimelineToLegacyFormat(badgeAwardsTimeline.timeline);
-				}
-
-				if (badgeTypeDistribution?.distribution && badgeTypeDistribution.distribution.length > 0) {
-					this.badgeTypeStats = this.transformBadgeTypeDistribution(badgeTypeDistribution.distribution);
-				}
-
-				if (recentBadgeAwards?.awards && recentBadgeAwards.awards.length > 0) {
-					this.monthlyBadges = this.transformRecentBadgeAwardsToMonthlyBadges(recentBadgeAwards.awards);
-				}
-
-				if (deliveryMethodDistribution) {
-					this.deliveryMethodStats = {
-						online: {
-							count: deliveryMethodDistribution.online?.value || 0,
-							percentage: deliveryMethodDistribution.online?.percentage || 0,
-							color: '#F1F0FF'
-						},
-						inPerson: {
-							count: deliveryMethodDistribution.inPerson?.value || 0,
-							percentage: deliveryMethodDistribution.inPerson?.percentage || 0,
-							color: '#E4FFE4'
-						}
-					};
-				}
-
-				this.isLoading = false;
-			},
-			error: (error) => {
-				console.error('[NETWORK-BADGE-ANALYSIS] Error loading network data:', error);
-				this.isLoading = false;
-			}
-		});
+					this.isLoading = false;
+				},
+				error: (error) => {
+					console.error('[NETWORK-BADGE-ANALYSIS] Error loading network data:', error);
+					this.isLoading = false;
+				},
+			});
 	}
 
 	/**
@@ -470,12 +540,13 @@ export class NetworkBadgeAnalysisComponent
 			category: 'Badge-Vergabe',
 			badgeType: (award.badgeType || 'participation') as 'participation' | 'competency' | 'learningpath',
 			competencyAreas: [],
-			skills: award.competencies?.map(comp => ({
-				name: comp.name,
-				escoUri: comp.escoUri || ''
-			})) || [],
+			skills:
+				award.competencies?.map((comp) => ({
+					name: comp.name,
+					escoUri: comp.escoUri || '',
+				})) || [],
 			value: award.count,
-			date: award.date
+			date: award.date,
 		}));
 	}
 
@@ -484,7 +555,10 @@ export class NetworkBadgeAnalysisComponent
 	 * @param timeline - API timeline entries
 	 * @param selectedMonth - If provided, include day in the result for daily view
 	 */
-	private transformTimelineToLegacyFormat(timeline: NetworkBadgeAwardTimelineEntry[], selectedMonth?: number | null): BadgeAwardData[] {
+	private transformTimelineToLegacyFormat(
+		timeline: NetworkBadgeAwardTimelineEntry[],
+		selectedMonth?: number | null,
+	): BadgeAwardData[] {
 		const result: BadgeAwardData[] = [];
 
 		for (const entry of timeline) {
@@ -501,7 +575,7 @@ export class NetworkBadgeAnalysisComponent
 						month,
 						day,
 						type: 'participation',
-						count: entry.byType.participation
+						count: entry.byType.participation,
 					});
 				}
 				if (entry.byType.competency > 0) {
@@ -511,7 +585,7 @@ export class NetworkBadgeAnalysisComponent
 						month,
 						day,
 						type: 'competency',
-						count: entry.byType.competency
+						count: entry.byType.competency,
 					});
 				}
 				if (entry.byType.learningpath > 0) {
@@ -521,7 +595,7 @@ export class NetworkBadgeAnalysisComponent
 						month,
 						day,
 						type: 'learningpath',
-						count: entry.byType.learningpath
+						count: entry.byType.learningpath,
 					});
 				}
 			} else {
@@ -531,7 +605,7 @@ export class NetworkBadgeAnalysisComponent
 					month,
 					day,
 					type: 'all',
-					count: entry.count
+					count: entry.count,
 				});
 			}
 		}
@@ -542,7 +616,9 @@ export class NetworkBadgeAnalysisComponent
 	/**
 	 * Transform badge type distribution from API to BadgeTypeStatsExtended for pie chart
 	 */
-	private transformBadgeTypeDistribution(distribution: NetworkBadgeTypeDistributionEntry[]): BadgeTypeStatsExtended[] {
+	private transformBadgeTypeDistribution(
+		distribution: NetworkBadgeTypeDistributionEntry[],
+	): BadgeTypeStatsExtended[] {
 		return distribution.map((entry) => {
 			const displayConfig = getBadgeTypeDisplayConfig(entry.type);
 			return {
@@ -551,13 +627,12 @@ export class NetworkBadgeAnalysisComponent
 				count: entry.count,
 				percentage: entry.percentage,
 				color: displayConfig.color,
-				borderColor: displayConfig.borderColor
+				borderColor: displayConfig.borderColor,
 			};
 		});
 	}
 
-	ngAfterViewInit(): void {
-	}
+	ngAfterViewInit(): void {}
 
 	ngOnDestroy(): void {
 		this.destroy$.next();
@@ -573,7 +648,7 @@ export class NetworkBadgeAnalysisComponent
 	 * @param badgeSlug - Badge class slug/id
 	 */
 	navigateToBadgeDetail(badgeSlug: string): void {
-		const badge = this.monthlyBadges.find(b => b.badgeKey === badgeSlug);
+		const badge = this.monthlyBadges.find((b) => b.badgeKey === badgeSlug);
 		if (badge?.issuerId) {
 			this.router.navigate(['/issuer/issuers', badge.issuerId, 'badges', badgeSlug]);
 		}
@@ -612,7 +687,7 @@ export class NetworkBadgeAnalysisComponent
 
 		// Build params - if month is selected, use startDate/endDate for the month range
 		const params: { year?: number; startDate?: string; endDate?: string; groupBy: 'day' | 'month' } = {
-			groupBy: groupBy
+			groupBy: groupBy,
 		};
 
 		if (month) {
@@ -625,20 +700,27 @@ export class NetworkBadgeAnalysisComponent
 			params.year = year;
 		}
 
-		this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, params).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge awards timeline:', { year, month }, error);
-				this.isLoadingTimeline = false;
-				return EMPTY;
-			})
-		).subscribe({
-			next: (response) => {
-				const timeline = response?.timeline || [];
-				this._badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline, month);
-				this.isLoadingTimeline = false;
-			}
-		});
+		this.networkDashboardApi
+			.getBadgeAwardsTimeline(this.networkSlug, params)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.error(
+						'[NETWORK-BADGE-ANALYSIS] Error loading badge awards timeline:',
+						{ year, month },
+						error,
+					);
+					this.isLoadingTimeline = false;
+					return EMPTY;
+				}),
+			)
+			.subscribe({
+				next: (response) => {
+					const timeline = response?.timeline || [];
+					this._badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline, month);
+					this.isLoadingTimeline = false;
+				},
+			});
 	}
 
 	onBadgeTypeChange(type: string): void {
@@ -755,7 +837,7 @@ export class NetworkBadgeAnalysisComponent
 			return date.toLocaleDateString('de-DE', {
 				day: '2-digit',
 				month: '2-digit',
-				year: 'numeric'
+				year: 'numeric',
 			});
 		} catch {
 			return dateString;
@@ -777,82 +859,93 @@ export class NetworkBadgeAnalysisComponent
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading KPIs:', error);
 					return of({ kpis: [] });
-				})
+				}),
 			),
 			competencyAreas: this.networkDashboardApi.getCompetencyAreas(this.networkSlug, 10, apiDeliveryMethod).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading competency areas:', error);
 					return of({ data: [] });
-				})
+				}),
 			),
-			strengthenedCompetencies: this.networkDashboardApi.getStrengthenedCompetencies(this.networkSlug, 10, 'hours', 'desc', apiDeliveryMethod).pipe(
-				catchError((error) => {
-					console.error('[NETWORK-BADGE-ANALYSIS] Error loading strengthened competencies:', error);
-					return of({ competencies: [] });
-				})
-			),
-			badgeLocations: method === 'in-person'
-				? this.networkDashboardApi.getBadgeLocations(this.networkSlug, apiDeliveryMethod, 20).pipe(
+			strengthenedCompetencies: this.networkDashboardApi
+				.getStrengthenedCompetencies(this.networkSlug, 10, 'hours', 'desc', apiDeliveryMethod)
+				.pipe(
 					catchError((error) => {
-						console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge locations:', error);
-						return of({ locations: [] } as NetworkBadgeLocationsResponse);
-					})
-				)
-				: of({ locations: [] } as NetworkBadgeLocationsResponse),
-			competencySkills: this.networkDashboardApi.getCompetencyAreasSkills(this.networkSlug, { deliveryMethod: apiDeliveryMethod }).pipe(
-				catchError((error) => {
-					console.error('[NETWORK-BADGE-ANALYSIS] Error loading competency skills:', error);
-					return of({ skills: [] });
-				})
-			)
-		}).pipe(takeUntil(this.destroy$)).subscribe({
-			next: ({ kpis, competencyAreas, strengthenedCompetencies, badgeLocations, competencySkills }) => {
-				const topCompetencyAreas = competencyAreas?.data
-					? this.transformCompetencyAreasToDetailData(competencyAreas.data)
-					: [];
+						console.error('[NETWORK-BADGE-ANALYSIS] Error loading strengthened competencies:', error);
+						return of({ competencies: [] });
+					}),
+				),
+			badgeLocations:
+				method === 'in-person'
+					? this.networkDashboardApi.getBadgeLocations(this.networkSlug, apiDeliveryMethod, 20).pipe(
+							catchError((error) => {
+								console.error('[NETWORK-BADGE-ANALYSIS] Error loading badge locations:', error);
+								return of({ locations: [] } as NetworkBadgeLocationsResponse);
+							}),
+						)
+					: of({ locations: [] } as NetworkBadgeLocationsResponse),
+			competencySkills: this.networkDashboardApi
+				.getCompetencyAreasSkills(this.networkSlug, { deliveryMethod: apiDeliveryMethod })
+				.pipe(
+					catchError((error) => {
+						console.error('[NETWORK-BADGE-ANALYSIS] Error loading competency skills:', error);
+						return of({ skills: [] });
+					}),
+				),
+		})
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: ({ kpis, competencyAreas, strengthenedCompetencies, badgeLocations, competencySkills }) => {
+					const topCompetencyAreas = competencyAreas?.data
+						? this.transformCompetencyAreasToDetailData(competencyAreas.data)
+						: [];
 
-				const individualCompetencies = strengthenedCompetencies?.competencies
-					? this.transformStrengthenedCompetenciesToDetailData(strengthenedCompetencies.competencies)
-					: [];
+					const individualCompetencies = strengthenedCompetencies?.competencies
+						? this.transformStrengthenedCompetenciesToDetailData(strengthenedCompetencies.competencies)
+						: [];
 
-				const plzDistribution = method === 'in-person' && badgeLocations?.locations
-					? this.transformBadgeLocationsToPlzStats(badgeLocations.locations)
-					: undefined;
+					const plzDistribution =
+						method === 'in-person' && badgeLocations?.locations
+							? this.transformBadgeLocationsToPlzStats(badgeLocations.locations)
+							: undefined;
 
-				if (competencySkills?.skills?.length > 0) {
-					this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
-				} else {
-					this.skillVisualisationData = [];
-				}
+					if (competencySkills?.skills?.length > 0) {
+						this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
+					} else {
+						this.skillVisualisationData = [];
+					}
 
-				const badgesAwardedKpi = kpis?.kpis?.find(k => k.id === 'badges_awarded');
-				const competencyHoursKpi = kpis?.kpis?.find(k => k.id === 'competency_hours');
+					const badgesAwardedKpi = kpis?.kpis?.find((k) => k.id === 'badges_awarded');
+					const competencyHoursKpi = kpis?.kpis?.find((k) => k.id === 'competency_hours');
 
-				const totalBadges = badgesAwardedKpi?.value ?? topCompetencyAreas.reduce((sum, area) => sum + area.count, 0);
-				const totalHours = competencyHoursKpi?.value ?? individualCompetencies.reduce((sum, area) => sum + area.hours, 0);
+					const totalBadges =
+						badgesAwardedKpi?.value ?? topCompetencyAreas.reduce((sum, area) => sum + area.count, 0);
+					const totalHours =
+						competencyHoursKpi?.value ?? individualCompetencies.reduce((sum, area) => sum + area.hours, 0);
 
-				const deliveryData: DeliveryMethodDetailData = {
-					method: method,
-					methodLabel: method === 'online'
-						? this.translate.instant('Network.Dashboard.badgeAnalysis.deliveryMethod.online')
-						: this.translate.instant('Network.Dashboard.badgeAnalysis.deliveryMethod.inPerson'),
-					totalBadges: totalBadges,
-					totalHours: totalHours,
-					topCompetencyAreas: topCompetencyAreas,
-					individualCompetencies: individualCompetencies,
-					plzDistribution: plzDistribution
-				};
+					const deliveryData: DeliveryMethodDetailData = {
+						method: method,
+						methodLabel:
+							method === 'online'
+								? this.translate.instant('Network.Dashboard.badgeAnalysis.deliveryMethod.online')
+								: this.translate.instant('Network.Dashboard.badgeAnalysis.deliveryMethod.inPerson'),
+						totalBadges: totalBadges,
+						totalHours: totalHours,
+						topCompetencyAreas: topCompetencyAreas,
+						individualCompetencies: individualCompetencies,
+						plzDistribution: plzDistribution,
+					};
 
-				this.deliveryMethodData.set(deliveryData);
-				this.currentView = 'delivery-method-detail';
-				this.setupDeliveryMethodTabs(method);
-				this.isLoadingDeliveryMethod = false;
-			},
-			error: (error) => {
-				console.error('[NETWORK-BADGE-ANALYSIS] Error loading delivery method data:', error);
-				this.isLoadingDeliveryMethod = false;
-			}
-		});
+					this.deliveryMethodData.set(deliveryData);
+					this.currentView = 'delivery-method-detail';
+					this.setupDeliveryMethodTabs(method);
+					this.isLoadingDeliveryMethod = false;
+				},
+				error: (error) => {
+					console.error('[NETWORK-BADGE-ANALYSIS] Error loading delivery method data:', error);
+					this.isLoadingDeliveryMethod = false;
+				},
+			});
 	}
 
 	/**
@@ -860,15 +953,16 @@ export class NetworkBadgeAnalysisComponent
 	 * Translates "other" to "Andere" and keeps original order (sorted by badgeCount from API)
 	 */
 	private transformBadgeLocationsToPlzStats(locations: BadgeLocation[]): PlzStatisticsData[] {
-		return locations.map(location => ({
+		return locations.map((location) => ({
 			zipCode: location.city,
-			regionName: location.city.toLowerCase() === 'other'
-				? this.translate.instant('Network.Dashboard.badgeAnalysis.regions.other')
-				: location.city,
+			regionName:
+				location.city.toLowerCase() === 'other'
+					? this.translate.instant('Network.Dashboard.badgeAnalysis.regions.other')
+					: location.city,
 			learnerCount: location.badgeCount,
 			percentage: location.badgePercentage,
 			trend: 'stable' as const,
-			trendValue: 0
+			trendValue: 0,
 		}));
 	}
 
@@ -883,7 +977,7 @@ export class NetworkBadgeAnalysisComponent
 	 * Transform NetworkCompetencyAreaData to CompetencyAreaData for delivery method detail view
 	 */
 	private transformCompetencyAreasToDetailData(areas: NetworkCompetencyAreaData[]): CompetencyAreaData[] {
-		return areas.map(area => {
+		return areas.map((area) => {
 			const displayConfig = getCompetencyAreaDisplayConfig(area.id);
 
 			return {
@@ -894,7 +988,7 @@ export class NetworkBadgeAnalysisComponent
 				percentage: area.value,
 				color: displayConfig.color,
 				icon: displayConfig.icon,
-				escoUri: area.escoUri
+				escoUri: area.escoUri,
 			};
 		});
 	}
@@ -903,10 +997,12 @@ export class NetworkBadgeAnalysisComponent
 	 * Transform NetworkStrengthenedCompetencyData to CompetencyAreaData for delivery method detail view (Einzelstunden)
 	 * This uses the strengthened competencies endpoint which provides ESCO URIs
 	 */
-	private transformStrengthenedCompetenciesToDetailData(competencies: NetworkStrengthenedCompetencyData[]): CompetencyAreaData[] {
-		const maxHours = Math.max(...competencies.map(c => c.hours), 1);
+	private transformStrengthenedCompetenciesToDetailData(
+		competencies: NetworkStrengthenedCompetencyData[],
+	): CompetencyAreaData[] {
+		const maxHours = Math.max(...competencies.map((c) => c.hours), 1);
 
-		return competencies.map(comp => ({
+		return competencies.map((comp) => ({
 			name: comp.title,
 			areaKey: comp.competencyId,
 			count: 0, // Not provided by this endpoint
@@ -914,7 +1010,7 @@ export class NetworkBadgeAnalysisComponent
 			percentage: Math.round((comp.hours / maxHours) * 100),
 			color: '#492E98', // OEB Purple
 			icon: undefined, // No icons for individual competencies
-			escoUri: comp.escoUri
+			escoUri: comp.escoUri,
 		}));
 	}
 
@@ -958,19 +1054,19 @@ export class NetworkBadgeAnalysisComponent
 	getMaxCompetencyCount(): number {
 		const data = this.deliveryMethodData();
 		if (!data) return 0;
-		return Math.max(...data.topCompetencyAreas.map(c => c.count));
+		return Math.max(...data.topCompetencyAreas.map((c) => c.count));
 	}
 
 	getMaxCompetencyHours(): number {
 		const data = this.deliveryMethodData();
 		if (!data) return 0;
-		return Math.max(...data.topCompetencyAreas.map(c => c.hours));
+		return Math.max(...data.topCompetencyAreas.map((c) => c.hours));
 	}
 
 	getMaxPlzCount(): number {
 		const data = this.deliveryMethodData();
 		if (!data?.plzDistribution || data.plzDistribution.length === 0) return 1;
-		return Math.max(...data.plzDistribution.map(p => p.learnerCount)) || 1;
+		return Math.max(...data.plzDistribution.map((p) => p.learnerCount)) || 1;
 	}
 
 	/**
@@ -984,7 +1080,7 @@ export class NetworkBadgeAnalysisComponent
 		const ratio = learnerCount / maxCount;
 		const minWidth = 30;
 		const maxWidth = 100;
-		return minWidth + (ratio * (maxWidth - minWidth));
+		return minWidth + ratio * (maxWidth - minWidth);
 	}
 
 	getIconSvg(iconName: string): string {
@@ -1004,12 +1100,12 @@ export class NetworkBadgeAnalysisComponent
 	 */
 	getCompetencyFontSize(text: string): number {
 		const length = text?.length || 0;
-		if (length <= 20) return 14;      // tw-text-sm equivalent
+		if (length <= 20) return 14; // tw-text-sm equivalent
 		if (length <= 30) return 13;
-		if (length <= 40) return 12;      // tw-text-xs equivalent
+		if (length <= 40) return 12; // tw-text-xs equivalent
 		if (length <= 50) return 11;
 		if (length <= 60) return 10;
-		return 9;                          // Very long text
+		return 9; // Very long text
 	}
 
 	/**
@@ -1018,7 +1114,7 @@ export class NetworkBadgeAnalysisComponent
 	getMaxIndividualCompetencyHours(): number {
 		const data = this.deliveryMethodData();
 		if (!data?.individualCompetencies || data.individualCompetencies.length === 0) return 1;
-		return Math.max(...data.individualCompetencies.map(c => c.hours)) || 1;
+		return Math.max(...data.individualCompetencies.map((c) => c.hours)) || 1;
 	}
 
 	/**
@@ -1028,11 +1124,11 @@ export class NetworkBadgeAnalysisComponent
 		const data = this.deliveryMethodData();
 		if (!data?.individualCompetencies) return [];
 
-		return data.individualCompetencies.map(comp => ({
+		return data.individualCompetencies.map((comp) => ({
 			id: comp.areaKey,
 			label: comp.name,
 			value: comp.hours,
-			escoUri: comp.escoUri
+			escoUri: comp.escoUri,
 		}));
 	}
 
@@ -1118,7 +1214,7 @@ export class NetworkBadgeAnalysisComponent
 	 * Check if any delivery method segment is 100% (full circle)
 	 */
 	isDeliveryMethodFullCircle(): boolean {
-		return this.deliveryMethodChartData.some(stat => stat.percentage >= 99.9);
+		return this.deliveryMethodChartData.some((stat) => stat.percentage >= 99.9);
 	}
 
 	/**
@@ -1193,7 +1289,7 @@ export class NetworkBadgeAnalysisComponent
 	 * Transform ESCO skills to ApiRootSkill format for skill visualisation component
 	 */
 	private transformToApiRootSkills(skills: ESCORootSkill[]): ApiRootSkill[] {
-		return skills.map(skill => ({
+		return skills.map((skill) => ({
 			preferred_label: skill.preferred_label,
 			alt_labels: skill.alt_labels,
 			description: skill.description,
@@ -1201,10 +1297,9 @@ export class NetworkBadgeAnalysisComponent
 			type: skill.type,
 			reuse_level: skill.reuse_level || '',
 			studyLoad: skill.studyLoad,
-			breadcrumb_paths: skill.breadcrumb_paths as [any[]]
+			breadcrumb_paths: skill.breadcrumb_paths as [any[]],
 		}));
 	}
 
-	onCompetencyAreaClick(areaData: CompetencyAreaClickData): void {
-	}
+	onCompetencyAreaClick(areaData: CompetencyAreaClickData): void {}
 }

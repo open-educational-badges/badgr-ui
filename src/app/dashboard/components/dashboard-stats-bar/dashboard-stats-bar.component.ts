@@ -20,7 +20,7 @@ export interface StatItem {
 	imports: [CommonModule, TranslatePipe, NgIcon],
 	providers: [provideIcons({ lucideAward, lucideClock, lucideWarehouse, lucideUsers })],
 	templateUrl: './dashboard-stats-bar.component.html',
-	styleUrls: ['./dashboard-stats-bar.component.scss']
+	styleUrls: ['./dashboard-stats-bar.component.scss'],
 })
 export class DashboardStatsBarComponent {
 	@Input() totalBadges: number = 0;
@@ -33,23 +33,23 @@ export class DashboardStatsBarComponent {
 			{
 				label: 'Dashboard.Stats.badges',
 				value: this.formatNumber(this.totalBadges),
-				icon: 'lucideAward'
+				icon: 'lucideAward',
 			},
 			{
 				label: 'Dashboard.Stats.competencyHours',
 				value: this.formatNumber(this.totalCompetencyHours),
-				icon: 'lucideClock'
+				icon: 'lucideClock',
 			},
 			{
 				label: 'Dashboard.Stats.institutions',
 				value: this.formatNumber(this.totalInstitutions),
-				icon: 'lucideWarehouse'
+				icon: 'lucideWarehouse',
 			},
 			{
 				label: 'Dashboard.Stats.learners',
 				value: this.formatNumber(this.totalLearners),
-				icon: 'lucideUsers'
-			}
+				icon: 'lucideUsers',
+			},
 		];
 	}
 

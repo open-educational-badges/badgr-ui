@@ -23,7 +23,10 @@ import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/d
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideAward, lucideSchool, lucideUserStar, lucideClock, lucideClockFading } from '@ng-icons/lucide';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { BadgeDistributionPieChartComponent, PieChartSegment } from '../badge-distribution-pie-chart/badge-distribution-pie-chart.component';
+import {
+	BadgeDistributionPieChartComponent,
+	PieChartSegment,
+} from '../badge-distribution-pie-chart/badge-distribution-pie-chart.component';
 import { InfoIcon } from '../../../common/components/info-icon.component';
 
 export interface Institution {
@@ -60,7 +63,7 @@ export type SocialspaceViewState = 'overview' | 'city-detail' | 'city-learner-de
 	],
 	providers: [provideIcons({ lucideAward, lucideSchool, lucideUserStar, lucideClock, lucideClockFading })],
 	templateUrl: './oeb-dashboard-socialspace.component.html',
-	styleUrls: ['./oeb-dashboard-socialspace.component.scss']
+	styleUrls: ['./oeb-dashboard-socialspace.component.scss'],
 })
 export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
@@ -106,11 +109,9 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		// Load user's issuers to check membership for institution clicks
-		this.issuerManager.myIssuers$
-			.pipe(takeUntil(this.destroy$))
-			.subscribe(issuers => {
-				this.userIssuerSlugs = new Set(issuers.map(i => i.slug));
-			});
+		this.issuerManager.myIssuers$.pipe(takeUntil(this.destroy$)).subscribe((issuers) => {
+			this.userIssuerSlugs = new Set(issuers.map((i) => i.slug));
+		});
 
 		this.loadInstitutions();
 		this.loadCities();
@@ -146,33 +147,34 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 
 		this.loading = true;
 
-		this.networkDashboardApi.getSocialspaceInstitutions(this.networkSlug).pipe(
-			takeUntil(this.destroy$)
-		).subscribe({
-			next: (response) => {
-				this.institutions = response.institutions;
-				this.totalInstitutions = response.summary.total;
-				this.newInstitutionsCount = response.summary.newThisMonth;
+		this.networkDashboardApi
+			.getSocialspaceInstitutions(this.networkSlug)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					this.institutions = response.institutions;
+					this.totalInstitutions = response.summary.total;
+					this.newInstitutionsCount = response.summary.newThisMonth;
 
-				this.institutionsTableData = response.institutions.map(inst => ({
-					id: inst.id,
-					name: inst.name,
-					type: inst.type,
-					image: this.fixImageUrl(inst.image),
-					city: inst.city,
-					badgesIssued: inst.badgesIssued,
-					activeUsers: inst.activeUsers || 0,
-					joinedDate: inst.joinedDate || '',
-					issuerId: inst.issuerId
-				}));
+					this.institutionsTableData = response.institutions.map((inst) => ({
+						id: inst.id,
+						name: inst.name,
+						type: inst.type,
+						image: this.fixImageUrl(inst.image),
+						city: inst.city,
+						badgesIssued: inst.badgesIssued,
+						activeUsers: inst.activeUsers || 0,
+						joinedDate: inst.joinedDate || '',
+						issuerId: inst.issuerId,
+					}));
 
-				this.loading = false;
-			},
-			error: (error) => {
-				console.error('[SOCIALSPACE] Error loading institutions:', error);
-				this.loading = false;
-			}
-		});
+					this.loading = false;
+				},
+				error: (error) => {
+					console.error('[SOCIALSPACE] Error loading institutions:', error);
+					this.loading = false;
+				},
+			});
 	}
 
 	/**
@@ -184,16 +186,17 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this.networkDashboardApi.getSocialspaceCities(this.networkSlug).pipe(
-			takeUntil(this.destroy$)
-		).subscribe({
-			next: (response) => {
-				this.citiesData.set(response.cities);
-			},
-			error: (error) => {
-				console.error('[SOCIALSPACE] Error loading cities:', error);
-			}
-		});
+		this.networkDashboardApi
+			.getSocialspaceCities(this.networkSlug)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (response) => {
+					this.citiesData.set(response.cities);
+				},
+				error: (error) => {
+					console.error('[SOCIALSPACE] Error loading cities:', error);
+				},
+			});
 	}
 
 	/**
@@ -205,7 +208,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 		return date.toLocaleDateString('de-DE', {
 			day: '2-digit',
 			month: '2-digit',
-			year: 'numeric'
+			year: 'numeric',
 		});
 	}
 
@@ -319,61 +322,64 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 
 		this.detailLoading.set(true);
 
-		this.networkDashboardApi.getSocialspaceCityDetail(this.networkSlug, city).pipe(
-			takeUntil(this.destroy$)
-		).subscribe({
-			next: (data) => {
-				this.cityDetailData.set(data);
+		this.networkDashboardApi
+			.getSocialspaceCityDetail(this.networkSlug, city)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data) => {
+					this.cityDetailData.set(data);
 
-				// Transform top institutions to podium format
-				if (data.topInstitutions && data.topInstitutions.length > 0) {
-					const top3 = data.topInstitutions.slice(0, 3).map((inst, index) => ({
-						rank: (index + 1) as 1 | 2 | 3,
-						name: inst.name,
-						count: inst.badgeCount,
-						color: index === 0 ? '#FFCF0F' : index === 1 ? '#DEDEDE' : '#DEB200',
-						image: this.fixImageUrl(inst.image) || null,
-						id: inst.issuerId || undefined,
-					}));
-					this.top3Institutions.set(top3);
-
-					if (data.topInstitutions.length > 3) {
-						const additionalWithFixedImages = data.topInstitutions.slice(3).map(inst => ({
-							...inst,
-							image: this.fixImageUrl(inst.image)
+					// Transform top institutions to podium format
+					if (data.topInstitutions && data.topInstitutions.length > 0) {
+						const top3 = data.topInstitutions.slice(0, 3).map((inst, index) => ({
+							rank: (index + 1) as 1 | 2 | 3,
+							name: inst.name,
+							count: inst.badgeCount,
+							color: index === 0 ? '#FFCF0F' : index === 1 ? '#DEDEDE' : '#DEB200',
+							image: this.fixImageUrl(inst.image) || null,
+							id: inst.issuerId || undefined,
 						}));
-						this.additionalInstitutions.set(additionalWithFixedImages);
+						this.top3Institutions.set(top3);
+
+						if (data.topInstitutions.length > 3) {
+							const additionalWithFixedImages = data.topInstitutions.slice(3).map((inst) => ({
+								...inst,
+								image: this.fixImageUrl(inst.image),
+							}));
+							this.additionalInstitutions.set(additionalWithFixedImages);
+						}
 					}
-				}
-			},
-			error: (error) => {
-				console.error('[SOCIALSPACE] Error loading city detail:', error);
-			}
-		});
+				},
+				error: (error) => {
+					console.error('[SOCIALSPACE] Error loading city detail:', error);
+				},
+			});
 
-		this.networkDashboardApi.getSocialspaceLearners(this.networkSlug, city).pipe(
-			takeUntil(this.destroy$)
-		).subscribe({
-			next: (data) => {
-				this.cityLearnersData.set(data);
-			},
-			error: (error) => {
-				console.error('[SOCIALSPACE] Error loading learners data:', error);
-			}
-		});
+		this.networkDashboardApi
+			.getSocialspaceLearners(this.networkSlug, city)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data) => {
+					this.cityLearnersData.set(data);
+				},
+				error: (error) => {
+					console.error('[SOCIALSPACE] Error loading learners data:', error);
+				},
+			});
 
-		this.networkDashboardApi.getSocialspaceCompetencies(this.networkSlug, city).pipe(
-			takeUntil(this.destroy$)
-		).subscribe({
-			next: (data) => {
-				this.cityCompetenciesData.set(data);
-				this.detailLoading.set(false);
-			},
-			error: (error) => {
-				console.error('[SOCIALSPACE] Error loading competencies:', error);
-				this.detailLoading.set(false);
-			}
-		});
+		this.networkDashboardApi
+			.getSocialspaceCompetencies(this.networkSlug, city)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: (data) => {
+					this.cityCompetenciesData.set(data);
+					this.detailLoading.set(false);
+				},
+				error: (error) => {
+					console.error('[SOCIALSPACE] Error loading competencies:', error);
+					this.detailLoading.set(false);
+				},
+			});
 	}
 
 	/**
@@ -493,7 +499,8 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 		const data = this.cityDetailData();
 		if (!data || !data.badgesByType) return [];
 
-		const total = (data.badgesByType.participation || 0) +
+		const total =
+			(data.badgesByType.participation || 0) +
 			(data.badgesByType.competency || 0) +
 			(data.badgesByType.learningpath || 0);
 
@@ -506,7 +513,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 				count: data.badgesByType.participation || 0,
 				percentage: Math.round(((data.badgesByType.participation || 0) / total) * 100 * 10) / 10,
 				color: '#E4FFE4',
-				borderColor: '#93F993'
+				borderColor: '#93F993',
 			},
 			{
 				type: 'competency' as const,
@@ -514,7 +521,7 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 				count: data.badgesByType.competency || 0,
 				percentage: Math.round(((data.badgesByType.competency || 0) / total) * 100 * 10) / 10,
 				color: '#F1F0FF',
-				borderColor: '#CCD7FF'
+				borderColor: '#CCD7FF',
 			},
 			{
 				type: 'learningpath' as const,
@@ -522,9 +529,9 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 				count: data.badgesByType.learningpath || 0,
 				percentage: Math.round(((data.badgesByType.learningpath || 0) / total) * 100 * 10) / 10,
 				color: '#FFEAEA',
-				borderColor: '#FFBAB9'
-			}
-		].filter(stat => stat.count > 0);
+				borderColor: '#FFBAB9',
+			},
+		].filter((stat) => stat.count > 0);
 	}
 
 	/**
@@ -533,16 +540,18 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 	getTotalBadgesForPieChart(): number {
 		const data = this.cityDetailData();
 		if (!data || !data.badgesByType) return 0;
-		return (data.badgesByType.participation || 0) +
+		return (
+			(data.badgesByType.participation || 0) +
 			(data.badgesByType.competency || 0) +
-			(data.badgesByType.learningpath || 0);
+			(data.badgesByType.learningpath || 0)
+		);
 	}
 
 	/**
 	 * Convert badge type stats to PieChartSegment[] for the new pie chart component
 	 */
 	getBadgeTypePieChartSegments(): PieChartSegment[] {
-		return this.getBadgeTypeStatsForPieChart().map(stat => ({
+		return this.getBadgeTypeStatsForPieChart().map((stat) => ({
 			id: stat.type,
 			label: stat.label,
 			count: stat.count,

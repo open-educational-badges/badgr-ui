@@ -31,7 +31,7 @@ describe('PlzOverviewComponent', () => {
 		metadata: {
 			lastUpdated: '2024-11-16',
 			totalLearners: 3542,
-			totalPlzAreas: 18
+			totalPlzAreas: 18,
 		},
 		statistics: [
 			{
@@ -40,7 +40,7 @@ describe('PlzOverviewComponent', () => {
 				learnerCount: 487,
 				percentage: 13.7,
 				trend: 'up',
-				trendValue: 23
+				trendValue: 23,
 			},
 			{
 				plz: '10xxx',
@@ -48,7 +48,7 @@ describe('PlzOverviewComponent', () => {
 				learnerCount: 412,
 				percentage: 11.6,
 				trend: 'up',
-				trendValue: 18
+				trendValue: 18,
 			},
 			{
 				plz: '20xxx',
@@ -56,7 +56,7 @@ describe('PlzOverviewComponent', () => {
 				learnerCount: 356,
 				percentage: 10.1,
 				trend: 'stable',
-				trendValue: 3
+				trendValue: 3,
 			},
 			{
 				plz: '60xxx',
@@ -64,7 +64,7 @@ describe('PlzOverviewComponent', () => {
 				learnerCount: 298,
 				percentage: 8.4,
 				trend: 'up',
-				trendValue: 15
+				trendValue: 15,
 			},
 			{
 				plz: '90xxx',
@@ -72,27 +72,21 @@ describe('PlzOverviewComponent', () => {
 				learnerCount: 176,
 				percentage: 5.0,
 				trend: 'down',
-				trendValue: -5
-			}
-		]
+				trendValue: -5,
+			},
+		],
 	};
 
 	beforeEach(async () => {
-		const mockDataServiceSpy = jasmine.createSpyObj('DashboardMockDataService', [
-			'getPlzStatistics'
-		]);
+		const mockDataServiceSpy = jasmine.createSpyObj('DashboardMockDataService', ['getPlzStatistics']);
 		const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
 		await TestBed.configureTestingModule({
-			imports: [
-				CommonModule,
-				TranslateModule.forRoot(),
-				PlzOverviewComponent
-			],
+			imports: [CommonModule, TranslateModule.forRoot(), PlzOverviewComponent],
 			providers: [
 				{ provide: DashboardMockDataService, useValue: mockDataServiceSpy },
-				{ provide: Router, useValue: routerSpy }
-			]
+				{ provide: Router, useValue: routerSpy },
+			],
 		}).compileComponents();
 
 		mockDataService = TestBed.inject(DashboardMockDataService) as jasmine.SpyObj<DashboardMockDataService>;
@@ -131,7 +125,7 @@ describe('PlzOverviewComponent', () => {
 
 			const expectedTotal = mockPlzStatisticsResponse.statistics.reduce(
 				(sum, stat) => sum + stat.learnerCount,
-				0
+				0,
 			);
 			expect(component.totalLearners).toBe(expectedTotal);
 		});
@@ -140,11 +134,11 @@ describe('PlzOverviewComponent', () => {
 			let loadingStateBeforeResponse = false;
 
 			mockDataService.getPlzStatistics.and.returnValue(
-				new Observable(observer => {
+				new Observable((observer) => {
 					loadingStateBeforeResponse = component.loading;
 					observer.next(mockPlzStatisticsResponse);
 					observer.complete();
-				})
+				}),
 			);
 
 			fixture.detectChanges();
@@ -174,7 +168,7 @@ describe('PlzOverviewComponent', () => {
 		it('should handle empty statistics array', () => {
 			const emptyResponse: PlzStatisticsResponse = {
 				...mockPlzStatisticsResponse,
-				statistics: []
+				statistics: [],
 			};
 			mockDataService.getPlzStatistics.and.returnValue(of(emptyResponse));
 
@@ -193,10 +187,7 @@ describe('PlzOverviewComponent', () => {
 
 			expect(component.error).toBe('Dashboard.plzOverview.error');
 			expect(component.loading).toBe(false);
-			expect(console.error).toHaveBeenCalledWith(
-				'[PLZ-OVERVIEW] Error loading PLZ statistics:',
-				error
-			);
+			expect(console.error).toHaveBeenCalledWith('[PLZ-OVERVIEW] Error loading PLZ statistics:', error);
 		});
 
 		it('should log successful data load', () => {
@@ -205,7 +196,7 @@ describe('PlzOverviewComponent', () => {
 
 			expect(console.log).toHaveBeenCalledWith(
 				'[PLZ-OVERVIEW] PLZ Statistics loaded:',
-				mockPlzStatisticsResponse
+				mockPlzStatisticsResponse,
 			);
 		});
 
@@ -220,16 +211,16 @@ describe('PlzOverviewComponent', () => {
 						learnerCount: 0,
 						percentage: 0,
 						trend: 'stable',
-						trendValue: 0
-					}
-				]
+						trendValue: 0,
+					},
+				],
 			};
 			mockDataService.getPlzStatistics.and.returnValue(of(dataWithZero));
 
 			fixture.detectChanges();
 
 			expect(component.plzStatistics.length).toBe(6);
-			const emptyRegion = component.plzStatistics.find(s => s.plz === '99xxx');
+			const emptyRegion = component.plzStatistics.find((s) => s.plz === '99xxx');
 			expect(emptyRegion?.learnerCount).toBe(0);
 		});
 	});
@@ -253,10 +244,7 @@ describe('PlzOverviewComponent', () => {
 
 			component.viewPlzDetails(testPlz);
 
-			expect(console.log).toHaveBeenCalledWith(
-				'[PLZ-OVERVIEW] Navigating to PLZ detail:',
-				testPlz
-			);
+			expect(console.log).toHaveBeenCalledWith('[PLZ-OVERVIEW] Navigating to PLZ detail:', testPlz);
 		});
 
 		it('should navigate to dashboard from back button', () => {
@@ -266,7 +254,7 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should handle navigation for all PLZ codes', () => {
-			component.plzStatistics.forEach(stat => {
+			component.plzStatistics.forEach((stat) => {
 				component.viewPlzDetails(stat.plz);
 			});
 
@@ -318,9 +306,9 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should handle all trend types in statistics', () => {
-			const upTrends = component.plzStatistics.filter(s => s.trend === 'up');
-			const downTrends = component.plzStatistics.filter(s => s.trend === 'down');
-			const stableTrends = component.plzStatistics.filter(s => s.trend === 'stable');
+			const upTrends = component.plzStatistics.filter((s) => s.trend === 'up');
+			const downTrends = component.plzStatistics.filter((s) => s.trend === 'down');
+			const stableTrends = component.plzStatistics.filter((s) => s.trend === 'stable');
 
 			expect(upTrends.length).toBeGreaterThan(0);
 			expect(downTrends.length).toBeGreaterThan(0);
@@ -351,7 +339,7 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should handle maximum learner count', () => {
-			const maxCount = Math.max(...component.plzStatistics.map(s => s.learnerCount));
+			const maxCount = Math.max(...component.plzStatistics.map((s) => s.learnerCount));
 			const expectedWidth = (maxCount / component.totalLearners) * 100;
 
 			const barWidth = component.getBarWidth(maxCount);
@@ -360,7 +348,7 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should handle minimum learner count', () => {
-			const minCount = Math.min(...component.plzStatistics.map(s => s.learnerCount));
+			const minCount = Math.min(...component.plzStatistics.map((s) => s.learnerCount));
 			const expectedWidth = (minCount / component.totalLearners) * 100;
 
 			const barWidth = component.getBarWidth(minCount);
@@ -375,7 +363,7 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should calculate correct widths for all statistics', () => {
-			component.plzStatistics.forEach(stat => {
+			component.plzStatistics.forEach((stat) => {
 				const width = component.getBarWidth(stat.learnerCount);
 				expect(width).toBeGreaterThanOrEqual(0);
 				expect(width).toBeLessThanOrEqual(100);
@@ -422,7 +410,7 @@ describe('PlzOverviewComponent', () => {
 			const singleArea: PlzStatisticsResponse = {
 				...mockPlzStatisticsResponse,
 				metadata: { ...mockPlzStatisticsResponse.metadata, totalPlzAreas: 1 },
-				statistics: [mockPlzStatisticsResponse.statistics[0]]
+				statistics: [mockPlzStatisticsResponse.statistics[0]],
 			};
 			mockDataService.getPlzStatistics.and.returnValue(of(singleArea));
 
@@ -442,9 +430,9 @@ describe('PlzOverviewComponent', () => {
 						learnerCount: 1000000,
 						percentage: 99.9,
 						trend: 'up',
-						trendValue: 50000
-					}
-				]
+						trendValue: 50000,
+					},
+				],
 			};
 			mockDataService.getPlzStatistics.and.returnValue(of(largeCount));
 
@@ -455,7 +443,7 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should handle negative trend values', () => {
-			const negativeTrend = component.plzStatistics.find(s => s.trend === 'down');
+			const negativeTrend = component.plzStatistics.find((s) => s.trend === 'down');
 
 			expect(negativeTrend).toBeDefined();
 			expect(negativeTrend?.trendValue).toBeLessThan(0);
@@ -467,8 +455,8 @@ describe('PlzOverviewComponent', () => {
 				metadata: {
 					lastUpdated: '',
 					totalLearners: 0,
-					totalPlzAreas: 0
-				}
+					totalPlzAreas: 0,
+				},
 			};
 			mockDataService.getPlzStatistics.and.returnValue(of(noMetadata));
 
@@ -481,9 +469,23 @@ describe('PlzOverviewComponent', () => {
 			const mixedFormats: PlzStatisticsResponse = {
 				...mockPlzStatisticsResponse,
 				statistics: [
-					{ plz: '80xxx', regionName: 'Munich', learnerCount: 100, percentage: 50, trend: 'up', trendValue: 5 },
-					{ plz: '80xx', regionName: 'Zurich', learnerCount: 100, percentage: 50, trend: 'up', trendValue: 5 }
-				]
+					{
+						plz: '80xxx',
+						regionName: 'Munich',
+						learnerCount: 100,
+						percentage: 50,
+						trend: 'up',
+						trendValue: 5,
+					},
+					{
+						plz: '80xx',
+						regionName: 'Zurich',
+						learnerCount: 100,
+						percentage: 50,
+						trend: 'up',
+						trendValue: 5,
+					},
+				],
 			};
 			mockDataService.getPlzStatistics.and.returnValue(of(mixedFormats));
 
@@ -503,7 +505,7 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should maintain all required properties for each statistic', () => {
-			component.plzStatistics.forEach(stat => {
+			component.plzStatistics.forEach((stat) => {
 				expect(stat.plz).toBeDefined();
 				expect(stat.regionName).toBeDefined();
 				expect(stat.learnerCount).toBeDefined();
@@ -514,16 +516,13 @@ describe('PlzOverviewComponent', () => {
 		});
 
 		it('should have correct total learners sum', () => {
-			const calculatedTotal = component.plzStatistics.reduce(
-				(sum, stat) => sum + stat.learnerCount,
-				0
-			);
+			const calculatedTotal = component.plzStatistics.reduce((sum, stat) => sum + stat.learnerCount, 0);
 
 			expect(component.totalLearners).toBe(calculatedTotal);
 		});
 
 		it('should have percentage values that are reasonable', () => {
-			component.plzStatistics.forEach(stat => {
+			component.plzStatistics.forEach((stat) => {
 				expect(stat.percentage).toBeGreaterThanOrEqual(0);
 				expect(stat.percentage).toBeLessThanOrEqual(100);
 			});

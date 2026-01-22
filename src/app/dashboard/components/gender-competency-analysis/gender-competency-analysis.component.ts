@@ -16,9 +16,12 @@ import {
 	GenderIndividualCompetency,
 	GenderTopBadge,
 	NetworkCompetencyAreaData,
-	ESCORootSkill
+	ESCORootSkill,
 } from '../../models/network-dashboard-api.model';
-import { RecipientSkillVisualisationComponent, CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
+import {
+	RecipientSkillVisualisationComponent,
+	CompetencyAreaClickData,
+} from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { ApiRootSkill } from '../../../common/model/ai-skills.model';
 
 /**
@@ -67,10 +70,18 @@ export interface GenderCompetencyData {
 @Component({
 	selector: 'app-gender-competency-analysis',
 	standalone: true,
-	imports: [CommonModule, TranslateModule, NgIcon, DashboardTopBadgesComponent, RouterLink, RecipientSkillVisualisationComponent, HorizontalBarChartComponent],
+	imports: [
+		CommonModule,
+		TranslateModule,
+		NgIcon,
+		DashboardTopBadgesComponent,
+		RouterLink,
+		RecipientSkillVisualisationComponent,
+		HorizontalBarChartComponent,
+	],
 	providers: [provideIcons({ lucideClockFading })],
 	templateUrl: './gender-competency-analysis.component.html',
-	styleUrls: ['./gender-competency-analysis.component.scss']
+	styleUrls: ['./gender-competency-analysis.component.scss'],
 })
 export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
@@ -102,9 +113,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	/** Additional badges beyond top 3 (for list display below podium) */
 	additionalBadges: TopBadgeData[] = [];
 
-	constructor(
-		private networkDashboardApi: NetworkDashboardApiService
-	) {}
+	constructor(private networkDashboardApi: NetworkDashboardApiService) {}
 
 	ngOnInit(): void {
 		this.loadGenderData();
@@ -132,77 +141,83 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 		const genderType = mapGenderLabelToType(this.gender);
 
 		forkJoin({
-			genderDetail: this.networkDashboardApi.getLearnersGenderDetail(
-				this.networkSlug,
-				this.gender as GenderType,
-				5  // competencyLimit only, no badgeLimit
-			).pipe(
-				catchError((error) => {
-					console.warn('[GENDER-ANALYSIS] Gender detail API failed:', error);
-					return of(null);
-				})
-			),
-			competencySkills: this.networkDashboardApi.getCompetencyAreasSkills(this.networkSlug, { gender: genderType }).pipe(
-				catchError((error) => {
-					console.warn('[GENDER-ANALYSIS] Competency areas skills API failed:', error);
-					return of(null);
-				})
-			)
-		}).pipe(
-			takeUntil(this.destroy$)
-		).subscribe({
-			next: ({ genderDetail, competencySkills }) => {
-				if (!genderDetail) {
-					console.warn('[GENDER-ANALYSIS] No gender detail data available');
+			genderDetail: this.networkDashboardApi
+				.getLearnersGenderDetail(
+					this.networkSlug,
+					this.gender as GenderType,
+					5, // competencyLimit only, no badgeLimit
+				)
+				.pipe(
+					catchError((error) => {
+						console.warn('[GENDER-ANALYSIS] Gender detail API failed:', error);
+						return of(null);
+					}),
+				),
+			competencySkills: this.networkDashboardApi
+				.getCompetencyAreasSkills(this.networkSlug, { gender: genderType })
+				.pipe(
+					catchError((error) => {
+						console.warn('[GENDER-ANALYSIS] Competency areas skills API failed:', error);
+						return of(null);
+					}),
+				),
+		})
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: ({ genderDetail, competencySkills }) => {
+					if (!genderDetail) {
+						console.warn('[GENDER-ANALYSIS] No gender detail data available');
+						this.setFallbackData();
+						return;
+					}
+
+					console.log('[GENDER-ANALYSIS] Data loaded from API:', genderDetail);
+					console.log('[GENDER-ANALYSIS] Skills data loaded:', competencySkills);
+
+					// Transform API data to component format
+					// Note: API uses topCompetencyAreas and topStrengthenedCompetencies
+					const transformedKompetenzbereiche = this.transformCompetencyAreas(genderDetail.topCompetencyAreas);
+					const transformedEinzelkompetenzen = this.transformIndividualCompetencies(
+						genderDetail.topStrengthenedCompetencies,
+					);
+					const transformedBadges = this.transformTopBadges(genderDetail.topBadges);
+
+					// Transform ESCO skills data for skill visualisation
+					if (competencySkills?.skills?.length > 0) {
+						this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
+						console.log('[GENDER-ANALYSIS] Skill visualisation data:', this.skillVisualisationData);
+					} else {
+						this.skillVisualisationData = [];
+					}
+
+					this.data = {
+						gender: this.gender, // Use i18n label from parent component
+						totalBadges: genderDetail.metadata.totalBadges,
+						topKompetenzbereiche: transformedKompetenzbereiche,
+						topEinzelkompetenzen: transformedEinzelkompetenzen,
+						topBadges: transformedBadges,
+					};
+
+					// Transform top badges for podium display (top 3 only)
+					this.top3BadgesForDisplay = this.transformToTop3Badges(transformedBadges);
+					// Store additional badges beyond top 3 for list display
+					this.additionalBadges = transformedBadges.slice(3);
+
+					this.loading = false;
+					console.log('[GENDER-ANALYSIS] Data transformed:', this.data);
+				},
+				error: (error) => {
+					console.error('[GENDER-ANALYSIS] Error in subscription:', error);
 					this.setFallbackData();
-					return;
-				}
-
-				console.log('[GENDER-ANALYSIS] Data loaded from API:', genderDetail);
-				console.log('[GENDER-ANALYSIS] Skills data loaded:', competencySkills);
-
-				// Transform API data to component format
-				// Note: API uses topCompetencyAreas and topStrengthenedCompetencies
-				const transformedKompetenzbereiche = this.transformCompetencyAreas(genderDetail.topCompetencyAreas);
-				const transformedEinzelkompetenzen = this.transformIndividualCompetencies(genderDetail.topStrengthenedCompetencies);
-				const transformedBadges = this.transformTopBadges(genderDetail.topBadges);
-
-				// Transform ESCO skills data for skill visualisation
-				if (competencySkills?.skills?.length > 0) {
-					this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
-					console.log('[GENDER-ANALYSIS] Skill visualisation data:', this.skillVisualisationData);
-				} else {
-					this.skillVisualisationData = [];
-				}
-
-				this.data = {
-					gender: this.gender, // Use i18n label from parent component
-					totalBadges: genderDetail.metadata.totalBadges,
-					topKompetenzbereiche: transformedKompetenzbereiche,
-					topEinzelkompetenzen: transformedEinzelkompetenzen,
-					topBadges: transformedBadges
-				};
-
-				// Transform top badges for podium display (top 3 only)
-				this.top3BadgesForDisplay = this.transformToTop3Badges(transformedBadges);
-				// Store additional badges beyond top 3 for list display
-				this.additionalBadges = transformedBadges.slice(3);
-
-				this.loading = false;
-				console.log('[GENDER-ANALYSIS] Data transformed:', this.data);
-			},
-			error: (error) => {
-				console.error('[GENDER-ANALYSIS] Error in subscription:', error);
-				this.setFallbackData();
-			}
-		});
+				},
+			});
 	}
 
 	/**
 	 * Transform ESCORootSkill array to ApiRootSkill array for skill visualisation component
 	 */
 	private transformToApiRootSkills(skills: ESCORootSkill[]): ApiRootSkill[] {
-		return skills.map(skill => ({
+		return skills.map((skill) => ({
 			preferred_label: skill.preferred_label,
 			alt_labels: skill.alt_labels,
 			description: skill.description,
@@ -210,7 +225,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 			type: skill.type,
 			reuse_level: skill.reuse_level || '',
 			studyLoad: skill.studyLoad,
-			breadcrumb_paths: skill.breadcrumb_paths as [any[]]
+			breadcrumb_paths: skill.breadcrumb_paths as [any[]],
 		}));
 	}
 
@@ -218,7 +233,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 * Transform competency areas from API format
 	 */
 	private transformCompetencyAreas(areas: NetworkCompetencyAreaData[]): CompetencyAreaData[] {
-		return areas.map(item => {
+		return areas.map((item) => {
 			const displayConfig = getCompetencyAreaDisplayConfig(item.id);
 			return {
 				name: item.name,
@@ -234,11 +249,11 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 * Transform individual competencies from API format
 	 */
 	private transformIndividualCompetencies(competencies: GenderIndividualCompetency[]): IndividualCompetencyData[] {
-		return competencies.map(comp => ({
+		return competencies.map((comp) => ({
 			name: comp.name,
 			count: comp.count,
 			hours: comp.hours,
-			escoUri: comp.escoUri
+			escoUri: comp.escoUri,
 		}));
 	}
 
@@ -246,12 +261,12 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 * Transform top badges from API format
 	 */
 	private transformTopBadges(badges: GenderTopBadge[]): TopBadgeData[] {
-		return badges.map(badge => ({
+		return badges.map((badge) => ({
 			badgeId: badge.badgeId,
 			name: badge.name,
 			count: badge.count,
 			hours: badge.hours || 0,
-			image: badge.image
+			image: badge.image,
 		}));
 	}
 
@@ -274,20 +289,20 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 */
 	private getMockEinzelkompetenzen(): IndividualCompetencyData[] {
 		const mockDataByGender: { [key: string]: IndividualCompetencyData[] } = {
-			'Männlich': [
+			Männlich: [
 				{ name: 'Web Development', count: 52, hours: 208 },
 				{ name: 'Project Management', count: 38, hours: 152 },
 				{ name: 'Data Analytics', count: 31, hours: 124 },
 				{ name: 'Leadership', count: 27, hours: 108 },
 				{ name: 'Communication Skills', count: 24, hours: 96 },
 			],
-			'Weiblich': [
+			Weiblich: [
 				{ name: 'Digital Marketing', count: 64, hours: 256 },
 				{ name: 'Communication Skills', count: 47, hours: 188 },
 				{ name: 'Leadership', count: 35, hours: 140 },
 				{ name: 'Teamwork', count: 29, hours: 116 },
 				{ name: 'Project Management', count: 25, hours: 100 },
-			]
+			],
 		};
 		return mockDataByGender[this.gender] || mockDataByGender['Männlich'];
 	}
@@ -297,18 +312,18 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 */
 	private getMockTopBadges(): TopBadgeData[] {
 		const mockDataByGender: { [key: string]: TopBadgeData[] } = {
-			'Männlich': [
+			Männlich: [
 				{ badgeId: 'mock-badge-1', name: 'Full Stack Developer', count: 45, hours: 180 },
 				{ badgeId: 'mock-badge-2', name: 'Agile Practitioner', count: 32, hours: 128 },
 				{ badgeId: 'mock-badge-3', name: 'Data Scientist', count: 28, hours: 112 },
 				{ badgeId: 'mock-badge-4', name: 'Technical Lead', count: 22, hours: 88 },
 			],
-			'Weiblich': [
+			Weiblich: [
 				{ badgeId: 'mock-badge-5', name: 'Digital Marketing Expert', count: 58, hours: 232 },
 				{ badgeId: 'mock-badge-6', name: 'Team Leader', count: 41, hours: 164 },
 				{ badgeId: 'mock-badge-7', name: 'Language Specialist', count: 36, hours: 144 },
 				{ badgeId: 'mock-badge-8', name: 'Communication Pro', count: 30, hours: 120 },
-			]
+			],
 		};
 		return mockDataByGender[this.gender] || mockDataByGender['Männlich'];
 	}
@@ -322,7 +337,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 			totalBadges: 0,
 			topKompetenzbereiche: [],
 			topEinzelkompetenzen: [],
-			topBadges: []
+			topBadges: [],
 		};
 		this.top3BadgesForDisplay = [];
 		this.additionalBadges = [];
@@ -341,7 +356,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 			count: badge.count,
 			color: colors[index],
 			image: badge.image,
-			badgeId: badge.badgeId
+			badgeId: badge.badgeId,
 		}));
 	}
 
@@ -366,7 +381,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 */
 	getCompetencyBarWidth(count: number): number {
 		if (!this.data || this.data.topEinzelkompetenzen.length === 0) return 5;
-		const maxCount = Math.max(...this.data.topEinzelkompetenzen.map(c => c.count));
+		const maxCount = Math.max(...this.data.topEinzelkompetenzen.map((c) => c.count));
 		if (maxCount === 0) return 5;
 		return Math.max(3, (count / maxCount) * 100);
 	}
@@ -376,7 +391,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 */
 	getCompetencyBarWidthByHours(hours: number): number {
 		if (!this.data || this.data.topEinzelkompetenzen.length === 0) return 5;
-		const maxHours = Math.max(...this.data.topEinzelkompetenzen.map(c => c.hours));
+		const maxHours = Math.max(...this.data.topEinzelkompetenzen.map((c) => c.hours));
 		if (maxHours === 0) return 5;
 		return Math.max(3, (hours / maxHours) * 100);
 	}
@@ -396,7 +411,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 */
 	getBadgeBarWidth(count: number): number {
 		if (!this.data || this.data.topBadges.length === 0) return 5;
-		const maxCount = Math.max(...this.data.topBadges.map(b => b.count));
+		const maxCount = Math.max(...this.data.topBadges.map((b) => b.count));
 		if (maxCount === 0) return 5;
 		return Math.max(3, (count / maxCount) * 100);
 	}
@@ -406,7 +421,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 */
 	getBadgeBarWidthByHours(hours: number): number {
 		if (!this.data || this.data.topBadges.length === 0) return 5;
-		const maxHours = Math.max(...this.data.topBadges.map(b => b.hours));
+		const maxHours = Math.max(...this.data.topBadges.map((b) => b.hours));
 		if (maxHours === 0) return 5;
 		return Math.max(3, (hours / maxHours) * 100);
 	}
@@ -431,14 +446,18 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 			'Web Development': 'http://data.europa.eu/esco/skill/2468ace0-1357-bdf9-8642-0eca8642dbf0',
 			'Project Management': 'http://data.europa.eu/esco/skill/f8e7d6c5-b4a3-2109-8765-432109876543',
 			'Data Analytics': 'http://data.europa.eu/esco/skill/a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-			'Leadership': 'http://data.europa.eu/esco/skill/9876fedc-ba09-8765-4321-0fedcba98765',
+			Leadership: 'http://data.europa.eu/esco/skill/9876fedc-ba09-8765-4321-0fedcba98765',
 			'Communication Skills': 'http://data.europa.eu/esco/skill/8ac4e016-79bd-f035-ca86-42edb1975320',
 			'Digital Marketing': 'http://data.europa.eu/esco/skill/1a2b3c4d-5e6f-7890-1234-567890abcdef',
-			'Teamwork': 'http://data.europa.eu/esco/skill/5791bde3-468a-cf02-9753-fdb086420eca',
-			'Programming': 'http://data.europa.eu/esco/skill/d45c7b4e-5c1d-4b67-a2e6-9c2b5f3d8e7f',
+			Teamwork: 'http://data.europa.eu/esco/skill/5791bde3-468a-cf02-9753-fdb086420eca',
+			Programming: 'http://data.europa.eu/esco/skill/d45c7b4e-5c1d-4b67-a2e6-9c2b5f3d8e7f',
 		};
 		const key = competencyName.replace('Dashboard.competency.', '');
-		return skillMap[competencyName] || skillMap[key] || `http://data.europa.eu/esco/skill/${encodeURIComponent(competencyName.toLowerCase().replace(/\s+/g, '-'))}`;
+		return (
+			skillMap[competencyName] ||
+			skillMap[key] ||
+			`http://data.europa.eu/esco/skill/${encodeURIComponent(competencyName.toLowerCase().replace(/\s+/g, '-'))}`
+		);
 	}
 
 	/**
@@ -446,13 +465,13 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	 */
 	getCompetencyBarItems(): HorizontalBarItem[] {
 		if (!this.data) return [];
-		return this.data.topEinzelkompetenzen.map(comp => ({
+		return this.data.topEinzelkompetenzen.map((comp) => ({
 			id: comp.name,
 			label: comp.name,
 			value: comp.hours,
 			barDisplayValue: comp.hours,
 			escoUri: comp.escoUri || this.getEscoUri(comp.name),
-			data: comp
+			data: comp,
 		}));
 	}
 }

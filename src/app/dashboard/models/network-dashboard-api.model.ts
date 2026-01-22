@@ -61,10 +61,10 @@ export interface NetworkCompetencyAreasResponse {
 
 export interface NetworkCompetencyAreaData {
 	id: string;
-	name: string;       // Display name of the competency area
-	value: number;      // Percentage for visualization
-	weight: number;     // Absolute count
-	escoUri?: string;   // Optional ESCO URI for the competency
+	name: string; // Display name of the competency area
+	value: number; // Percentage for visualization
+	weight: number; // Absolute count
+	escoUri?: string; // Optional ESCO URI for the competency
 	// Note: color is assigned by frontend based on area ID
 }
 
@@ -84,10 +84,10 @@ export interface NetworkTopBadgesResponse {
 }
 
 export interface NetworkTopBadgeData {
-	rank: number;       // 1, 2, 3
+	rank: number; // 1, 2, 3
 	badgeId: string;
 	badgeTitle: string;
-	image: string;      // URL to badge image
+	image: string; // URL to badge image
 	count: number;
 	// Note: icon and color are assigned by frontend based on rank
 }
@@ -116,14 +116,14 @@ export interface NetworkEscoSkill {
 }
 
 export interface NetworkRecentActivityData {
-	date: string;           // ISO date string (e.g., "2024-11-06")
+	date: string; // ISO date string (e.g., "2024-11-06")
 	badgeId: string;
 	badgeTitle: string;
-	badgeImage: string;     // URL to badge image
-	issuerId: string;       // Issuer slug for linking to institution page
-	issuerName: string;     // Display name of the institution/issuer
+	badgeImage: string; // URL to badge image
+	issuerId: string; // Issuer slug for linking to institution page
+	issuerName: string; // Display name of the institution/issuer
 	recipientCount: number;
-	skills?: NetworkEscoSkill[];  // Einzelkompetenzen with ESCO links (optional)
+	skills?: NetworkEscoSkill[]; // Einzelkompetenzen with ESCO links (optional)
 }
 
 // ==========================================
@@ -145,28 +145,28 @@ export interface CompetencyAreaDisplayConfig {
 export const COMPETENCY_AREA_DISPLAY_CONFIG: Record<string, CompetencyAreaDisplayConfig> = {
 	it_digital: {
 		color: '#492E98',
-		icon: 'Monitor'
+		icon: 'Monitor',
 	},
 	social_competencies: {
 		color: '#492E98',
-		icon: 'Users'
+		icon: 'Users',
 	},
 	languages: {
 		color: '#492E98',
-		icon: 'Globe'
+		icon: 'Globe',
 	},
 	crafts: {
 		color: '#492E98',
-		icon: 'Wrench'
+		icon: 'Wrench',
 	},
 	management: {
 		color: '#492E98',
-		icon: 'BarChart3'
+		icon: 'BarChart3',
 	},
 	other: {
 		color: '#492E98',
-		icon: 'Star'
-	}
+		icon: 'Star',
+	},
 };
 
 /**
@@ -195,7 +195,7 @@ export interface BadgeRankDisplayConfig {
 export const BADGE_RANK_DISPLAY_CONFIG: Record<number, BadgeRankDisplayConfig> = {
 	1: { icon: 'lucideTrophy', color: '#FFCC00' },
 	2: { icon: 'lucideMedal', color: '#492E98' },
-	3: { icon: 'lucideAward', color: '#492E98' }
+	3: { icon: 'lucideAward', color: '#492E98' },
 };
 
 /**
@@ -248,7 +248,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
-		order: 1
+		order: 1,
 	},
 	badges_created: {
 		descriptionKey: 'Network.Dashboard.kpi.badgesCreated',
@@ -257,7 +257,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
-		order: 2
+		order: 2,
 	},
 	badges_awarded: {
 		descriptionKey: 'Network.Dashboard.kpi.badgesAwarded',
@@ -266,7 +266,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
-		order: 3
+		order: 3,
 	},
 	participation_badges: {
 		descriptionKey: 'Network.Dashboard.kpi.participationBadges',
@@ -278,7 +278,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconBorderColor: '#492E98',
 		variant: 'dual',
 		pairedWith: 'competency_badges',
-		order: 4
+		order: 4,
 	},
 	competency_badges: {
 		descriptionKey: 'Network.Dashboard.kpi.competencyBadges',
@@ -290,7 +290,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconBorderColor: '#492E98',
 		variant: 'dual',
 		pairedWith: 'participation_badges',
-		order: 4
+		order: 4,
 	},
 	competency_hours: {
 		descriptionKey: 'Network.Dashboard.kpi.competencyHours',
@@ -300,7 +300,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
-		order: 5
+		order: 5,
 	},
 	learners_count: {
 		descriptionKey: 'Network.Dashboard.kpi.learnersCount',
@@ -309,7 +309,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
-		order: 6
+		order: 6,
 	},
 	badges_per_month: {
 		descriptionKey: 'Network.Dashboard.kpi.badgesPerMonth',
@@ -318,7 +318,7 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
-		order: 7
+		order: 7,
 	},
 	learners_with_paths: {
 		descriptionKey: 'Network.Dashboard.kpi.learnersWithPaths',
@@ -327,8 +327,8 @@ export const KPI_DISPLAY_CONFIG: Record<NetworkKPIId, KPIDisplayConfig> = {
 		iconSize: 80,
 		iconColor: '#492E98',
 		variant: 'standard',
-		order: 8
-	}
+		order: 8,
+	},
 };
 
 /**
@@ -351,7 +351,7 @@ export function formatKPIValue(value: number): string {
 export function formatTrendLabel(
 	trend: 'up' | 'down' | 'stable' | undefined,
 	trendValue: number | undefined,
-	unitKey: string | undefined
+	unitKey: string | undefined,
 ): string {
 	if (!trend || trendValue === undefined) return '';
 
@@ -451,7 +451,7 @@ export interface NetworkBadgeAwardsTimelineResponse {
 }
 
 export interface NetworkBadgeAwardTimelineEntry {
-	date: string;      // ISO date string (e.g., "2024-01-01")
+	date: string; // ISO date string (e.g., "2024-01-01")
 	count: number;
 	byType?: {
 		participation: number;
@@ -515,29 +515,31 @@ export const BADGE_TYPE_DISPLAY_CONFIG: Record<string, BadgeTypeDisplayConfig> =
 	participation: {
 		label: 'Teilnahme-Badges',
 		color: '#E4FFE4',
-		borderColor: '#93F993'
+		borderColor: '#93F993',
 	},
 	competency: {
 		label: 'Kompetenz-Badges',
 		color: '#F1F0FF',
-		borderColor: '#CCD7FF'
+		borderColor: '#CCD7FF',
 	},
 	learningpath: {
 		label: 'Micro Degrees',
 		color: '#FFEAEA',
-		borderColor: '#FFBAB9'
-	}
+		borderColor: '#FFBAB9',
+	},
 };
 
 /**
  * Get display config for a badge type
  */
 export function getBadgeTypeDisplayConfig(type: string): BadgeTypeDisplayConfig {
-	return BADGE_TYPE_DISPLAY_CONFIG[type] || {
-		label: type,
-		color: '#F1F0FF',
-		borderColor: '#CCD7FF'
-	};
+	return (
+		BADGE_TYPE_DISPLAY_CONFIG[type] || {
+			label: type,
+			color: '#F1F0FF',
+			borderColor: '#CCD7FF',
+		}
+	);
 }
 
 /**
@@ -809,21 +811,29 @@ export interface GenderTopBadge {
 /**
  * Gender type for API parameter
  */
-export type GenderType = 'male' | 'female' | 'diverse' | 'noAnswer' | 'Männlich' | 'Weiblich' | 'Divers' | 'Keine Angabe';
+export type GenderType =
+	| 'male'
+	| 'female'
+	| 'diverse'
+	| 'noAnswer'
+	| 'Männlich'
+	| 'Weiblich'
+	| 'Divers'
+	| 'Keine Angabe';
 
 /**
  * Map localized gender labels to API gender types
  */
 export function mapGenderLabelToType(label: string): 'male' | 'female' | 'diverse' | 'noAnswer' {
 	const mapping: Record<string, 'male' | 'female' | 'diverse' | 'noAnswer'> = {
-		'male': 'male',
-		'female': 'female',
-		'diverse': 'diverse',
-		'noAnswer': 'noAnswer',
-		'Männlich': 'male',
-		'Weiblich': 'female',
-		'Divers': 'diverse',
-		'Keine Angabe': 'noAnswer'
+		male: 'male',
+		female: 'female',
+		diverse: 'diverse',
+		noAnswer: 'noAnswer',
+		Männlich: 'male',
+		Weiblich: 'female',
+		Divers: 'diverse',
+		'Keine Angabe': 'noAnswer',
 	};
 	return mapping[label] || 'male';
 }
@@ -833,10 +843,10 @@ export function mapGenderLabelToType(label: string): 'male' | 'female' | 'divers
  */
 export function mapGenderTypeToLabel(type: string): string {
 	const mapping: Record<string, string> = {
-		'male': 'Männlich',
-		'female': 'Weiblich',
-		'diverse': 'Divers',
-		'noAnswer': 'Keine Angabe'
+		male: 'Männlich',
+		female: 'Weiblich',
+		diverse: 'Divers',
+		noAnswer: 'Keine Angabe',
 	};
 	return mapping[type] || type;
 }

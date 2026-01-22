@@ -137,10 +137,7 @@ import { NetworkRecentActivityData } from '../../models/network-dashboard-api.mo
 		<ng-template #issuerCellTemplate let-context>
 			<div class="tw-flex tw-items-center tw-h-10">
 				@if (context.row.original.issuerId) {
-					<a
-						[routerLink]="['/issuer/issuers', context.row.original.issuerId]"
-						class="tw-cursor-pointer"
-					>
+					<a [routerLink]="['/issuer/issuers', context.row.original.issuerId]" class="tw-cursor-pointer">
 						{{ context.getValue() }}
 					</a>
 				} @else {

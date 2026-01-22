@@ -72,7 +72,7 @@ export type BarChartVariant = 'default' | 'neutral';
 	imports: [CommonModule, TranslateModule, NgIcon],
 	providers: [provideIcons({ lucideClockFading })],
 	templateUrl: './horizontal-bar-chart.component.html',
-	styleUrls: ['./horizontal-bar-chart.component.scss']
+	styleUrls: ['./horizontal-bar-chart.component.scss'],
 })
 export class HorizontalBarChartComponent {
 	/**
@@ -168,7 +168,7 @@ export class HorizontalBarChartComponent {
 	 */
 	computedBarAreaWidth = computed(() => {
 		const provided = this.barAreaWidthPercent();
-		return provided !== null ? provided : (100 - this.labelWidthPercent());
+		return provided !== null ? provided : 100 - this.labelWidthPercent();
 	});
 
 	/**
@@ -177,7 +177,7 @@ export class HorizontalBarChartComponent {
 	maxValue = computed(() => {
 		const itemList = this.items();
 		if (!itemList || itemList.length === 0) return 1;
-		return Math.max(...itemList.map(item => item.value)) || 1;
+		return Math.max(...itemList.map((item) => item.value)) || 1;
 	});
 
 	/**

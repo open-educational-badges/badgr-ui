@@ -11,10 +11,13 @@ import {
 	getCompetencyAreaDisplayConfig,
 	ResidenceStrengthenedCompetency,
 	NetworkCompetencyAreaData,
-	ESCORootSkill
+	ESCORootSkill,
 } from '../../models/network-dashboard-api.model';
 import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-bar-chart/horizontal-bar-chart.component';
-import { RecipientSkillVisualisationComponent, CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
+import {
+	RecipientSkillVisualisationComponent,
+	CompetencyAreaClickData,
+} from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { ApiRootSkill } from '../../../common/model/ai-skills.model';
 
 /**
@@ -60,7 +63,7 @@ export interface ResidenceDetailData {
 	imports: [CommonModule, TranslateModule, NgIcon, RecipientSkillVisualisationComponent, HorizontalBarChartComponent],
 	providers: [provideIcons({ lucideClockFading })],
 	templateUrl: './residence-detail.component.html',
-	styleUrls: ['./residence-detail.component.scss']
+	styleUrls: ['./residence-detail.component.scss'],
 })
 export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
@@ -88,11 +91,16 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private networkDashboardApi: NetworkDashboardApiService,
-		private translate: TranslateService
+		private translate: TranslateService,
 	) {}
 
 	ngOnInit(): void {
-		console.log('[RESIDENCE-DETAIL] Component initialized with city:', this.city, ', networkSlug:', this.networkSlug);
+		console.log(
+			'[RESIDENCE-DETAIL] Component initialized with city:',
+			this.city,
+			', networkSlug:',
+			this.networkSlug,
+		);
 		this.loadResidenceData();
 	}
 
@@ -108,7 +116,12 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	private loadResidenceData(): void {
 		this.loading = true;
 
-		console.log('[RESIDENCE-DETAIL] loadResidenceData called with city:', this.city, ', networkSlug:', this.networkSlug);
+		console.log(
+			'[RESIDENCE-DETAIL] loadResidenceData called with city:',
+			this.city,
+			', networkSlug:',
+			this.networkSlug,
+		);
 
 		if (!this.networkSlug) {
 			console.warn('[RESIDENCE-DETAIL] No networkSlug provided');
@@ -130,53 +143,57 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 				catchError((error) => {
 					console.warn('[RESIDENCE-DETAIL] Residence detail API failed:', error);
 					return of(null);
-				})
+				}),
 			),
-			competencySkills: this.networkDashboardApi.getCompetencyAreasSkills(this.networkSlug, { city: this.city }).pipe(
-				catchError((error) => {
-					console.warn('[RESIDENCE-DETAIL] Competency areas skills API failed:', error);
-					return of(null);
-				})
-			)
-		}).pipe(
-			takeUntil(this.destroy$)
-		).subscribe({
-			next: ({ residenceDetail, competencySkills }) => {
-				if (!residenceDetail) {
-					console.warn('[RESIDENCE-DETAIL] No residence detail data available');
+			competencySkills: this.networkDashboardApi
+				.getCompetencyAreasSkills(this.networkSlug, { city: this.city })
+				.pipe(
+					catchError((error) => {
+						console.warn('[RESIDENCE-DETAIL] Competency areas skills API failed:', error);
+						return of(null);
+					}),
+				),
+		})
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: ({ residenceDetail, competencySkills }) => {
+					if (!residenceDetail) {
+						console.warn('[RESIDENCE-DETAIL] No residence detail data available');
+						this.setFallbackData();
+						return;
+					}
+
+					console.log('[RESIDENCE-DETAIL] Data loaded from API:', residenceDetail);
+					console.log('[RESIDENCE-DETAIL] Skills data loaded:', competencySkills);
+
+					// Transform ESCO skills data for skill visualisation
+					if (competencySkills?.skills?.length > 0) {
+						this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
+						console.log('[RESIDENCE-DETAIL] Skill visualisation data:', this.skillVisualisationData);
+					} else {
+						this.skillVisualisationData = [];
+					}
+
+					// Transform strengthened competencies
+					const strengthenedCompetencies = this.transformStrengthenedCompetencies(
+						residenceDetail.topStrengthenedCompetencies,
+					);
+
+					this.data = {
+						city: residenceDetail.metadata.city,
+						learnerCount: residenceDetail.metadata.totalLearners,
+						topCompetencyAreas: [],
+						topStrengthenedCompetencies: strengthenedCompetencies,
+					};
+
+					this.loading = false;
+					console.log('[RESIDENCE-DETAIL] Data transformed:', this.data);
+				},
+				error: (error) => {
+					console.error('[RESIDENCE-DETAIL] Error in subscription:', error);
 					this.setFallbackData();
-					return;
-				}
-
-				console.log('[RESIDENCE-DETAIL] Data loaded from API:', residenceDetail);
-				console.log('[RESIDENCE-DETAIL] Skills data loaded:', competencySkills);
-
-				// Transform ESCO skills data for skill visualisation
-				if (competencySkills?.skills?.length > 0) {
-					this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
-					console.log('[RESIDENCE-DETAIL] Skill visualisation data:', this.skillVisualisationData);
-				} else {
-					this.skillVisualisationData = [];
-				}
-
-				// Transform strengthened competencies
-				const strengthenedCompetencies = this.transformStrengthenedCompetencies(residenceDetail.topStrengthenedCompetencies);
-
-				this.data = {
-					city: residenceDetail.metadata.city,
-					learnerCount: residenceDetail.metadata.totalLearners,
-					topCompetencyAreas: [],
-					topStrengthenedCompetencies: strengthenedCompetencies
-				};
-
-				this.loading = false;
-				console.log('[RESIDENCE-DETAIL] Data transformed:', this.data);
-			},
-			error: (error) => {
-				console.error('[RESIDENCE-DETAIL] Error in subscription:', error);
-				this.setFallbackData();
-			}
-		});
+				},
+			});
 	}
 
 	/**
@@ -184,7 +201,7 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	 * The structures are compatible, but we need to cast the types
 	 */
 	private transformToApiRootSkills(skills: ESCORootSkill[]): ApiRootSkill[] {
-		return skills.map(skill => ({
+		return skills.map((skill) => ({
 			preferred_label: skill.preferred_label,
 			alt_labels: skill.alt_labels,
 			description: skill.description,
@@ -192,15 +209,17 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 			type: skill.type,
 			reuse_level: skill.reuse_level || '',
 			studyLoad: skill.studyLoad,
-			breadcrumb_paths: skill.breadcrumb_paths as [any[]]
+			breadcrumb_paths: skill.breadcrumb_paths as [any[]],
 		}));
 	}
 
 	/**
 	 * Transform strengthened competencies from API format
 	 */
-	private transformStrengthenedCompetencies(competencies: ResidenceStrengthenedCompetency[]): ResidenceStrengthenedCompetencyData[] {
-		return competencies.map(comp => ({
+	private transformStrengthenedCompetencies(
+		competencies: ResidenceStrengthenedCompetency[],
+	): ResidenceStrengthenedCompetencyData[] {
+		return competencies.map((comp) => ({
 			competencyKey: comp.competencyKey || comp.competencyId || '',
 			title: comp.title || comp.competencyKey || '', // Use title for display, fallback to competencyKey
 			areaKey: comp.areaKey || '',
@@ -209,7 +228,7 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 			badges: comp.badges || 0,
 			trend: comp.trend || 'stable',
 			trendValue: comp.trendValue || 0,
-			escoUri: comp.escoUri
+			escoUri: comp.escoUri,
 		}));
 	}
 
@@ -219,15 +238,15 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	 * we need to map city names back to ZIP codes for mock data
 	 */
 	private readonly cityToZipCodeMap: { [city: string]: string } = {
-		'München': '8000',
-		'Augsburg': '8600',
-		'Ingolstadt': '8500',
-		'Landshut': '8400',
-		'Rosenheim': '8300',
-		'Zürich': '8000',
-		'Basel': '4000',
-		'Bern': '3000',
-		'other': 'other'
+		München: '8000',
+		Augsburg: '8600',
+		Ingolstadt: '8500',
+		Landshut: '8400',
+		Rosenheim: '8300',
+		Zürich: '8000',
+		Basel: '4000',
+		Bern: '3000',
+		other: 'other',
 	};
 
 	/**
@@ -252,7 +271,7 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 			city: this.city,
 			learnerCount: 0,
 			topCompetencyAreas: [],
-			topStrengthenedCompetencies: []
+			topStrengthenedCompetencies: [],
 		};
 		this.loading = false;
 	}
@@ -278,7 +297,7 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	 */
 	getCompetencyAreaBarWidth(count: number): number {
 		if (!this.data || this.data.topCompetencyAreas.length === 0) return 5;
-		const maxCount = Math.max(...this.data.topCompetencyAreas.map(a => a.count));
+		const maxCount = Math.max(...this.data.topCompetencyAreas.map((a) => a.count));
 		if (maxCount === 0) return 5;
 		return Math.max(3, (count / maxCount) * 100);
 	}
@@ -288,7 +307,7 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	 */
 	getStrengthenedCompetencyBarWidth(count: number): number {
 		if (!this.data || this.data.topStrengthenedCompetencies.length === 0) return 5;
-		const maxCount = Math.max(...this.data.topStrengthenedCompetencies.map(c => c.count));
+		const maxCount = Math.max(...this.data.topStrengthenedCompetencies.map((c) => c.count));
 		if (maxCount === 0) return 5;
 		return Math.max(3, (count / maxCount) * 100);
 	}
@@ -328,7 +347,8 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 			'competency.webDevelopment': 'http://data.europa.eu/esco/skill/2468ace0-1357-bdf9-8642-0eca8642dbf0',
 			'competency.graphicDesign': 'http://data.europa.eu/esco/skill/3579bdf1-2468-ace0-7531-fdb97531eca8',
 			'competency.uxUiDesign': 'http://data.europa.eu/esco/skill/4680acf2-3579-bdf1-8642-eca86420dbf9',
-			'competency.sustainableDevelopment': 'http://data.europa.eu/esco/skill/5791bde3-468a-cf02-9753-fdb086420eca',
+			'competency.sustainableDevelopment':
+				'http://data.europa.eu/esco/skill/5791bde3-468a-cf02-9753-fdb086420eca',
 			'competency.french': 'http://data.europa.eu/esco/skill/68a2cef4-579b-de13-a864-20ecb97531fd',
 			'competency.english': 'http://data.europa.eu/esco/skill/79b3df05-68ac-ef24-b975-31fdc08642ea',
 			'competency.publicSpeaking': 'http://data.europa.eu/esco/skill/8ac4e016-79bd-f035-ca86-42edb1975320',
@@ -337,9 +357,11 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 			'competency.changeManagement': 'http://data.europa.eu/esco/skill/bdf71349-ace0-2368-fdb9-75e04ca86531',
 			'competency.cloudComputing': 'http://data.europa.eu/esco/skill/ce082450-bdf1-3479-0eca-86f15db97642',
 			'competency.healthcareManagement': 'http://data.europa.eu/esco/skill/df19356a-ce02-458a-1fdb-97026eca8753',
-			'competency.environmentalPolicy': 'http://data.europa.eu/esco/skill/e02a467b-df13-569b-20ec-a8137fdb9864'
+			'competency.environmentalPolicy': 'http://data.europa.eu/esco/skill/e02a467b-df13-569b-20ec-a8137fdb9864',
 		};
-		return skillMap[competencyKey] || `http://data.europa.eu/esco/skill/${competencyKey.replace('competency.', '')}`;
+		return (
+			skillMap[competencyKey] || `http://data.europa.eu/esco/skill/${competencyKey.replace('competency.', '')}`
+		);
 	}
 
 	/**
@@ -347,14 +369,14 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	 */
 	private getIconForArea(areaId: string): string {
 		const iconMap: { [key: string]: string } = {
-			'it_digital': 'Monitor',
-			'management_leadership': 'BarChart3',
-			'communication': 'Users',
-			'creative_design': 'Star',
-			'languages': 'Globe',
-			'health_social': 'Heart',
-			'sustainability': 'Leaf',
-			'handwerk': 'Wrench'
+			it_digital: 'Monitor',
+			management_leadership: 'BarChart3',
+			communication: 'Users',
+			creative_design: 'Star',
+			languages: 'Globe',
+			health_social: 'Heart',
+			sustainability: 'Leaf',
+			handwerk: 'Wrench',
 		};
 		return iconMap[areaId] || 'Star';
 	}
@@ -364,14 +386,14 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 	 */
 	getCompetencyBarItems(): HorizontalBarItem[] {
 		if (!this.data) return [];
-		return this.data.topStrengthenedCompetencies.map(comp => ({
+		return this.data.topStrengthenedCompetencies.map((comp) => ({
 			id: comp.competencyKey,
 			label: comp.title,
 			value: comp.count,
 			barDisplayValue: comp.hours,
 			afterBarText: `${comp.count} `,
 			escoUri: comp.escoUri,
-			data: comp
+			data: comp,
 		}));
 	}
 }

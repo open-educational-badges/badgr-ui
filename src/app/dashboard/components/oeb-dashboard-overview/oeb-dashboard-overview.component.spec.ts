@@ -35,16 +35,16 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 				cityName: 'Dresden',
 				value: 42,
 				date: '2024-10-25T00:00:00.000Z',
-				categoryKey: 'new_postal_area'
+				categoryKey: 'new_postal_area',
 			},
 			{
 				postalCodePrefix: '50',
 				cityName: 'Köln',
 				value: 38,
 				date: '2024-10-15T00:00:00.000Z',
-				categoryKey: 'new_postal_area'
-			}
-		]
+				categoryKey: 'new_postal_area',
+			},
+		],
 	};
 
 	const mockKpis: KPIData[] = [
@@ -54,7 +54,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 			value: 127,
 			unit: 'Dashboard.unit.institutions',
 			trend: 'up',
-			trendValue: 15
+			trendValue: 15,
 		},
 		{
 			id: 'badges',
@@ -63,7 +63,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 			unit: 'Dashboard.unit.badges',
 			trend: 'up',
 			trendValue: 28,
-			hasMonthlyDetails: true
+			hasMonthlyDetails: true,
 		},
 		mockPlzKpi,
 		{
@@ -72,22 +72,16 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 			value: 73.2,
 			unit: 'Dashboard.unit.index',
 			trend: 'up',
-			trendValue: 5
-		}
+			trendValue: 5,
+		},
 	];
 
 	beforeEach(async () => {
 		const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
 		await TestBed.configureTestingModule({
-			imports: [
-				CommonModule,
-				TranslateModule.forRoot(),
-				OebDashboardOverviewComponent
-			],
-			providers: [
-				{ provide: Router, useValue: routerSpy }
-			]
+			imports: [CommonModule, TranslateModule.forRoot(), OebDashboardOverviewComponent],
+			providers: [{ provide: Router, useValue: routerSpy }],
 		}).compileComponents();
 
 		router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
@@ -120,7 +114,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		});
 
 		it('should display PLZ breadth KPI', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth');
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth');
 
 			expect(plzKpi).toBeDefined();
 			expect(plzKpi?.value).toBe(85);
@@ -128,20 +122,20 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		});
 
 		it('should show PLZ KPI unit correctly', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth');
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth');
 
 			expect(plzKpi?.unit).toBe('Dashboard.unit.plzAreas');
 		});
 
 		it('should display PLZ KPI trend', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth');
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth');
 
 			expect(plzKpi?.trend).toBe('stable');
 			expect(plzKpi?.trendValue).toBe(2);
 		});
 
 		it('should have monthly details for PLZ KPI', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth');
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth');
 
 			expect(plzKpi?.hasMonthlyDetails).toBe(true);
 			expect(plzKpi?.monthlyDetails).toBeDefined();
@@ -149,7 +143,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		});
 
 		it('should show postal code prefixes in monthly details', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth');
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth');
 			const details = plzKpi?.monthlyDetails;
 
 			expect(details?.[0].postalCodePrefix).toBe('01');
@@ -166,7 +160,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		});
 
 		it('should navigate to PLZ KPI detail page', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth')!;
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth')!;
 
 			component.viewKpiDetails(plzKpi);
 
@@ -175,14 +169,11 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 
 		it('should log navigation action for PLZ KPI', () => {
 			spyOn(console, 'log');
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth')!;
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth')!;
 
 			component.viewKpiDetails(plzKpi);
 
-			expect(console.log).toHaveBeenCalledWith(
-				'[OEB-OVERVIEW] Navigating to KPI detail:',
-				'competencyBreadth'
-			);
+			expect(console.log).toHaveBeenCalledWith('[OEB-OVERVIEW] Navigating to KPI detail:', 'competencyBreadth');
 		});
 
 		it('should not navigate when KPI has no ID', () => {
@@ -192,13 +183,11 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 			component.viewKpiDetails(kpiWithoutId);
 
 			expect(router.navigate).not.toHaveBeenCalled();
-			expect(console.warn).toHaveBeenCalledWith(
-				'[OEB-OVERVIEW] KPI missing ID, cannot navigate to details'
-			);
+			expect(console.warn).toHaveBeenCalledWith('[OEB-OVERVIEW] KPI missing ID, cannot navigate to details');
 		});
 
 		it('should navigate to all KPI details including PLZ', () => {
-			component.kpis.forEach(kpi => {
+			component.kpis.forEach((kpi) => {
 				component.viewKpiDetails(kpi);
 			});
 
@@ -214,7 +203,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		});
 
 		it('should detect PLZ KPI as clickable when has details and positive trend', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth')!;
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth')!;
 
 			const isClickable = component.hasClickableDetails(plzKpi);
 
@@ -227,7 +216,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 				value: 100,
 				trend: 'up',
 				trendValue: 5,
-				hasMonthlyDetails: false
+				hasMonthlyDetails: false,
 			};
 
 			const isClickable = component.hasClickableDetails(kpiWithoutDetails);
@@ -241,7 +230,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 				value: 100,
 				trend: 'stable',
 				trendValue: 0,
-				hasMonthlyDetails: true
+				hasMonthlyDetails: true,
 			};
 
 			const isClickable = component.hasClickableDetails(kpiWithZeroTrend);
@@ -255,7 +244,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 				value: 100,
 				trend: 'down',
 				trendValue: -5,
-				hasMonthlyDetails: true
+				hasMonthlyDetails: true,
 			};
 
 			const isClickable = component.hasClickableDetails(kpiWithNegativeTrend);
@@ -268,7 +257,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 				id: 'test',
 				value: 100,
 				trend: 'stable',
-				hasMonthlyDetails: true
+				hasMonthlyDetails: true,
 			};
 
 			const isClickable = component.hasClickableDetails(kpiWithoutTrend);
@@ -312,7 +301,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 
 		it('should display correct trend for PLZ KPI', () => {
 			component.kpis = mockKpis;
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth')!;
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth')!;
 
 			const icon = component.getTrendIcon(plzKpi.trend!);
 			const color = component.getTrendColor(plzKpi.trend!);
@@ -333,7 +322,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		it('should handle KPI with missing trend', () => {
 			const kpiWithoutTrend: KPIData = {
 				id: 'test',
-				value: 100
+				value: 100,
 			};
 			component.kpis = [kpiWithoutTrend];
 
@@ -345,7 +334,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 			const kpi: KPIData = {
 				id: 'test',
 				value: 100,
-				trendValue: 5
+				trendValue: 5,
 			};
 
 			const isClickable = component.hasClickableDetails(kpi);
@@ -356,7 +345,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		it('should handle very large PLZ area count', () => {
 			const largePlzKpi: KPIData = {
 				...mockPlzKpi,
-				value: 999999
+				value: 999999,
 			};
 			component.kpis = [largePlzKpi];
 			fixture.detectChanges();
@@ -367,12 +356,14 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		it('should handle PLZ KPI with many monthly details', () => {
 			const manyDetails: KPIData = {
 				...mockPlzKpi,
-				monthlyDetails: Array(50).fill(null).map((_, i) => ({
-					postalCodePrefix: `${i}`,
-					cityName: `City ${i}`,
-					value: i,
-					categoryKey: 'new_postal_area'
-				}))
+				monthlyDetails: Array(50)
+					.fill(null)
+					.map((_, i) => ({
+						postalCodePrefix: `${i}`,
+						cityName: `City ${i}`,
+						value: i,
+						categoryKey: 'new_postal_area',
+					})),
 			};
 			component.kpis = [manyDetails];
 			fixture.detectChanges();
@@ -388,7 +379,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		});
 
 		it('should preserve all KPI properties', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth')!;
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth')!;
 
 			expect(plzKpi.id).toBe('competencyBreadth');
 			expect(plzKpi.label).toBe('Dashboard.kpi.portfolioWidth');
@@ -400,7 +391,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 		});
 
 		it('should maintain monthly details structure', () => {
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth')!;
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth')!;
 			const detail = plzKpi.monthlyDetails?.[0];
 
 			expect(detail?.postalCodePrefix).toBeDefined();
@@ -421,7 +412,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 	describe('Performance', () => {
 		it('should handle rapid navigation clicks', () => {
 			component.kpis = mockKpis;
-			const plzKpi = component.kpis.find(k => k.id === 'competencyBreadth')!;
+			const plzKpi = component.kpis.find((k) => k.id === 'competencyBreadth')!;
 
 			for (let i = 0; i < 100; i++) {
 				component.viewKpiDetails(plzKpi);
@@ -435,7 +426,7 @@ describe('OebDashboardOverviewComponent - PLZ KPI Tests', () => {
 
 			const startTime = performance.now();
 			for (let i = 0; i < 1000; i++) {
-				component.kpis.forEach(kpi => {
+				component.kpis.forEach((kpi) => {
 					component.hasClickableDetails(kpi);
 				});
 			}

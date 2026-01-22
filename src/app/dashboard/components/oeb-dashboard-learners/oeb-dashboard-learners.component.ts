@@ -14,7 +14,7 @@ import {
 	LearnerResidenceStatistic,
 	LearnerGenderStatistic,
 	LearnerKPIData,
-	mapGenderTypeToLabel
+	mapGenderTypeToLabel,
 } from '../../models/network-dashboard-api.model';
 import { CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { InfoIcon } from '../../../common/components/info-icon.component';
@@ -55,10 +55,18 @@ export type LernendeViewState = 'overview' | 'gender-detail' | 'residence-detail
 @Component({
 	selector: 'app-oeb-dashboard-learners',
 	standalone: true,
-	imports: [CommonModule, TranslateModule, GenderCompetencyAnalysisComponent, ResidenceDetailComponent, HorizontalBarChartComponent, InfoIcon, NgIcon],
+	imports: [
+		CommonModule,
+		TranslateModule,
+		GenderCompetencyAnalysisComponent,
+		ResidenceDetailComponent,
+		HorizontalBarChartComponent,
+		InfoIcon,
+		NgIcon,
+	],
 	providers: [provideIcons({ lucideUserStar, lucideClock })],
 	templateUrl: './oeb-dashboard-learners.component.html',
-	styleUrls: ['./oeb-dashboard-learners.component.scss']
+	styleUrls: ['./oeb-dashboard-learners.component.scss'],
 })
 export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	private destroy$ = new Subject<void>();
@@ -98,7 +106,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	@Input() genderDistributionData: ChartData = {
 		labels: ['Männlich', 'Weiblich'],
 		values: [52.2, 47.8],
-		backgroundColor: ['#492E98', '#CCD7FF'] // OEB Purple and KI Lila
+		backgroundColor: ['#492E98', '#CCD7FF'], // OEB Purple and KI Lila
 	};
 
 	/** Detailed gender statistics */
@@ -122,12 +130,16 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	selectedResidence: LearnerResidenceData | null = null;
 
 	/** Event emitted when view state changes (for breadcrumb updates) */
-	@Output() viewStateChange = new EventEmitter<{ state: LernendeViewState; gender?: string; residence?: LearnerResidenceData }>();
+	@Output() viewStateChange = new EventEmitter<{
+		state: LernendeViewState;
+		gender?: string;
+		residence?: LearnerResidenceData;
+	}>();
 
 	constructor(
 		private networkDashboardApi: NetworkDashboardApiService,
 		private router: Router,
-		private translate: TranslateService
+		private translate: TranslateService,
 	) {}
 
 	ngOnInit(): void {
@@ -161,51 +173,54 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 		this.loadingResidence = true;
 		this.loadingGender = true;
 
-		this.networkDashboardApi.getLearnersOverview(this.networkSlug).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.warn('[LEARNERS] Overview API failed, trying individual endpoints:', error);
-				// Fallback to individual endpoints
-				this.loadFromIndividualApis();
-				return of(null);
-			})
-		).subscribe({
-			next: (response) => {
-				if (!response) return;
+		this.networkDashboardApi
+			.getLearnersOverview(this.networkSlug)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.warn('[LEARNERS] Overview API failed, trying individual endpoints:', error);
+					// Fallback to individual endpoints
+					this.loadFromIndividualApis();
+					return of(null);
+				}),
+			)
+			.subscribe({
+				next: (response) => {
+					if (!response) return;
 
-				const learnersKpi = response.kpis.totalLearners;
-				if (typeof learnersKpi === 'object' && learnersKpi !== null) {
-					this.totalLearners = learnersKpi.value;
-					this.totalLearnersTrend = learnersKpi.trend;
-					this.totalLearnersTrendValue = learnersKpi.trendValue;
-					this.totalLearnersTrendPeriod = learnersKpi.trendPeriod;
-				} else {
-					this.totalLearners = learnersKpi as unknown as number;
-				}
+					const learnersKpi = response.kpis.totalLearners;
+					if (typeof learnersKpi === 'object' && learnersKpi !== null) {
+						this.totalLearners = learnersKpi.value;
+						this.totalLearnersTrend = learnersKpi.trend;
+						this.totalLearnersTrendValue = learnersKpi.trendValue;
+						this.totalLearnersTrendPeriod = learnersKpi.trendPeriod;
+					} else {
+						this.totalLearners = learnersKpi as unknown as number;
+					}
 
-				const hoursKpi = response.kpis.totalCompetencyHours;
-				if (typeof hoursKpi === 'object' && hoursKpi !== null) {
-					this.totalCompetencyHours = hoursKpi.value;
-					this.competencyHoursTrend = hoursKpi.trend;
-					this.competencyHoursTrendValue = hoursKpi.trendValue;
-					this.competencyHoursTrendPeriod = hoursKpi.trendPeriod;
-				} else {
-					this.totalCompetencyHours = hoursKpi as unknown as number;
-				}
+					const hoursKpi = response.kpis.totalCompetencyHours;
+					if (typeof hoursKpi === 'object' && hoursKpi !== null) {
+						this.totalCompetencyHours = hoursKpi.value;
+						this.competencyHoursTrend = hoursKpi.trend;
+						this.competencyHoursTrendValue = hoursKpi.trendValue;
+						this.competencyHoursTrendPeriod = hoursKpi.trendPeriod;
+					} else {
+						this.totalCompetencyHours = hoursKpi as unknown as number;
+					}
 
-				this.learnerResidenceData = this.transformResidenceData(response.residenceDistribution);
+					this.learnerResidenceData = this.transformResidenceData(response.residenceDistribution);
 
-				this.transformGenderData(response.genderDistribution);
+					this.transformGenderData(response.genderDistribution);
 
-				this.loadingOverview = false;
-				this.loadingResidence = false;
-				this.loadingGender = false;
-			},
-			error: (error) => {
-				console.error('[LEARNERS] Error in overview subscription:', error);
-				this.loadMockData();
-			}
-		});
+					this.loadingOverview = false;
+					this.loadingResidence = false;
+					this.loadingGender = false;
+				},
+				error: (error) => {
+					console.error('[LEARNERS] Error in overview subscription:', error);
+					this.loadMockData();
+				},
+			});
 	}
 
 	/**
@@ -223,25 +238,28 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	private loadResidenceFromApi(): void {
 		this.loadingResidence = true;
 
-		this.networkDashboardApi.getLearnersResidence(this.networkSlug, 5, true).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.error('[LEARNERS] Residence API failed:', error);
-				return of(null);
-			})
-		).subscribe({
-			next: (response) => {
-				if (response) {
-					this.learnerResidenceData = this.transformResidenceData(response.statistics);
-					if (response.metadata?.totalLearners) {
-						this.totalLearners = response.metadata.totalLearners;
+		this.networkDashboardApi
+			.getLearnersResidence(this.networkSlug, 5, true)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.error('[LEARNERS] Residence API failed:', error);
+					return of(null);
+				}),
+			)
+			.subscribe({
+				next: (response) => {
+					if (response) {
+						this.learnerResidenceData = this.transformResidenceData(response.statistics);
+						if (response.metadata?.totalLearners) {
+							this.totalLearners = response.metadata.totalLearners;
+						}
+					} else {
+						this.loadResidenceMockData();
 					}
-				} else {
-					this.loadResidenceMockData();
-				}
-				this.loadingResidence = false;
-			}
-		});
+					this.loadingResidence = false;
+				},
+			});
 	}
 
 	/**
@@ -250,48 +268,54 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	private loadGenderFromApi(): void {
 		this.loadingGender = true;
 
-		this.networkDashboardApi.getLearnersGender(this.networkSlug).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.error('[LEARNERS] Gender API failed:', error);
-				return of(null);
-			})
-		).subscribe({
-			next: (response) => {
-				if (response) {
-					this.transformGenderData(response.distribution);
-				} else {
-					this.loadGenderMockData();
-				}
-				this.loadingGender = false;
-			}
-		});
+		this.networkDashboardApi
+			.getLearnersGender(this.networkSlug)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.error('[LEARNERS] Gender API failed:', error);
+					return of(null);
+				}),
+			)
+			.subscribe({
+				next: (response) => {
+					if (response) {
+						this.transformGenderData(response.distribution);
+					} else {
+						this.loadGenderMockData();
+					}
+					this.loadingGender = false;
+				},
+			});
 	}
 
 	/**
 	 * Load KPIs from API (for competency hours)
 	 */
 	private loadKpisFromApi(): void {
-		this.networkDashboardApi.getKpis(this.networkSlug).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.error('[LEARNERS] KPIs API failed:', error);
-				return of(null);
-			})
-		).subscribe({
-			next: (response) => {
-				if (response) {
-					const competencyHoursKpi = response.kpis.find(kpi => kpi.id === 'competency_hours');
-					if (competencyHoursKpi) {
-						this.totalCompetencyHours = competencyHoursKpi.value;
+		this.networkDashboardApi
+			.getKpis(this.networkSlug)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.error('[LEARNERS] KPIs API failed:', error);
+					return of(null);
+				}),
+			)
+			.subscribe({
+				next: (response) => {
+					if (response) {
+						const competencyHoursKpi = response.kpis.find((kpi) => kpi.id === 'competency_hours');
+						if (competencyHoursKpi) {
+							this.totalCompetencyHours = competencyHoursKpi.value;
+						}
+						const learnersKpi = response.kpis.find((kpi) => kpi.id === 'learners_count');
+						if (learnersKpi && !this.totalLearners) {
+							this.totalLearners = learnersKpi.value;
+						}
 					}
-					const learnersKpi = response.kpis.find(kpi => kpi.id === 'learners_count');
-					if (learnersKpi && !this.totalLearners) {
-						this.totalLearners = learnersKpi.value;
-					}
-				}
-			}
-		});
+				},
+			});
 	}
 
 	/**
@@ -300,15 +324,11 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	 * Supports multiple API formats for backwards compatibility
 	 */
 	private transformResidenceData(statistics: LearnerResidenceStatistic[]): LearnerResidenceData[] {
-		const data = statistics.map(stat => {
+		const data = statistics.map((stat) => {
 			const statAny = stat as any;
 
-			const cityName = statAny.city ||
-				statAny.name ||
-				statAny.regionName ||
-				statAny.region ||
-				statAny.zipCode ||
-				'unknown';
+			const cityName =
+				statAny.city || statAny.name || statAny.regionName || statAny.region || statAny.zipCode || 'unknown';
 
 			const learnerCount = statAny.learnerCount ?? statAny.count ?? statAny.learners ?? 0;
 
@@ -318,7 +338,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 				city: cityName,
 				learnerCount: learnerCount,
 				percentage: percentage,
-				isOtherCategory: cityName === 'other' || cityName === 'Andere Wohnorte'
+				isOtherCategory: cityName === 'other' || cityName === 'Andere Wohnorte',
 			};
 		});
 
@@ -337,23 +357,23 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	 */
 	private transformGenderData(distribution: LearnerGenderStatistic[]): void {
 		const genderColors: Record<string, string> = {
-			'male': '#492E98',
-			'female': '#CCD7FF',
-			'diverse': '#93F993',
-			'noAnswer': '#FFBAB9'
+			male: '#492E98',
+			female: '#CCD7FF',
+			diverse: '#93F993',
+			noAnswer: '#FFBAB9',
 		};
 
-		this.genderStatistics = distribution.map(stat => ({
+		this.genderStatistics = distribution.map((stat) => ({
 			gender: mapGenderTypeToLabel(stat.gender),
 			count: stat.count,
 			percentage: stat.percentage,
-			color: genderColors[stat.gender] || '#492E98'
+			color: genderColors[stat.gender] || '#492E98',
 		}));
 
 		this.genderDistributionData = {
-			labels: this.genderStatistics.map(g => g.gender),
-			values: this.genderStatistics.map(g => g.percentage),
-			backgroundColor: this.genderStatistics.map(g => g.color)
+			labels: this.genderStatistics.map((g) => g.gender),
+			values: this.genderStatistics.map((g) => g.percentage),
+			backgroundColor: this.genderStatistics.map((g) => g.color),
 		};
 	}
 
@@ -382,7 +402,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 		this.genderDistributionData = {
 			labels: [],
 			values: [],
-			backgroundColor: []
+			backgroundColor: [],
 		};
 		this.loadingGender = false;
 	}
@@ -398,7 +418,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	 * Show residence competency analysis sub-component when clicking on a residence location
 	 */
 	onResidenceClick(city: string): void {
-		const residence = this.learnerResidenceData.find(r => r.city === city);
+		const residence = this.learnerResidenceData.find((r) => r.city === city);
 		if (residence) {
 			this.selectedResidence = residence;
 			this.viewState = 'residence-detail';
@@ -448,15 +468,12 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 			console.warn('[LEARNERS] No competency URIs in area data');
 			return;
 		}
-		this.router.navigate(
-			['/issuer/networks', this.networkSlug, 'competency-tracking'],
-			{
-				state: {
-					openAreaDetail: true,
-					areaData: areaData
-				}
-			}
-		);
+		this.router.navigate(['/issuer/networks', this.networkSlug, 'competency-tracking'], {
+			state: {
+				openAreaDetail: true,
+				areaData: areaData,
+			},
+		});
 	}
 
 	/**
@@ -464,7 +481,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	 */
 	getMaxLearnerCount(): number {
 		if (this.learnerResidenceData.length === 0) return 100;
-		return Math.max(...this.learnerResidenceData.map(r => r.learnerCount));
+		return Math.max(...this.learnerResidenceData.map((r) => r.learnerCount));
 	}
 
 	/**
@@ -475,7 +492,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	getBarWidth(percentage: number): number {
 		if (!this.learnerResidenceData || this.learnerResidenceData.length === 0) return 5;
 
-		const maxPercentage = Math.max(...this.learnerResidenceData.map(r => r.percentage));
+		const maxPercentage = Math.max(...this.learnerResidenceData.map((r) => r.percentage));
 		if (maxPercentage === 0) return 5;
 
 		const scaledWidth = (percentage / maxPercentage) * 100;
@@ -491,7 +508,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	getGenderBarWidth(percentage: number): number {
 		if (!this.genderStatistics || this.genderStatistics.length === 0) return 5;
 
-		const maxPercentage = Math.max(...this.genderStatistics.map(g => g.percentage));
+		const maxPercentage = Math.max(...this.genderStatistics.map((g) => g.percentage));
 		if (maxPercentage === 0) return 5;
 
 		const scaledWidth = (percentage / maxPercentage) * 100;
@@ -503,15 +520,16 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	 * Transform residence data to HorizontalBarItem format for the reusable component
 	 */
 	getResidenceBarItems(): HorizontalBarItem[] {
-		return this.learnerResidenceData.map(residence => ({
+		return this.learnerResidenceData.map((residence) => ({
 			id: residence.city,
-			label: residence.city === 'other'
-				? this.translate.instant('Dashboard.Learners.otherResidences')
-				: residence.city,
+			label:
+				residence.city === 'other'
+					? this.translate.instant('Dashboard.Learners.otherResidences')
+					: residence.city,
 			value: residence.percentage,
 			barDisplayValue: residence.percentage,
 			afterBarText: `${residence.learnerCount} `,
-			data: residence
+			data: residence,
 		}));
 	}
 
@@ -519,13 +537,13 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 	 * Transform gender data to HorizontalBarItem format for the reusable component
 	 */
 	getGenderBarItems(): HorizontalBarItem[] {
-		return this.genderStatistics.map(gender => ({
+		return this.genderStatistics.map((gender) => ({
 			id: gender.gender,
 			label: gender.gender,
 			value: gender.percentage,
 			barDisplayValue: gender.percentage,
 			afterBarText: `${gender.count} `,
-			data: gender
+			data: gender,
 		}));
 	}
 

@@ -14,7 +14,7 @@
  * Response from GET /v1/dashboard/overview/kpis
  */
 export interface DashboardKPIsResponse {
-	topKpis: KPIData[];      // Exactly 3 items
+	topKpis: KPIData[]; // Exactly 3 items
 	secondaryKpis: KPIData[];
 }
 
@@ -34,7 +34,7 @@ export interface KPIData {
 export interface MonthlyDetail {
 	title?: string;
 	value: string;
-	date: string;  // ISO 8601
+	date: string; // ISO 8601
 	categoryKey?: string;
 	details?: string;
 	areaKey?: string;
@@ -61,12 +61,12 @@ export interface CompetencyAreasResponse {
 
 export interface CompetencyAreaSummary {
 	id: string;
-	name: string;        // Display name of the competency area
-	value: number;       // Prozent für Bubble-Größe
-	weight: number;      // Absoluter Wert
+	name: string; // Display name of the competency area
+	value: number; // Prozent für Bubble-Größe
+	weight: number; // Absoluter Wert
 	userCount: number;
 	institutionCount: number;
-	color: string;       // Hex-Farbe
+	color: string; // Hex-Farbe
 }
 
 /**
@@ -74,7 +74,7 @@ export interface CompetencyAreaSummary {
  */
 export interface CompetencyAreaDetails {
 	id: string;
-	name: string;        // Display name of the competency area
+	name: string; // Display name of the competency area
 	description?: string;
 	statistics: {
 		totalBadges: number;
@@ -139,7 +139,7 @@ export interface TopBadgesResponse {
 }
 
 export interface TopBadgeData {
-	rank: number;  // 1, 2, 3
+	rank: number; // 1, 2, 3
 	badgeId: string;
 	badgeTitleKey: string;
 	badgeTitle: string;
@@ -163,8 +163,8 @@ export interface TopBadgeData {
 		trendValue: number;
 	};
 	visualization?: {
-		icon: string;   // z.B. "lucideTrophy"
-		color: string;  // Hex-Farbe
+		icon: string; // z.B. "lucideTrophy"
+		color: string; // Hex-Farbe
 	};
 }
 

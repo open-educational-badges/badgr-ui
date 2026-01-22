@@ -140,14 +140,14 @@ export class BadgeDistributionPieChartComponent {
 	 * Filter segments to only show those with count > 0 for the pie chart
 	 */
 	get activeSegments(): PieChartSegment[] {
-		return this.segments.filter(s => s.count > 0).slice(0, 3);
+		return this.segments.filter((s) => s.count > 0).slice(0, 3);
 	}
 
 	/**
 	 * Check if there is any data to display (at least one segment with count > 0)
 	 */
 	get hasData(): boolean {
-		return this.segments.some(s => s.count > 0);
+		return this.segments.some((s) => s.count > 0);
 	}
 
 	// ==========================================

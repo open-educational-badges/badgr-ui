@@ -15,12 +15,24 @@ import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { HlmH1 } from '@spartan-ng/helm/typography';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { NetworkDashboardApiService } from '../../../dashboard/services/network-dashboard-api.service';
-import { HorizontalBarChartComponent, HorizontalBarItem } from '../../../dashboard/components/horizontal-bar-chart/horizontal-bar-chart.component';
+import {
+	HorizontalBarChartComponent,
+	HorizontalBarItem,
+} from '../../../dashboard/components/horizontal-bar-chart/horizontal-bar-chart.component';
 import { RecipientSkillVisualisationComponent } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { GenderCompetencyAnalysisComponent } from '../../../dashboard/components/gender-competency-analysis/gender-competency-analysis.component';
 import { ApiRootSkill } from '../../../common/model/ai-skills.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideBookOpen, lucideUserStar, lucideClock, lucideClockFading, lucideAward, lucideSchool, lucideCircleSlash2 } from '@ng-icons/lucide';
+import {
+	lucideArrowLeft,
+	lucideBookOpen,
+	lucideUserStar,
+	lucideClock,
+	lucideClockFading,
+	lucideAward,
+	lucideSchool,
+	lucideCircleSlash2,
+} from '@ng-icons/lucide';
 import { InfoIcon } from '../../../common/components/info-icon.component';
 import {
 	NetworkStrengthenedCompetencyData,
@@ -107,7 +119,18 @@ interface CompetencyAreaDetailData {
 		NgIcon,
 		InfoIcon,
 	],
-	providers: [provideIcons({ lucideArrowLeft, lucideBookOpen, lucideUserStar, lucideClock, lucideClockFading, lucideAward, lucideSchool, lucideCircleSlash2 })],
+	providers: [
+		provideIcons({
+			lucideArrowLeft,
+			lucideBookOpen,
+			lucideUserStar,
+			lucideClock,
+			lucideClockFading,
+			lucideAward,
+			lucideSchool,
+			lucideCircleSlash2,
+		}),
+	],
 	templateUrl: './network-competency-tracking.component.html',
 	styleUrls: ['./network-competency-tracking.component.scss'],
 })
@@ -136,7 +159,9 @@ export class NetworkCompetencyTrackingComponent
 	totalCompetencyHours = signal<number>(0);
 	averageCompetencyHours = signal<number>(0);
 	totalCompetencies = signal<number>(0);
-	competencyHoursTrend = signal<{ trend: 'up' | 'down' | 'stable'; trendValue: number; trendPeriod?: string } | null>(null);
+	competencyHoursTrend = signal<{ trend: 'up' | 'down' | 'stable'; trendValue: number; trendPeriod?: string } | null>(
+		null,
+	);
 
 	// Skill visualisation data for ESCO bubbles (ApiRootSkill format)
 	skillVisualisationData: ApiRootSkill[] = [];
@@ -170,11 +195,7 @@ export class NetworkCompetencyTrackingComponent
 		noAnswer: { color: '#F3F4F6', borderColor: '#9CA3AF' },
 	};
 
-	constructor(
-		route: ActivatedRoute,
-		router: Router,
-		sessionService: SessionService
-	) {
+	constructor(route: ActivatedRoute, router: Router, sessionService: SessionService) {
 		super(router, route, sessionService);
 
 		// Get network slug and optional competencyId from route
@@ -210,11 +231,13 @@ export class NetworkCompetencyTrackingComponent
 					title: network.name,
 					routerLink: ['/issuer/networks', this.networkSlug],
 				};
-				this.title.setTitle(this.translate.instant('Dashboard.pageTitle.competencyTracking', { network: network.name }));
+				this.title.setTitle(
+					this.translate.instant('Dashboard.pageTitle.competencyTracking', { network: network.name }),
+				);
 			},
 			(error) => {
 				console.error('[NETWORK-COMPETENCY-TRACKING] Error loading network:', error);
-			}
+			},
 		);
 	}
 
@@ -250,31 +273,33 @@ export class NetworkCompetencyTrackingComponent
 				catchError((error) => {
 					console.error('[NETWORK-COMPETENCY-TRACKING] Error loading competency skills:', error);
 					return of({ skills: [] });
-				})
+				}),
 			),
 			strengthenedCompetencies: this.networkDashboardApi.getStrengthenedCompetencies(this.networkSlug, 20).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-COMPETENCY-TRACKING] Error loading strengthened competencies:', error);
 					return of({ competencies: [], metadata: { totalCompetencies: 0, totalHours: 0, lastUpdated: '' } });
-				})
+				}),
 			),
 			genderData: this.networkDashboardApi.getLearnersGender(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-COMPETENCY-TRACKING] Error loading gender data:', error);
 					return of({ distribution: [] });
-				})
+				}),
 			),
-			recentBadgeAwards: this.networkDashboardApi.getRecentBadgeAwards(this.networkSlug, { days: 30, limit: 100 }).pipe(
-				catchError((error) => {
-					console.error('[NETWORK-COMPETENCY-TRACKING] Error loading recent badge awards:', error);
-					return of({ awards: [] });
-				})
-			),
+			recentBadgeAwards: this.networkDashboardApi
+				.getRecentBadgeAwards(this.networkSlug, { days: 30, limit: 100 })
+				.pipe(
+					catchError((error) => {
+						console.error('[NETWORK-COMPETENCY-TRACKING] Error loading recent badge awards:', error);
+						return of({ awards: [] });
+					}),
+				),
 			kpis: this.networkDashboardApi.getKpis(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-COMPETENCY-TRACKING] Error loading KPIs:', error);
 					return of({ kpis: [] } as NetworkKPIsResponse);
-				})
+				}),
 			),
 		})
 			.pipe(takeUntil(this.destroy$))
@@ -294,7 +319,10 @@ export class NetworkCompetencyTrackingComponent
 
 					// Calculate KPIs from metadata
 					const totalHours = strengthenedCompetencies?.metadata?.totalHours || 0;
-					const totalCount = strengthenedCompetencies?.metadata?.totalCompetencies || strengthenedCompetencies?.competencies?.length || 0;
+					const totalCount =
+						strengthenedCompetencies?.metadata?.totalCompetencies ||
+						strengthenedCompetencies?.competencies?.length ||
+						0;
 
 					this.totalCompetencyHours.set(totalHours);
 					this.totalCompetencies.set(totalCount);
@@ -318,8 +346,14 @@ export class NetworkCompetencyTrackingComponent
 
 					// Process KPIs to extract trend data for competency hours
 					if (kpis?.kpis?.length > 0) {
-						const competencyHoursKpi = kpis.kpis.find((kpi: NetworkKPIData) => kpi.id === 'competency_hours');
-						if (competencyHoursKpi && competencyHoursKpi.trend && competencyHoursKpi.trendValue !== undefined) {
+						const competencyHoursKpi = kpis.kpis.find(
+							(kpi: NetworkKPIData) => kpi.id === 'competency_hours',
+						);
+						if (
+							competencyHoursKpi &&
+							competencyHoursKpi.trend &&
+							competencyHoursKpi.trendValue !== undefined
+						) {
 							this.competencyHoursTrend.set({
 								trend: competencyHoursKpi.trend,
 								trendValue: competencyHoursKpi.trendValue,
@@ -351,7 +385,7 @@ export class NetworkCompetencyTrackingComponent
 	 * Transform ESCO skills to ApiRootSkill format for skill visualisation component
 	 */
 	private transformToApiRootSkills(skills: ESCORootSkill[]): ApiRootSkill[] {
-		return skills.map(skill => ({
+		return skills.map((skill) => ({
 			preferred_label: skill.preferred_label,
 			alt_labels: skill.alt_labels,
 			description: skill.description,
@@ -359,7 +393,7 @@ export class NetworkCompetencyTrackingComponent
 			type: skill.type,
 			reuse_level: skill.reuse_level || '',
 			studyLoad: skill.studyLoad,
-			breadcrumb_paths: skill.breadcrumb_paths as [any[]]
+			breadcrumb_paths: skill.breadcrumb_paths as [any[]],
 		}));
 	}
 
@@ -464,9 +498,7 @@ export class NetworkCompetencyTrackingComponent
 	 */
 	openCompetencyDetailById(competencyId: string): void {
 		// Try to find the competency in already loaded data
-		const existingCompetency = this.individualCompetencyData.find(
-			(c) => c.competencyId === competencyId
-		);
+		const existingCompetency = this.individualCompetencyData.find((c) => c.competencyId === competencyId);
 
 		if (existingCompetency) {
 			// Use existing data to open detail
@@ -496,35 +528,35 @@ export class NetworkCompetencyTrackingComponent
 		this.competencyDetailLoading = true;
 
 		// Fetch real competency details from API
-		this.networkDashboardApi.getCompetencyDetail(
-			networkSlug,
-			competency.competencyId
-		).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.error('[NetworkCompetencyTracking] Failed to load competency details:', error);
-				this.competencyDetailLoading = false;
-				return of(null);
-			})
-		).subscribe((response: NetworkCompetencyDetailResponse | null) => {
-			if (response) {
-				// Map API response to component's CompetencyDetailData format
-				const detailData: CompetencyDetailData = {
-					competencyId: response.competencyId,
-					title: response.title,
-					hours: response.hours,
-					badgeCount: response.badgeCount,
-					userCount: response.userCount,
-					institutionCount: response.institutionCount,
-					escoUri: response.escoUri,
-					institutions: this.mapInstitutionsFromApi(response.institutions),
-				};
+		this.networkDashboardApi
+			.getCompetencyDetail(networkSlug, competency.competencyId)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.error('[NetworkCompetencyTracking] Failed to load competency details:', error);
+					this.competencyDetailLoading = false;
+					return of(null);
+				}),
+			)
+			.subscribe((response: NetworkCompetencyDetailResponse | null) => {
+				if (response) {
+					// Map API response to component's CompetencyDetailData format
+					const detailData: CompetencyDetailData = {
+						competencyId: response.competencyId,
+						title: response.title,
+						hours: response.hours,
+						badgeCount: response.badgeCount,
+						userCount: response.userCount,
+						institutionCount: response.institutionCount,
+						escoUri: response.escoUri,
+						institutions: this.mapInstitutionsFromApi(response.institutions),
+					};
 
-				this.selectedCompetency = detailData;
-				this.viewState = 'competency-detail';
-			}
-			this.competencyDetailLoading = false;
-		});
+					this.selectedCompetency = detailData;
+					this.viewState = 'competency-detail';
+				}
+				this.competencyDetailLoading = false;
+			});
 	}
 
 	/**
@@ -581,7 +613,7 @@ export class NetworkCompetencyTrackingComponent
 	 */
 	getMaxInstitutionBadgeCount(): number {
 		if (!this.selectedCompetency?.institutions?.length) return 0;
-		return Math.max(...this.selectedCompetency.institutions.map(i => i.badgeCount));
+		return Math.max(...this.selectedCompetency.institutions.map((i) => i.badgeCount));
 	}
 
 	/**
@@ -644,34 +676,37 @@ export class NetworkCompetencyTrackingComponent
 			institutionLimit: 10,
 		};
 
-		this.networkDashboardApi.getCompetencyAreaDetail(networkSlug, request).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.error('[NetworkCompetencyTracking] Failed to load competency area details:', error);
-				this.areaDetailLoading = false;
-				return of(null);
-			})
-		).subscribe((response: CompetencyAreaDetailResponse | null) => {
-			if (response) {
-				// Map API response to component format
-				const detailData: CompetencyAreaDetailData = {
-					areaName: response.areaName,
-					areaConceptUri: response.areaConceptUri,
-					totalHours: response.totalHours,
-					totalCompetencies: response.totalCompetencies,
-					matchedCompetencies: response.matchedCompetencies,
-					badgeCount: response.badgeCount,
-					userCount: response.userCount,
-					institutionCount: response.institutionCount,
-					topCompetencies: response.topCompetencies,
-					institutions: this.mapInstitutionsFromApi(response.institutions),
-				};
+		this.networkDashboardApi
+			.getCompetencyAreaDetail(networkSlug, request)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.error('[NetworkCompetencyTracking] Failed to load competency area details:', error);
+					this.areaDetailLoading = false;
+					return of(null);
+				}),
+			)
+			.subscribe((response: CompetencyAreaDetailResponse | null) => {
+				if (response) {
+					// Map API response to component format
+					const detailData: CompetencyAreaDetailData = {
+						areaName: response.areaName,
+						areaConceptUri: response.areaConceptUri,
+						totalHours: response.totalHours,
+						totalCompetencies: response.totalCompetencies,
+						matchedCompetencies: response.matchedCompetencies,
+						badgeCount: response.badgeCount,
+						userCount: response.userCount,
+						institutionCount: response.institutionCount,
+						topCompetencies: response.topCompetencies,
+						institutions: this.mapInstitutionsFromApi(response.institutions),
+					};
 
-				this.selectedCompetencyArea = detailData;
-				this.viewState = 'area-detail';
-			}
-			this.areaDetailLoading = false;
-		});
+					this.selectedCompetencyArea = detailData;
+					this.viewState = 'area-detail';
+				}
+				this.areaDetailLoading = false;
+			});
 	}
 
 	/**

@@ -1,4 +1,14 @@
-import { Component, ElementRef, input, OnChanges, SimpleChanges, OnDestroy, inject, viewChild, output } from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	input,
+	OnChanges,
+	SimpleChanges,
+	OnDestroy,
+	inject,
+	viewChild,
+	output,
+} from '@angular/core';
 import { ApiRootSkill, ApiSkill } from '../../../common/model/ai-skills.model';
 import { debounceTime, fromEvent, Subject, takeUntil, tap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -433,11 +443,11 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	initD3() {
 		// Compact mode uses smaller canvas optimized for only top-level bubbles
 		// This makes the bubbles fill more of the available space percentage-wise
-		const width = this.compactMode() ? 320 : (this.mobile ? 540 : 1144);
+		const width = this.compactMode() ? 320 : this.mobile ? 540 : 1144;
 		const height = this.compactMode() ? 320 : width;
 
 		// Larger relative node sizes in compact mode to fill available space
-		const nodeBaseSize = this.compactMode() ? 50 : (this.showSingleNode ? 100 : 60);
+		const nodeBaseSize = this.compactMode() ? 50 : this.showSingleNode ? 100 : 60;
 		const nodeMaxAdditionalSize = this.compactMode() ? 45 : 100;
 		const topLevelSkills = this.getTopLevelSkills();
 		const maxStudyLoad = topLevelSkills.reduce((current, d) => Math.max(current, d.studyLoad), 0);
@@ -505,7 +515,12 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			// keep nodes inside SVG bounds
 			.force(
 				'bounds',
-				d3ForceBoundary(width * -boundaryFactor, height * -boundaryFactor, width * boundaryFactor, height * boundaryFactor)
+				d3ForceBoundary(
+					width * -boundaryFactor,
+					height * -boundaryFactor,
+					width * boundaryFactor,
+					height * boundaryFactor,
+				)
 					.strength(this.compactMode() ? 0.2 : 0.1)
 					.border(this.compactMode() ? 5 : 10),
 			)
@@ -802,33 +817,32 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 						n.classList.add('show');
 					});
 				});
-			})
-				.on('mouseout', (e, d) => {
-					let ancestors = [d.id];
-					if (d.depth > 1) {
-						ancestors = Array.from(d.ancestors.values());
-					}
-					ancestors.forEach((id) => {
-						d = this.skillTree.get(id);
-						const children = svg
-							.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-							.filter((d2) => d2.ancestors.has(d.id));
-						const linkedIds = [d.id, ...children.data().map((c) => c.id)];
-						children.nodes().forEach((n) => {
-							n.classList.remove('show');
-						});
-						const links = svg
-							.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-							.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
-						links.nodes().forEach((n) => {
-							n.classList.remove('show');
-						});
+			}).on('mouseout', (e, d) => {
+				let ancestors = [d.id];
+				if (d.depth > 1) {
+					ancestors = Array.from(d.ancestors.values());
+				}
+				ancestors.forEach((id) => {
+					d = this.skillTree.get(id);
+					const children = svg
+						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+						.filter((d2) => d2.ancestors.has(d.id));
+					const linkedIds = [d.id, ...children.data().map((c) => c.id)];
+					children.nodes().forEach((n) => {
+						n.classList.remove('show');
 					});
-
-					// hide all descriptions
-					const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
-					for (const n of descriptionNodes) n.classList.remove('show-description');
+					const links = svg
+						.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
+						.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
+					links.nodes().forEach((n) => {
+						n.classList.remove('show');
+					});
 				});
+
+				// hide all descriptions
+				const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
+				for (const n of descriptionNodes) n.classList.remove('show-description');
+			});
 		}
 
 		// clear previous versions (on mobile change)

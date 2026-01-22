@@ -1,13 +1,4 @@
-import {
-	AfterContentInit,
-	Component,
-	ElementRef,
-	inject,
-	OnInit,
-	signal,
-	TemplateRef,
-	ViewChild,
-} from '@angular/core';
+import { AfterContentInit, Component, ElementRef, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SessionService } from '../../../common/services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -46,7 +37,10 @@ import { Network } from '~/issuer/network.model';
 import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
 import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
 import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
-import { OebDashboardSocialspaceComponent, SocialspaceViewState } from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
+import {
+	OebDashboardSocialspaceComponent,
+	SocialspaceViewState,
+} from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
 import { SvgIconComponent } from '~/common/components/svg-icon.component';
 @Component({
 	selector: 'network-dashboard',
@@ -255,12 +249,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		];
 
 		if (hasDashboardAccess) {
-			this.tabs = [
-				dashboardTabs[0],
-				...baseTabs,
-				dashboardTabs[1],
-				dashboardTabs[2],
-			];
+			this.tabs = [dashboardTabs[0], ...baseTabs, dashboardTabs[1], dashboardTabs[2]];
 		} else {
 			this.tabs = baseTabs;
 			if (this.activeTab === 'overview' || this.activeTab === 'socialspace' || this.activeTab === 'learners') {
@@ -325,10 +314,17 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	}
 
 	isInDetailSubView(): boolean {
-		if (this.activeTab === 'learners' && (this.learnerSubView?.state === 'gender-detail' || this.learnerSubView?.state === 'residence-detail')) {
+		if (
+			this.activeTab === 'learners' &&
+			(this.learnerSubView?.state === 'gender-detail' || this.learnerSubView?.state === 'residence-detail')
+		) {
 			return true;
 		}
-		if (this.activeTab === 'socialspace' && this.socialspaceSubView && this.socialspaceSubView.state !== 'overview') {
+		if (
+			this.activeTab === 'socialspace' &&
+			this.socialspaceSubView &&
+			this.socialspaceSubView.state !== 'overview'
+		) {
 			return true;
 		}
 		return false;

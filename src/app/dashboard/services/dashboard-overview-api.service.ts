@@ -43,7 +43,7 @@ export class DashboardOverviewApiService extends BaseHttpApiService {
 		protected loginService: SessionService,
 		protected http: HttpClient,
 		protected configService: AppConfigService,
-		protected messageService: MessageService
+		protected messageService: MessageService,
 	) {
 		super(loginService, http, configService, messageService);
 	}
@@ -89,18 +89,17 @@ export class DashboardOverviewApiService extends BaseHttpApiService {
 			}
 		}
 
-		return this.http.get<DashboardKPIsResponse>(
-			`${this.buildApiUrl(this.BASE_PATH)}/kpis`,
-			{
+		return this.http
+			.get<DashboardKPIsResponse>(`${this.buildApiUrl(this.BASE_PATH)}/kpis`, {
 				params: httpParams,
-				withCredentials: true
-			}
-		).pipe(
-			catchError((error) => {
-				console.error('[DashboardOverviewApiService] GET /kpis failed:', error);
-				return throwError(() => this.mapError(error, 'getKpis'));
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error('[DashboardOverviewApiService] GET /kpis failed:', error);
+					return throwError(() => this.mapError(error, 'getKpis'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -151,18 +150,17 @@ export class DashboardOverviewApiService extends BaseHttpApiService {
 			}
 		}
 
-		return this.http.get<CompetencyAreasResponse>(
-			`${this.buildApiUrl(this.BASE_PATH)}/competency-areas`,
-			{
+		return this.http
+			.get<CompetencyAreasResponse>(`${this.buildApiUrl(this.BASE_PATH)}/competency-areas`, {
 				params: httpParams,
-				withCredentials: true
-			}
-		).pipe(
-			catchError((error) => {
-				console.error('[DashboardOverviewApiService] GET /competency-areas failed:', error);
-				return throwError(() => this.mapError(error, 'getCompetencyAreas'));
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error('[DashboardOverviewApiService] GET /competency-areas failed:', error);
+					return throwError(() => this.mapError(error, 'getCompetencyAreas'));
+				}),
+			);
 	}
 
 	/**
@@ -199,18 +197,17 @@ export class DashboardOverviewApiService extends BaseHttpApiService {
 			}
 		}
 
-		return this.http.get<CompetencyAreaDetails>(
-			`${this.buildApiUrl(this.BASE_PATH)}/competency-areas/${areaId}`,
-			{
+		return this.http
+			.get<CompetencyAreaDetails>(`${this.buildApiUrl(this.BASE_PATH)}/competency-areas/${areaId}`, {
 				params: httpParams,
-				withCredentials: true
-			}
-		).pipe(
-			catchError((error) => {
-				console.error(`[DashboardOverviewApiService] GET /competency-areas/${areaId} failed:`, error);
-				return throwError(() => this.mapError(error, 'getCompetencyAreaDetail'));
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(`[DashboardOverviewApiService] GET /competency-areas/${areaId} failed:`, error);
+					return throwError(() => this.mapError(error, 'getCompetencyAreaDetail'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -261,18 +258,17 @@ export class DashboardOverviewApiService extends BaseHttpApiService {
 			}
 		}
 
-		return this.http.get<TopBadgesResponse>(
-			`${this.buildApiUrl(this.BASE_PATH)}/top-badges`,
-			{
+		return this.http
+			.get<TopBadgesResponse>(`${this.buildApiUrl(this.BASE_PATH)}/top-badges`, {
 				params: httpParams,
-				withCredentials: true
-			}
-		).pipe(
-			catchError((error) => {
-				console.error('[DashboardOverviewApiService] GET /top-badges failed:', error);
-				return throwError(() => this.mapError(error, 'getTopBadges'));
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error('[DashboardOverviewApiService] GET /top-badges failed:', error);
+					return throwError(() => this.mapError(error, 'getTopBadges'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -286,7 +282,6 @@ export class DashboardOverviewApiService extends BaseHttpApiService {
 		return `${this.configService.apiConfig.baseUrl}${path}`;
 	}
 
-
 	/**
 	 * Map HTTP error to ApiErrorResponse
 	 */
@@ -295,7 +290,7 @@ export class DashboardOverviewApiService extends BaseHttpApiService {
 			error: error.error?.error || error.statusText || 'Unknown Error',
 			message: error.error?.message || error.message || `${context} failed`,
 			details: error.error?.details,
-			requestId: error.error?.requestId
+			requestId: error.error?.requestId,
 		};
 	}
 }

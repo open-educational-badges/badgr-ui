@@ -23,12 +23,12 @@ describe('PlzMapComponent', () => {
 		{ code: '80469-80539', name: 'Isarvorstadt/Haidhausen', count: 198, percentage: 81 },
 		{ code: '80634-80639', name: 'Neuhausen/Nymphenburg', count: 167, percentage: 68 },
 		{ code: '80796-80809', name: 'Schwabing/Maxvorstadt', count: 221, percentage: 90 },
-		{ code: '80933-80999', name: 'Milbertshofen/Freimann/Feldmoching', count: 143, percentage: 58 }
+		{ code: '80933-80999', name: 'Milbertshofen/Freimann/Feldmoching', count: 143, percentage: 58 },
 	];
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			imports: [CommonModule, PlzMapComponent]
+			imports: [CommonModule, PlzMapComponent],
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(PlzMapComponent);
@@ -59,7 +59,7 @@ describe('PlzMapComponent', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			const counts = component.plzRegions.map(r => r.count);
+			const counts = component.plzRegions.map((r) => r.count);
 			const sortedCounts = [...counts].sort((a, b) => b - a);
 			expect(counts).toEqual(sortedCounts);
 		});
@@ -71,7 +71,7 @@ describe('PlzMapComponent', () => {
 			const maxCount = component.plzRegions[0].count;
 			expect(component.plzRegions[0].percentage).toBe(100);
 
-			component.plzRegions.forEach(region => {
+			component.plzRegions.forEach((region) => {
 				const expectedPercentage = (region.count / maxCount) * 100;
 				expect(region.percentage).toBeCloseTo(expectedPercentage, 1);
 			});
@@ -263,7 +263,7 @@ describe('PlzMapComponent', () => {
 		});
 
 		it('should find label for all regions', () => {
-			component.plzRegions.forEach(region => {
+			component.plzRegions.forEach((region) => {
 				const label = component.getRegionLabel(region.code);
 				expect(label).toBe(region.name);
 			});
@@ -290,7 +290,7 @@ describe('PlzMapComponent', () => {
 		it('should handle regions with zero count', () => {
 			const dataWithZero: PlzRegion[] = [
 				{ code: '80331', name: 'Test', count: 100, percentage: 100 },
-				{ code: '80332', name: 'Zero', count: 0, percentage: 0 }
+				{ code: '80332', name: 'Zero', count: 0, percentage: 0 },
 			];
 			component.plzData = dataWithZero;
 			fixture.detectChanges();
@@ -303,20 +303,18 @@ describe('PlzMapComponent', () => {
 			const equalData: PlzRegion[] = [
 				{ code: '80331', name: 'Region 1', count: 100, percentage: 100 },
 				{ code: '80332', name: 'Region 2', count: 100, percentage: 100 },
-				{ code: '80333', name: 'Region 3', count: 100, percentage: 100 }
+				{ code: '80333', name: 'Region 3', count: 100, percentage: 100 },
 			];
 			component.plzData = equalData;
 			fixture.detectChanges();
 
-			component.plzRegions.forEach(region => {
+			component.plzRegions.forEach((region) => {
 				expect(region.percentage).toBe(100);
 			});
 		});
 
 		it('should not break when maxCount is zero', () => {
-			const zeroData: PlzRegion[] = [
-				{ code: '80331', name: 'Zero Region', count: 0, percentage: 0 }
-			];
+			const zeroData: PlzRegion[] = [{ code: '80331', name: 'Zero Region', count: 0, percentage: 0 }];
 			component.plzData = zeroData;
 			fixture.detectChanges();
 
@@ -339,7 +337,7 @@ describe('PlzMapComponent', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			component.plzRegions.forEach(region => {
+			component.plzRegions.forEach((region) => {
 				expect(region.code).toBeDefined();
 				expect(region.name).toBeDefined();
 				expect(region.count).toBeDefined();
@@ -351,10 +349,10 @@ describe('PlzMapComponent', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			const maxCount = Math.max(...component.plzRegions.map(r => r.count));
+			const maxCount = Math.max(...component.plzRegions.map((r) => r.count));
 			expect(maxCount).toBeGreaterThan(0);
 
-			component.plzRegions.forEach(region => {
+			component.plzRegions.forEach((region) => {
 				const expectedPercentage = (region.count / maxCount) * 100;
 				expect(region.percentage).toBeCloseTo(expectedPercentage, 1);
 			});
@@ -370,7 +368,7 @@ describe('PlzMapComponent', () => {
 		it('should have title attributes for tooltips', () => {
 			const regionElements = fixture.debugElement.queryAll(By.css('[title]'));
 
-			regionElements.forEach(element => {
+			regionElements.forEach((element) => {
 				const title = element.nativeElement.getAttribute('title');
 				expect(title).toBeTruthy();
 				expect(title).toContain('Badges');
@@ -380,7 +378,7 @@ describe('PlzMapComponent', () => {
 		it('should have cursor-pointer class for clickable regions', () => {
 			const regionElements = fixture.debugElement.queryAll(By.css('[title]'));
 
-			regionElements.forEach(element => {
+			regionElements.forEach((element) => {
 				const classes = element.nativeElement.className;
 				expect(classes).toContain('tw-cursor-pointer');
 			});
@@ -389,7 +387,7 @@ describe('PlzMapComponent', () => {
 		it('should have hover effects', () => {
 			const regionElements = fixture.debugElement.queryAll(By.css('[title]'));
 
-			regionElements.forEach(element => {
+			regionElements.forEach((element) => {
 				const classes = element.nativeElement.className;
 				expect(classes).toContain('hover:tw-opacity-80');
 				expect(classes).toContain('hover:tw-scale-105');
@@ -399,7 +397,7 @@ describe('PlzMapComponent', () => {
 		it('should have smooth transitions', () => {
 			const regionElements = fixture.debugElement.queryAll(By.css('[title]'));
 
-			regionElements.forEach(element => {
+			regionElements.forEach((element) => {
 				const classes = element.nativeElement.className;
 				expect(classes).toContain('tw-transition-all');
 			});
@@ -421,7 +419,7 @@ describe('PlzMapComponent', () => {
 				code: '80331',
 				name: 'Test Region',
 				count: 100,
-				percentage: 100
+				percentage: 100,
 			};
 
 			expect(validRegion.code).toBeDefined();
@@ -438,24 +436,18 @@ describe('PlzMapComponent', () => {
 				badgesByType: {
 					participation: 40,
 					competency: 50,
-					learningpath: 10
+					learningpath: 10,
 				},
-				topCompetencies: [
-					{ name: 'Test', count: 10, percentage: 10 }
-				],
+				topCompetencies: [{ name: 'Test', count: 10, percentage: 10 }],
 				institutions: 5,
-				topInstitutions: [
-					{ name: 'Test Uni', badgeCount: 50 }
-				],
+				topInstitutions: [{ name: 'Test Uni', badgeCount: 50 }],
 				demographics: {
-					genderDistribution: [
-						{ gender: 'Weiblich', count: 50, percentage: 50 }
-					]
+					genderDistribution: [{ gender: 'Weiblich', count: 50, percentage: 50 }],
 				},
 				trendData: {
 					monthlyGrowth: 10,
-					yearlyGrowth: 50
-				}
+					yearlyGrowth: 50,
+				},
 			};
 
 			expect(validMetrics.code).toBeDefined();

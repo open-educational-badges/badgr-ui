@@ -23,7 +23,8 @@ export type Tab = {
 		<hlm-tabs-list
 			class="tw-w-full tw-max-w-[600px] tw-flex tw-justify-between"
 			[class.tw-hidden]="hideTabBar()"
-			aria-label="tabs">
+			aria-label="tabs"
+		>
 			@for (tab of tabs(); track tab) {
 				<button
 					class="tw-grow tw-px-6 tw-py-2"

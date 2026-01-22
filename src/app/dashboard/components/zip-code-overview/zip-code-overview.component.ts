@@ -9,7 +9,7 @@ import { ZipCodeStatisticsData } from '../../models/dashboard-models';
 	standalone: true,
 	imports: [CommonModule, TranslatePipe],
 	templateUrl: './zip-code-overview.component.html',
-	styleUrls: ['./zip-code-overview.component.scss']
+	styleUrls: ['./zip-code-overview.component.scss'],
 })
 export class ZipCodeOverviewComponent implements OnInit {
 	zipCodeStatistics: ZipCodeStatisticsData[] = [];
@@ -34,19 +34,27 @@ export class ZipCodeOverviewComponent implements OnInit {
 
 	getTrendIcon(trend: string): string {
 		switch (trend) {
-			case 'up': return '↗';
-			case 'down': return '↘';
-			case 'stable': return '→';
-			default: return '→';
+			case 'up':
+				return '↗';
+			case 'down':
+				return '↘';
+			case 'stable':
+				return '→';
+			default:
+				return '→';
 		}
 	}
 
 	getTrendColor(trend: string): string {
 		switch (trend) {
-			case 'up': return 'var(--color-green)';
-			case 'down': return 'var(--color-red)';
-			case 'stable': return 'var(--color-darkgray)';
-			default: return 'var(--color-darkgray)';
+			case 'up':
+				return 'var(--color-green)';
+			case 'down':
+				return 'var(--color-red)';
+			case 'stable':
+				return 'var(--color-darkgray)';
+			default:
+				return 'var(--color-darkgray)';
 		}
 	}
 

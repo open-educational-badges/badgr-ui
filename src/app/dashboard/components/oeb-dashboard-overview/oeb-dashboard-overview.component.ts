@@ -1,4 +1,17 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, signal, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import {
+	Component,
+	OnInit,
+	Input,
+	Output,
+	EventEmitter,
+	OnDestroy,
+	signal,
+	OnChanges,
+	SimpleChanges,
+	ViewChild,
+	ElementRef,
+	AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -32,14 +45,20 @@ import {
 	getBadgeTypeDisplayConfig,
 	ESCORootSkill,
 	SocialspaceInstitution,
-	BadgeTypeStatsExtended
+	BadgeTypeStatsExtended,
 } from '../../models/network-dashboard-api.model';
 import { RecentActivityTableComponent } from '../recent-activity-table/recent-activity-table.component';
-import { RecipientSkillVisualisationComponent, CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
+import {
+	RecipientSkillVisualisationComponent,
+	CompetencyAreaClickData,
+} from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-bar-chart/horizontal-bar-chart.component';
 import { ApiRootSkill } from '../../../common/model/ai-skills.model';
 import { AppConfigService } from '../../../common/app-config.service';
-import { BadgeDistributionPieChartComponent, PieChartSegment } from '../badge-distribution-pie-chart/badge-distribution-pie-chart.component';
+import {
+	BadgeDistributionPieChartComponent,
+	PieChartSegment,
+} from '../badge-distribution-pie-chart/badge-distribution-pie-chart.component';
 import { BadgesYearlyLineChartComponent } from '../badges-yearly-line-chart/badges-yearly-line-chart.component';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 
@@ -72,11 +91,11 @@ export interface CompetencyData {
 		RecipientSkillVisualisationComponent,
 		HorizontalBarChartComponent,
 		BadgeDistributionPieChartComponent,
-		BadgesYearlyLineChartComponent
+		BadgesYearlyLineChartComponent,
 	],
 	providers: [provideIcons({ lucideClockFading })],
 	templateUrl: './oeb-dashboard-overview.component.html',
-	styleUrls: ['./oeb-dashboard-overview.component.scss']
+	styleUrls: ['./oeb-dashboard-overview.component.scss'],
 })
 export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChanges {
 	private destroy$ = new Subject<void>();
@@ -120,7 +139,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 * Convert badgeTypeStats to PieChartSegment[] for the new pie chart component
 	 */
 	get badgeTypePieChartSegments(): PieChartSegment[] {
-		return this.badgeTypeStats.map(stat => ({
+		return this.badgeTypeStats.map((stat) => ({
 			id: stat.type,
 			label: stat.label,
 			count: stat.count,
@@ -161,8 +180,18 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	/** Month keys for translation lookup */
 	private readonly monthKeys = [
-		'january', 'february', 'march', 'april', 'may', 'june',
-		'july', 'august', 'september', 'october', 'november', 'december'
+		'january',
+		'february',
+		'march',
+		'april',
+		'may',
+		'june',
+		'july',
+		'august',
+		'september',
+		'october',
+		'november',
+		'december',
 	];
 
 	// Loading and error states (using signals for reactive UI)
@@ -182,7 +211,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		private networkDashboardApi: NetworkDashboardApiService,
 		private translate: TranslateService,
 		private configService: AppConfigService,
-		private issuerManager: IssuerManager
+		private issuerManager: IssuerManager,
 	) {}
 
 	ngOnInit(): void {
@@ -191,22 +220,18 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		this.initializeMonths();
 
 		// Load user's issuers to check membership for institution clicks
-		this.issuerManager.myIssuers$
-			.pipe(takeUntil(this.destroy$))
-			.subscribe(issuers => {
-				this.userIssuerSlugs = new Set(issuers.map(i => i.slug));
-			});
+		this.issuerManager.myIssuers$.pipe(takeUntil(this.destroy$)).subscribe((issuers) => {
+			this.userIssuerSlugs = new Set(issuers.map((i) => i.slug));
+		});
 
 		// Load initial data
 		this.loadDashboardData();
 
 		// Reload data when data source changes (only for non-network mode)
 		if (!this.networkSlug) {
-			this.dataSourceService.dataSource$
-				.pipe(takeUntil(this.destroy$))
-				.subscribe(source => {
-					this.loadDashboardData();
-				});
+			this.dataSourceService.dataSource$.pipe(takeUntil(this.destroy$)).subscribe((source) => {
+				this.loadDashboardData();
+			});
 		}
 	}
 
@@ -222,9 +247,18 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	private initializeBadgeTypes(): void {
 		this.badgeTypes = [
 			{ value: 'all', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.allTypes') },
-			{ value: 'competency', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.competencyBadges') },
-			{ value: 'participation', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.participationBadges') },
-			{ value: 'learningpath', label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.learningPaths') }
+			{
+				value: 'competency',
+				label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.competencyBadges'),
+			},
+			{
+				value: 'participation',
+				label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.participationBadges'),
+			},
+			{
+				value: 'learningpath',
+				label: this.translate.instant('Network.Dashboard.badgeTimeline.filter.learningPaths'),
+			},
 		];
 	}
 
@@ -235,7 +269,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		this.availableMonths = this.monthKeys.map((key, index) => ({
 			value: index + 1,
 			label: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.label`),
-			shortLabel: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.short`)
+			shortLabel: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.short`),
 		}));
 	}
 
@@ -253,7 +287,6 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		// Chart rendering is now handled by the reusable BadgesYearlyLineChartComponent
 		// This method is kept for backwards compatibility but does nothing
 	}
-
 
 	/**
 	 * Renders chart when DOM is ready and container has dimensions
@@ -314,130 +347,146 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading network KPIs:', error);
 					return of({ kpis: [] });
-				})
+				}),
 			),
 			competencyAreas: this.networkDashboardApi.getCompetencyAreas(this.networkSlug, 6).pipe(
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading network competency areas:', error);
 					return of({ data: [] });
-				})
+				}),
 			),
 			// NEW: Load competency areas as ESCO skills for visualisation
 			competencySkills: this.networkDashboardApi.getCompetencyAreasSkills(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading competency areas skills:', error);
 					return of({ skills: [] });
-				})
+				}),
 			),
 			topBadges: this.networkDashboardApi.getTopBadges(this.networkSlug, 3).pipe(
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading network top badges:', error);
 					return of({ badges: [] });
-				})
+				}),
 			),
 			recentActivity: this.networkDashboardApi.getRecentActivity(this.networkSlug, 4).pipe(
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading network recent activity:', error);
 					return of({ activities: [] });
-				})
+				}),
 			),
 			// NEW: Load strengthened competencies
 			strengthenedCompetencies: this.networkDashboardApi.getStrengthenedCompetencies(this.networkSlug, 8).pipe(
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading strengthened competencies:', error);
 					return of({ competencies: [] });
-				})
+				}),
 			),
 			// NEW: Load badge awards timeline
-			badgeAwardsTimeline: this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, {
-				year: this.selectedYear,
-				groupBy: 'month'
-			}).pipe(
-				catchError((error) => {
-					console.error('[OEB-OVERVIEW] Error loading badge awards timeline:', error);
-					return of({ timeline: [] });
+			badgeAwardsTimeline: this.networkDashboardApi
+				.getBadgeAwardsTimeline(this.networkSlug, {
+					year: this.selectedYear,
+					groupBy: 'month',
 				})
-			),
+				.pipe(
+					catchError((error) => {
+						console.error('[OEB-OVERVIEW] Error loading badge awards timeline:', error);
+						return of({ timeline: [] });
+					}),
+				),
 			// NEW: Load badge type distribution
 			badgeTypeDistribution: this.networkDashboardApi.getBadgeTypeDistribution(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading badge type distribution:', error);
 					return of({ distribution: [] });
-				})
+				}),
 			),
 			// Load institutions for the Institutions-Ranking section
 			institutions: this.networkDashboardApi.getSocialspaceInstitutions(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] Error loading institutions:', error);
 					return of({ institutions: [], summary: { total: 0, newThisMonth: 0 } });
-				})
-			)
-		}).pipe(takeUntil(this.destroy$)).subscribe({
-			next: ({ kpis, competencyAreas, competencySkills, topBadges, recentActivity, strengthenedCompetencies, badgeAwardsTimeline, badgeTypeDistribution, institutions }) => {
-				// Transform KPIs to KpiCardData
-				if (kpis?.kpis) {
-					this.kpiCards = this.transformNetworkKpisToCards(kpis.kpis);
-				}
+				}),
+			),
+		})
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: ({
+					kpis,
+					competencyAreas,
+					competencySkills,
+					topBadges,
+					recentActivity,
+					strengthenedCompetencies,
+					badgeAwardsTimeline,
+					badgeTypeDistribution,
+					institutions,
+				}) => {
+					// Transform KPIs to KpiCardData
+					if (kpis?.kpis) {
+						this.kpiCards = this.transformNetworkKpisToCards(kpis.kpis);
+					}
 
 					// Transform ESCO skills data for skill visualisation
-				if (competencySkills?.skills?.length > 0) {
-					this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
-				} else {
-					this.skillVisualisationData = [];
-				}
+					if (competencySkills?.skills?.length > 0) {
+						this.skillVisualisationData = this.transformToApiRootSkills(competencySkills.skills);
+					} else {
+						this.skillVisualisationData = [];
+					}
 
-				// Transform top badges - icons and colors assigned by frontend based on rank
-				if (topBadges?.badges) {
-					this.top3Badges = topBadges.badges.map((badge) => {
-						const displayConfig = getBadgeRankDisplayConfig(badge.rank);
-						return {
-							rank: badge.rank as 1 | 2 | 3,
-							name: badge.badgeTitle,
-							count: badge.count,
-							image: badge.image,
-							icon: displayConfig.icon,
-							color: displayConfig.color,
-						};
-					});
-				}
+					// Transform top badges - icons and colors assigned by frontend based on rank
+					if (topBadges?.badges) {
+						this.top3Badges = topBadges.badges.map((badge) => {
+							const displayConfig = getBadgeRankDisplayConfig(badge.rank);
+							return {
+								rank: badge.rank as 1 | 2 | 3,
+								name: badge.badgeTitle,
+								count: badge.count,
+								image: badge.image,
+								icon: displayConfig.icon,
+								color: displayConfig.color,
+							};
+						});
+					}
 
-				// Set recent activities directly from API
-				if (recentActivity?.activities) {
-					this.recentActivities = recentActivity.activities;
-				}
+					// Set recent activities directly from API
+					if (recentActivity?.activities) {
+						this.recentActivities = recentActivity.activities;
+					}
 
-				// NEW: Transform strengthened competencies for bar chart
-				if (strengthenedCompetencies?.competencies) {
-					this.individualCompetencyData = this.transformStrengthenedCompetencies(strengthenedCompetencies.competencies);
-				}
+					// NEW: Transform strengthened competencies for bar chart
+					if (strengthenedCompetencies?.competencies) {
+						this.individualCompetencyData = this.transformStrengthenedCompetencies(
+							strengthenedCompetencies.competencies,
+						);
+					}
 
-				// NEW: Transform badge awards timeline for line chart
-				if (badgeAwardsTimeline?.timeline) {
-					this.badgeAwardsTimeline = badgeAwardsTimeline.timeline;
-					this.badgeAwardsByTime = this.transformTimelineToLegacyFormat(badgeAwardsTimeline.timeline);
-				}
+					// NEW: Transform badge awards timeline for line chart
+					if (badgeAwardsTimeline?.timeline) {
+						this.badgeAwardsTimeline = badgeAwardsTimeline.timeline;
+						this.badgeAwardsByTime = this.transformTimelineToLegacyFormat(badgeAwardsTimeline.timeline);
+					}
 
-				// NEW: Transform badge type distribution for pie chart
-				if (badgeTypeDistribution?.distribution) {
-					this.badgeTypeStats = this.transformBadgeTypeDistribution(badgeTypeDistribution.distribution);
-				}
+					// NEW: Transform badge type distribution for pie chart
+					if (badgeTypeDistribution?.distribution) {
+						this.badgeTypeStats = this.transformBadgeTypeDistribution(badgeTypeDistribution.distribution);
+					}
 
-				// Transform institutions to Top 3 for the Institutions-Ranking section
-				if (institutions?.institutions && institutions.institutions.length > 0) {
-					this.top3Institutions = this.transformInstitutionsToTop3(institutions.institutions);
-				}
+					// Transform institutions to Top 3 for the Institutions-Ranking section
+					if (institutions?.institutions && institutions.institutions.length > 0) {
+						this.top3Institutions = this.transformInstitutionsToTop3(institutions.institutions);
+					}
 
-				this.isLoading.set(false);
-				this.dataLoaded = true;
-				// Render chart after Angular updates the DOM with the content block
-				this.scheduleChartRender();
-			},
-			error: (error) => {
-				console.error('[OEB-OVERVIEW] Error loading network data:', error);
-				this.dataLoaded = true;
-				this.handleError('Netzwerk-Dashboard konnte nicht geladen werden');
-			}
-		});
+					this.isLoading.set(false);
+					this.dataLoaded = true;
+					// Render chart after Angular updates the DOM with the content block
+					this.scheduleChartRender();
+				},
+				error: (error) => {
+					console.error('[OEB-OVERVIEW] Error loading network data:', error);
+					this.dataLoaded = true;
+					this.handleError('Netzwerk-Dashboard konnte nicht geladen werden');
+				},
+			});
 	}
 
 	/**
@@ -458,7 +507,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 			count: 0, // API doesn't provide count, only hours
 			hours: comp.hours,
 			color: '#492E98',
-			escoUri: comp.escoUri
+			escoUri: comp.escoUri,
 		}));
 
 		return transformed;
@@ -469,7 +518,10 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 * @param timeline - API timeline entries
 	 * @param selectedMonth - If provided, include day in the result for daily view
 	 */
-	private transformTimelineToLegacyFormat(timeline: NetworkBadgeAwardTimelineEntry[], selectedMonth?: number | null): BadgeAwardData[] {
+	private transformTimelineToLegacyFormat(
+		timeline: NetworkBadgeAwardTimelineEntry[],
+		selectedMonth?: number | null,
+	): BadgeAwardData[] {
 		if (!timeline || timeline.length === 0) {
 			return [];
 		}
@@ -491,7 +543,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 						month,
 						day,
 						type: 'participation',
-						count: entry.byType.participation
+						count: entry.byType.participation,
 					});
 				}
 				if (entry.byType.competency > 0) {
@@ -501,7 +553,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 						month,
 						day,
 						type: 'competency',
-						count: entry.byType.competency
+						count: entry.byType.competency,
 					});
 				}
 				if (entry.byType.learningpath > 0) {
@@ -511,7 +563,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 						month,
 						day,
 						type: 'learningpath',
-						count: entry.byType.learningpath
+						count: entry.byType.learningpath,
 					});
 				}
 			} else {
@@ -522,7 +574,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 					month,
 					day,
 					type: 'all',
-					count: entry.count
+					count: entry.count,
 				});
 			}
 		}
@@ -534,9 +586,15 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 * Transform badge type distribution from API to BadgeTypeStatsExtended for pie chart
 	 * Ensures all three badge types are always present, even with 0 count
 	 */
-	private transformBadgeTypeDistribution(distribution: NetworkBadgeTypeDistributionEntry[]): BadgeTypeStatsExtended[] {
+	private transformBadgeTypeDistribution(
+		distribution: NetworkBadgeTypeDistributionEntry[],
+	): BadgeTypeStatsExtended[] {
 		// Define all badge types that should always be shown
-		const allBadgeTypes: Array<'participation' | 'competency' | 'learningpath'> = ['participation', 'competency', 'learningpath'];
+		const allBadgeTypes: Array<'participation' | 'competency' | 'learningpath'> = [
+			'participation',
+			'competency',
+			'learningpath',
+		];
 
 		// Create a map of existing distribution data
 		const distributionMap = new Map<string, NetworkBadgeTypeDistributionEntry>();
@@ -556,7 +614,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 					count: entry.count,
 					percentage: entry.percentage,
 					color: displayConfig.color,
-					borderColor: displayConfig.borderColor
+					borderColor: displayConfig.borderColor,
 				};
 			} else {
 				// Badge type not in API response - add with 0 count
@@ -566,7 +624,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 					count: 0,
 					percentage: 0,
 					color: displayConfig.color,
-					borderColor: displayConfig.borderColor
+					borderColor: displayConfig.borderColor,
 				};
 			}
 		});
@@ -576,7 +634,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 * Transform ESCORootSkill array to ApiRootSkill array for skill visualisation component
 	 */
 	private transformToApiRootSkills(skills: ESCORootSkill[]): ApiRootSkill[] {
-		return skills.map(skill => ({
+		return skills.map((skill) => ({
 			preferred_label: skill.preferred_label,
 			alt_labels: skill.alt_labels,
 			description: skill.description,
@@ -584,7 +642,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 			type: skill.type,
 			reuse_level: skill.reuse_level || '',
 			studyLoad: skill.studyLoad,
-			breadcrumb_paths: skill.breadcrumb_paths as [any[]]
+			breadcrumb_paths: skill.breadcrumb_paths as [any[]],
 		}));
 	}
 
@@ -614,7 +672,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 			if (config.variant === 'dual' && config.pairedWith) {
 				// Find the paired KPI
-				const pairedKpi = kpis.find(k => k.id === config.pairedWith);
+				const pairedKpi = kpis.find((k) => k.id === config.pairedWith);
 				const pairedConfig = pairedKpi ? KPI_DISPLAY_CONFIG[pairedKpi.id] : null;
 
 				if (pairedKpi && pairedConfig) {
@@ -627,11 +685,11 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 							size: config.iconSize,
 							color: config.iconColor,
 							filled: config.iconFilled || false,
-							borderColor: config.iconBorderColor
+							borderColor: config.iconBorderColor,
 						},
 						value: {
 							raw: kpi.value,
-							display: formatKPIValue(kpi.value)
+							display: formatKPIValue(kpi.value),
 						},
 						description: this.translate.instant(config.descriptionKey),
 						iconSecondary: {
@@ -639,13 +697,13 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 							size: pairedConfig.iconSize,
 							color: pairedConfig.iconColor,
 							filled: pairedConfig.iconFilled || false,
-							borderColor: pairedConfig.iconBorderColor
+							borderColor: pairedConfig.iconBorderColor,
 						},
 						valueSecondary: {
 							raw: pairedKpi.value,
-							display: formatKPIValue(pairedKpi.value)
+							display: formatKPIValue(pairedKpi.value),
 						},
-						descriptionSecondary: this.translate.instant(pairedConfig.descriptionKey)
+						descriptionSecondary: this.translate.instant(pairedConfig.descriptionKey),
 					});
 
 					processedIds.add(kpi.id);
@@ -661,24 +719,29 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 						size: config.iconSize,
 						color: config.iconColor,
 						filled: config.iconFilled || false,
-						borderColor: config.iconBorderColor
+						borderColor: config.iconBorderColor,
 					},
 					value: {
 						raw: kpi.value,
-						display: formatKPIValue(kpi.value)
+						display: formatKPIValue(kpi.value),
 					},
 					description: this.translate.instant(config.descriptionKey),
-					tooltip: config.tooltipKey ? this.translate.instant(config.tooltipKey) : undefined
+					tooltip: config.tooltipKey ? this.translate.instant(config.tooltipKey) : undefined,
 				};
 
 				// Add growth indicator only if trend is positive ('up') and KPI should show trend
-				if (kpi.trend === 'up' && kpi.trendValue !== undefined && kpi.trendValue > 0 && this.shouldShowTrend(kpi.id)) {
+				if (
+					kpi.trend === 'up' &&
+					kpi.trendValue !== undefined &&
+					kpi.trendValue > 0 &&
+					this.shouldShowTrend(kpi.id)
+				) {
 					const trendLabel = this.formatTrendLabelForKpi(kpi);
 
 					card.growth = {
 						percentage: kpi.trendValue,
 						label: trendLabel,
-						isPositive: true
+						isPositive: true,
 					};
 				}
 
@@ -728,14 +791,15 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		this.kpiCards = MOCK_KPI_CARDS;
 
 		// Load top badges from new endpoint
-		this.overviewApiService.getTopBadges({ limit: 3, period: 'all_time' })
+		this.overviewApiService
+			.getTopBadges({ limit: 3, period: 'all_time' })
 			.pipe(
 				takeUntil(this.destroy$),
 				catchError((error) => {
 					console.error('[OEB-OVERVIEW] API Error loading top badges:', error);
 					this.handleError(this.translate.instant('Dashboard.error.topBadgesLoadFailed'));
 					return EMPTY;
-				})
+				}),
 			)
 			.subscribe({
 				next: (response) => {
@@ -751,7 +815,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 					this.dataLoaded = true;
 					// Render chart after Angular updates the DOM with the content block
 					this.scheduleChartRender();
-				}
+				},
 			});
 	}
 
@@ -877,10 +941,14 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 */
 	private getIconForRank(rank: number): string {
 		switch (rank) {
-			case 1: return 'lucideTrophy';
-			case 2: return 'lucideMedal';
-			case 3: return 'lucideAward';
-			default: return 'lucideBadge';
+			case 1:
+				return 'lucideTrophy';
+			case 2:
+				return 'lucideMedal';
+			case 3:
+				return 'lucideAward';
+			default:
+				return 'lucideBadge';
 		}
 	}
 
@@ -889,10 +957,14 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 */
 	private getColorForRank(rank: number): string {
 		switch (rank) {
-			case 1: return '#FFCC00';
-			case 2: return '#492E98';
-			case 3: return '#492E98';
-			default: return '#492E98';
+			case 1:
+				return '#FFCC00';
+			case 2:
+				return '#492E98';
+			case 3:
+				return '#492E98';
+			default:
+				return '#492E98';
 		}
 	}
 
@@ -903,7 +975,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		return [
 			{ rank: 1, name: 'Digital Marketing Expert', count: 87, icon: 'lucideTrophy', color: '#FFCC00' },
 			{ rank: 2, name: 'Web Development Fundamentals', count: 64, icon: 'lucideMedal', color: '#492E98' },
-			{ rank: 3, name: 'Project Management Professional', count: 52, icon: 'lucideAward', color: '#492E98' }
+			{ rank: 3, name: 'Project Management Professional', count: 52, icon: 'lucideAward', color: '#492E98' },
 		];
 	}
 
@@ -928,19 +1000,27 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	getTrendIcon(trend: string): string {
 		switch (trend) {
-			case 'up': return '↗';
-			case 'down': return '↘';
-			case 'stable': return '→';
-			default: return '→';
+			case 'up':
+				return '↗';
+			case 'down':
+				return '↘';
+			case 'stable':
+				return '→';
+			default:
+				return '→';
 		}
 	}
 
 	getTrendColor(trend: string): string {
 		switch (trend) {
-			case 'up': return 'var(--color-green)';
-			case 'down': return 'var(--color-red)';
-			case 'stable': return 'var(--color-darkgray)';
-			default: return 'var(--color-darkgray)';
+			case 'up':
+				return 'var(--color-green)';
+			case 'down':
+				return 'var(--color-red)';
+			case 'stable':
+				return 'var(--color-darkgray)';
+			default:
+				return 'var(--color-darkgray)';
 		}
 	}
 
@@ -959,7 +1039,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		if (!this.individualCompetencyData || this.individualCompetencyData.length === 0) {
 			return 1; // Avoid division by zero
 		}
-		return Math.max(...this.individualCompetencyData.map(c => c.count)) || 1;
+		return Math.max(...this.individualCompetencyData.map((c) => c.count)) || 1;
 	}
 
 	/**
@@ -969,7 +1049,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		if (!this.individualCompetencyData || this.individualCompetencyData.length === 0) {
 			return 1; // Avoid division by zero
 		}
-		return Math.max(...this.individualCompetencyData.map(c => c.hours)) || 1;
+		return Math.max(...this.individualCompetencyData.map((c) => c.hours)) || 1;
 	}
 
 	/**
@@ -980,12 +1060,12 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 */
 	getCompetencyFontSize(text: string): number {
 		const length = text?.length || 0;
-		if (length <= 20) return 14;      // tw-text-sm equivalent
+		if (length <= 20) return 14; // tw-text-sm equivalent
 		if (length <= 30) return 13;
-		if (length <= 40) return 12;      // tw-text-xs equivalent
+		if (length <= 40) return 12; // tw-text-xs equivalent
 		if (length <= 50) return 11;
 		if (length <= 60) return 10;
-		return 9;                          // Very long text
+		return 9; // Very long text
 	}
 
 	/**
@@ -995,8 +1075,8 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 */
 	getCompetencyLineHeight(text: string): number {
 		const length = text?.length || 0;
-		if (length <= 30) return 1.25;    // tight
-		return 1.2;                        // tighter for longer text
+		if (length <= 30) return 1.25; // tight
+		return 1.2; // tighter for longer text
 	}
 
 	// Gap between segments in pixels (converted to angle)
@@ -1097,7 +1177,12 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 */
 	openCompetencyDetail(competency: CompetencyData): void {
 		if (this.networkSlug) {
-			this.router.navigate(['/issuer/networks', this.networkSlug, 'competency-tracking', competency.competencyKey]);
+			this.router.navigate([
+				'/issuer/networks',
+				this.networkSlug,
+				'competency-tracking',
+				competency.competencyKey,
+			]);
 		}
 	}
 
@@ -1105,13 +1190,13 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 * Transform individual competency data to HorizontalBarItem format for the reusable component
 	 */
 	getCompetencyBarItems(): HorizontalBarItem[] {
-		return this.individualCompetencyData.map(comp => ({
+		return this.individualCompetencyData.map((comp) => ({
 			id: comp.competencyKey,
 			label: comp.displayTitle,
 			value: comp.hours,
 			barDisplayValue: comp.hours,
 			escoUri: comp.escoUri,
-			data: comp
+			data: comp,
 		}));
 	}
 
@@ -1156,15 +1241,12 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		}
 
 		// Navigate to competency tracking page with area data in router state
-		this.router.navigate(
-			['/issuer/networks', this.networkSlug, 'competency-tracking'],
-			{
-				state: {
-					openAreaDetail: true,
-					areaData: areaData
-				}
-			}
-		);
+		this.router.navigate(['/issuer/networks', this.networkSlug, 'competency-tracking'], {
+			state: {
+				openAreaDetail: true,
+				areaData: areaData,
+			},
+		});
 	}
 
 	/**
@@ -1213,7 +1295,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 		// Build params - if month is selected, use startDate/endDate for the month range
 		const params: { year?: number; startDate?: string; endDate?: string; groupBy: 'day' | 'month' } = {
-			groupBy: groupBy
+			groupBy: groupBy,
 		};
 
 		if (month) {
@@ -1226,23 +1308,26 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 			params.year = year;
 		}
 
-		this.networkDashboardApi.getBadgeAwardsTimeline(this.networkSlug, params).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				console.error('[OEB-OVERVIEW] Error loading badge awards timeline:', { year, month }, error);
-				this.isLoadingTimeline = false;
-				return EMPTY;
-			})
-		).subscribe({
-			next: (response) => {
-				// Always update the data - even if empty - to ensure chart reflects current selection
-				const timeline = response?.timeline || [];
-				this.badgeAwardsTimeline = timeline;
-				this.badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline, month);
-				this.isLoadingTimeline = false;
-				// Chart rendering is now handled by the reusable BadgesYearlyLineChartComponent
-			}
-		});
+		this.networkDashboardApi
+			.getBadgeAwardsTimeline(this.networkSlug, params)
+			.pipe(
+				takeUntil(this.destroy$),
+				catchError((error) => {
+					console.error('[OEB-OVERVIEW] Error loading badge awards timeline:', { year, month }, error);
+					this.isLoadingTimeline = false;
+					return EMPTY;
+				}),
+			)
+			.subscribe({
+				next: (response) => {
+					// Always update the data - even if empty - to ensure chart reflects current selection
+					const timeline = response?.timeline || [];
+					this.badgeAwardsTimeline = timeline;
+					this.badgeAwardsByTime = this.transformTimelineToLegacyFormat(timeline, month);
+					this.isLoadingTimeline = false;
+					// Chart rendering is now handled by the reusable BadgesYearlyLineChartComponent
+				},
+			});
 	}
 
 	/**
@@ -1259,5 +1344,4 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	onBadgeTypeFilterChange(type: string): void {
 		this.selectedBadgeType = type;
 	}
-
 }

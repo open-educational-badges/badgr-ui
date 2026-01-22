@@ -86,7 +86,7 @@ export type PlzDetailMetrics = ZipCodeDetailMetrics;
 	standalone: true,
 	imports: [CommonModule, TranslatePipe],
 	templateUrl: './zip-code-map.component.html',
-	styleUrls: ['./zip-code-map.component.scss']
+	styleUrls: ['./zip-code-map.component.scss'],
 })
 export class ZipCodeMapComponent implements OnInit, OnChanges {
 	/** City data from API (preferred input) */
@@ -94,7 +94,9 @@ export class ZipCodeMapComponent implements OnInit, OnChanges {
 
 	@Input() zipCodeData: ZipCodeRegion[] = [];
 	/** @deprecated Use zipCodeData instead */
-	@Input() set plzData(value: ZipCodeRegion[]) { this.zipCodeData = value; }
+	@Input() set plzData(value: ZipCodeRegion[]) {
+		this.zipCodeData = value;
+	}
 	@Output() zipCodeClicked = new EventEmitter<string>();
 	/** @deprecated Use zipCodeClicked instead */
 	@Output() plzClicked = this.zipCodeClicked;
@@ -102,7 +104,7 @@ export class ZipCodeMapComponent implements OnInit, OnChanges {
 	// City/region data for display - populated from API
 	zipCodeRegions: ZipCodeRegion[] = [];
 
-	constructor() { }
+	constructor() {}
 
 	ngOnInit(): void {
 		this.updateRegionsFromData();
@@ -120,11 +122,11 @@ export class ZipCodeMapComponent implements OnInit, OnChanges {
 	private updateRegionsFromData(): void {
 		// Priority 1: Use cities from API
 		if (this.cities && this.cities.length > 0) {
-			this.zipCodeRegions = this.cities.map(city => ({
+			this.zipCodeRegions = this.cities.map((city) => ({
 				code: city.city, // Use city name as the "code" for click handling
 				name: city.city,
 				count: city.badges,
-				percentage: 0 // Will be calculated below
+				percentage: 0, // Will be calculated below
 			}));
 		}
 		// Priority 2: Use zipCodeData if provided
@@ -142,9 +144,9 @@ export class ZipCodeMapComponent implements OnInit, OnChanges {
 
 		// Recalculate percentages based on sorted order
 		const maxCount = this.zipCodeRegions[0]?.count || 1;
-		this.zipCodeRegions = this.zipCodeRegions.map(region => ({
+		this.zipCodeRegions = this.zipCodeRegions.map((region) => ({
 			...region,
-			percentage: (region.count / maxCount) * 100
+			percentage: (region.count / maxCount) * 100,
 		}));
 	}
 
@@ -156,7 +158,7 @@ export class ZipCodeMapComponent implements OnInit, OnChanges {
 
 	getRegionLabel(code: string): string {
 		// Find the region by code
-		const region = this.zipCodeRegions.find(r => r.code === code);
+		const region = this.zipCodeRegions.find((r) => r.code === code);
 		return region ? region.name : code;
 	}
 

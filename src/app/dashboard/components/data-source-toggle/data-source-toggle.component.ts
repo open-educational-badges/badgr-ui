@@ -32,7 +32,8 @@ import { DashboardDataSourceService, DataSourceType } from '../../services/dashb
 			<span
 				class="tw-text-sm tw-font-medium tw-transition-colors tw-duration-200"
 				[class.tw-text-gray-400]="isApiData"
-				[class.tw-text-purple-600]="!isApiData">
+				[class.tw-text-purple-600]="!isApiData"
+			>
 				{{ 'Dashboard.dataSource.mock' | translate }}
 			</span>
 
@@ -47,11 +48,13 @@ import { DashboardDataSourceService, DataSourceType } from '../../services/dashb
 				(keydown.space)="onToggle(); $event.preventDefault()"
 				class="toggle-switch tw-relative tw-inline-flex tw-h-6 tw-w-11 tw-flex-shrink-0 tw-cursor-pointer tw-rounded-full tw-border-2 tw-border-transparent tw-transition-colors tw-duration-200 tw-ease-in-out focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-purple-500 focus:tw-ring-offset-2"
 				[class.tw-bg-purple-600]="isApiData"
-				[class.tw-bg-gray-300]="!isApiData">
+				[class.tw-bg-gray-300]="!isApiData"
+			>
 				<span
 					class="toggle-dot tw-pointer-events-none tw-inline-block tw-h-5 tw-w-5 tw-transform tw-rounded-full tw-bg-white tw-shadow tw-ring-0 tw-transition tw-duration-200 tw-ease-in-out"
 					[class.tw-translate-x-5]="isApiData"
-					[class.tw-translate-x-0]="!isApiData">
+					[class.tw-translate-x-0]="!isApiData"
+				>
 				</span>
 			</button>
 
@@ -59,7 +62,8 @@ import { DashboardDataSourceService, DataSourceType } from '../../services/dashb
 			<span
 				class="tw-text-sm tw-font-medium tw-transition-colors tw-duration-200"
 				[class.tw-text-gray-400]="!isApiData"
-				[class.tw-text-purple-600]="isApiData">
+				[class.tw-text-purple-600]="isApiData"
+			>
 				{{ 'Dashboard.dataSource.api' | translate }}
 			</span>
 
@@ -68,37 +72,42 @@ import { DashboardDataSourceService, DataSourceType } from '../../services/dashb
 				<span
 					class="tw-h-2 tw-w-2 tw-rounded-full tw-animate-pulse"
 					[class.tw-bg-green-500]="isApiData"
-					[class.tw-bg-yellow-500]="!isApiData">
+					[class.tw-bg-yellow-500]="!isApiData"
+				>
 				</span>
 				<span class="tw-text-xs tw-text-gray-500">
-					{{ (isApiData ? 'Dashboard.dataSource.liveStatus' : 'Dashboard.dataSource.mockStatus') | translate }}
+					{{
+						(isApiData ? 'Dashboard.dataSource.liveStatus' : 'Dashboard.dataSource.mockStatus') | translate
+					}}
 				</span>
 			</div>
 		</div>
 	`,
-	styles: [`
-		.toggle-switch {
-			box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-		}
-
-		.toggle-dot {
-			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-		}
-
-		.data-source-toggle {
-			padding: 0.5rem 0.75rem;
-			background: rgba(255, 255, 255, 0.9);
-			border-radius: 0.5rem;
-			border: 1px solid #e5e7eb;
-		}
-
-		@media (max-width: 640px) {
-			.data-source-toggle {
-				flex-wrap: wrap;
-				justify-content: center;
+	styles: [
+		`
+			.toggle-switch {
+				box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 			}
-		}
-	`]
+
+			.toggle-dot {
+				box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+			}
+
+			.data-source-toggle {
+				padding: 0.5rem 0.75rem;
+				background: rgba(255, 255, 255, 0.9);
+				border-radius: 0.5rem;
+				border: 1px solid #e5e7eb;
+			}
+
+			@media (max-width: 640px) {
+				.data-source-toggle {
+					flex-wrap: wrap;
+					justify-content: center;
+				}
+			}
+		`,
+	],
 })
 export class DataSourceToggleComponent implements OnInit, OnDestroy {
 	private subscription: Subscription | null = null;
@@ -108,7 +117,7 @@ export class DataSourceToggleComponent implements OnInit, OnDestroy {
 	constructor(private dataSourceService: DashboardDataSourceService) {}
 
 	ngOnInit(): void {
-		this.subscription = this.dataSourceService.dataSource$.subscribe(source => {
+		this.subscription = this.dataSourceService.dataSource$.subscribe((source) => {
 			this.isApiData = source === 'api';
 		});
 	}

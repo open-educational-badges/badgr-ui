@@ -22,13 +22,15 @@ import { ZipCodeStatisticsData } from '../../models/dashboard-models';
 	standalone: true,
 	imports: [CommonModule, TranslatePipe],
 	templateUrl: './oeb-dashboard-zip-code-kpi.component.html',
-	styleUrls: ['./oeb-dashboard-zip-code-kpi.component.scss']
+	styleUrls: ['./oeb-dashboard-zip-code-kpi.component.scss'],
 })
 export class OebDashboardZipCodeKpiComponent implements OnInit {
 	/** ZIP code statistics data */
 	@Input() zipCodeData: ZipCodeStatisticsData[] = [];
 	/** @deprecated Use zipCodeData instead */
-	@Input() set plzData(value: ZipCodeStatisticsData[]) { this.zipCodeData = value; }
+	@Input() set plzData(value: ZipCodeStatisticsData[]) {
+		this.zipCodeData = value;
+	}
 
 	/** Total number of learners across all ZIP code areas */
 	@Input() totalLearners: number = 0;
@@ -36,7 +38,9 @@ export class OebDashboardZipCodeKpiComponent implements OnInit {
 	/** Number of ZIP code areas represented */
 	@Input() totalZipCodeAreas: number = 0;
 	/** @deprecated Use totalZipCodeAreas instead */
-	@Input() set totalPlzAreas(value: number) { this.totalZipCodeAreas = value; }
+	@Input() set totalPlzAreas(value: number) {
+		this.totalZipCodeAreas = value;
+	}
 
 	constructor(private router: Router) {}
 
@@ -56,9 +60,7 @@ export class OebDashboardZipCodeKpiComponent implements OnInit {
 	 * Get the top 3 ZIP code areas by learner count
 	 */
 	getTopZipCodeAreas(): ZipCodeStatisticsData[] {
-		return this.zipCodeData
-			.sort((a, b) => b.learnerCount - a.learnerCount)
-			.slice(0, 3);
+		return this.zipCodeData.sort((a, b) => b.learnerCount - a.learnerCount).slice(0, 3);
 	}
 
 	/** @deprecated Use viewZipCodeDetails instead */
@@ -76,10 +78,14 @@ export class OebDashboardZipCodeKpiComponent implements OnInit {
 	 */
 	getTrendIcon(trend: string): string {
 		switch (trend) {
-			case 'up': return '↗';
-			case 'down': return '↘';
-			case 'stable': return '→';
-			default: return '→';
+			case 'up':
+				return '↗';
+			case 'down':
+				return '↘';
+			case 'stable':
+				return '→';
+			default:
+				return '→';
 		}
 	}
 
@@ -88,10 +94,14 @@ export class OebDashboardZipCodeKpiComponent implements OnInit {
 	 */
 	getTrendColor(trend: string): string {
 		switch (trend) {
-			case 'up': return 'var(--color-green)';
-			case 'down': return 'var(--color-red)';
-			case 'stable': return 'var(--color-darkgray)';
-			default: return 'var(--color-darkgray)';
+			case 'up':
+				return 'var(--color-green)';
+			case 'down':
+				return 'var(--color-red)';
+			case 'stable':
+				return 'var(--color-darkgray)';
+			default:
+				return 'var(--color-darkgray)';
 		}
 	}
 

@@ -64,7 +64,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 		protected loginService: SessionService,
 		protected http: HttpClient,
 		protected configService: AppConfigService,
-		protected messageService: MessageService
+		protected messageService: MessageService,
 	) {
 		super(loginService, http, configService, messageService);
 	}
@@ -102,15 +102,17 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('deliveryMethod', deliveryMethod);
 		}
 
-		return this.http.get<NetworkKPIsResponse>(
-			this.buildNetworkUrl(networkSlug, 'kpis'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/kpis failed:`, error);
-				return throwError(() => this.mapError(error, 'getKpis'));
-			})
-		);
+		return this.http
+			.get<NetworkKPIsResponse>(this.buildNetworkUrl(networkSlug, 'kpis'), { params, withCredentials: true })
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/kpis failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getKpis'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -130,7 +132,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	getCompetencyAreas(
 		networkSlug: string,
 		limit: number = 6,
-		deliveryMethod?: DeliveryMethodType
+		deliveryMethod?: DeliveryMethodType,
 	): Observable<NetworkCompetencyAreasResponse> {
 		let params = new HttpParams();
 		if (limit) {
@@ -140,15 +142,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('deliveryMethod', deliveryMethod);
 		}
 
-		return this.http.get<NetworkCompetencyAreasResponse>(
-			this.buildNetworkUrl(networkSlug, 'competency-areas'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/competency-areas failed:`, error);
-				return throwError(() => this.mapError(error, 'getCompetencyAreas'));
+		return this.http
+			.get<NetworkCompetencyAreasResponse>(this.buildNetworkUrl(networkSlug, 'competency-areas'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/competency-areas failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getCompetencyAreas'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -191,7 +198,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 */
 	getCompetencyAreasSkills(
 		networkSlug: string,
-		params?: CompetencyAreasSkillsParams
+		params?: CompetencyAreasSkillsParams,
 	): Observable<CompetencyAreasSkillsResponse> {
 		let httpParams = new HttpParams();
 
@@ -208,15 +215,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			httpParams = httpParams.set('deliveryMethod', params.deliveryMethod);
 		}
 
-		return this.http.get<CompetencyAreasSkillsResponse>(
-			this.buildNetworkUrl(networkSlug, 'competency-areas/skills'),
-			{ params: httpParams, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/competency-areas/skills failed:`, error);
-				return throwError(() => this.mapError(error, 'getCompetencyAreasSkills'));
+		return this.http
+			.get<CompetencyAreasSkillsResponse>(this.buildNetworkUrl(networkSlug, 'competency-areas/skills'), {
+				params: httpParams,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/competency-areas/skills failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getCompetencyAreasSkills'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -238,15 +250,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('limit', limit.toString());
 		}
 
-		return this.http.get<NetworkTopBadgesResponse>(
-			this.buildNetworkUrl(networkSlug, 'top-badges'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/top-badges failed:`, error);
-				return throwError(() => this.mapError(error, 'getTopBadges'));
+		return this.http
+			.get<NetworkTopBadgesResponse>(this.buildNetworkUrl(networkSlug, 'top-badges'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/top-badges failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getTopBadges'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -268,15 +285,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('limit', limit.toString());
 		}
 
-		return this.http.get<NetworkRecentActivityResponse>(
-			this.buildNetworkUrl(networkSlug, 'recent-activity'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/recent-activity failed:`, error);
-				return throwError(() => this.mapError(error, 'getRecentActivity'));
+		return this.http
+			.get<NetworkRecentActivityResponse>(this.buildNetworkUrl(networkSlug, 'recent-activity'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/recent-activity failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getRecentActivity'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -301,7 +323,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 		limit: number = 8,
 		sortBy: 'hours' | 'count' | 'title' = 'hours',
 		sortOrder: 'asc' | 'desc' = 'desc',
-		deliveryMethod?: DeliveryMethodType
+		deliveryMethod?: DeliveryMethodType,
 	): Observable<NetworkStrengthenedCompetenciesResponse> {
 		let params = new HttpParams();
 		if (limit) {
@@ -317,15 +339,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('deliveryMethod', deliveryMethod);
 		}
 
-		return this.http.get<NetworkStrengthenedCompetenciesResponse>(
-			this.buildNetworkUrl(networkSlug, 'strengthened-competencies'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/strengthened-competencies failed:`, error);
-				return throwError(() => this.mapError(error, 'getStrengthenedCompetencies'));
-			})
-		);
+		return this.http
+			.get<NetworkStrengthenedCompetenciesResponse>(
+				this.buildNetworkUrl(networkSlug, 'strengthened-competencies'),
+				{ params, withCredentials: true },
+			)
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/strengthened-competencies failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getStrengthenedCompetencies'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -354,7 +381,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	getCompetencyDetail(
 		networkSlug: string,
 		competencyId: string,
-		params?: NetworkCompetencyDetailParams
+		params?: NetworkCompetencyDetailParams,
 	): Observable<NetworkCompetencyDetailResponse> {
 		let httpParams = new HttpParams();
 
@@ -365,15 +392,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			httpParams = httpParams.set('deliveryMethod', params.deliveryMethod);
 		}
 
-		return this.http.get<NetworkCompetencyDetailResponse>(
-			this.buildNetworkUrl(networkSlug, `strengthened-competencies/${encodeURIComponent(competencyId)}`),
-			{ params: httpParams, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/strengthened-competencies/${competencyId} failed:`, error);
-				return throwError(() => this.mapError(error, 'getCompetencyDetail'));
-			})
-		);
+		return this.http
+			.get<NetworkCompetencyDetailResponse>(
+				this.buildNetworkUrl(networkSlug, `strengthened-competencies/${encodeURIComponent(competencyId)}`),
+				{ params: httpParams, withCredentials: true },
+			)
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/strengthened-competencies/${competencyId} failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getCompetencyDetail'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -415,18 +447,21 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 */
 	getCompetencyAreaDetail(
 		networkSlug: string,
-		request: CompetencyAreaDetailRequest
+		request: CompetencyAreaDetailRequest,
 	): Observable<CompetencyAreaDetailResponse> {
-		return this.http.post<CompetencyAreaDetailResponse>(
-			this.buildNetworkUrl(networkSlug, 'competency-area-detail'),
-			request,
-			{ withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] POST /issuer/networks/${networkSlug}/dashboard/competency-area-detail failed:`, error);
-				return throwError(() => this.mapError(error, 'getCompetencyAreaDetail'));
+		return this.http
+			.post<CompetencyAreaDetailResponse>(this.buildNetworkUrl(networkSlug, 'competency-area-detail'), request, {
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] POST /issuer/networks/${networkSlug}/dashboard/competency-area-detail failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getCompetencyAreaDetail'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -444,7 +479,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 */
 	getBadgeAwardsTimeline(
 		networkSlug: string,
-		params?: NetworkBadgeAwardsTimelineParams
+		params?: NetworkBadgeAwardsTimelineParams,
 	): Observable<NetworkBadgeAwardsTimelineResponse> {
 		let httpParams = new HttpParams();
 
@@ -464,15 +499,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			httpParams = httpParams.set('badgeType', params.badgeType);
 		}
 
-		return this.http.get<NetworkBadgeAwardsTimelineResponse>(
-			this.buildNetworkUrl(networkSlug, 'badge-awards-timeline'),
-			{ params: httpParams, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/badge-awards-timeline failed:`, error);
-				return throwError(() => this.mapError(error, 'getBadgeAwardsTimeline'));
+		return this.http
+			.get<NetworkBadgeAwardsTimelineResponse>(this.buildNetworkUrl(networkSlug, 'badge-awards-timeline'), {
+				params: httpParams,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/badge-awards-timeline failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getBadgeAwardsTimeline'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -488,24 +528,26 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 * @param year - Optional year filter
 	 * @returns Observable with badge type distribution data
 	 */
-	getBadgeTypeDistribution(
-		networkSlug: string,
-		year?: number
-	): Observable<NetworkBadgeTypeDistributionResponse> {
+	getBadgeTypeDistribution(networkSlug: string, year?: number): Observable<NetworkBadgeTypeDistributionResponse> {
 		let params = new HttpParams();
 		if (year) {
 			params = params.set('year', year.toString());
 		}
 
-		return this.http.get<NetworkBadgeTypeDistributionResponse>(
-			this.buildNetworkUrl(networkSlug, 'badge-type-distribution'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/badge-type-distribution failed:`, error);
-				return throwError(() => this.mapError(error, 'getBadgeTypeDistribution'));
+		return this.http
+			.get<NetworkBadgeTypeDistributionResponse>(this.buildNetworkUrl(networkSlug, 'badge-type-distribution'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/badge-type-distribution failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getBadgeTypeDistribution'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -523,22 +565,27 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 */
 	getDeliveryMethodDistribution(
 		networkSlug: string,
-		year?: number
+		year?: number,
 	): Observable<NetworkDeliveryMethodDistributionResponse> {
 		let params = new HttpParams();
 		if (year) {
 			params = params.set('year', year.toString());
 		}
 
-		return this.http.get<NetworkDeliveryMethodDistributionResponse>(
-			this.buildNetworkUrl(networkSlug, 'delivery-method-distribution'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/delivery-method-distribution failed:`, error);
-				return throwError(() => this.mapError(error, 'getDeliveryMethodDistribution'));
-			})
-		);
+		return this.http
+			.get<NetworkDeliveryMethodDistributionResponse>(
+				this.buildNetworkUrl(networkSlug, 'delivery-method-distribution'),
+				{ params, withCredentials: true },
+			)
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/delivery-method-distribution failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getDeliveryMethodDistribution'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -557,7 +604,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 */
 	getRecentBadgeAwards(
 		networkSlug: string,
-		params?: NetworkRecentBadgeAwardsParams
+		params?: NetworkRecentBadgeAwardsParams,
 	): Observable<NetworkRecentBadgeAwardsResponse> {
 		let httpParams = new HttpParams();
 
@@ -574,15 +621,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			httpParams = httpParams.set('sortOrder', params.sortOrder);
 		}
 
-		return this.http.get<NetworkRecentBadgeAwardsResponse>(
-			this.buildNetworkUrl(networkSlug, 'recent-badge-awards'),
-			{ params: httpParams, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/recent-badge-awards failed:`, error);
-				return throwError(() => this.mapError(error, 'getRecentBadgeAwards'));
+		return this.http
+			.get<NetworkRecentBadgeAwardsResponse>(this.buildNetworkUrl(networkSlug, 'recent-badge-awards'), {
+				params: httpParams,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/recent-badge-awards failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getRecentBadgeAwards'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -611,7 +663,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	getBadgeLocations(
 		networkSlug: string,
 		deliveryMethod?: DeliveryMethodType,
-		limit: number = 20
+		limit: number = 20,
 	): Observable<NetworkBadgeLocationsResponse> {
 		let params = new HttpParams();
 		if (deliveryMethod) {
@@ -621,15 +673,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('limit', limit.toString());
 		}
 
-		return this.http.get<NetworkBadgeLocationsResponse>(
-			this.buildNetworkUrl(networkSlug, 'badge-locations'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/badge-locations failed:`, error);
-				return throwError(() => this.mapError(error, 'getBadgeLocations'));
+		return this.http
+			.get<NetworkBadgeLocationsResponse>(this.buildNetworkUrl(networkSlug, 'badge-locations'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/badge-locations failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getBadgeLocations'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -657,15 +714,19 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 * ```
 	 */
 	getLearnersOverview(networkSlug: string): Observable<NetworkLearnersOverviewResponse> {
-		return this.http.get<NetworkLearnersOverviewResponse>(
-			this.buildNetworkUrl(networkSlug, 'learners'),
-			{ withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners failed:`, error);
-				return throwError(() => this.mapError(error, 'getLearnersOverview'));
+		return this.http
+			.get<NetworkLearnersOverviewResponse>(this.buildNetworkUrl(networkSlug, 'learners'), {
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getLearnersOverview'));
+				}),
+			);
 	}
 
 	/**
@@ -681,7 +742,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	getLearnersResidence(
 		networkSlug: string,
 		limit: number = 5,
-		includeOther: boolean = true
+		includeOther: boolean = true,
 	): Observable<NetworkLearnersResidenceResponse> {
 		let params = new HttpParams();
 		if (limit) {
@@ -689,15 +750,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 		}
 		params = params.set('includeOther', includeOther.toString());
 
-		return this.http.get<NetworkLearnersResidenceResponse>(
-			this.buildNetworkUrl(networkSlug, 'learners/residence'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/residence failed:`, error);
-				return throwError(() => this.mapError(error, 'getLearnersResidence'));
+		return this.http
+			.get<NetworkLearnersResidenceResponse>(this.buildNetworkUrl(networkSlug, 'learners/residence'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/residence failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getLearnersResidence'));
+				}),
+			);
 	}
 
 	/**
@@ -714,22 +780,27 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	getLearnersResidenceDetail(
 		networkSlug: string,
 		city: string,
-		competencyLimit?: number
+		competencyLimit?: number,
 	): Observable<NetworkLearnersResidenceDetailResponse> {
 		let params = new HttpParams();
 		if (competencyLimit !== undefined && competencyLimit > 0) {
 			params = params.set('competencyLimit', competencyLimit.toString());
 		}
 
-		return this.http.get<NetworkLearnersResidenceDetailResponse>(
-			this.buildNetworkUrl(networkSlug, `learners/residence/${encodeURIComponent(city)}`),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/residence/${city} failed:`, error);
-				return throwError(() => this.mapError(error, 'getLearnersResidenceDetail'));
-			})
-		);
+		return this.http
+			.get<NetworkLearnersResidenceDetailResponse>(
+				this.buildNetworkUrl(networkSlug, `learners/residence/${encodeURIComponent(city)}`),
+				{ params, withCredentials: true },
+			)
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/residence/${city} failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getLearnersResidenceDetail'));
+				}),
+			);
 	}
 
 	/**
@@ -741,15 +812,19 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 * @returns Observable with learner gender distribution
 	 */
 	getLearnersGender(networkSlug: string): Observable<NetworkLearnersGenderResponse> {
-		return this.http.get<NetworkLearnersGenderResponse>(
-			this.buildNetworkUrl(networkSlug, 'learners/gender'),
-			{ withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/gender failed:`, error);
-				return throwError(() => this.mapError(error, 'getLearnersGender'));
+		return this.http
+			.get<NetworkLearnersGenderResponse>(this.buildNetworkUrl(networkSlug, 'learners/gender'), {
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/gender failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getLearnersGender'));
+				}),
+			);
 	}
 
 	/**
@@ -767,7 +842,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 		networkSlug: string,
 		gender: GenderType,
 		competencyLimit: number = 5,
-		badgeLimit?: number
+		badgeLimit?: number,
 	): Observable<NetworkLearnersGenderDetailResponse> {
 		let params = new HttpParams();
 		if (competencyLimit) {
@@ -780,15 +855,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 		// Map localized label to API gender type
 		const genderType = mapGenderLabelToType(gender);
 
-		return this.http.get<NetworkLearnersGenderDetailResponse>(
-			this.buildNetworkUrl(networkSlug, `learners/gender/${encodeURIComponent(genderType)}`),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/gender/${genderType} failed:`, error);
-				return throwError(() => this.mapError(error, 'getLearnersGenderDetail'));
-			})
-		);
+		return this.http
+			.get<NetworkLearnersGenderDetailResponse>(
+				this.buildNetworkUrl(networkSlug, `learners/gender/${encodeURIComponent(genderType)}`),
+				{ params, withCredentials: true },
+			)
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/learners/gender/${genderType} failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getLearnersGenderDetail'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -808,7 +888,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	getSocialspaceInstitutions(
 		networkSlug: string,
 		city?: string,
-		type?: string
+		type?: string,
 	): Observable<SocialspaceInstitutionsResponse> {
 		let params = new HttpParams();
 		if (city) {
@@ -818,15 +898,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('type', type);
 		}
 
-		return this.http.get<SocialspaceInstitutionsResponse>(
-			this.buildNetworkUrl(networkSlug, 'socialspace/institutions'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/institutions failed:`, error);
-				return throwError(() => this.mapError(error, 'getSocialspaceInstitutions'));
+		return this.http
+			.get<SocialspaceInstitutionsResponse>(this.buildNetworkUrl(networkSlug, 'socialspace/institutions'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/institutions failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getSocialspaceInstitutions'));
+				}),
+			);
 	}
 
 	/**
@@ -838,15 +923,19 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 * @returns Observable with cities data
 	 */
 	getSocialspaceCities(networkSlug: string): Observable<SocialspaceCitiesResponse> {
-		return this.http.get<SocialspaceCitiesResponse>(
-			this.buildNetworkUrl(networkSlug, 'socialspace/cities'),
-			{ withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/cities failed:`, error);
-				return throwError(() => this.mapError(error, 'getSocialspaceCities'));
+		return this.http
+			.get<SocialspaceCitiesResponse>(this.buildNetworkUrl(networkSlug, 'socialspace/cities'), {
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/cities failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getSocialspaceCities'));
+				}),
+			);
 	}
 
 	/**
@@ -858,22 +947,24 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 * @param city - City name
 	 * @returns Observable with city detail data
 	 */
-	getSocialspaceCityDetail(
-		networkSlug: string,
-		city: string
-	): Observable<SocialspaceCityDetailResponse> {
+	getSocialspaceCityDetail(networkSlug: string, city: string): Observable<SocialspaceCityDetailResponse> {
 		let params = new HttpParams();
 		params = params.set('city', city);
 
-		return this.http.get<SocialspaceCityDetailResponse>(
-			this.buildNetworkUrl(networkSlug, 'socialspace/city-detail'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/city-detail failed:`, error);
-				return throwError(() => this.mapError(error, 'getSocialspaceCityDetail'));
+		return this.http
+			.get<SocialspaceCityDetailResponse>(this.buildNetworkUrl(networkSlug, 'socialspace/city-detail'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/city-detail failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getSocialspaceCityDetail'));
+				}),
+			);
 	}
 
 	/**
@@ -885,22 +976,24 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	 * @param city - City name
 	 * @returns Observable with learner demographics data
 	 */
-	getSocialspaceLearners(
-		networkSlug: string,
-		city: string
-	): Observable<SocialspaceLearnersResponse> {
+	getSocialspaceLearners(networkSlug: string, city: string): Observable<SocialspaceLearnersResponse> {
 		let params = new HttpParams();
 		params = params.set('city', city);
 
-		return this.http.get<SocialspaceLearnersResponse>(
-			this.buildNetworkUrl(networkSlug, 'socialspace/learners'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/learners failed:`, error);
-				return throwError(() => this.mapError(error, 'getSocialspaceLearners'));
+		return this.http
+			.get<SocialspaceLearnersResponse>(this.buildNetworkUrl(networkSlug, 'socialspace/learners'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/learners failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getSocialspaceLearners'));
+				}),
+			);
 	}
 
 	/**
@@ -916,7 +1009,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 	getSocialspaceCompetencies(
 		networkSlug: string,
 		city: string,
-		limit: number = 20
+		limit: number = 20,
 	): Observable<SocialspaceCompetenciesResponse> {
 		let params = new HttpParams();
 		params = params.set('city', city);
@@ -924,15 +1017,20 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			params = params.set('limit', limit.toString());
 		}
 
-		return this.http.get<SocialspaceCompetenciesResponse>(
-			this.buildNetworkUrl(networkSlug, 'socialspace/competencies'),
-			{ params, withCredentials: true }
-		).pipe(
-			catchError((error) => {
-				console.error(`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/competencies failed:`, error);
-				return throwError(() => this.mapError(error, 'getSocialspaceCompetencies'));
+		return this.http
+			.get<SocialspaceCompetenciesResponse>(this.buildNetworkUrl(networkSlug, 'socialspace/competencies'), {
+				params,
+				withCredentials: true,
 			})
-		);
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[NetworkDashboardApiService] GET /issuer/networks/${networkSlug}/dashboard/socialspace/competencies failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getSocialspaceCompetencies'));
+				}),
+			);
 	}
 
 	// ==========================================
@@ -954,7 +1052,7 @@ export class NetworkDashboardApiService extends BaseHttpApiService {
 			error: error.error?.error || error.statusText || 'Unknown Error',
 			message: error.error?.message || error.message || `${context} failed`,
 			details: error.error?.details,
-			requestId: error.error?.requestId
+			requestId: error.error?.requestId,
 		};
 	}
 }

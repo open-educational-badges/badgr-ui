@@ -132,9 +132,23 @@ export interface InstitutionTableData {
 							height="40"
 						/>
 					} @else {
-						<div class="tw-w-10 tw-h-10 tw-rounded tw-flex tw-items-center tw-justify-center" style="background-color: #F5F5F5;">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#492E98" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+						<div
+							class="tw-w-10 tw-h-10 tw-rounded tw-flex tw-items-center tw-justify-center"
+							style="background-color: #F5F5F5;"
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="#492E98"
+								stroke-width="1.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path
+									d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+								/>
 							</svg>
 						</div>
 					}

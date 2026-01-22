@@ -1,4 +1,15 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import {
+	Component,
+	Input,
+	Output,
+	EventEmitter,
+	ViewChild,
+	ElementRef,
+	AfterViewInit,
+	OnChanges,
+	SimpleChanges,
+	OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -21,7 +32,7 @@ export interface MonthOption {
 	standalone: true,
 	imports: [CommonModule, FormsModule, TranslateModule],
 	templateUrl: './badges-yearly-line-chart.component.html',
-	styleUrls: ['./badges-yearly-line-chart.component.scss']
+	styleUrls: ['./badges-yearly-line-chart.component.scss'],
 })
 export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 	@ViewChild('lineChartSvg') lineChartSvg!: ElementRef<SVGSVGElement>;
@@ -89,8 +100,18 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 
 	/** Month keys for translation lookup */
 	private readonly monthKeys = [
-		'january', 'february', 'march', 'april', 'may', 'june',
-		'july', 'august', 'september', 'october', 'november', 'december'
+		'january',
+		'february',
+		'march',
+		'april',
+		'may',
+		'june',
+		'july',
+		'august',
+		'september',
+		'october',
+		'november',
+		'december',
 	];
 
 	constructor(private translate: TranslateService) {
@@ -104,7 +125,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 		this.availableMonths = this.monthKeys.map((key, index) => ({
 			value: index + 1,
 			label: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.label`),
-			shortLabel: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.short`)
+			shortLabel: this.translate.instant(`Network.Dashboard.badgeTimeline.months.${key}.short`),
 		}));
 	}
 
@@ -131,7 +152,8 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 		if (!this.viewInitialized) return;
 
 		// CRITICAL FIX: Track if loading just finished
-		const loadingJustFinished = changes['isLoading'] &&
+		const loadingJustFinished =
+			changes['isLoading'] &&
 			changes['isLoading'].previousValue === true &&
 			changes['isLoading'].currentValue === false;
 
@@ -253,7 +275,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 	}
 
 	getSelectedBadgeTypeLabel(): string {
-		const selected = this.badgeTypes.find(t => t.value === this.selectedBadgeType);
+		const selected = this.badgeTypes.find((t) => t.value === this.selectedBadgeType);
 		return selected?.label || '';
 	}
 
@@ -280,17 +302,15 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			return [];
 		}
 
-		let filtered = this.data.filter(award => award.year === +this.selectedYear);
+		let filtered = this.data.filter((award) => award.year === +this.selectedYear);
 
 		// Filter by month if a specific month is selected
 		if (this.selectedMonth && this.selectedMonth > 0) {
-			filtered = filtered.filter(award => award.month === this.selectedMonth);
+			filtered = filtered.filter((award) => award.month === this.selectedMonth);
 		}
 
 		if (this.selectedBadgeType !== 'all') {
-			filtered = filtered.filter(award =>
-				award.type === this.selectedBadgeType || award.type === 'all'
-			);
+			filtered = filtered.filter((award) => award.type === this.selectedBadgeType || award.type === 'all');
 		}
 
 		return filtered;
@@ -346,9 +366,15 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 	/**
 	 * Render monthly chart (x-axis shows months JAN-DEC)
 	 */
-	private renderMonthlyChart(svg: d3.Selection<SVGSVGElement, unknown, null, undefined>, filteredData: BadgeAwardData[], width: number, height: number, margin: { top: number; right: number; bottom: number; left: number }): void {
+	private renderMonthlyChart(
+		svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+		filteredData: BadgeAwardData[],
+		width: number,
+		height: number,
+		margin: { top: number; right: number; bottom: number; left: number },
+	): void {
 		// Group data by month for line chart
-		const monthlyData = d3.group(filteredData, d => d.month);
+		const monthlyData = d3.group(filteredData, (d) => d.month);
 
 		// Create chart data for all 12 months - sum all badge counts for each month
 		const chartData = Array.from({ length: 12 }, (_, i) => {
@@ -357,40 +383,44 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			const total = items.reduce((sum, item) => sum + item.count, 0);
 			return {
 				month,
-				total
+				total,
 			};
 		});
 
 		// Create scales
-		const xScale = d3.scaleLinear()
-			.domain([1, 12])
-			.range([0, width]);
+		const xScale = d3.scaleLinear().domain([1, 12]).range([0, width]);
 
-		const maxValue = d3.max(chartData, d => d.total) || 30;
+		const maxValue = d3.max(chartData, (d) => d.total) || 30;
 
-		const yScale = d3.scaleLinear()
+		const yScale = d3
+			.scaleLinear()
 			.domain([0, maxValue * 1.1]) // Add 10% padding at top
 			.nice()
 			.range([height, 0]);
 
 		// Create chart group
-		const g = svg.append('g')
-			.attr('transform', `translate(${margin.left},${margin.top})`);
+		const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
 		// Add grid lines
 		g.append('g')
 			.attr('class', 'grid')
 			.attr('opacity', 0.1)
-			.call(d3.axisLeft(yScale)
-				.tickSize(-width)
-				.tickFormat(() => ''));
+			.call(
+				d3
+					.axisLeft(yScale)
+					.tickSize(-width)
+					.tickFormat(() => ''),
+			);
 
 		// Add axes - use shortLabel for months (horizontal, not rotated)
 		g.append('g')
 			.attr('transform', `translate(0,${height})`)
-			.call(d3.axisBottom(xScale)
-				.ticks(12)
-				.tickFormat(d => this.availableMonths[+d - 1]?.shortLabel || ''))
+			.call(
+				d3
+					.axisBottom(xScale)
+					.ticks(12)
+					.tickFormat((d) => this.availableMonths[+d - 1]?.shortLabel || ''),
+			)
 			.selectAll('text')
 			.style('text-anchor', 'middle')
 			.style('font-size', '11px')
@@ -403,10 +433,11 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.style('font-weight', 'normal');
 
 		// Single line generator in OEB Blue
-		const lineGenerator = d3.line<any>()
-			.defined(d => d.total >= 0)
-			.x(d => xScale(d.month))
-			.y(d => yScale(d.total))
+		const lineGenerator = d3
+			.line<any>()
+			.defined((d) => d.total >= 0)
+			.x((d) => xScale(d.month))
+			.y((d) => yScale(d.total))
 			.curve(d3.curveMonotoneX);
 
 		// Draw single solid line in OEB Blue
@@ -423,8 +454,8 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.enter()
 			.append('circle')
 			.attr('class', 'hover-area')
-			.attr('cx', d => xScale(d.month))
-			.attr('cy', d => yScale(d.total))
+			.attr('cx', (d) => xScale(d.month))
+			.attr('cy', (d) => yScale(d.total))
 			.attr('r', 20)
 			.attr('fill', 'none')
 			.attr('stroke', 'none')
@@ -442,10 +473,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			})
 			.on('mouseout', (event, d) => {
 				// Hide the visible dot
-				g.select(`.dot-${d.month}`)
-					.style('opacity', 0)
-					.style('display', 'none')
-					.style('visibility', 'hidden');
+				g.select(`.dot-${d.month}`).style('opacity', 0).style('display', 'none').style('visibility', 'hidden');
 				this.hideTooltip();
 			});
 
@@ -454,9 +482,9 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.data(chartData)
 			.enter()
 			.append('circle')
-			.attr('class', d => `dot dot-${d.month}`)
-			.attr('cx', d => xScale(d.month))
-			.attr('cy', d => yScale(d.total))
+			.attr('class', (d) => `dot dot-${d.month}`)
+			.attr('cx', (d) => xScale(d.month))
+			.attr('cy', (d) => yScale(d.total))
 			.attr('r', 6)
 			.attr('fill', '#492E98')
 			.attr('stroke', 'white')
@@ -470,11 +498,17 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 	/**
 	 * Render daily chart (x-axis shows days 1-28/29/30/31)
 	 */
-	private renderDailyChart(svg: d3.Selection<SVGSVGElement, unknown, null, undefined>, filteredData: BadgeAwardData[], width: number, height: number, margin: { top: number; right: number; bottom: number; left: number }): void {
+	private renderDailyChart(
+		svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+		filteredData: BadgeAwardData[],
+		width: number,
+		height: number,
+		margin: { top: number; right: number; bottom: number; left: number },
+	): void {
 		const daysInMonth = this.getDaysInMonth(this.selectedYear, this.selectedMonth!);
 
 		// Group data by day for line chart
-		const dailyData = d3.group(filteredData, d => d.day || 1);
+		const dailyData = d3.group(filteredData, (d) => d.day || 1);
 
 		// Create chart data for all days in the month
 		const chartData = Array.from({ length: daysInMonth }, (_, i) => {
@@ -483,43 +517,52 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			const total = items.reduce((sum, item) => sum + item.count, 0);
 			return {
 				day,
-				total
+				total,
 			};
 		});
 
 		// Create scales
-		const xScale = d3.scaleLinear()
-			.domain([1, daysInMonth])
-			.range([0, width]);
+		const xScale = d3.scaleLinear().domain([1, daysInMonth]).range([0, width]);
 
-		const maxValue = d3.max(chartData, d => d.total) || 10;
+		const maxValue = d3.max(chartData, (d) => d.total) || 10;
 
-		const yScale = d3.scaleLinear()
+		const yScale = d3
+			.scaleLinear()
 			.domain([0, maxValue * 1.1]) // Add 10% padding at top
 			.nice()
 			.range([height, 0]);
 
 		// Create chart group
-		const g = svg.append('g')
-			.attr('transform', `translate(${margin.left},${margin.top})`);
+		const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
 		// Add grid lines
 		g.append('g')
 			.attr('class', 'grid')
 			.attr('opacity', 0.1)
-			.call(d3.axisLeft(yScale)
-				.tickSize(-width)
-				.tickFormat(() => ''));
+			.call(
+				d3
+					.axisLeft(yScale)
+					.tickSize(-width)
+					.tickFormat(() => ''),
+			);
 
 		// Add axes - show day numbers
 		// Determine tick count based on days in month (show every day, every 2nd, or every 5th)
-		const tickCount = daysInMonth <= 15 ? daysInMonth : (daysInMonth <= 20 ? Math.ceil(daysInMonth / 2) : Math.ceil(daysInMonth / 3));
+		const tickCount =
+			daysInMonth <= 15
+				? daysInMonth
+				: daysInMonth <= 20
+					? Math.ceil(daysInMonth / 2)
+					: Math.ceil(daysInMonth / 3);
 
 		g.append('g')
 			.attr('transform', `translate(0,${height})`)
-			.call(d3.axisBottom(xScale)
-				.ticks(tickCount)
-				.tickFormat(d => String(Math.round(+d))))
+			.call(
+				d3
+					.axisBottom(xScale)
+					.ticks(tickCount)
+					.tickFormat((d) => String(Math.round(+d))),
+			)
 			.selectAll('text')
 			.style('text-anchor', 'middle')
 			.style('font-size', '11px')
@@ -532,10 +575,11 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.style('font-weight', 'normal');
 
 		// Single line generator in OEB Blue
-		const lineGenerator = d3.line<any>()
-			.defined(d => d.total >= 0)
-			.x(d => xScale(d.day))
-			.y(d => yScale(d.total))
+		const lineGenerator = d3
+			.line<any>()
+			.defined((d) => d.total >= 0)
+			.x((d) => xScale(d.day))
+			.y((d) => yScale(d.total))
 			.curve(d3.curveMonotoneX);
 
 		// Draw single solid line in OEB Blue
@@ -552,8 +596,8 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.enter()
 			.append('circle')
 			.attr('class', 'hover-area')
-			.attr('cx', d => xScale(d.day))
-			.attr('cy', d => yScale(d.total))
+			.attr('cx', (d) => xScale(d.day))
+			.attr('cy', (d) => yScale(d.total))
 			.attr('r', 15)
 			.attr('fill', 'none')
 			.attr('stroke', 'none')
@@ -563,18 +607,12 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.style('pointer-events', 'all')
 			.on('mouseover', (event, d) => {
 				// Show the visible dot
-				g.select(`.dot-${d.day}`)
-					.style('visibility', 'visible')
-					.style('display', 'block')
-					.style('opacity', 1);
+				g.select(`.dot-${d.day}`).style('visibility', 'visible').style('display', 'block').style('opacity', 1);
 				this.showDailyTooltip(event, d);
 			})
 			.on('mouseout', (event, d) => {
 				// Hide the visible dot
-				g.select(`.dot-${d.day}`)
-					.style('opacity', 0)
-					.style('display', 'none')
-					.style('visibility', 'hidden');
+				g.select(`.dot-${d.day}`).style('opacity', 0).style('display', 'none').style('visibility', 'hidden');
 				this.hideTooltip();
 			});
 
@@ -583,9 +621,9 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 			.data(chartData)
 			.enter()
 			.append('circle')
-			.attr('class', d => `dot dot-${d.day}`)
-			.attr('cx', d => xScale(d.day))
-			.attr('cy', d => yScale(d.total))
+			.attr('class', (d) => `dot dot-${d.day}`)
+			.attr('cx', (d) => xScale(d.day))
+			.attr('cy', (d) => yScale(d.total))
 			.attr('r', 6)
 			.attr('fill', '#492E98')
 			.attr('stroke', 'white')
