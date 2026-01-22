@@ -67,6 +67,12 @@ export interface Top3Badge extends PodiumItem {
 	imports: [CommonModule, TranslatePipe, RouterLink],
 	template: `
 		<!-- Podium Display - Dynamic based on item count -->
+		@if (top3Badges.length === 0) {
+			<!-- Case: No items - Show empty state -->
+			<div class="tw-flex tw-items-center tw-justify-center tw-h-48 tw-text-gray-500">
+				{{ 'Dashboard.noDataAvailable' | translate }}
+			</div>
+		} @else {
 		<div class="tw-flex tw-flex-col tw-px-4 tw-pt-10 tw-pb-4">
 			<!-- Case: Only 1 Item - Center it -->
 			@if (top3Badges.length === 1) {
@@ -416,6 +422,7 @@ export interface Top3Badge extends PodiumItem {
 				</div>
 			}
 		</div>
+		}
 	`,
 	styles: [`
 		.podium-position {

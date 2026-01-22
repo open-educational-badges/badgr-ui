@@ -178,90 +178,97 @@
 							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
 								<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.deliveryMethodBadges' | translate }}</h3>
 
-								<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-4">
-									<div class="tw-relative" style="width: 200px; height: 200px; padding: 4px;">
-										<svg viewBox="-3 -3 313 313" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
-											@for (stat of deliveryMethodChartData; let i = $index; track stat.type) {
-												<circle
-													cx="153.5"
-													cy="153.5"
-													r="128.5"
-													fill="none"
-													[attr.stroke]="stat.color"
-													stroke-width="47"
-													[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage)"
-													[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i)">
-												</circle>
-											}
-											@for (stat of deliveryMethodChartData; let i = $index; track stat.type) {
-												<circle
-													cx="153.5"
-													cy="153.5"
-													r="152"
-													fill="none"
-													[attr.stroke]="stat.borderColor"
-													stroke-width="3"
-													[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage, 152)"
-													[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i, 152)">
-												</circle>
-												<circle
-													cx="153.5"
-													cy="153.5"
-													r="105"
-													fill="none"
-													[attr.stroke]="stat.borderColor"
-													stroke-width="3"
-													[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage, 105)"
-													[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i, 105)">
-												</circle>
-												@if (!isDeliveryMethodFullCircle()) {
-													<line
-														[attr.x1]="getDeliveryMethodRadialCoord(i, 105, 'x')"
-														[attr.y1]="getDeliveryMethodRadialCoord(i, 105, 'y')"
-														[attr.x2]="getDeliveryMethodRadialCoord(i, 152, 'x')"
-														[attr.y2]="getDeliveryMethodRadialCoord(i, 152, 'y')"
-														[attr.stroke]="stat.borderColor"
-														stroke-width="3"
-														stroke-linecap="round">
-													</line>
-													<line
-														[attr.x1]="getDeliveryMethodRadialCoord(i, 105, 'x', true)"
-														[attr.y1]="getDeliveryMethodRadialCoord(i, 105, 'y', true)"
-														[attr.x2]="getDeliveryMethodRadialCoord(i, 152, 'x', true)"
-														[attr.y2]="getDeliveryMethodRadialCoord(i, 152, 'y', true)"
-														[attr.stroke]="stat.borderColor"
-														stroke-width="3"
-														stroke-linecap="round">
-													</line>
+								@if (hasDeliveryMethodData) {
+									<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-4">
+										<div class="tw-relative" style="width: 200px; height: 200px; padding: 4px;">
+											<svg viewBox="-3 -3 313 313" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
+												@for (stat of deliveryMethodChartData; let i = $index; track stat.type) {
+													<circle
+														cx="153.5"
+														cy="153.5"
+														r="128.5"
+														fill="none"
+														[attr.stroke]="stat.color"
+														stroke-width="47"
+														[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage)"
+														[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i)">
+													</circle>
 												}
-											}
-										</svg>
-									</div>
+												@for (stat of deliveryMethodChartData; let i = $index; track stat.type) {
+													<circle
+														cx="153.5"
+														cy="153.5"
+														r="152"
+														fill="none"
+														[attr.stroke]="stat.borderColor"
+														stroke-width="3"
+														[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage, 152)"
+														[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i, 152)">
+													</circle>
+													<circle
+														cx="153.5"
+														cy="153.5"
+														r="105"
+														fill="none"
+														[attr.stroke]="stat.borderColor"
+														stroke-width="3"
+														[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage, 105)"
+														[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i, 105)">
+													</circle>
+													@if (!isDeliveryMethodFullCircle()) {
+														<line
+															[attr.x1]="getDeliveryMethodRadialCoord(i, 105, 'x')"
+															[attr.y1]="getDeliveryMethodRadialCoord(i, 105, 'y')"
+															[attr.x2]="getDeliveryMethodRadialCoord(i, 152, 'x')"
+															[attr.y2]="getDeliveryMethodRadialCoord(i, 152, 'y')"
+															[attr.stroke]="stat.borderColor"
+															stroke-width="3"
+															stroke-linecap="round">
+														</line>
+														<line
+															[attr.x1]="getDeliveryMethodRadialCoord(i, 105, 'x', true)"
+															[attr.y1]="getDeliveryMethodRadialCoord(i, 105, 'y', true)"
+															[attr.x2]="getDeliveryMethodRadialCoord(i, 152, 'x', true)"
+															[attr.y2]="getDeliveryMethodRadialCoord(i, 152, 'y', true)"
+															[attr.stroke]="stat.borderColor"
+															stroke-width="3"
+															stroke-linecap="round">
+														</line>
+													}
+												}
+											</svg>
+										</div>
 
-									<div class="tw-flex tw-flex-col tw-gap-3 tw-w-full">
-										@for (stat of deliveryMethodChartData; track stat.type) {
-											<div
-												class="tw-flex tw-items-center tw-gap-3 tw-cursor-pointer hover:tw-bg-gray-50 tw-rounded-lg tw-p-2 tw-transition-colors"
-												(click)="navigateToDeliveryMethod(stat.type === 'online' ? 'online' : 'in-person')">
-												<div class="tw-w-5 tw-h-5 tw-rounded-full tw-flex-shrink-0" [style.background-color]="stat.borderColor"></div>
-												<div class="tw-flex tw-justify-between tw-items-center tw-flex-1">
-													<span class="tw-text-sm tw-font-normal tw-text-gray-800 hover:tw-underline">{{ stat.label }}</span>
-													<span class="tw-text-sm tw-text-gray-600">{{ stat.count }} ({{ stat.percentage }}%)</span>
+										<div class="tw-flex tw-flex-col tw-gap-3 tw-w-full">
+											@for (stat of deliveryMethodChartData; track stat.type) {
+												<div
+													class="tw-flex tw-items-center tw-gap-3 tw-cursor-pointer hover:tw-bg-gray-50 tw-rounded-lg tw-p-2 tw-transition-colors"
+													(click)="navigateToDeliveryMethod(stat.type === 'online' ? 'online' : 'in-person')">
+													<div class="tw-w-5 tw-h-5 tw-rounded-full tw-flex-shrink-0" [style.background-color]="stat.borderColor"></div>
+													<div class="tw-flex tw-justify-between tw-items-center tw-flex-1">
+														<span class="tw-text-sm tw-font-normal tw-text-gray-800 hover:tw-underline">{{ stat.label }}</span>
+														<span class="tw-text-sm tw-text-gray-600">{{ stat.count }} ({{ stat.percentage }}%)</span>
+													</div>
 												</div>
-											</div>
-										}
+											}
+										</div>
 									</div>
-								</div>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-48 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
 							</div>
 
 							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
 								<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.badgeDistributionByType' | translate }}</h3>
 
-								<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-4">
-									<div class="tw-relative" style="width: 200px; height: 200px; padding: 4px;">
-										<svg viewBox="-3 -3 313 313" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
-											@for (stat of badgeTypeStats; let i = $index; track stat.type) {
-												<circle
+								@if (hasBadgeTypeData) {
+									<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-4">
+										<div class="tw-relative" style="width: 200px; height: 200px; padding: 4px;">
+											<svg viewBox="-3 -3 313 313" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
+												@for (stat of badgeTypeStats; let i = $index; track stat.type) {
+													<circle
 													cx="153.5"
 													cy="153.5"
 													r="128.5"
@@ -327,6 +334,11 @@
 										}
 									</div>
 								</div>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-48 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
 							</div>
 
 							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">

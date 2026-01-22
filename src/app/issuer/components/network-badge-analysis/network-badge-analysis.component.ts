@@ -184,6 +184,20 @@ export class NetworkBadgeAnalysisComponent
 		return this.badgeTypeStats.reduce((sum, stat) => sum + stat.count, 0);
 	}
 
+	/**
+	 * Check if delivery method chart has any data (online or in-person > 0)
+	 */
+	get hasDeliveryMethodData(): boolean {
+		return this.deliveryMethodStats.online.count > 0 || this.deliveryMethodStats.inPerson.count > 0;
+	}
+
+	/**
+	 * Check if badge type chart has any data (any badge type > 0)
+	 */
+	get hasBadgeTypeData(): boolean {
+		return this.badgeTypeStats.some(stat => stat.count > 0);
+	}
+
 	badgeDensity: number = 0;
 	badgeDensityTrend: 'up' | 'down' | 'stable' = 'stable';
 	badgeDensityTrendValue: number = 0;

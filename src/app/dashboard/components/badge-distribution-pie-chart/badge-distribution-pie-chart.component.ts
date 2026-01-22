@@ -143,6 +143,13 @@ export class BadgeDistributionPieChartComponent {
 		return this.segments.filter(s => s.count > 0).slice(0, 3);
 	}
 
+	/**
+	 * Check if there is any data to display (at least one segment with count > 0)
+	 */
+	get hasData(): boolean {
+		return this.segments.some(s => s.count > 0);
+	}
+
 	// ==========================================
 	// SVG Calculation Methods
 	// ==========================================

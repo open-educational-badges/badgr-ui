@@ -1,98 +1,104 @@
 <!-- Badge Distribution Pie Chart Component -->
-<div class="badge-pie-chart"
-	[class.badge-pie-chart--left]="labelPosition === 'left'"
-	[class.badge-pie-chart--bottom]="labelPosition === 'bottom'">
+@if (hasData) {
+	<div class="badge-pie-chart"
+		[class.badge-pie-chart--left]="labelPosition === 'left'"
+		[class.badge-pie-chart--bottom]="labelPosition === 'bottom'">
 
-	<!-- Legend (configurable position) - shows all segments including 0% -->
-	<div class="badge-pie-chart__legend"
-		[class.badge-pie-chart__legend--left]="labelPosition === 'left'"
-		[class.badge-pie-chart__legend--bottom]="labelPosition === 'bottom'">
-		@for (segment of allSegments; track segment.id) {
-			<div class="badge-pie-chart__legend-item"
-				[class.badge-pie-chart__legend-item--clickable]="labelsClickable"
-				(click)="onLabelClick(segment)"
-				[attr.role]="labelsClickable ? 'button' : null"
-				[attr.tabindex]="labelsClickable ? 0 : null"
-				(keydown.enter)="onLabelClick(segment)"
-				(keydown.space)="onLabelClick(segment)">
-				<div class="badge-pie-chart__legend-color" [style.background-color]="segment.borderColor"></div>
-				<div class="badge-pie-chart__legend-text">
-					<p class="badge-pie-chart__legend-label">{{ segment.label }}</p>
-					<p class="badge-pie-chart__legend-value">{{ segment.count }} ({{ segment.percentage }}%)</p>
+		<!-- Legend (configurable position) - shows all segments including 0% -->
+		<div class="badge-pie-chart__legend"
+			[class.badge-pie-chart__legend--left]="labelPosition === 'left'"
+			[class.badge-pie-chart__legend--bottom]="labelPosition === 'bottom'">
+			@for (segment of allSegments; track segment.id) {
+				<div class="badge-pie-chart__legend-item"
+					[class.badge-pie-chart__legend-item--clickable]="labelsClickable"
+					(click)="onLabelClick(segment)"
+					[attr.role]="labelsClickable ? 'button' : null"
+					[attr.tabindex]="labelsClickable ? 0 : null"
+					(keydown.enter)="onLabelClick(segment)"
+					(keydown.space)="onLabelClick(segment)">
+					<div class="badge-pie-chart__legend-color" [style.background-color]="segment.borderColor"></div>
+					<div class="badge-pie-chart__legend-text">
+						<p class="badge-pie-chart__legend-label">{{ segment.label }}</p>
+						<p class="badge-pie-chart__legend-value">{{ segment.count }} ({{ segment.percentage }}%)</p>
+					</div>
+					@if (labelsClickable) {
+						<svg class="badge-pie-chart__legend-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M9 5l7 7-7 7"></path>
+						</svg>
+					}
 				</div>
-				@if (labelsClickable) {
-					<svg class="badge-pie-chart__legend-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M9 5l7 7-7 7"></path>
-					</svg>
-				}
-			</div>
-		}
-	</div>
+			}
+		</div>
 
-	<!-- SVG Donut Chart -->
-	<div class="badge-pie-chart__chart"
-		[class.badge-pie-chart__chart--small]="size === 'small'"
-		[class.badge-pie-chart__chart--medium]="size === 'medium'"
-		[class.badge-pie-chart__chart--large]="size === 'large'">
-		<svg viewBox="-3 -3 313 313" class="badge-pie-chart__svg">
-			<!-- Donut segments (fill color) with gap - renders all segments including 0% -->
-			@for (segment of allSegments; let i = $index; track segment.id) {
-				<circle
-					cx="153.5"
-					cy="153.5"
-					r="128.5"
-					fill="none"
-					[attr.stroke]="segment.color"
-					stroke-width="47"
-					[attr.stroke-dasharray]="getStrokeDasharrayWithGap(segment.percentage)"
-					[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i)">
-				</circle>
-			}
-			<!-- Border arcs for each segment (outer, inner, and radial lines) -->
-			@for (segment of allSegments; let i = $index; track segment.id) {
-				<!-- Outer arc border -->
-				<circle
-					cx="153.5"
-					cy="153.5"
-					r="152"
-					fill="none"
-					[attr.stroke]="segment.borderColor"
-					stroke-width="3"
-					[attr.stroke-dasharray]="getStrokeDasharrayWithGap(segment.percentage, 152)"
-					[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i, 152)">
-				</circle>
-				<!-- Inner arc border -->
-				<circle
-					cx="153.5"
-					cy="153.5"
-					r="105"
-					fill="none"
-					[attr.stroke]="segment.borderColor"
-					stroke-width="3"
-					[attr.stroke-dasharray]="getStrokeDasharrayWithGap(segment.percentage, 105)"
-					[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i, 105)">
-				</circle>
-				<!-- Start radial line -->
-				<line
-					[attr.x1]="getRadialLineCoord(i, 105, 'x')"
-					[attr.y1]="getRadialLineCoord(i, 105, 'y')"
-					[attr.x2]="getRadialLineCoord(i, 152, 'x')"
-					[attr.y2]="getRadialLineCoord(i, 152, 'y')"
-					[attr.stroke]="segment.borderColor"
-					stroke-width="3"
-					stroke-linecap="round">
-				</line>
-				<!-- End radial line -->
-				<line
-					[attr.x1]="getRadialLineCoord(i, 105, 'x', true)"
-					[attr.y1]="getRadialLineCoord(i, 105, 'y', true)"
-					[attr.x2]="getRadialLineCoord(i, 152, 'x', true)"
-					[attr.y2]="getRadialLineCoord(i, 152, 'y', true)"
-					[attr.stroke]="segment.borderColor"
-					stroke-width="3"
-					stroke-linecap="round">
-				</line>
-			}
-		</svg>
+		<!-- SVG Donut Chart -->
+		<div class="badge-pie-chart__chart"
+			[class.badge-pie-chart__chart--small]="size === 'small'"
+			[class.badge-pie-chart__chart--medium]="size === 'medium'"
+			[class.badge-pie-chart__chart--large]="size === 'large'">
+			<svg viewBox="-3 -3 313 313" class="badge-pie-chart__svg">
+				<!-- Donut segments (fill color) with gap - renders all segments including 0% -->
+				@for (segment of allSegments; let i = $index; track segment.id) {
+					<circle
+						cx="153.5"
+						cy="153.5"
+						r="128.5"
+						fill="none"
+						[attr.stroke]="segment.color"
+						stroke-width="47"
+						[attr.stroke-dasharray]="getStrokeDasharrayWithGap(segment.percentage)"
+						[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i)">
+					</circle>
+				}
+				<!-- Border arcs for each segment (outer, inner, and radial lines) -->
+				@for (segment of allSegments; let i = $index; track segment.id) {
+					<!-- Outer arc border -->
+					<circle
+						cx="153.5"
+						cy="153.5"
+						r="152"
+						fill="none"
+						[attr.stroke]="segment.borderColor"
+						stroke-width="3"
+						[attr.stroke-dasharray]="getStrokeDasharrayWithGap(segment.percentage, 152)"
+						[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i, 152)">
+					</circle>
+					<!-- Inner arc border -->
+					<circle
+						cx="153.5"
+						cy="153.5"
+						r="105"
+						fill="none"
+						[attr.stroke]="segment.borderColor"
+						stroke-width="3"
+						[attr.stroke-dasharray]="getStrokeDasharrayWithGap(segment.percentage, 105)"
+						[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i, 105)">
+					</circle>
+					<!-- Start radial line -->
+					<line
+						[attr.x1]="getRadialLineCoord(i, 105, 'x')"
+						[attr.y1]="getRadialLineCoord(i, 105, 'y')"
+						[attr.x2]="getRadialLineCoord(i, 152, 'x')"
+						[attr.y2]="getRadialLineCoord(i, 152, 'y')"
+						[attr.stroke]="segment.borderColor"
+						stroke-width="3"
+						stroke-linecap="round">
+					</line>
+					<!-- End radial line -->
+					<line
+						[attr.x1]="getRadialLineCoord(i, 105, 'x', true)"
+						[attr.y1]="getRadialLineCoord(i, 105, 'y', true)"
+						[attr.x2]="getRadialLineCoord(i, 152, 'x', true)"
+						[attr.y2]="getRadialLineCoord(i, 152, 'y', true)"
+						[attr.stroke]="segment.borderColor"
+						stroke-width="3"
+						stroke-linecap="round">
+					</line>
+				}
+			</svg>
+		</div>
 	</div>
-</div>
+} @else {
+	<div class="tw-flex tw-items-center tw-justify-center tw-h-48 tw-text-gray-500">
+		{{ 'Dashboard.noDataAvailable' | translate }}
+	</div>
+}
