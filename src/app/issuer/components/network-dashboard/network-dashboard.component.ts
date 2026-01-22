@@ -97,16 +97,12 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	issuerSearchResults = [];
 
 	rightsAndRolesExpanded = false;
-	networkBadges: ApiBadgeClass[] = [];
 	networkActionsMenuItems: MenuItem[] = [];
-
 	baseCrumbs: LinkEntry[] = [];
 
 	learnerSubView: { state: string; gender?: string; residence?: { city: string } } | null = null;
 
 	socialspaceSubView: { state: SocialspaceViewState; city?: string } | null = null;
-
-	private _networkStaffRoleOptions: FormFieldSelectOption[];
 
 	@ViewChild('overviewTemplate', { static: true }) overviewTemplate: ElementRef;
 	@ViewChild('partnerTemplate', { static: true }) partnerTemplate: ElementRef;

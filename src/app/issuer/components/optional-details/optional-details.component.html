@@ -6,7 +6,7 @@
 
 		<ul class="tw-list-none tw-p-0 tw-m-0 tw-flex tw-flex-col">
 			<!--Expiration Item-->
-			@if (showExpiration && hasControl('valid_from') && hasControl('expires_at')) {
+			@if (showExpiration() && hasControl('valid_from') && hasControl('expires_at')) {
 				<li>
 					<ng-template #collapseExpirationTrigger>
 						<ng-icon size="24px" hlm name="lucideClockFading" class="tw-mr-1 tw-text-oebblack"></ng-icon>
@@ -51,99 +51,51 @@
 					</oeb-collapsible>
 				</li>
 
-				<oeb-separator
-					[separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'"
-				></oeb-separator>
+				<oeb-separator [separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'" />
 			}
 
-			<!-- Evidence Item -->
-			@if (showEvidence && hasControl('evidence_items')) {
+			<!-- course url Item -->
+			@if (showCourseUrl() && hasControl('courseUrl')) {
 				<li>
-					<ng-template #collapseEvidenceTrigger>
+					<ng-template #courseUrlTrigger>
+						<ng-icon size="24px" hlm name="lucideExternalLink" class="tw-mr-1"></ng-icon>
 						<span
-							[class.tw-font-semibold]="evidenceCollapsible.expanded"
-							[class.tw-font-normal]="!evidenceCollapsible.expanded"
+							[class.tw-font-semibold]="courseUrlCollapsible.expanded"
+							[class.tw-font-normal]="!courseUrlCollapsible.expanded"
 							class="tw-text-lg tw-text-oebblack tw-mr-auto"
-							[innerHTML]="'Issuer.evidence' | translate"
+							[innerHTML]="'CreateBadge.linkToCourse' | translate"
 						></span>
 					</ng-template>
 					<oeb-collapsible
-						#evidenceCollapsible
-						[trigger]="collapseEvidenceTrigger"
+						#courseUrlCollapsible
+						[trigger]="courseUrlTrigger"
+						[defaultOpen]="courseUrlDefaultOpen()"
 						[closeIcon]="'lucideChevronDown'"
 						[iconStyle]="'tw-text-oebblack'"
 						[iconSize]="'lg'"
 					>
-						<div class="tw-space-y-4 tw-pt-4">
-							@for (evidence of evidenceItems?.controls; let i = $index; track i; let isLast = $last) {
-								<div class="tw-mb-4">
-									<div class="tw-flex tw-flex-col tw-gap-4">
-										<oeb-input
-											[control]="evidence.get('evidence_url')"
-											[label]="'Issuer.evidenceUrl' | translate"
-											[labelStyle]="'tw-text-oebblack tw-text-lg tw-font-normal'"
-											[placeholder]="'https://example.com'"
-											[noTopMargin]="true"
-											[urlField]="true"
-											[fieldType]="'url'"
-											errorMessage="{{ 'Issuer.enterURL' | translate }}"
-										></oeb-input>
-										<oeb-input
-											[control]="evidence.get('narrative')"
-											[label]="'Issuer.evidenceNarrative' | translate"
-											[labelStyle]="'tw-text-oebblack tw-text-lg tw-font-normal'"
-											[noTopMargin]="true"
-											fieldType="textarea"
-											[size]="'lg'"
-										></oeb-input>
-									</div>
-
-									<div class="tw-flex tw-justify-between tw-items-center tw-mt-3">
-										@if (isLast) {
-											<oeb-button
-												[text]="'Issuer.addNewEvidence' | translate"
-												variant="secondary"
-												[weight]="'normal'"
-												size="sm"
-												(click)="addEvidence(); $event.stopPropagation()"
-											>
-											</oeb-button>
-										}
-										<oeb-button
-											[text]="'General.remove' | translate"
-											type="button"
-											(click)="removeEvidence(i); $event.stopPropagation()"
-											variant="destructive"
-											size="sm"
-											weight="normal"
-											class="tw-ml-auto"
-										>
-										</oeb-button>
-									</div>
-								</div>
-							}
-
-							@if (evidenceItems?.controls?.length === 0) {
-								<oeb-button
-									[text]="'Issuer.addNewEvidence' | translate"
-									variant="secondary"
-									weight="normal"
-									size="sm"
-									(click)="addEvidence(); $event.stopPropagation()"
-								>
-								</oeb-button>
-							}
-						</div>
+						<section class="tw-flex tw-flex-col tw-gap-4 tw-pt-4">
+							<div class="tw-flex tw-gap-4">
+								<oeb-input
+									class="oeb-input-hide-arrows tw-w-full"
+									[control]="getRawControl('courseUrl')"
+									[label]="'CreateBadge.websiteUrl' | translate"
+									[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+									[noTopMargin]="true"
+									[placeholder]="'https://'"
+									[urlField]="true"
+									[fieldType]="'url'"
+									errorMessage="{{ 'Issuer.enterURL' | translate }}"
+								/>
+							</div>
+						</section>
 					</oeb-collapsible>
 				</li>
-
-				<oeb-separator
-					[separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'"
-				></oeb-separator>
+				<oeb-separator [separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'" />
 			}
 
 			<!-- Course Date Item -->
-			@if (showCourseDate && hasControl('activity_start_date') && hasControl('activity_end_date')) {
+			@if (showCourseDate() && hasControl('activity_start_date') && hasControl('activity_end_date')) {
 				<li>
 					<ng-template #collapseCourseDateTrigger>
 						<ng-icon size="24px" hlm name="lucideCalendarDays" class="tw-mr-1"></ng-icon>
@@ -184,7 +136,7 @@
 					</oeb-collapsible>
 				</li>
 
-				@if (showLocation && hasControl('activity_zip')) {
+				@if (showLocation() && hasControl('activity_zip')) {
 					<oeb-separator
 						[separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'"
 					></oeb-separator>
@@ -192,7 +144,7 @@
 			}
 
 			<!-- Location Item -->
-			@if (showLocation && hasControl('activity_zip')) {
+			@if (showLocation() && hasControl('activity_zip')) {
 				<li>
 					<ng-template #venueTrigger>
 						<ng-icon size="24px" hlm name="lucideMapPin" class="tw-mr-1"></ng-icon>
@@ -240,6 +192,89 @@
 								</oeb-checkbox>
 							}
 						</section>
+					</oeb-collapsible>
+				</li>
+				<oeb-separator
+					[separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'"
+				></oeb-separator>
+			}
+
+			<!-- Evidence -->
+			@if (showEvidence() && evidenceItems) {
+				<li>
+					<ng-template #collapseEvidenceTrigger>
+						<ng-icon size="24px" hlm name="lucideBookOpen" class="tw-mr-1"></ng-icon>
+						<span
+							[class.tw-font-semibold]="evidenceCollapsible.expanded"
+							[class.tw-font-normal]="!evidenceCollapsible.expanded"
+							class="tw-text-lg tw-text-oebblack tw-mr-auto"
+							[innerHTML]="'Issuer.narrative' | translate"
+						></span>
+					</ng-template>
+					<oeb-collapsible
+						#evidenceCollapsible
+						[trigger]="collapseEvidenceTrigger"
+						[closeIcon]="'lucideChevronDown'"
+						[iconStyle]="'tw-text-oebblack'"
+						[iconSize]="'lg'"
+					>
+						<div class="tw-flex tw-flex-col tw-gap-4 tw-pt-2">
+							<div class="tw-flex tw-flex-col tw-gap-3">
+								<label class="tw-mt-1 tw-text-oebblack">
+									{{ 'Issuer.evidenceUrl' | translate }}
+								</label>
+
+								@for (item of evidenceItems.controls; track $index) {
+									<div class="tw-flex tw-gap-2 tw-items-start">
+										<oeb-input
+											class="tw-flex-1"
+											[control]="getEvidenceUrlControl($index)"
+											[placeholder]="'http://...'"
+											[noTopMargin]="true"
+											[urlField]="true"
+											errorMessage="{{ 'Issuer.enterURL' | translate }}"
+										></oeb-input>
+										@if (evidenceItems.controls.length > 1) {
+											<button
+												type="button"
+												(click)="removeEvidence($index)"
+												class="tw-p-2 tw-text-red-600 hover:tw-bg-red-50 tw-rounded-md tw-transition-colors"
+												[attr.aria-label]="'General.remove' | translate"
+											>
+												<ng-icon size="24px" name="lucideTrash2"></ng-icon>
+											</button>
+										}
+									</div>
+								}
+
+								<oeb-button
+									[style]="'secondary'"
+									(click)="addEvidence()"
+									[text]="'Issuer.addEvidenceUrl' | translate"
+									type="button"
+									[size]="'sm'"
+									icon="lucidePlus"
+									[iconLeft]="true"
+									variant="secondary"
+									[weight]="'normal'"
+								>
+								</oeb-button>
+								<div class="tw-flex tw-flex-col">
+									<label class="tw-text-oebblack tw-mb-2">
+										{{ 'Issuer.evidenceNarrative' | translate }}
+									</label>
+									<textarea
+										[value]="sharedNarrative"
+										(input)="onNarrativeChange($event)"
+										class="tw-w-full tw-p-3 tw-border tw-border-solid tw-border-gray-300 tw-rounded-md tw-min-h-[120px] tw-resize-y focus:tw-outline-none focus:tw-border-purple focus:tw-ring-1 focus:tw-ring-purple"
+										maxlength="600"
+									></textarea>
+									<span class="tw-text-sm tw-text-gray-500 tw-mt-1 tw-text-right">
+										{{ sharedNarrative.length }} / 600
+									</span>
+								</div>
+							</div>
+						</div>
 					</oeb-collapsible>
 				</li>
 			}

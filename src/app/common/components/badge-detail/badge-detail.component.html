@@ -174,7 +174,7 @@
 
 								@if (config.copy_permissions && !config.copy_permissions.includes('none')) {
 									<div
-										class="tw-flex tw-flex-row tw-text-oebblack tw-italic"
+										class="tw-flex tw-flex-row tw-text-oebblack tw-italic tw-mb-2"
 										[class.tw-pb-2]="hasCriteria || config.competencies.length"
 									>
 										<dt [innerHTML]="('Badge.copyableFor' | translate) + ':&nbsp;'"></dt>
@@ -187,93 +187,151 @@
 										></dd>
 									</div>
 								}
-								<dl class="tw-pt-2">
-									@if (config.activity_start_date) {
-										<div class="tw-flex tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
-											<dt class="tw-text-sm tw-text-darkgray">
-												{{ 'RecBadge.courseDateShort' | translate }}
-											</dt>
-											<dd class="tw-text-sm tw-font-medium tw-text-oebblack md:tw-ml-2">
-												<time [date]="config.activity_start_date" format="dd.MM.y"></time>
-												@if (config.activity_end_date) {
-													&nbsp; — &nbsp;<time
-														[date]="config.activity_end_date"
-														format="dd.MM.y"
-													></time>
-												}
-											</dd>
-										</div>
-									}
-
-									@if (hasCriteria || config.competencies.length) {
-										<div
-											class="tw-bg-white tw-mb-4 tw-rounded-[10px] tw-p-2"
-											[class.tw-mt-6]="!config.copy_permissions"
+								@if (hasCriteria || config.competencies.length) {
+									<div class="tw-bg-white tw-mb-4 tw-rounded-[10px] tw-p-2">
+										<oeb-collapsible
+											[trigger]="collapseCriteriaTrigger"
+											closeIcon="lucideChevronDown"
+											[iconSize]="'24px'"
+											[iconStyle]="'tw-text-oebblack tw-mr-2'"
+											[defaultOpen]="hasCriteria"
+											[id]=""
 										>
-											<oeb-collapsible
-												[trigger]="collapseCriteriaTrigger"
-												closeIcon="lucideChevronDown"
-												[iconSize]="'24px'"
-												[iconStyle]="'tw-text-oebblack tw-mr-2'"
-												[defaultOpen]="hasCriteria"
-												[id]=""
-											>
-												<ng-template #collapseCriteriaTrigger>
-													<dt
-														class="tw-mr-auto tw-flex tw-justify-center tw-items-center tw-px-2"
-													>
-														<ng-icon
-															hlm
-															name="lucideAward"
-															class="tw-w-6 tw-h-6 tw-text-purple"
-														/>
-														<span
-															class="tw-text-oebblack tw-font-bold tw-text-sm tw-ml-2 tw-uppercase"
-															[innerHTML]="'Badge.awardCriteria' | translate"
-														></span>
-													</dt>
-												</ng-template>
-												@if (hasCriteria) {
-													<dd>
-														<ul class="tw-pl-10 tw-mt-1 tw-list-inside tw-list-disc">
-															@for (
-																criteria of config.awardCriteria;
-																track criteria.name
-															) {
-																<li class="tw-mb-2">
-																	<p hlmP [size]="'sm'" class="tw-inline">
-																		{{ criteria.name }}
+											<ng-template #collapseCriteriaTrigger>
+												<dt
+													class="tw-mr-auto tw-flex tw-justify-center tw-items-center tw-px-2"
+												>
+													<ng-icon
+														hlm
+														name="lucideAward"
+														class="tw-w-6 tw-h-6 tw-text-purple"
+													/>
+													<span
+														class="tw-text-oebblack tw-font-bold tw-text-sm tw-ml-2 tw-uppercase"
+														[innerHTML]="'Badge.awardCriteria' | translate"
+													></span>
+												</dt>
+											</ng-template>
+											@if (hasCriteria) {
+												<dd>
+													<ul class="tw-pl-10 tw-mt-1 tw-list-inside tw-list-disc">
+														@for (criteria of config.awardCriteria; track criteria.name) {
+															<li class="tw-mb-2">
+																<p hlmP [size]="'sm'" class="tw-inline">
+																	{{ criteria.name }}
+																</p>
+																@if (criteria.description) {
+																	<p
+																		hlmP
+																		[size]="'sm'"
+																		class="tw-text-darkgrey tw-italic tw-ml-4 tw-mt-1"
+																	>
+																		{{ criteria.description }}
 																	</p>
-																	@if (criteria.description) {
-																		<p
-																			hlmP
-																			[size]="'sm'"
-																			class="tw-text-darkgrey tw-italic tw-ml-4 tw-mt-1"
-																		>
-																			{{ criteria.description }}
-																		</p>
-																	}
-																</li>
-															}
-														</ul>
-													</dd>
-												} @else {
-													<ul class="tw-pr-2 tw-pl-8 tw-list-inside tw-list-disc">
-														@for (competency of config.competencies; track competency) {
-															<li class="tw-mb-1">
-																<span class="tw-text-oebblack">{{
-																	competency.name
-																}}</span>
+																}
 															</li>
 														}
 													</ul>
-												}
-											</oeb-collapsible>
+												</dd>
+											} @else {
+												<ul class="tw-pr-2 tw-pl-8 tw-list-inside tw-list-disc">
+													@for (competency of config.competencies; track competency) {
+														<li class="tw-mb-1">
+															<span class="tw-text-oebblack">{{ competency.name }}</span>
+														</li>
+													}
+												</ul>
+											}
+										</oeb-collapsible>
+									</div>
+								}
+								<hr
+									class="tw-mb-4 tw-w-full tw-border-solid tw-border-top-[1px] tw-border-[--color-midgrey]"
+								/>
+								@if (config.issuedTo) {
+									<p class="tw-text-sm tw-text-darkgray">
+										{{ 'RecBadgeDetail.awardedTo' | translate }}
+									</p>
+									<p class="tw-text-sm tw-font-medium tw-text-oebblack tw-break-all">
+										{{ config.issuedTo }}
+									</p>
+								}
+								<dl>
+									@if (config.createdAt) {
+										<div class="tw-flex tw-text-sm tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
+											<dt class="tw-text-darkgray">{{ 'Badge.createdOn' | translate }}</dt>
+											<dd class="tw-font-medium md:tw-ml-2 tw-text-oebblack">
+												<time [date]="config.createdAt" format="dd.MM.y"></time>
+											</dd>
 										</div>
 									}
+									@if (config.issuedOn) {
+										<div class="tw-flex tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
+											<dt class="tw-text-sm tw-text-darkgray">
+												{{ 'RecBadgeDetail.issuedOn' | translate }}
+											</dt>
+											<dd class="tw-text-sm tw-font-medium tw-text-oebblack md:tw-ml-2">
+												<time [date]="config.issuedOn" format="dd.MM.y"></time>
+											</dd>
+										</div>
+									}
+									@if (config.validUntil) {
+										<div class="tw-flex tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
+											<dt class="tw-text-sm tw-text-darkgray">
+												{{ 'RecBadgeDetail.validUntil' | translate }}
+											</dt>
+											<dd class="tw-text-sm tw-font-medium tw-text-oebblack md:tw-ml-2">
+												<time [date]="config.validUntil" format="dd.MM.y"></time>
+											</dd>
+										</div>
+									}
+								</dl>
+								<hr
+									class="tw-my-4 tw-w-full tw-border-solid tw-border-top-[1px] tw-border-[--color-midgrey]"
+								/>
+								<dl>
+									@if (config.courseUrl) {
+										<div class="tw-flex tw-text-sm tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
+											<ng-icon
+												hlm
+												[name]="'lucideExternalLink'"
+												[size]="'20px'"
+												class="tw-me-1"
+											/><a href="{{ config.courseUrl }}" class="tw-underline tw-text-link">{{
+												'CreateBadge.course' | translate
+											}}</a>
+										</div>
+									}
+									@if (config.duration) {
+										<div class="tw-flex tw-text-sm tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
+											<dt class="tw-text-darkgray">
+												{{ 'RecBadgeDetail.duration' | translate }}
+											</dt>
+											<dd class="tw-text-oebblack tw-font-medium md:tw-ml-2">
+												{{ +config.duration | hourPipe }} {{ 'RecBadge.hours' | translate }}
+											</dd>
+										</div>
+									}
+									@if (config.activity_start_date) {
+										<dt class="tw-text-sm tw-text-darkgray tw-mt-1 tw-pt-1">
+											{{ 'RecBadge.courseDateShort' | translate }}
+										</dt>
+										<dd class="tw-text-sm tw-font-medium tw-text-oebblack">
+											<time [date]="config.activity_start_date" format="dd.MM.y"></time>
+											@if (config.activity_end_date) {
+												&nbsp; — &nbsp;<time
+													[date]="config.activity_end_date"
+													format="dd.MM.y"
+												></time>
+											}
+										</dd>
+									}
+									<hr
+										class="tw-my-4 tw-w-full tw-border-solid tw-border-top-[1px] tw-border-[--color-midgrey]"
+									/>
 									@if (config.version) {
 										<div
-											class="tw-flex tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col md:tw-items-center tw-items-start"
+											class="tw-flex tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col md:tw-items-center tw-items-start"
 										>
 											<dt class="tw-text-sm tw-text-darkgray">
 												{{ 'Badge.standard' | translate }}
@@ -292,8 +350,9 @@
 											</dd>
 										</div>
 									}
+
 									@if (config.category) {
-										<div class="tw-flex tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
+										<div class="tw-flex tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
 											<dt class="tw-text-sm tw-text-darkgray">
 												{{ 'General.category' | translate }}
 											</dt>
@@ -302,19 +361,20 @@
 											</dd>
 										</div>
 									}
-									@if (config.duration) {
-										<div class="tw-flex tw-text-sm tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
-											<dt class="tw-text-darkgray">
-												{{ 'RecBadgeDetail.duration' | translate }}
+
+									@if (config.expiration) {
+										<div class="tw-flex tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
+											<dt class="tw-text-sm tw-text-darkgray">
+												{{ 'RecBadgeDetail.expiryAfter' | translate }}
 											</dt>
-											<dd class="tw-text-oebblack tw-font-medium md:tw-ml-2">
-												{{ +config.duration | hourPipe }} {{ 'RecBadge.hours' | translate }}
+											<dd class="tw-text-sm tw-text-oebblack tw-font-medium md:tw-ml-2">
+												{{ config.expiration | timePeriodPipe }}
 											</dd>
 										</div>
 									}
 
 									@if (config.activity_city) {
-										<div class="tw-flex tw-text-sm tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
+										<div class="tw-flex tw-text-sm tw-mt-1 tw-pt-1 md:tw-flex-row tw-flex-col">
 											<dt class="tw-text-darkgray">
 												{{ 'RecBadgeDetail.place' | translate }}
 											</dt>
@@ -324,46 +384,8 @@
 										</div>
 									}
 
-									@if (config.createdAt) {
-										<div class="tw-flex tw-text-sm tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
-											<dt class="tw-text-darkgray">{{ 'Badge.createdOn' | translate }}</dt>
-											<dd class="tw-font-medium md:tw-ml-2 tw-text-oebblack">
-												<time [date]="config.createdAt" format="dd.MM.y"></time>
-											</dd>
-										</div>
-									}
-									@if (config.issuedOn) {
-										<div class="tw-flex tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
-											<dt class="tw-text-sm tw-text-darkgray">
-												{{ 'RecBadgeDetail.issuedOn' | translate }}
-											</dt>
-											<dd class="tw-text-sm tw-font-medium tw-text-oebblack md:tw-ml-2">
-												<time [date]="config.issuedOn" format="dd.MM.y"></time>
-											</dd>
-										</div>
-									}
-									@if (config.validUntil) {
-										<div class="tw-flex tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
-											<dt class="tw-text-sm tw-text-darkgray">
-												{{ 'RecBadgeDetail.validUntil' | translate }}
-											</dt>
-											<dd class="tw-text-sm tw-font-medium tw-text-oebblack md:tw-ml-2">
-												<time [date]="config.validUntil" format="dd.MM.y"></time>
-											</dd>
-										</div>
-									}
-									@if (config.issuedTo) {
-										<div class="tw-flex tw-mt-2 tw-pt-2 md:tw-flex-row tw-flex-col">
-											<dt class="tw-text-sm tw-text-darkgray">
-												{{ 'RecBadgeDetail.awardedTo' | translate }}
-											</dt>
-											<dd class="tw-text-sm tw-font-medium tw-text-oebblack md:tw-ml-2">
-												{{ config.issuedTo }}
-											</dd>
-										</div>
-									}
 									@if (config.license) {
-										<div class="tw-mt-2 tw-pt-2 tw-flex tw-flex-row">
+										<div class="tw-mt-1 tw-pt-1 tw-flex tw-flex-row">
 											<dt class="tw-text-sm tw-text-darkgray">
 												{{ 'General.license' | translate }}
 											</dt>
@@ -410,7 +432,7 @@
 							<h3 hlmH3 class="tw-font-semibold tw-mb-2">
 								{{ 'CreateBadge.shortDescription' | translate }}
 							</h3>
-							<p hlmP>{{ config.badgeDescription }}</p>
+							<p class="tw-text-oebblack tw-text-lg">{{ config.badgeDescription }}</p>
 						</section>
 
 						<!-- Kompetenzen -->
@@ -429,6 +451,33 @@
 										[studyload]="(competency.studyLoad | hourPipe) + ' h'"
 									></competency-accordion>
 								}
+							</section>
+						}
+
+						<!-- Evidence -->
+						@if (normalizedEvidence.length > 0) {
+							<section class="tw-text-oebblack tw-mb-10">
+								<h3 hlmH3 class="tw-font-semibold tw-text-oebblack">
+									{{ 'RecBadgeDetail.narrative' | translate }}
+								</h3>
+								<ul class="tw-py-2">
+									@for (item of normalizedEvidence; track item) {
+										@if (item.url) {
+											<li class="tw-flex tw-items-center tw-text-lg">
+												<ng-icon hlm size="16px" name="lucideExternalLink" />
+												<a
+													class="tw-text-link tw-ml-2 tw-underline"
+													[href]="item.url"
+													target="_blank"
+													>{{ 'RecBadgeDetail.viewEvidenceUrl' | translate }}</a
+												>
+											</li>
+										}
+									}
+								</ul>
+								<p class="tw-text-oebblack tw-text-lg">
+									{{ normalizedEvidence[0].narrative }}
+								</p>
 							</section>
 						}
 

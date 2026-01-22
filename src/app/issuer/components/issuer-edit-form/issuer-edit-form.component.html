@@ -209,9 +209,9 @@
 			<oeb-button
 				type="submit"
 				width="max_content"
-				[disabled]="!!addIssuerFinished"
+				[disabled]="!!addPromiseFinished"
 				text="{{ existingIssuer ? ('General.save' | translate) : ('Network.create' | translate) }}"
-				[loading-promises]="[addIssuerFinished]"
+				[loading-promises]="[addPromiseFinished]"
 				[loading-message]="'General.add' | translate"
 			>
 			</oeb-button>
@@ -219,9 +219,9 @@
 			<oeb-button
 				type="submit"
 				width="max_content"
-				[disabled]="!!addIssuerFinished"
+				[disabled]="!!addPromiseFinished"
 				text="{{ existingIssuer ? ('General.save' | translate) : ('Issuer.createInstitution' | translate) }}"
-				[loading-promises]="[addIssuerFinished]"
+				[loading-promises]="[addPromiseFinished]"
 				loading-message="Hinzufügen"
 			>
 			</oeb-button>

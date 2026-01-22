@@ -28,6 +28,7 @@ export interface ApiBadgeClassForCreation {
 	image: string;
 	imageFrame?: boolean;
 	description: string;
+	course_url?: string;
 	criteria_url?: string;
 	criteria_text?: string;
 
@@ -64,7 +65,7 @@ export interface ApiBadgeClass extends ApiBadgeClassForCreation {
 
 	json: ApiBadgeClassJsonld;
 	source_url: string;
-
+	course_url: string;
 	issuerVerified: boolean;
 	issuerOwnerAcceptedTos: boolean;
 	isNetworkBadge: boolean;

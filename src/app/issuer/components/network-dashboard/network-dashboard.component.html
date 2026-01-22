@@ -4,9 +4,14 @@
 			<bg-breadcrumbs [linkentries]="crumbs"> </bg-breadcrumbs>
 		</div>
 		@if (activeTab === 'overview') {
-			<h1 hlmH1 class="tw-text-purple tw-font-black tw-mt-20 tw-pb-14">
-				{{ 'Network.welcomeDashboard' | translate }}
-			</h1>
+			<div class="tw-flex tw-mt-20">
+				<h1 hlmH1 class="tw-text-purple tw-font-black tw-pb-14">
+					{{ 'Network.welcomeDashboard' | translate }}
+				</h1>
+				@if (role === 'creator') {
+					<oeb-button [variant]="'secondary'" [text]="'General.edit' | translate" [routerLink]="['./edit']" />
+				}
+			</div>
 		}
 		<ng-template [bgAwaitPromises]="[networkLoaded]">
 			<section
@@ -17,8 +22,8 @@
 					<img width="70px" [src]="network().image" alt="Network Logo" />
 				</div>
 				<div class="tw-flex tw-flex-col">
-					<span class="tw-font-bold tw-text-3xl tw-text-oebblack">{{ network().name }}</span>
-					<span class="tw-text-oebblack tw-text-lg tw-font-semibold tw-mt-2">
+					<span class="tw-font-bold tw-text-3xl tw-text-oebblack tw-flex-grow">{{ network().name }}</span>
+					<span class="tw-text-oebblack tw-italic tw-flex-grow">
 						{{
 							'Network.yourRole'
 								| translate

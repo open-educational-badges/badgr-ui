@@ -410,9 +410,13 @@
 		"addOptionalDetails": "Optionale Details hinzufügen",
 		"evidence": "Nachweis für erfolgreiche Teilnahme",
 		"addNewEvidence": "Weiteren Nachweis hinzufügen",
-		"evidenceUrl": "URL zum Nachweis",
-		"evidenceNarrative": "Textliches Narrativ",
-		"youthWelfare": "Freier Träger der Jugendhilfe"
+		"evidenceUrl": "Nachweis-URL (Link zu z.B. Materialien oder Fotos, die den Lernerfolg belegen)",
+		"evidenceNarrative": "Textliches Narrativ (Erzählung/Hintergrund-Infos zur Badge-Vergabe; max. 600 Zeichen)",
+		"narrative": "Nachweis / Narrativ",
+		"addEvidenceUrl": "Weitere URL hinzufügen",
+		"youthWelfare": "Freier Träger der Jugendhilfe",
+		"catalogAllLoaded": "Alle Institutionen, die deinen Suchkriterien entsprechen, wurden geladen.",
+		"badgeCount": "Badge-Anzahl"
 	},
 	"Network": {
 		"networksNav": "Netzwerke A-Z",
@@ -461,7 +465,8 @@
 		"role": {
 			"owner": "Eigentümer:in",
 			"editor": "Editor:in",
-			"staff": "Mitarbeiter:in"
+			"staff": "Mitarbeiter:in",
+			"creator": "Ersteller:in / Eigentümer:in"
 		},
 		"confirmNetworkInvitation": "Bestätige die <span class='tw-font-bold'>Netzwerk-Einladung von {{networkName}}</span> für deine Institution <span class='tw-italic'>{{issuerName}}</span> mit Klick auf den Button:",
 		"partnerSince": "Netzwerk-Partner:in seit",
@@ -480,6 +485,8 @@
 		"sharedOn": "Freigegeben am",
 		"website": "Netzwerk-Webseite",
 		"createLpInfo": "Um einen <span class='tw-font-bold'>Netzwerk-Lernpfad</span> anlegen zu können, müssen mindestens zwei Badges im Netzwerk erstellt oder von Partner-Institutionen für das Netzwerk freigegeben werden.",
+		"pendingInvites": "Unbestätigte Einladungen",
+		"edit": "Netzwerk bearbeiten"
 		"pendingInvites": "Unbestätigte Einladungen",
 		"Dashboard": {
 			"kpi": {
@@ -798,7 +805,10 @@
 		"activityStartDateRequired": "Startdatum ist erforderlich",
 		"selectIssuer": "Für welche deiner Institutionen soll der Badge erstellt bzw. editiert werden?",
 		"noIssuersAvailable": "Du bist nicht Teil einer Institution und kannst daher keine Badges erstellen oder editieren.",
-		"selectBadge": "Wähle den zu bearbeitenden Badge oder erstelle einen Neuen"
+		"selectBadge": "Wähle den zu bearbeitenden Badge oder erstelle einen Neuen",
+		"linkToCourse": "Link zur Lernveranstaltung",
+		"course": "Lernveranstaltung",
+		"websiteUrl": "Webseiten-URL"
 	},
 	"Signup": {
 		"youHaveAccount": "Du hast bereits einen Account?",
@@ -1028,7 +1038,7 @@
 		"viewAlignmentUrl": "Besuche Verknüpfungs-URL",
 		"narrative": "Narrativ",
 		"evidence": "Nachweis",
-		"viewEvidenceUrl": "Besuche Nachweis-URL",
+		"viewEvidenceUrl": "Nachweis-URL",
 		"downloadImage": "Download Badge-Bild",
 		"downloadImage20": "Download Badge-Bild (2.0)",
 		"downloadImage30": "Download Badge-Bild (3.0)",
@@ -1045,7 +1055,8 @@
 		"sureToRemove": "Bist du sicher, dass du {{badgeName}} aus deinen Badges entfernen möchtest?",
 		"pdfDownload": "PDF-Zertifikat herunterladen",
 		"downloadMicroDegree": "Micro Degree herunterladen",
-		"place": "Ort"
+		"place": "Ort",
+		"expiryAfter": "Gültigkeit ab Vergabe"
 	},
 	"BadgeCollection": {
 		"addCollection": "Sammlung hinzufügen",
@@ -1288,7 +1299,8 @@
 		"confirmDelete": "Möchtest du diesen Lernpfad wirklich löschen?",
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
-		"institutions": "Institutionen"
+		"institutions": "Institutionen",
+		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",

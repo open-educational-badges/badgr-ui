@@ -73,6 +73,7 @@ import { HlmNumberedPagination } from '@spartan-ng/helm/pagination';
 							[value]="searchValue()"
 							(input)="onSearchChange($event)"
 							class="tw-w-full tw-pl-10 tw-pr-4 tw-py-2 tw-border-solid tw-border-2 tw-border-purple tw-rounded-lg tw-text-sm focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-purple-900 focus:tw-border-transparent"
+							[disabled]="awardInProgress()"
 						/>
 						@if (searchValue()) {
 							<button

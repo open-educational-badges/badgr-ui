@@ -470,6 +470,7 @@ export class BadgeClassDetailComponent
 			slug: this.badgeSlug,
 			createdAt: badgeClass.createdAt,
 			updatedAt: badgeClass.updatedAt,
+			courseUrl: badgeClass.courseUrl,
 			duration: badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad,
 			category: badgeClass.extension['extensions:CategoryExtension']?.Category,
 			tags: badgeClass.tags,
@@ -488,6 +489,7 @@ export class BadgeClassDetailComponent
 			license: badgeClass.extension['extensions:LicenseExtension'] ? true : false,
 			learningPaths: this.learningPaths,
 			copy_permissions: badgeClass.copyPermissions,
+			expiration: badgeClass.expiration,
 			menuitems: [
 				{
 					title: 'Badge.shareOnNetwork',
@@ -811,7 +813,7 @@ export class BadgeClassDetailComponent
 	}
 
 	deleteBadge() {
-		if (this.activeRecipientCount === 0) {
+		if (this.recipientCount === 0) {
 			this.confirmDialog
 				.openResolveRejectDialog({
 					dialogTitle: this.translate.instant('General.warning'),
@@ -978,13 +980,6 @@ export class BadgeClassDetailComponent
 		if ((this.isTaskPending || this.isTaskProcessing) && this.batchAwards && !this.hasScrolled) {
 			if (this.batchAwards.nativeElement.offsetTop > 0) this.hasScrolled = true;
 			this.batchAwards.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-		}
-	}
-
-	private updateResults() {
-		this.instanceResults = this.allBadgeInstances.entities;
-		if (this.recipientCount > this.resultsPerPage) {
-			this.showAssertionCount = true;
 		}
 	}
 }

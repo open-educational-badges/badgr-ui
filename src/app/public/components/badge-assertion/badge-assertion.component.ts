@@ -5,6 +5,8 @@ import { preloadImageURL } from '../../../common/util/file-util';
 import { PublicApiService } from '../../services/public-api.service';
 import { LoadedRouteParam } from '../../../common/util/loaded-route-param';
 import {
+	OB3EvidenceItem,
+	PublicApiBadgeAssertion,
 	PublicApiBadgeAssertionWithBadgeClass,
 	PublicApiBadgeClass,
 	PublicApiIssuer,
@@ -29,6 +31,7 @@ import {
 	isOB2Assertion,
 	isOB3Assertion,
 } from '~/common/util/assertion-helper';
+import { ApiBadgeInstanceEvidenceItem } from '~/issuer/models/badgeinstance-api.model';
 
 @Component({
 	template: ` <bg-badgedetail [config]="config" [awaitPromises]="[assertionIdParam.loadedPromise]"></bg-badgedetail>`,
@@ -262,8 +265,10 @@ export class PublicBadgeAssertionComponent {
 					badgeLoadingImageUrl: this.badgeLoadingImageUrl,
 					badgeFailedImageUrl: this.badgeFailedImageUrl,
 					badgeImage: assertion.image,
+					evidence_items: this.normalizeEvidence(assertion, assertionVersion),
 					competencies: assertion.badge['extensions:CompetencyExtension'],
 					license: assertion.badge['extensions:LicenseExtension'] ? true : false,
+					courseUrl: assertion.badge.courseUrl,
 					duration: assertion.badge['extensions:StudyLoadExtension'].StudyLoad,
 					learningPaths: lps,
 					version: assertionVersion,
@@ -277,10 +282,10 @@ export class PublicBadgeAssertionComponent {
 						isOB3Assertion(assertion) && assertion.credentialSubject.activityEndDate
 							? new Date(assertion.credentialSubject.activityEndDate)
 							: null,
-					networkBadge: assertion.isNetworkBadge,
-					networkImage: assertion.networkImage,
-					networkName: assertion.networkName,
-					sharedOnNetwork: assertion.sharedOnNetwork,
+					networkBadge: assertion.badge.isNetworkBadge,
+					networkImage: assertion.badge.networkImage,
+					networkName: assertion.badge.networkName,
+					sharedOnNetwork: assertion.badge.sharedOnNetwork,
 					awardingIssuers: this.awardingIssuers,
 				};
 				if (assertion['extensions:recipientProfile'] && assertion['extensions:recipientProfile'].name) {
@@ -291,6 +296,26 @@ export class PublicBadgeAssertionComponent {
 				console.error('Failed to fetch assertion data', err);
 			}
 		});
+	}
+
+	normalizeEvidence(
+		assertion: PublicApiBadgeAssertion,
+		version: '2.0' | '3.0',
+	): (OB3EvidenceItem | ApiBadgeInstanceEvidenceItem)[] {
+		if (version === '3.0') {
+			if (Array.isArray(assertion.evidence)) {
+				return assertion.evidence;
+			}
+			return [];
+		} else {
+			if (Array.isArray(assertion.evidence)) {
+				return assertion.evidence;
+			} else if (typeof assertion.evidence === 'object' && assertion.evidence !== null) {
+				return [assertion.evidence];
+			} else {
+				return [];
+			}
+		}
 	}
 
 	exportPng() {

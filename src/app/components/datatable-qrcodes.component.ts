@@ -391,6 +391,8 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 				activity_city: qrCode.activity_city,
 				activity_zip: qrCode.activity_zip,
 				activity_online: qrCode.activity_online,
+				evidence_items: qrCode.evidence_items ?? [],
+				course_url: qrCode.course_url,
 			} satisfies BadgeInstanceBatchAssertion);
 		});
 
