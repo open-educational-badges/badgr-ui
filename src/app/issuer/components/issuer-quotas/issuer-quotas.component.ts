@@ -53,4 +53,8 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 			return quota['used'] / quota['max'] >= 0.8;
 		}
 	}
+	// returns true if any quota has a custom value
+	isCustom() {
+		return Object.keys(this.issuer.quotas.quotas).some((key, index) => this.issuer.quotas.quotas[key].custom);
+	}
 }

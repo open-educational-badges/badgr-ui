@@ -33,6 +33,7 @@ export interface ApiBaseIssuer {
 	state?: string;
 	linkedinId: string;
 	badgeClassCount: number;
+	quotas: ApiQuotas;
 }
 
 export interface ApiIssuer extends ApiBaseIssuer {
@@ -57,8 +58,6 @@ export interface ApiIssuer extends ApiBaseIssuer {
 	lon?: number;
 
 	networks: ApiNetwork[];
-
-	quotas: ApiQuotas;
 }
 
 export interface ApiNetwork extends ApiBaseIssuer {
@@ -81,6 +80,19 @@ export interface ApiQuotasBooleanQuota {
 
 export interface ApiQuotas {
 	level: string;
+	nextLevel: {
+		level: string;
+		price: number;
+		quotas: {
+			BADGE_CREATE: number;
+			BADGE_AWARD: number;
+			LEARNINGPATH_CREATE: number;
+			ACCOUNTS_ADMIN: number;
+			ACCOUNTS_MEMBER: number;
+			AISKILLS_REQUESTS: number;
+			PDFEDITOR: boolean;
+		};
+	};
 	periodStart: string;
 	nextPayment: string;
 	paymentPeriod: 'month' | 'year';
@@ -89,6 +101,7 @@ export interface ApiQuotas {
 		BADGE_AWARD: ApiQuotasNumberQuota;
 		LEARNINGPATH_CREATE: ApiQuotasNumberQuota;
 		ACCOUNTS_ADMIN: ApiQuotasNumberQuota;
+		ACCOUNTS_MEMBER: ApiQuotasNumberQuota;
 		AISKILLS_REQUESTS: ApiQuotasNumberQuota;
 		PDFEDITOR: ApiQuotasBooleanQuota;
 	};

@@ -15,8 +15,25 @@
 							<h2
 								class="tw-uppercase tw-text-oebblack tw-font-[900] tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mt-10"
 							>
-								Aktuelles Paket von {{ issuer.name }}
+								Aktuelles Paket von {{ issuer.name }}:
 							</h2>
+							<div class="tw-flex tw-flex tw-items-center tw-gap-4 tw-mt-5">
+								<img
+									[src]="`/assets/oeb/images/quotas/logo_${issuer.quotas.level.toLowerCase()}.svg`"
+									width="100"
+								/>
+								<div>
+									<p
+										class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2"
+									>
+										{{ issuer.quotas.level }}
+										@if (isCustom()) {
+											<span>(Individuelle Konditionen*)</span>
+										}
+									</p>
+									<p class="tw-text-purple tw-text-[18px]/[1.2em]">Aktiv · Laufzeit bis xxx</p>
+								</div>
+							</div>
 						</hgroup>
 					</div>
 
@@ -38,6 +55,7 @@
 							<a
 								class="tw-text-right tw-text-link tw-underline tw-mt-6"
 								[href]="this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'"
+								tgarget="_blank"
 								>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
 							>
 						</div>

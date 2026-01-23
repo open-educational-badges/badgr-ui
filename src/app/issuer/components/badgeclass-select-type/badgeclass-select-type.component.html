@@ -22,7 +22,12 @@
 
 					<div class="tw-flex tw-justify-evenly oeb-badgeclass-select-container tw-flex-col md:tw-flex-row">
 						<a
-							[routerLink]="['/issuer/issuers', issuerSlug, 'badges', 'create', 'participation']"
+							(click)="checkQuotasDialog('BADGE_CREATE')"
+							[routerLink]="
+								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0
+									? ['/issuer/issuers', issuerSlug, 'badges', 'create', 'participation']
+									: null
+							"
 							[attr.data-umami-event]="'create-participation-badge-1'"
 						>
 							<div>
@@ -33,11 +38,16 @@
 
 							<quota-information
 								quotas="BADGE_CREATE"
-								class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3"
+								class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
 							/>
 						</a>
 						<a
-							[routerLink]="['/issuer/issuers', issuerSlug, 'badges', 'create', 'competency']"
+							(click)="checkQuotasDialog('BADGE_CREATE')"
+							[routerLink]="
+								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0
+									? ['/issuer/issuers', issuerSlug, 'badges', 'create', 'competency']
+									: null
+							"
 							[attr.data-umami-event]="'create-competency-badge-1'"
 						>
 							<div>
@@ -47,12 +57,17 @@
 							</div>
 							<quota-information
 								quotas="BADGE_CREATE"
-								class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3"
+								class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
 							/>
 						</a>
 						@if (canCreateLp) {
 							<a
-								[routerLink]="['/issuer/issuers', issuerSlug, 'learningpaths', 'create']"
+								(click)="checkQuotasDialog('LEARNINGPATH_CREATE')"
+								[routerLink]="
+									issuer?.quotas?.quotas['LEARNINGPATH_CREATE'].quota > 0
+										? ['/issuer/issuers', issuerSlug, 'learningpaths', 'create']
+										: null
+								"
 								[attr.data-umami-event]="'create-micro-degree-1'"
 							>
 								<div>
@@ -62,7 +77,7 @@
 								</div>
 								<quota-information
 									quotas="LEARNINGPATH_CREATE"
-									class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3"
+									class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
 								/>
 							</a>
 						}
@@ -72,3 +87,4 @@
 		</div>
 	</div>
 </div>
+<quota-exceeded-dialog #quotasExceededDialog [issuer]="issuer"></quota-exceeded-dialog>

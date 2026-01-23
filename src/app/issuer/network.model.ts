@@ -1,5 +1,5 @@
 import { ManagedEntity } from '~/common/model/managed-entity';
-import { ApiIssuer, ApiNetwork, IssuerRef, IssuerStaffRoleSlug, IssuerUrl } from './models/issuer-api.model';
+import { ApiIssuer, ApiNetwork, ApiQuotas, IssuerRef, IssuerStaffRoleSlug, IssuerUrl } from './models/issuer-api.model';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { ApiEntityRef } from '~/common/model/entity-ref';
 import { Issuer, IssuerStaffMember } from './models/issuer.model';
@@ -115,6 +115,10 @@ export class Network extends ManagedEntity<ApiNetwork, IssuerRef> {
 
 	get is_network(): boolean {
 		return true;
+	}
+
+	get quotas(): ApiQuotas {
+		return this.apiModel.quotas;
 	}
 
 	get partnerCount(): number {
