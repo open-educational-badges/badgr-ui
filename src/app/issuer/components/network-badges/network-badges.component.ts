@@ -42,6 +42,7 @@ import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { ActivatedRoute } from '@angular/router';
 import { HlmIcon } from '@spartan-ng/helm/icon';
+import { LinkEntry } from '~/common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 
 export interface SharedBadgeWithRequests extends ApiBadgeClassNetworkShare {
 	requestCount: number;
@@ -104,6 +105,7 @@ export class NetworkBadgesComponent {
 	}
 
 	network = input.required<Network>();
+	crumbs = input<LinkEntry[]>([]);
 	userIssuers = signal<Issuer[]>([]);
 	isLoadingIssuers = signal(false);
 	requestsLoaded: Promise<Map<string, ApiQRCode[]>>;
@@ -309,13 +311,15 @@ export class NetworkBadgesComponent {
 	}
 
 	routeToBadgeDetail(badge, issuerSlug, focusRequests: boolean = false) {
-		const extras = focusRequests
-			? {
-					queryParams: { focusRequests: 'true' },
-				}
-			: {};
+		const newCrumbs = [...this.crumbs()];
+		newCrumbs.at(-1).routerLink = [location.pathname];
+		newCrumbs.push({ title: badge.name, routerLink: ['/issuer/issuers/', issuerSlug, 'badges', badge.slug] });
+		const extras = {
+			queryParams: { focusRequests: focusRequests ? 'true' : undefined },
+			state: { crumbs: newCrumbs },
+		};
 
-		this.router.navigate(['/issuer/issuers/', issuerSlug, 'badges', badge.slug], extras);
+		this.router.navigate(newCrumbs.at(-1).routerLink, extras);
 	}
 
 	routeToBadgeCreation(issuer: Issuer) {

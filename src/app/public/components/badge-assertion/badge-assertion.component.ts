@@ -288,6 +288,7 @@ export class PublicBadgeAssertionComponent {
 					sharedOnNetwork: assertion.badge.sharedOnNetwork,
 					awardingIssuers: this.awardingIssuers,
 					crumbs: [
+						{ title: 'Badges' },
 						{
 							title:
 								assertion['extensions:recipientProfile'] &&

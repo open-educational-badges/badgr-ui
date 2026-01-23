@@ -7,7 +7,7 @@ import { AppConfigService } from '../../../common/app-config.service';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { BadgeClass } from '../../../issuer/models/badgeclass.model';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
-import { MenuItem } from '../badge-detail/badge-detail.component.types';
+import { MenuItem, PageConfig } from '../badge-detail/badge-detail.component.types';
 import { TranslateService, TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
@@ -46,6 +46,7 @@ interface NetworkBadgeGroup {
 import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { environment } from 'src/environments/environment';
+import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -97,6 +98,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
 	@Input() public: boolean = false;
+	@Input() crumbs: LinkEntry[];
 	@Output() issuerDeleted = new EventEmitter();
 
 	learningPathsPromise: Promise<unknown>;
@@ -524,13 +526,15 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {
-		const extras = focusRequests
-			? {
-					queryParams: { focusRequests: 'true' },
-				}
-			: {};
+		const newCrumbs = [...this.crumbs];
+		newCrumbs.at(-1).routerLink = [location.pathname];
+		newCrumbs.push({ title: badge.name, routerLink: ['/issuer/issuers/', issuer.slug, 'badges', badge.slug] });
+		const extras = {
+			queryParams: { focusRequests: focusRequests ? 'true' : undefined },
+			state: { crumbs: newCrumbs },
+		};
 
-		this.router.navigate(['/issuer/issuers/', issuer.slug, 'badges', badge.slug], extras);
+		this.router.navigate(newCrumbs.at(-1).routerLink, extras);
 	}
 	redirectToLearningPathDetail(learningPathSlug, issuer) {
 		this.router.navigate(['/issuer/issuers/', issuer.slug, 'learningpaths', learningPathSlug]);

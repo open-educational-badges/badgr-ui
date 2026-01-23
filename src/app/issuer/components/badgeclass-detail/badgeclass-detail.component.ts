@@ -613,6 +613,9 @@ export class BadgeClassDetailComponent
 				this.activeTab = params['tab'];
 			}
 		});
+
+		const navigationState = history.state;
+		this.crumbs = navigationState.crumbs ?? [];
 	}
 
 	ngOnDestroy() {
