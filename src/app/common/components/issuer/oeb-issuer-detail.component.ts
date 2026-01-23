@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewChild, inject, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, inject, TemplateRef, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -7,7 +7,7 @@ import { AppConfigService } from '../../../common/app-config.service';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { BadgeClass } from '../../../issuer/models/badgeclass.model';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
-import { MenuItem, PageConfig } from '../badge-detail/badge-detail.component.types';
+import { MenuItem } from '../badge-detail/badge-detail.component.types';
 import { TranslateService, TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
@@ -153,10 +153,10 @@ export class OebIssuerDetailComponent implements OnInit {
 	badgeTemplateTabs: any = undefined;
 	activeTabBadgeTemplate = 'issuer-badges';
 
-	@ViewChild('badgesTemplate', { static: false }) badgesTemplate: TemplateRef<any>;
-	@ViewChild('learningPathTemplate', { static: false }) learningPathTemplate: TemplateRef<any>;
-	@ViewChild('issuerBadgesTemplate', { static: false }) issuerBadgesTemplate: TemplateRef<any>;
-	@ViewChild('networkBadgesTemplate', { static: false }) networkBadgesTemplate: TemplateRef<any>;
+	readonly badgesTemplate = viewChild<TemplateRef<any>>('badgesTemplate');
+	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
+	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
+	readonly networkBadgesTemplate = viewChild<TemplateRef<any>>('networkBadgesTemplate');
 
 	badgeResults: BadgeResult[] = [];
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
@@ -455,12 +455,12 @@ export class OebIssuerDetailComponent implements OnInit {
 			{
 				key: 'badges',
 				title: 'Badges',
-				component: this.badgesTemplate,
+				component: this.badgesTemplate(),
 			},
 			{
 				key: 'micro-degrees',
 				title: 'LearningPath.learningpathsPlural',
-				component: this.learningPathTemplate,
+				component: this.learningPathTemplate(),
 			},
 		];
 	}

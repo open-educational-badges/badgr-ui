@@ -1,4 +1,4 @@
-import { Component, ElementRef, model, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { BadgeClassManager } from '../../services/badgeclass-manager.service';
@@ -93,28 +93,22 @@ export class BadgeClassDetailComponent
 	protected userProfileManager = inject(UserProfileManager);
 	protected badgeInstanceApiService = inject(BadgeInstanceApiService);
 
-	@ViewChild('qrAwards') qrAwards!: ElementRef;
-	@ViewChild('batchAwards') batchAwards!: ElementRef;
+	readonly qrAwards = viewChild.required<ElementRef>('qrAwards');
+	readonly batchAwards = viewChild.required<ElementRef>('batchAwards');
 
-	@ViewChild('issuerSelection')
-	issuerSelection: TemplateRef<void>;
+	readonly issuerSelection = viewChild<TemplateRef<void>>('issuerSelection');
 
-	@ViewChild('headerTemplate')
-	headerTemplate: TemplateRef<void>;
+	readonly headerTemplate = viewChild<TemplateRef<void>>('headerTemplate');
 
-	@ViewChild('networkIssuerSelection')
-	networkIssuerSelection: TemplateRef<void>;
+	readonly networkIssuerSelection = viewChild<TemplateRef<void>>('networkIssuerSelection');
 
-	@ViewChild('networkIssuerSelectionHeader')
-	networkIssuerSelectionHeader: TemplateRef<void>;
+	readonly networkIssuerSelectionHeader = viewChild<TemplateRef<void>>('networkIssuerSelectionHeader');
 
-	@ViewChild('networkSelectionHeader')
-	networkSelectionHeader: TemplateRef<void>;
+	readonly networkSelectionHeader = viewChild<TemplateRef<void>>('networkSelectionHeader');
 
-	@ViewChild('networkSelection')
-	networkSelection: TemplateRef<void>;
+	readonly networkSelection = viewChild<TemplateRef<void>>('networkSelection');
 
-	@ViewChild('networkSearchInputModel') networkSearchInputModel: NgModel;
+	readonly networkSearchInputModel = viewChild<NgModel>('networkSearchInputModel');
 
 	readonly badgeFailedImageUrl = '../../../../breakdown/static/images/badge-failed.svg';
 	readonly badgeLoadingImageUrl = '../../../../breakdown/static/images/badge-loading.svg';
@@ -333,7 +327,7 @@ export class BadgeClassDetailComponent
 			{
 				key: 'recipients',
 				title: 'Badge.multiRecipients',
-				component: this.batchAwards,
+				component: this.batchAwards(),
 			},
 		];
 	}
@@ -376,8 +370,8 @@ export class BadgeClassDetailComponent
 
 		this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
-				headerTemplate: this.networkSelectionHeader,
-				content: this.networkSelection,
+				headerTemplate: this.networkSelectionHeader(),
+				content: this.networkSelection(),
 			},
 		});
 	}
@@ -391,8 +385,8 @@ export class BadgeClassDetailComponent
 		} else if (this.userIssuers.length > 1) {
 			const dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
-					headerTemplate: this.headerTemplate,
-					content: this.issuerSelection,
+					headerTemplate: this.headerTemplate(),
+					content: this.issuerSelection(),
 				},
 			});
 
@@ -892,8 +886,8 @@ export class BadgeClassDetailComponent
 				} else {
 					const dialogRef = this._hlmDialogService.open(DialogComponent, {
 						context: {
-							headerTemplate: this.networkIssuerSelectionHeader,
-							content: this.networkIssuerSelection,
+							headerTemplate: this.networkIssuerSelectionHeader(),
+							content: this.networkIssuerSelection(),
 							templateContext: {
 								closeDialog: (result?) => dialogRef.close(result),
 							},
@@ -946,8 +940,8 @@ export class BadgeClassDetailComponent
 				} else {
 					const dialogRef = this._hlmDialogService.open(DialogComponent, {
 						context: {
-							headerTemplate: this.networkIssuerSelectionHeader,
-							content: this.networkIssuerSelection,
+							headerTemplate: this.networkIssuerSelectionHeader(),
+							content: this.networkIssuerSelection(),
 							templateContext: {
 								closeDialog: (result?: string) => dialogRef.close(result),
 							},
@@ -974,16 +968,18 @@ export class BadgeClassDetailComponent
 	}
 
 	private focusRequestsOnPage() {
-		if (this.focusRequests && this.qrAwards && !this.hasScrolled) {
-			if (this.qrAwards.nativeElement.offsetTop > 0) this.hasScrolled = true;
-			this.qrAwards.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		const qrAwards = this.qrAwards();
+		if (this.focusRequests && qrAwards && !this.hasScrolled) {
+			if (qrAwards.nativeElement.offsetTop > 0) this.hasScrolled = true;
+			qrAwards.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
 	}
 
 	private focusBatchAwardingsOnPage() {
-		if ((this.isTaskPending || this.isTaskProcessing) && this.batchAwards && !this.hasScrolled) {
-			if (this.batchAwards.nativeElement.offsetTop > 0) this.hasScrolled = true;
-			this.batchAwards.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		const batchAwards = this.batchAwards();
+		if ((this.isTaskPending || this.isTaskProcessing) && batchAwards && !this.hasScrolled) {
+			if (batchAwards.nativeElement.offsetTop > 0) this.hasScrolled = true;
+			batchAwards.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
 	}
 }

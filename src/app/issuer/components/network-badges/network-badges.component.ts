@@ -1,21 +1,9 @@
-import {
-	Component,
-	computed,
-	effect,
-	ElementRef,
-	inject,
-	input,
-	Input,
-	output,
-	signal,
-	TemplateRef,
-	ViewChild,
-} from '@angular/core';
-import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
+import { Component, effect, ElementRef, inject, input, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { NetworkApiService } from '../../../issuer/services/network-api.service';
 import { OebTabsComponent, Tab } from '~/components/oeb-tabs.component';
-import { Route, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { BadgeClassManager } from '~/issuer/services/badgeclass-manager.service';
 import { MessageService } from '~/common/services/message.service';
@@ -28,20 +16,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { DialogComponent } from '~/components/dialog.component';
 import { Issuer } from '~/issuer/models/issuer.model';
-import { IssuerManager } from '~/issuer/services/issuer-manager.service';
-import { UserProfileManager } from '~/common/services/user-profile-manager.service';
 import { FormsModule } from '@angular/forms';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { QrCodeApiService } from '~/issuer/services/qrcode-api.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { BadgeClassApiService } from '~/issuer/services/badgeclass-api.service';
 import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { NetworkSharedBadgesDatatableComponent } from '~/components/datatable-network-shared-badges.component';
-import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { ActivatedRoute } from '@angular/router';
-import { HlmIcon } from '@spartan-ng/helm/icon';
 import { LinkEntry } from '~/common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 
 export interface SharedBadgeWithRequests extends ApiBadgeClassNetworkShare {
@@ -58,29 +41,20 @@ export interface SharedBadgeWithRequests extends ApiBadgeClassNetworkShare {
 		RouterLink,
 		DatatableComponent,
 		FormsModule,
-		TranslateDirective,
 		TranslateModule,
 		NetworkSharedBadgesDatatableComponent,
-		BgAwaitPromises,
-		HlmIcon,
 	],
 })
-export class NetworkBadgesComponent {
+export class NetworkBadgesComponent implements OnInit {
 	private networkApiService = inject(NetworkApiService);
 	private badgeClassService = inject(BadgeClassManager);
-	private badgeClassApiService = inject(BadgeClassApiService);
-	private userProfileManager = inject(UserProfileManager);
 	private entityManager = inject(CommonEntityManager);
-	private issuerManager = inject(IssuerManager);
 	private networkManager = inject(NetworkManager);
 	private messageService = inject(MessageService);
 	private qrCodeApiService = inject(QrCodeApiService);
 	private translate = inject(TranslateService);
 	private router = inject(Router);
 	private route = inject(ActivatedRoute);
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
 
 	constructor() {
 		effect(async () => {
