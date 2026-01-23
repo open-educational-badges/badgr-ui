@@ -58,6 +58,7 @@ import {
 	lucideLock,
 	lucideCalendarDays,
 	lucideMedal,
+	lucidePuzzle,
 } from '@ng-icons/lucide';
 
 export const IconsProvider = provideIcons({
@@ -119,4 +120,5 @@ export const IconsProvider = provideIcons({
 	lucideCircleAlert,
 	lucideLock,
 	lucideMedal,
+	lucidePuzzle,
 });

@@ -1,0 +1,149 @@
+<div class="oeb tw-relative tw-w-full">
+	<div class="page-padding">
+		<ng-template [bgAwaitPromises]="[issuerLoaded]">
+			<div class="tw-mb-8 tw-pb-6 tw-border-b tw-border-solid tw-border-[var(--color-light4)]">
+				<bg-breadcrumbs [linkentries]="crumbs"> </bg-breadcrumbs>
+			</div>
+
+			<header class="tw-relative">
+				<div class="tw-flex tw-justify-between tw-gap-6 tw-items-center">
+					<div class="tw-flex oeb-section-sm md:tw-max-w-[70%]">
+						<hgroup class="tw-flex tw-flex-col tw-justify-center oeb-break-words">
+							<h1 hlmH1 class="tw-text-purple tw-font-semibold md:tw-text-[35px] xl:tw-text-[46px]">
+								{{ 'Quotas.QuotasMenuItem' | translate }}
+							</h1>
+							<h2
+								class="tw-uppercase tw-text-oebblack tw-font-[900] tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mt-10"
+							>
+								Aktuelles Paket von {{ issuer.name }}
+							</h2>
+						</hgroup>
+					</div>
+
+					<aside
+						class="tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-absolute tw-right-0 tw-top-[17.5%]"
+					>
+						<div class="tw-flex tw-flex-col tw-gap-2">
+							<oeb-button
+								width="full_width"
+								class="tw-whitespace-nowrap"
+								[text]="'Quotas.ButtonUpgrade' | translate"
+							/>
+							<oeb-button
+								variant="secondary"
+								width="full_width"
+								class="tw-whitespace-nowrap"
+								[text]="'Quotas.ButtonIndividual' | translate"
+							/>
+							<a
+								class="tw-text-right tw-text-link tw-underline tw-mt-6"
+								[href]="this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'"
+								>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
+							>
+						</div>
+					</aside>
+				</div>
+			</header>
+			<section class="tw-mb-10">
+				<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">Nutzung in Kontingente</h3>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
+					<strong>Erstellte Badges</strong
+					><span>
+						<span [class]="quotaWarning(issuer.quotas.quotas['BADGE_CREATE']) ? 'tw-text-red' : ''"
+							>{{ issuer.quotas.quotas['BADGE_CREATE'].used }}/{{
+								issuer.quotas.quotas['BADGE_CREATE'].max
+							}}</span
+						>
+						@if (issuer.quotas.quotas['BADGE_CREATE'].custom) {
+							<span>*</span>
+						}
+					</span>
+				</p>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
+					<strong>Erstellte Micro Degrees</strong
+					><span>
+						<span [class]="quotaWarning(issuer.quotas.quotas['LEARNINGPATH_CREATE']) ? 'tw-text-red' : ''"
+							>{{ issuer.quotas.quotas['LEARNINGPATH_CREATE'].used }}/{{
+								issuer.quotas.quotas['LEARNINGPATH_CREATE'].max
+							}}</span
+						>
+						@if (issuer.quotas.quotas['LEARNINGPATH_CREATE'].custom) {
+							<span>*</span>
+						}
+					</span>
+				</p>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
+					<strong>Vergebene Badges</strong
+					><span>
+						<span [class]="quotaWarning(issuer.quotas.quotas['BADGE_AWARD']) ? 'tw-text-red' : ''"
+							>{{ issuer.quotas.quotas['BADGE_AWARD'].used }}/{{
+								issuer.quotas.quotas['BADGE_AWARD'].max
+							}}
+						</span>
+						@if (issuer.quotas.quotas['BADGE_AWARD'].custom) {
+							<span>*</span>
+						}
+						<span>(inkl. automatisch vergebener Micro Degrees)</span>
+					</span>
+				</p>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
+					<strong>Admin-Accounts</strong
+					><span>
+						<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_ADMIN']) ? 'tw-text-red' : ''"
+							>{{ issuer.quotas.quotas['ACCOUNTS_ADMIN'].used }}/{{
+								issuer.quotas.quotas['ACCOUNTS_ADMIN'].max
+							}}</span
+						>
+						@if (issuer.quotas.quotas['ACCOUNTS_ADMIN'].custom) {
+							<span>*</span>
+						}
+					</span>
+				</p>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
+					<strong>Mitarbeitenden-Accounts</strong
+					><span>
+						<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_MEMBER']) ? 'tw-text-red' : ''"
+							>{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].used }}/{{
+								issuer.quotas.quotas['ACCOUNTS_MEMBER'].max
+							}}</span
+						>
+						@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].custom) {
+							<span>*</span>
+						}
+					</span>
+				</p>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
+					<strong>KI-Tool-Anfragen</strong
+					><span>
+						<span [class]="quotaWarning(issuer.quotas.quotas['AISKILLS_REQUESTS']) ? 'tw-text-red' : ''"
+							>{{ issuer.quotas.quotas['AISKILLS_REQUESTS'].used }}/{{
+								issuer.quotas.quotas['AISKILLS_REQUESTS'].max
+							}}
+						</span>
+						@if (issuer.quotas.quotas['AISKILLS_REQUESTS'].custom) {
+							<span>*</span>
+						}
+						<span>(monatlich)</span>
+					</span>
+				</p>
+			</section>
+			<section class="tw-mb-10">
+				<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">Vertrag und Abrechnung</h3>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-2">
+					<strong>Vertragsart</strong>
+					<span> Jahresvertrag</span>
+				</p>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-2">
+					<strong>Zahlung</strong>
+					<span>{{ issuer.quotas.paymentPeriod === 'year' ? 'jährlich' : 'monatlich' }}</span>
+				</p>
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-2">
+					<strong>Nächste Abrechnung</strong>
+					<span>
+						<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
+					</span>
+				</p>
+			</section>
+		</ng-template>
+	</div>
+</div>

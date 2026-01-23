@@ -409,6 +409,14 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	async ngOnInit() {
+		if (this.isFullIssuer(this.issuer) && this.issuer.quotas) {
+			this.menuItems.unshift({
+				title: 'Quotas.QuotasMenuItem',
+				routerLink: ['./quotas'],
+				icon: 'lucidePuzzle',
+			});
+		}
+
 		// initialize counts as 0 and update after data has loaded
 		if (this.sessionService.isLoggedIn) {
 			if (this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {

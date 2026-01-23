@@ -7,7 +7,12 @@
 		@if ($index < quotaKeys.length - 1) {
 			<span> / </span>
 		} @else {
-			<span>. <a href="#" class="tw-text-link tw-underline">Info</a></span>
+			<span
+				>.
+				<a [routerLink]="['/issuer/issuers/' + issuer.slug + '/quotas']" class="tw-text-link tw-underline"
+					>Info</a
+				></span
+			>
 		}
 	</p>
 }

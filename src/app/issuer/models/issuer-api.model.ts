@@ -72,18 +72,26 @@ export interface ApiQuotasNumberQuota {
 	used: number;
 	quota: number;
 	max: number;
+	custom: boolean;
 }
 export interface ApiQuotasBooleanQuota {
 	quota: boolean;
+	custom: boolean;
 }
 
 export interface ApiQuotas {
-	BADGE_CREATE: ApiQuotasNumberQuota;
-	BADGE_AWARD: ApiQuotasNumberQuota;
-	LEARNINGPATH_CREATE: ApiQuotasNumberQuota;
-	ACCOUNTS_ADMIN: ApiQuotasNumberQuota;
-	AISKILLS_REQUESTS: ApiQuotasNumberQuota;
-	PDFEDITOR: ApiQuotasBooleanQuota;
+	level: string;
+	periodStart: string;
+	nextPayment: string;
+	paymentPeriod: 'month' | 'year';
+	quotas: {
+		BADGE_CREATE: ApiQuotasNumberQuota;
+		BADGE_AWARD: ApiQuotasNumberQuota;
+		LEARNINGPATH_CREATE: ApiQuotasNumberQuota;
+		ACCOUNTS_ADMIN: ApiQuotasNumberQuota;
+		AISKILLS_REQUESTS: ApiQuotasNumberQuota;
+		PDFEDITOR: ApiQuotasBooleanQuota;
+	};
 }
 
 export type ApiAnyIssuer = ApiIssuer | ApiNetwork;

@@ -1203,11 +1203,15 @@
 		"noIconsFoundFor": "Kein Icon gefunden für"
 	},
 	"Quotas": {
+		"QuotasMenuItem": "Pakete und Nutzung",
+		"ButtonUpgrade": "Jetzt Upgraden",
+		"ButtonIndividual": "Individuelles Angebot anfragen",
 		"Info_BADGE_CREATE": "Teilnahme- und Kompetenz-Badges erstellt",
 		"Info_BADGE_AWARD": "Badges vergeben",
 		"Info_LEARNINGPATH_CREATE": "Micro Degrees erstellt",
 		"Info_ACCOUNTS_ADMIN": "Admin-Accounts (Eigentümer:innen, Editor:innen)",
 		"Info_ACCOUNTS_MEMBER": "Mitarbeitenden-Accounts vergeben",
-		"Info_AISKILLS_REQUESTS": "Anfragen genutzt"
+		"Info_AISKILLS_REQUESTS": "Anfragen genutzt",
+		"FeatureListPlanComparison": "Feature-Liste: OEB-Pakete im Vergleich"
 	}
 }

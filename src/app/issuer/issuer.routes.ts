@@ -20,6 +20,7 @@ import { NetworkCreateComponent } from './components/network-create/network-crea
 import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
 import { NetworkEditComponent } from './components/network-edit/network-edit.component';
+import { IssuerQuotasComponent } from './components/issuer-quotas/issuer-quotas.component';
 
 export const routes = [
 	/* Issuer */
@@ -114,6 +115,10 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/bulk-import',
 		component: BadgeClassIssueBulkAwardComponent,
+	},
+	{
+		path: 'issuers/:issuerSlug/quotas',
+		component: IssuerQuotasComponent,
 	},
 	{
 		path: '**',

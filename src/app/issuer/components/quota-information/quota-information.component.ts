@@ -1,5 +1,5 @@
 import { Component, inject, input } from '@angular/core';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ApiQuotas, ApiQuotasBooleanQuota, ApiQuotasNumberQuota } from '~/issuer/models/issuer-api.model';
 import { Issuer } from '~/issuer/models/issuer.model';
@@ -17,7 +17,7 @@ type QuotaName =
 @Component({
 	selector: 'quota-information',
 	templateUrl: './quota-information.component.html',
-	imports: [TranslatePipe],
+	imports: [RouterLink, TranslatePipe],
 })
 export class QuotaInformationComponent {
 	protected issuerManager = inject(IssuerManager);
@@ -39,11 +39,11 @@ export class QuotaInformationComponent {
 			if (Array.isArray(quotas)) {
 				this.quotaKeys = quotas;
 				this.quotaValues = quotas.map((q) => {
-					return issuer.quotas[q];
+					return issuer.quotas.quotas[q];
 				});
 			} else {
 				this.quotaKeys = [quotas];
-				this.quotaValues = [issuer.quotas[quotas]];
+				this.quotaValues = [issuer.quotas.quotas[quotas]];
 			}
 		});
 	}
