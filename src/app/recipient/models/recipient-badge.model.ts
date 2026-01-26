@@ -70,6 +70,10 @@ export class RecipientBadgeInstance extends ManagedEntity<ApiRecipientBadgeInsta
 		return this.apiModel.shareUrl;
 	}
 
+	get courseUrl(): string {
+		return this.apiModel.courseUrl;
+	}
+
 	get isNew(): boolean {
 		return this.apiModel.acceptance === 'Unaccepted';
 	}

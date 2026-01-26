@@ -19,6 +19,7 @@ import { BadgeClassEditIssuedComponent } from './components/badgeclass-edit-issu
 import { NetworkCreateComponent } from './components/network-create/network-create.component';
 import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
+import { NetworkEditComponent } from './components/network-edit/network-edit.component';
 
 export const routes = [
 	/* Issuer */
@@ -37,6 +38,10 @@ export const routes = [
 	{
 		path: 'networks/:networkSlug',
 		component: NetworkDashboardComponent,
+	},
+	{
+		path: 'networks/:networkSlug/edit',
+		component: NetworkEditComponent,
 	},
 	{
 		path: 'networks/invite/:inviteSlug',

@@ -17,9 +17,6 @@ export class QrCodeApiService extends BaseHttpApiService {
 	protected messageService: MessageService;
 	private sanitizer = inject(DomSanitizer);
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const loginService = inject(AUTH_PROVIDER);
 		const http = inject(HttpClient);

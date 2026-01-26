@@ -63,6 +63,18 @@ export class Network extends ManagedEntity<ApiNetwork, IssuerRef> {
 		return this.apiModel.json.image;
 	}
 
+	get websiteUrl(): string {
+		return this.apiModel.json.url;
+	}
+
+	get country(): string {
+		return this.apiModel.country;
+	}
+
+	get state(): string {
+		return this.apiModel.state;
+	}
+
 	get badgeClassCount(): number {
 		const badges = this.commonManager.badgeManager.badgesList;
 

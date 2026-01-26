@@ -100,7 +100,7 @@ export interface ApiNetworkForCreation {
 	is_network?: boolean;
 }
 
-export type IssuerStaffRoleSlug = 'owner' | 'editor' | 'staff';
+export type IssuerStaffRoleSlug = 'creator' | 'owner' | 'editor' | 'staff';
 export interface ApiIssuerStaff {
 	role: IssuerStaffRoleSlug;
 	user: {

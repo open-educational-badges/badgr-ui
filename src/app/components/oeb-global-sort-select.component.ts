@@ -9,7 +9,7 @@ import { OebSelectComponent } from './select.component';
 		<oeb-select
 			[actionBar]="true"
 			class="oeb tw-block tw-w-full"
-			[options]="sortOptions"
+			[options]="options"
 			[control]="control"
 			[disabled]="disabled"
 			[autofocus]="true"
@@ -19,31 +19,19 @@ import { OebSelectComponent } from './select.component';
 	`,
 	imports: [OebSelectComponent],
 })
-export class OebGlobalSortSelectComponent implements OnInit, AfterViewInit {
+export class OebGlobalSortSelectComponent implements OnInit {
 	private translate = inject(TranslateService);
 
-	@Input() control: FormControl = new FormControl('name_asc');
+	@Input() control!: FormControl;
+	@Input() options!: Array<{ value: string; label: string }>;
 	@Input() disabled: boolean = false;
 	@Input() placeholder: string | undefined;
 
 	@Output() sortChanged = new EventEmitter<string>();
 
-	sortOptions: Array<{ value: string; label: string }> = [
-		{ value: 'name_asc', label: 'A-Z' },
-		{ value: 'name_desc', label: 'Z-A' },
-		{ value: 'date_asc', label: this.translate.instant('General.dateAscending') },
-		{ value: 'date_desc', label: this.translate.instant('General.dateDescending') },
-	];
-
 	ngOnInit(): void {
 		this.control.valueChanges.subscribe((value) => {
 			this.sortChanged.emit(value);
 		});
-	}
-
-	ngAfterViewInit(): void {
-		if (!this.control.value) {
-			this.control.setValue('date_desc', { emitEvent: true });
-		}
 	}
 }

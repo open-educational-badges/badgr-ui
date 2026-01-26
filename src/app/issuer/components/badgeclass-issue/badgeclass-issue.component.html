@@ -98,11 +98,14 @@
 
 				<oeb-optional-details
 					[parentForm]="issueForm"
-					[showEvidence]="false"
+					[showEvidence]="true"
 					[showLocation]="true"
 					[showCourseDate]="true"
-				>
-				</oeb-optional-details>
+					(addEvidenceEvent)="addEvidence()"
+					(removeEvidenceEvent)="removeEvidence($event)"
+					[showCourseUrl]="true"
+					[courseUrlDefaultOpen]="badgeInstanceCourseUrl() !== null && badgeInstanceCourseUrl().length > 0"
+				/>
 
 				<span class="tw-text-oebblack tw-mt-10 tw-mb-4 tw-text-right tw-text-lg tw-block">
 					{{ 'Issuer.receivesBadgeByEmail' | translate }}</span
