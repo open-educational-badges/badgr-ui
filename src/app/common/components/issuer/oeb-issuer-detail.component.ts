@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewChild, inject, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, inject, TemplateRef, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -46,6 +46,7 @@ interface NetworkBadgeGroup {
 import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { environment } from 'src/environments/environment';
+import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -97,6 +98,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
 	@Input() public: boolean = false;
+	@Input() crumbs: LinkEntry[];
 	@Output() issuerDeleted = new EventEmitter();
 
 	learningPathsPromise: Promise<unknown>;
@@ -151,10 +153,10 @@ export class OebIssuerDetailComponent implements OnInit {
 	badgeTemplateTabs: any = undefined;
 	activeTabBadgeTemplate = 'issuer-badges';
 
-	@ViewChild('badgesTemplate', { static: false }) badgesTemplate: TemplateRef<any>;
-	@ViewChild('learningPathTemplate', { static: false }) learningPathTemplate: TemplateRef<any>;
-	@ViewChild('issuerBadgesTemplate', { static: false }) issuerBadgesTemplate: TemplateRef<any>;
-	@ViewChild('networkBadgesTemplate', { static: false }) networkBadgesTemplate: TemplateRef<any>;
+	readonly badgesTemplate = viewChild<TemplateRef<any>>('badgesTemplate');
+	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
+	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
+	readonly networkBadgesTemplate = viewChild<TemplateRef<any>>('networkBadgesTemplate');
 
 	badgeResults: BadgeResult[] = [];
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
@@ -453,12 +455,12 @@ export class OebIssuerDetailComponent implements OnInit {
 			{
 				key: 'badges',
 				title: 'Badges',
-				component: this.badgesTemplate,
+				component: this.badgesTemplate(),
 			},
 			{
 				key: 'micro-degrees',
 				title: 'LearningPath.learningpathsPlural',
-				component: this.learningPathTemplate,
+				component: this.learningPathTemplate(),
 			},
 		];
 	}
@@ -524,13 +526,15 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	routeToBadgeDetail(badge, issuer, focusRequests: boolean = false) {
-		const extras = focusRequests
-			? {
-					queryParams: { focusRequests: 'true' },
-				}
-			: {};
+		const newCrumbs = [...this.crumbs];
+		newCrumbs.at(-1).routerLink = [location.pathname];
+		newCrumbs.push({ title: badge.name, routerLink: ['/issuer/issuers/', issuer.slug, 'badges', badge.slug] });
+		const extras = {
+			queryParams: { focusRequests: focusRequests ? 'true' : undefined },
+			state: { crumbs: newCrumbs },
+		};
 
-		this.router.navigate(['/issuer/issuers/', issuer.slug, 'badges', badge.slug], extras);
+		this.router.navigate(newCrumbs.at(-1).routerLink, extras);
 	}
 	redirectToLearningPathDetail(learningPathSlug, issuer) {
 		this.router.navigate(['/issuer/issuers/', issuer.slug, 'learningpaths', learningPathSlug]);
