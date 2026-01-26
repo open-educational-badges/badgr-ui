@@ -207,7 +207,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 	private messageService = inject(MessageService);
 	private translate = inject(TranslateService);
 	private progressSubscription!: Subscription;
-	private processedAwardedEmails = new Set<string>();
+	private processedAwardedEntityIds = new Set<string>();
 	private processedRequests: RequestedBadge[] = [];
 
 	qrCode = input.required<ApiQRCode>();
@@ -239,7 +239,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 		columns: this.badgeTableColumnDefinition,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-		getRowId: (row) => row.email,
+		getRowId: (row) => row.entity_id,
 		state: {
 			sorting: this.tableSorting(),
 			rowSelection: this.rowSelection(),
@@ -316,7 +316,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 		if (this.taskSubscription) {
 			this.taskSubscription.unsubscribe();
 		}
-		this.processedAwardedEmails.clear();
+		this.processedAwardedEntityIds.clear();
 		this.processedRequests = [];
 	}
 
@@ -324,24 +324,25 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 		const successful = taskResult.result?.data ?? [];
 		if (!successful.length) return;
 
-		const allAwardedEmails = successful.map((s: any) => s.recipient_identifier);
-		const newlyAwardedEmails = allAwardedEmails.filter((email: string) => !this.processedAwardedEmails.has(email));
+		const newlyAwardedRequestIds = successful
+			.map((s: any) => s.request_entity_id)
+			.filter((id: string) => !this.processedAwardedEntityIds.has(id));
 
-		if (newlyAwardedEmails.length === 0) return;
+		if (!newlyAwardedRequestIds.length) return;
 
-		newlyAwardedEmails.forEach((email: string) => this.processedAwardedEmails.add(email));
+		newlyAwardedRequestIds.forEach((id) => this.processedAwardedEntityIds.add(id));
 
-		const newlyAwardedSet = new Set(newlyAwardedEmails);
+		const awardedSet = new Set(newlyAwardedRequestIds);
 
 		this.requestedBadges.update((current) => {
-			const updated = current.filter((b) => !newlyAwardedSet.has(b.email));
+			const updated = current.filter((b) => !awardedSet.has(b.entity_id));
 			this.requestCountChanged.emit(updated.length);
 			return updated;
 		});
 
 		this.rowSelection.update((current) => {
 			const updated = { ...current };
-			newlyAwardedEmails.forEach((email) => delete updated[email]);
+			newlyAwardedRequestIds.forEach((id) => delete updated[id]);
 			return updated;
 		});
 	}
@@ -365,8 +366,8 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 		const recipientProfileContextUrl =
 			'https://api.openbadges.education/static/extensions/recipientProfile/context.json';
 
-		const selectedEmails = Object.keys(this.rowSelection());
-		const selectedRequests = this.requestedBadges().filter((b) => selectedEmails.includes(b.email));
+		const selectedEntityIds = Object.keys(this.rowSelection());
+		const selectedRequests = this.requestedBadges().filter((b) => selectedEntityIds.includes(b.entity_id));
 		this.processedRequests = selectedRequests;
 		selectedRequests.forEach((b) => {
 			const activityStartDate = qrCode.activity_start_date
@@ -393,6 +394,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 				activity_online: qrCode.activity_online,
 				evidence_items: qrCode.evidence_items ?? [],
 				course_url: qrCode.course_url,
+				request_entity_id: b.entity_id,
 			} satisfies BadgeInstanceBatchAssertion);
 		});
 
@@ -462,7 +464,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 			this.requestedBadges.update((current) => current.filter((r) => !ids.includes(r.entity_id)));
 			this.requestCountChanged.emit(this.requestedBadges().length);
 			this.rowSelection.set({});
-			this.processedAwardedEmails.clear();
+			this.processedAwardedEntityIds.clear();
 			this.processedRequests = [];
 		});
 	}

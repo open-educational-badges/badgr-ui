@@ -88,6 +88,7 @@ export interface BadgeInstanceBatchAssertion {
 	activity_city?: string;
 	activity_online?: boolean;
 	course_url?: string;
+	request_entity_id?: string;
 }
 
 export interface BadgeInstanceResultSetV3 {
