@@ -406,9 +406,13 @@
 		"addOptionalDetails": "Add optional details",
 		"evidence": "Proof of successful participation",
 		"addNewEvidence": "Add another evidence",
-		"evidenceUrl": "Evidence URL",
-		"evidenceNarrative": "Textual narrative",
-		"youthWelfare": "Independent youth welfare organization"
+		"evidenceUrl": "Evidence URL (link to e.g. materials or photos that prove learning success)",
+		"evidenceNarrative": "Textual narrative (story/background information on badge awarding; max. 600 characters)",
+		"narrative": "Evidence / narrative",
+		"addEvidenceUrl": "Add another URL",
+		"youthWelfare": "Independent youth welfare organization",
+		"catalogAllLoaded": "All institutions matching your search criteria loaded.",
+		"badgeCount": "Badge Count"
 	},
 	"Network": {
 		"networksNav": "Networks A-Z",
@@ -449,7 +453,8 @@
 		"role": {
 			"owner": "Owner",
 			"editor": "Editor",
-			"staff": "Member"
+			"staff": "Member",
+			"creator": "Creator / Owner"
 		},
 		"confirmNetworkInvitation": "Confirm the <span class='tw-font-bold'>network invitation from {{networkName}}</span> for your institution <span class='tw-italic'>{{issuerName}}</span> by clicking the button:",
 		"partnerSince": "Network Partner since",
@@ -469,7 +474,8 @@
 		"sharedOn": "Shared on",
 		"website": "Network website",
 		"createLpInfo": "To create a <span class='tw-font-bold'>network learning path</span>, at least two badges must be created in the network or approved for the network by partner institutions.",
-		"pendingInvites": "Unconfirmed invitations"
+		"pendingInvites": "Unconfirmed invitations",
+		"edit": "Edit network"
 	},
 	"Badge": {
 		"groupBy": "Group by",
@@ -565,7 +571,8 @@
 		"networkAssertionsGetTracked": "All badge awards are included in the network's data evaluation.",
 		"cantRemoveFromNetwork": "The badge CANNOT be removed from the network.",
 		"shareBadgeOnNetwork": "Share badge on network",
-		"alreadyShared": "The badge was already shared on a network."
+		"alreadyShared": "The badge was already shared on a network.",
+		"unknownRecipient": "Recipient unknown"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
@@ -681,7 +688,10 @@
 		"activityStartDateRequired": "Start date is required",
 		"selectIssuer": "For which of your institutions should the badge be created or edited?",
 		"noIssuersAvailable": "You are not part of an institution and therefore cannot create or edit badges.",
-		"selectBadge": "Select the badge you want to edit or create a new one"
+		"selectBadge": "Select the badge you want to edit or create a new one",
+		"linkToCourse": "Link to Course Offering",
+		"course": "Course Offering",
+		"websiteUrl": "Website URL"
 	},
 	"Signup": {
 		"youHaveAccount": "Already have an account?",
@@ -927,7 +937,8 @@
 		"sureToRemove": "Are you sure you want to remove {{badgeName}} from your badges?",
 		"downloadMicroDegree": "Download Micro Degree",
 		"pdfDownload": "Download PDF-Certificate",
-		"place": "Place"
+		"place": "Place",
+		"expiryAfter": "Validity from Date of Award"
 	},
 	"BadgeCollection": {
 		"addCollection": "Add collection",
@@ -1170,7 +1181,8 @@
 		"confirmDelete": "Are you sure you want to delete this learning path?",
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
-		"institutions": "institutions"
+		"institutions": "institutions",
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",

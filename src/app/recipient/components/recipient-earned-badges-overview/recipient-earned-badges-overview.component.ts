@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
 import { NgIcon } from '@ng-icons/core';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { OebCheckboxComponent } from '~/components/oeb-checkbox.component';
 import { OebGlobalSortSelectComponent } from '~/components/oeb-global-sort-select.component';
 import { HlmP } from '~/components/spartan/ui-typography-helm/src/lib/hlm-p';
 import { RecipientBadgeInstance } from '~/recipient/models/recipient-badge.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	selector: 'recipient-earned-badges-overview',
@@ -80,6 +81,7 @@ import { RecipientBadgeInstance } from '~/recipient/models/recipient-badge.model
 					<oeb-global-sort-select
 						placeholder="{{ 'Badge.sortBy' | translate }}"
 						class="oeb tw-w-[12rem]"
+						[options]="sortOptions"
 						[control]="sortControl"
 						(sortChanged)="onSortChanged($event)"
 					/>
@@ -150,6 +152,7 @@ import { RecipientBadgeInstance } from '~/recipient/models/recipient-badge.model
 		}`,
 })
 export default class RecipientEarnedBadgesOverview {
+	private translate = inject(TranslateService);
 	readonly DEFAULT_SORT = 'date_desc';
 	badges = input.required<RecipientBadgeInstance[]>();
 	isEmbedded = input<boolean>(false);
@@ -170,6 +173,25 @@ export default class RecipientEarnedBadgesOverview {
 		else return undefined;
 	});
 	sortControl = new FormControl(this.DEFAULT_SORT);
+
+	sortOptions = [
+		{
+			value: 'name_asc',
+			label: 'A-Z',
+		},
+		{
+			value: 'name_desc',
+			label: 'Z-A',
+		},
+		{
+			value: 'date_asc',
+			label: this.translate.instant('General.dateAscending'),
+		},
+		{
+			value: 'date_desc',
+			label: this.translate.instant('General.dateDescending'),
+		},
+	];
 
 	onSortChanged(sortOption: string): void {
 		this.sortOption.set(sortOption as 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc');

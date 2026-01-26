@@ -24,6 +24,7 @@ import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-int
 import { OebInputComponent } from '~/components/input.component';
 import { OebSelectComponent } from '~/components/select.component';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
+import { UrlValidator } from '~/common/validators/url.validator';
 
 @Component({
 	templateUrl: 'badgeclass-edit-issued.component.html',
@@ -67,6 +68,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 
 	badgeClassForm = typedFormGroup()
 		.addControl('copy_permissions_allow_others', false)
+		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('expiration', null, [
 			(control) => PositiveIntegerOrNullValidator.valid(control, this.translate),
 			,
@@ -96,6 +98,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 			(badgeClass) => {
 				this.badgeClass = badgeClass;
 				this.badgeClassForm.setValue({
+					courseUrl: badgeClass.courseUrl,
 					copy_permissions_allow_others: badgeClass.canCopy('others'),
 					expiration: badgeClass.expiration,
 					expiration_unit: 'days',
@@ -147,6 +150,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 		}
 		this.badgeClass.expiration = expirationDays;
 		this.badgeClass.copyPermissions = copy_permissions;
+		this.badgeClass.courseUrl = formState.courseUrl;
 		try {
 			this.savePromise = this.badgeClass.save();
 			await this.savePromise;

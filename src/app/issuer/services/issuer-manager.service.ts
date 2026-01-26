@@ -122,6 +122,19 @@ export class IssuerManager {
 			.then((issuers) => issuers.filter((i) => uniqueUrls.indexOf(i.issuerUrl) >= 0));
 	}
 
+	issuersBySlugs(slugs: string[]): Promise<Issuer[]> {
+		if (!slugs || slugs.length === 0) {
+			return Promise.resolve([]);
+		}
+
+		const uniqueSlugs = [...new Set(slugs)];
+
+		return this.allIssuers$
+			.pipe(first())
+			.toPromise()
+			.then((issuers) => issuers.filter((i) => uniqueSlugs.includes(i.slug)));
+	}
+
 	private throwError(message: string): never {
 		throw new Error(message);
 	}

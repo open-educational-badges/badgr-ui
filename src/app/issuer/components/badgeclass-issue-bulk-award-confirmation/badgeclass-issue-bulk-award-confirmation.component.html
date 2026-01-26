@@ -4,8 +4,8 @@
 	</div>
 	<p hlmP class="oeb-standard-padding-bottom">
 		<span
-			>{{ transformedImportData.validRowsTransformed.size }} {{ 'Issuer.rowsWereImported' | translate }}
-			{{ transformedImportData.duplicateRecords.length }} {{ 'Issuer.rowsAreDuplicates' | translate }}</span
+			>{{ transformedImportData().validRowsTransformed.size }} {{ 'Issuer.rowsWereImported' | translate }}
+			{{ transformedImportData().duplicateRecords.length }} {{ 'Issuer.rowsAreDuplicates' | translate }}</span
 		><br />
 		<span>{{ 'Issuer.clickOnAwardBadges' | translate }}</span>
 	</p>
@@ -22,7 +22,7 @@
 				</tr>
 			</thead>
 			<tbody class="datatable-x-body">
-				@for (row of transformedImportData.validRowsTransformed; track row) {
+				@for (row of transformedImportData().validRowsTransformed; track row) {
 					<tr
 						class="datatable-x-row"
 						[ngClass]="{
@@ -96,8 +96,12 @@
 		[showEvidence]="false"
 		[showLocation]="true"
 		[showCourseDate]="true"
-	>
-	</oeb-optional-details>
+		[showEvidence]="true"
+		(addEvidenceEvent)="addEvidence()"
+		(removeEvidenceEvent)="removeEvidence($event)"
+		[showCourseUrl]="true"
+		[courseUrlDefaultOpen]="badgeInstanceCourseUrl() !== null && badgeInstanceCourseUrl().length > 0"
+	/>
 
 	<div class="oeb-standard-padding-bottom tw-flex tw-flex-col tw-text-end tw-gap-6 tw-mt-6">
 		@if (invalidEmailCount === 1) {

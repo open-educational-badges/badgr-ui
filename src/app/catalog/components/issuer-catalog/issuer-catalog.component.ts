@@ -1,33 +1,48 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { FormControl, FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Map, NavigationControl, Popup } from 'maplibre-gl';
+import {
+	combineLatest,
+	concatMap,
+	debounceTime,
+	distinctUntilChanged,
+	filter,
+	firstValueFrom,
+	skip,
+	Subscription,
+	tap,
+} from 'rxjs';
+
+import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
-import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
-import { Issuer } from '../../../issuer/models/issuer.model';
-import { Title } from '@angular/platform-browser';
-import { preloadImageURL } from '../../../common/util/file-util';
 import { AppConfigService } from '../../../common/app-config.service';
-import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
-import { Map, NavigationControl, Popup } from 'maplibre-gl';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
-import { FormControl, FormsModule } from '@angular/forms';
+
+import { CatalogService } from '~/catalog/catalog.service';
+import { IssuerV3 } from '~/issuer/models/issuerv3.model';
+
+import { preloadImageURL } from '../../../common/util/file-util';
 import { appearAnimation } from '../../../common/animations/animations';
-import { applySorting } from '../../util/sorting';
-import { FormMessageComponent } from '../../../common/components/form-message.component';
-import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
-import { CountUpModule } from 'ngx-countup';
-import { NgClass } from '@angular/common';
-import { NgIcon } from '@ng-icons/core';
-import { OebGlobalSortSelectComponent } from '../../../components/oeb-global-sort-select.component';
-import { OebSelectComponent } from '../../../components/select.component';
-import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { IssuerCardComponent } from '../../../components/issuer-card/issuer-card.component';
-import { PaginationAdvancedComponent } from '../../../components/oeb-numbered-pagination';
-import { HlmIcon } from '@spartan-ng/helm/icon';
-import { HlmInput } from '@spartan-ng/helm/input';
-import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
+
+import { FormMessageComponent } from '~/common/components/form-message.component';
 import { OebHeaderText } from '~/components/oeb-header-text.component';
+import { CountUpModule } from 'ngx-countup';
+import { NgIcon } from '@ng-icons/core';
+import { OebGlobalSortSelectComponent } from '~/components/oeb-global-sort-select.component';
+import { OebSelectComponent } from '~/components/select.component';
+import { LoadingDotsComponent } from '~/common/components/loading-dots.component';
+import { OebButtonComponent } from '~/components/oeb-button.component';
+import { IssuerCardComponent } from '~/components/issuer-card/issuer-card.component';
+import { NgClass } from '@angular/common';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
+import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmIcon } from '@spartan-ng/helm/icon';
+import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observer';
 
 @Component({
 	selector: 'app-issuer-catalog',
@@ -35,207 +50,192 @@ import { OebHeaderText } from '~/components/oeb-header-text.component';
 	styleUrls: ['./issuer-catalog.component.css'],
 	animations: [appearAnimation],
 	imports: [
+		TranslatePipe,
 		FormMessageComponent,
-		BgAwaitPromises,
-		CountUpModule,
-		FormsModule,
-		HlmInput,
-		NgIcon,
-		HlmIcon,
+		OebHeaderText,
 		OebGlobalSortSelectComponent,
 		OebSelectComponent,
+		CountUpModule,
+		NgIcon,
 		NgClass,
+		FormsModule,
+		LoadingDotsComponent,
 		OebButtonComponent,
 		IssuerCardComponent,
-		PaginationAdvancedComponent,
-		TranslatePipe,
-		OebHeaderText,
+		BgAwaitPromises,
+		HlmInput,
+		HlmIcon,
 	],
 })
-export class IssuerCatalogComponent extends BaseRoutableComponent implements OnInit, AfterViewInit {
-	protected title = inject(Title);
-	protected messageService = inject(MessageService);
-	protected issuerManager = inject(IssuerManager);
-	protected configService = inject(AppConfigService);
+export class IssuerCatalogComponent extends BaseRoutableComponent implements OnInit, AfterViewInit, OnDestroy {
+	router = inject(Router);
+	route = inject(ActivatedRoute);
+	private title = inject(Title);
 	private translate = inject(TranslateService);
-	sessionService = inject(SessionService);
-	protected profileManager = inject(UserProfileManager);
-
-	readonly issuerPlaceholderSrc = preloadImageURL('../../../../breakdown/static/images/placeholderavatar-issuer.svg');
-	readonly noIssuersPlaceholderSrc =
-		'../../../../assets/@concentricsky/badgr-style/dist/images/image-empty-issuer.svg';
-
-	Array = Array;
-
-	issuers: Issuer[] = null;
-	chooseABadgeCategory = this.translate.instant('CreateBadge.chooseABadgeCategory');
-
-	issuersLoaded: Promise<unknown>;
-	issuerResults: Issuer[] = [];
-	issuerResultsByCategory: MatchingIssuerCategory[] = [];
-	filteredIssuers: Issuer[] = [];
-
-	order = 'asc';
-	public badgesDisplay = 'grid';
-
-	issuerGeoJson;
-	categoryControl = new FormControl('');
-	categoryOptions = [
-		{
-			label: 'Issuer.categories.schule',
-			value: 'schule',
-		},
-		{
-			label: 'Issuer.categories.hochschule',
-			value: 'hochschule',
-		},
-		{
-			label: 'Issuer.categories.jugendhilfe',
-			value: 'jugendhilfe',
-		},
-		{
-			label: 'Issuer.categories.andere',
-			value: 'andere',
-		},
-		{
-			label: 'Issuer.categories.allCategories',
-			value: '',
-		},
-	];
-
-	sortControl = new FormControl();
-	private _searchQuery = '';
-	get searchQuery() {
-		return this._searchQuery;
-	}
-	set searchQuery(query) {
-		this._searchQuery = query;
-		// this.updateResults();
-		this.updatePaginatedResults();
-		this.currentPage = 1;
-	}
-
-	private _categoryFilter = '';
-	get categoryFilter() {
-		return this._categoryFilter;
-	}
-
-	set categoryFilter(val: string) {
-		this._categoryFilter = val;
-		// this.updateResults();
-		this.updatePaginatedResults();
-		this.currentPage = 1;
-	}
-
-	isFiltered() {
-		return Boolean(this.searchQuery || this.categoryFilter);
-	}
-
-	private _currentPage = 1;
-
-	get currentPage(): number {
-		return this._currentPage;
-	}
-
-	set currentPage(value: number) {
-		if (this._currentPage !== value) {
-			this._currentPage = value;
-			this.updatePaginatedResults();
-		}
-	}
-
-	get theme() {
-		return this.configService.theme;
-	}
-	get features() {
-		return this.configService.featuresConfig;
-	}
-
-	get issuersPluralWord(): string {
-		return this.plural['issuerText']['=0'];
-	}
-
-	issuersPerPage = 30;
-	totalPages: number;
-	nextLink: string;
-	previousLink: string;
-
-	sortOption: string | null = null;
-
-	issuerKeys = {};
-	plural = {};
+	private configService = inject(AppConfigService);
+	private profileManager = inject(UserProfileManager);
+	private catalogService = inject(CatalogService);
 
 	mapObject;
 	@ViewChild('map')
 	private mapContainer: ElementRef<HTMLElement>;
 
-	public loggedIn = false;
+	issuerGeoJson;
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
+	@ViewChild('loadMore') loadMore: ElementRef | undefined;
+
+	readonly INPUT_DEBOUNCE_TIME = 400;
+	readonly ISSUERS_PER_PAGE = 20;
+
+	readonly issuerPlaceholderSrc = preloadImageURL('../../../../breakdown/static/images/placeholderavatar-issuer.svg');
+
+	badgesDisplay: 'grid' | 'map' = 'grid';
+	loggedIn = false;
+
+	plural: any = {};
+	issuerKeys: Record<string, any> = {};
+
+	intersectionObserver?: IntersectionObserver;
+
+	issuers = signal<IssuerV3[]>([]);
+	totalCount = signal<number>(0);
+	hasNext = signal<boolean>(true);
+
+	currentPage = signal<number>(-1);
+	currentPage$ = toObservable(this.currentPage);
+
+	observeScrolling = signal<boolean>(false);
+	observeScrolling$ = toObservable(this.observeScrolling);
+
+	searchQuery = signal<string>('');
+	searchQuery$ = toObservable(this.searchQuery);
+
+	categoryFilter = signal<string>('');
+	categoryFilter$ = toObservable(this.categoryFilter);
+
+	sortOption = signal<'badges_desc' | 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc'>('badges_desc');
+	sortOption$ = toObservable(this.sortOption);
+
+	categoryControl = new FormControl('');
+	sortControl = new FormControl('badges_desc');
+
+	pageReadyPromise: Promise<unknown> = firstValueFrom(toObservable(this.issuers).pipe(skip(1)));
+
+	pageSubscriptions: Subscription[] = [];
+
+	categoryOptions = [
+		{ label: 'Issuer.categories.schule', value: 'schule' },
+		{ label: 'Issuer.categories.hochschule', value: 'hochschule' },
+		{ label: 'Issuer.categories.jugendhilfe', value: 'jugendhilfe' },
+		{ label: 'Issuer.categories.andere', value: 'andere' },
+		{ label: 'Issuer.categories.allCategories', value: '' },
+	];
+
+	sortOptions = [
+		{
+			value: 'name_asc',
+			label: 'A-Z',
+		},
+		{
+			value: 'name_desc',
+			label: 'Z-A',
+		},
+		{
+			value: 'badge_desc',
+			label: this.translate.instant('Issuer.badgeCount'),
+		},
+		{
+			value: 'date_asc',
+			label: this.translate.instant('General.dateAscending'),
+		},
+		{
+			value: 'date_desc',
+			label: this.translate.instant('General.dateDescending'),
+		},
+	];
 
 	constructor() {
-		const router = inject(Router);
-		const route = inject(ActivatedRoute);
-
-		super(router, route);
-		const title = this.title;
-
-		title.setTitle(`Issuers - ${this.configService.theme['serviceName'] || 'Badgr'}`);
-
-		// subscribe to issuer and badge class changes
-		this.issuersLoaded = this.loadIssuers();
-		// Subscribe to changes on the control
-		this.categoryControl.valueChanges.subscribe((value) => {
-			this.categoryFilter = value;
-		});
+		super(inject(Router), inject(ActivatedRoute));
+		this.title.setTitle(`Issuers – ${this.configService.theme['serviceName'] || 'Badgr'}`);
 	}
 
-	async loadIssuers() {
-		return new Promise(async (resolve, reject) => {
-			this.issuerManager.getAllIssuers().subscribe(
-				(issuers) => {
-					this.issuers = issuers
-						.filter(
-							(i) => i.apiModel.verified && i.ownerAcceptedTos && !i.apiModel.source_url && !i.is_network,
-						)
-						.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-					this.totalPages = Math.ceil(this.issuers.length / this.issuersPerPage);
-					this.updatePaginatedResults();
-					// this.issuerResults = this.issuers;
-					// this.issuerResults.sort((a, b) => a.name.localeCompare(b.name));
-					// if (this.mapObject)
-					// 	this.mapObject.on('load', function () {
-					// 		that.generateGeoJSON(that.issuerResults);
-					// 	});
-					resolve(issuers);
-				},
-				(error) => {
-					this.messageService.reportAndThrowError(this.translate.instant('Issuer.failLoadissuers'), error);
-				},
-			);
-		});
-	}
-
-	ngOnInit() {
-		this.loggedIn = this.sessionService.isLoggedIn;
-
+	ngOnInit(): void {
 		this.prepareTexts();
 
-		// Translate: to update predefined text when language is changed
-		this.translate.onLangChange.subscribe((event) => {
-			this.prepareTexts();
-		});
+		this.pageSubscriptions.push(
+			this.translate.onLangChange.subscribe(() => {
+				this.prepareTexts();
+			}),
+		);
+		this.pageSubscriptions.push(
+			this.observeScrolling$.pipe(filter(() => this.intersectionObserver !== undefined)).subscribe((observe) => {
+				if (observe) this.intersectionObserver!.observe(this.loadMore!.nativeElement);
+				else this.intersectionObserver!.unobserve(this.loadMore!.nativeElement);
+			}),
+		);
 
-		this.sortControl.valueChanges.subscribe((value) => {
-			this.sortOption = value;
-			this.updatePaginatedResults();
-		});
+		this.pageSubscriptions.push(
+			combineLatest(
+				[this.currentPage$, this.searchQuery$, this.categoryFilter$, this.sortOption$],
+				(page, search, category, sort) => ({
+					page,
+					search,
+					category,
+					sort,
+				}),
+			)
+				.pipe(
+					debounceTime(this.INPUT_DEBOUNCE_TIME),
+					filter((i) => i.page >= 0),
+					distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+					tap(() => this.observeScrolling.set(false)),
+					concatMap((i) => this.loadRangeOfIssuers(i.page, i.search, i.category, i.sort)),
+				)
+				.subscribe((response) => {
+					this.totalCount.set(response.count);
+					this.hasNext.set(response.next !== null);
+
+					if (!response.previous) {
+						this.issuers.set(response.results);
+					} else {
+						this.issuers.update((curr) => [...curr, ...response.results]);
+					}
+
+					this.observeScrolling.set(true);
+				}),
+		);
+
+		this.pageSubscriptions.push(
+			this.currentPage$.subscribe((p) => {
+				if (p === 0) window?.scrollTo({ top: 0, behavior: 'smooth' });
+			}),
+		);
+
+		this.pageSubscriptions.push(
+			this.categoryControl.valueChanges.subscribe((value) => {
+				this.categoryFilter.set(value ?? '');
+				if (this.currentPage() > 0) this.currentPage.set(0);
+			}),
+		);
+
+		this.pageSubscriptions.push(
+			this.sortControl.valueChanges.subscribe((value: any) => {
+				this.sortOption.set(value);
+				if (this.currentPage() > 0) this.currentPage.set(0);
+			}),
+		);
+
+		this.currentPage.set(0);
 	}
 
-	ngAfterViewInit() {
-		const myAPIKey = 'pk.eyJ1IjoidW11dDAwIiwiYSI6ImNrdXpoeDh3ODB5NzMydnFxMzI4eTlma3AifQ.SXH5fK6-sTOhrgWxiT10OQ';
-		const mapStyle = 'mapbox://styles/mapbox/streets-v11';
+	ngAfterViewInit(): void {
+		this.intersectionObserver = createInfiniteScrollObserver(this.loadMore, {
+			hasNext: this.hasNext,
+			observeScrolling: this.observeScrolling,
+			onLoadMore: () => {
+				this.currentPage.update((p) => p + 1);
+			},
+		});
 
 		const initialState = { lng: 10.5, lat: 51, zoom: 5 };
 		const style: any = {
@@ -279,43 +279,72 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 		});
 	}
 
-	private updateResults() {
-		// Clear Results
-		this.issuerResults = [];
-		this.issuerResultsByCategory = [];
-
-		this.issuerResults.sort((a, b) => a.name.localeCompare(b.name));
-		this.issuerResults = this.issuers
-			.filter(MatchingAlgorithm.issuerMatcher(this.searchQuery))
-			.filter((issuer) => !this.categoryFilter || issuer.category === this.categoryFilter);
-		this.issuerResultsByCategory.forEach((r) => r.issuers.sort((a, b) => a.name.localeCompare(b.name)));
-		this.generateGeoJSON(this.issuerResults);
+	ngOnDestroy(): void {
+		this.pageSubscriptions.forEach((s) => s.unsubscribe());
+		this.intersectionObserver?.disconnect();
 	}
 
-	private updatePaginatedResults() {
-		// Clear Results
-		this.issuerResults = [];
-		this.issuerResultsByCategory = [];
+	private async loadRangeOfIssuers(
+		pageNumber: number,
+		searchQuery: string,
+		category: string,
+		sortOption: 'badges_desc' | 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc',
+	) {
+		return await this.catalogService.getIssuers(
+			pageNumber * this.ISSUERS_PER_PAGE,
+			this.ISSUERS_PER_PAGE,
+			searchQuery,
+			category,
+			undefined,
+			sortOption,
+		);
+	}
 
-		// this.issuerResults.sort((a, b) => a.name.localeCompare(b.name));
+	onSearchQueryChange(query: string) {
+		this.searchQuery.set(query);
+		this.currentPage.set(0);
+	}
 
-		this.filteredIssuers = this.issuers
-			.filter(MatchingAlgorithm.issuerMatcher(this.searchQuery))
-			.filter((issuer) => !this.categoryFilter || issuer.category === this.categoryFilter);
+	onLoadMoreClicked() {
+		if (this.hasNext()) this.currentPage.update((p) => p + 1);
+	}
 
-		if (this.sortOption) {
-			applySorting(this.filteredIssuers, this.sortOption);
-		}
-		this.totalPages = Math.ceil(this.filteredIssuers.length / this.issuersPerPage);
-		const start = (this.currentPage - 1) * this.issuersPerPage;
-		const end = start + this.issuersPerPage;
+	private prepareTexts(): void {
+		this.issuerKeys = {
+			schule: this.translate.instant('Issuer.schoolLabel'),
+			hochschule: this.translate.instant('Issuer.universityLabel'),
+			jugendhilfe: this.translate.instant('Issuer.youthWelfare'),
+			andere: this.translate.instant('Issuer.othersLabel'),
+			'n/a': this.translate.instant('General.notSpecified') ?? 'Keine Angabe',
+		};
 
-		this.issuerResults = this.filteredIssuers.slice(start, end);
-		// this.issuerResults = this.issuers
-		// 	.filter(MatchingAlgorithm.issuerMatcher(this.searchQuery))
-		// 	.filter((issuer) => !this.categoryFilter || issuer.category === this.categoryFilter);
-		// this.issuerResultsByCategory.forEach((r) => r.issuers.sort((a, b) => a.name.localeCompare(b.name)));
-		// this.generateGeoJSON(this.issuerResults);
+		this.plural = {
+			issuer: {
+				'=0': this.translate.instant('Issuer.noInstitutions'),
+				'=1': '1 ' + this.translate.instant('Issuer.institution'),
+				other: this.translate.instant('General.institutions'),
+			},
+			issuerText: {
+				'=0': this.translate.instant('Issuer.institutionsIssued'),
+				'=1': '1 ' + this.translate.instant('Issuer.institutionIssued'),
+				other: '# ' + this.translate.instant('Issuer.institutionsIssued'),
+			},
+			badges: {
+				'=0': this.translate.instant('Issuer.noBadges'),
+				'=1': '<strong class="u-text-bold">1</strong> Badge',
+				other: '<strong class="u-text-bold">#</strong> Badges',
+			},
+			learningPath: {
+				'=0': this.translate.instant('General.noLearningPaths'),
+				'=1': '1 ' + this.translate.instant('General.learningPath'),
+				other: '# ' + this.translate.instant('General.learningPaths'),
+			},
+			recipient: {
+				'=0': this.translate.instant('Issuer.noRecipient'),
+				'=1': '1 ' + this.translate.instant('Issuer.recipient'),
+				other: '# ' + this.translate.instant('Issuer.recipients'),
+			},
+		};
 	}
 
 	generateGeoJSON(issuers) {
@@ -492,89 +521,31 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 		}
 	}
 
-	openMap() {
+	openMap(): void {
 		this.badgesDisplay = 'map';
-		this.updateResults();
-		setTimeout(() => {
-			this.mapObject.resize();
-		}, 10);
+		setTimeout(() => this.mapObject.resize(), 50);
 	}
 
-	openGrid() {
+	openGrid(): void {
 		this.badgesDisplay = 'grid';
-		this.updateResults();
 	}
 
-	prepareTexts() {
-		this.issuerKeys = {
-			schule: this.translate.get('Issuer.schoolLabel'),
-			hochschule: this.translate.get('Issuer.universityLabel'),
-			jugendhilfe: this.translate.get('Issuer.youthWelfare'),
-			andere: this.translate.get('Issuer.othersLabel'),
-			'n/a': 'Keine Angabe',
-		};
-		this.plural = {
-			issuer: {
-				'=0': this.translate.instant('Issuer.noInstitutions'),
-				'=1': '1 Institution',
-				other: this.translate.instant('General.institutions'),
-			},
-			issuerText: {
-				'=0': this.translate.instant('Issuer.institutionsIssued'),
-				'=1': '1 ' + this.translate.instant('Issuer.institutionIssued'),
-				other: '# ' + this.translate.instant('Issuer.institutionsIssued'),
-			},
-			badges: {
-				'=0': this.translate.instant('Issuer.noBadges'),
-				'=1': '<strong class="u-text-bold">1</strong> Badge',
-				other: '<strong class="u-text-bold">#</strong> Badges',
-			},
-			learningPath: {
-				'=0': this.translate.instant('General.noLearningPaths'),
-				'=1': '1 ' + this.translate.instant('General.learningPath'),
-				other: '# ' + this.translate.instant('General.learningPaths'),
-			},
-			recipient: {
-				'=0': this.translate.instant('Issuer.noRecipient'),
-				'=1': '1 ' + this.translate.instant('Issuer.recipient'),
-				other: '# ' + this.translate.instant('Issuer.recipients'),
-			},
-		};
-	}
-
-	navigateToIssuer(issuerData) {
+	navigateToIssuer(issuer: IssuerV3): void {
 		if (!this.loggedIn) {
-			this.router.navigate(['/public/issuers/', issuerData.slug]);
-		} else {
-			// Check whether user is a mebemr of the institution to be redirected to `issuer/issuer` page
-			this.profileManager.userProfilePromise
-				.then((profile) => profile.emails.loadedPromise)
-				.then((emails) => {
-					// Search for primary email, since it's not alawys the first in list
-					const primaryEmail = emails.entities.find((email) => email.primary).email;
-
-					const userEmail = emails.entities[0].email;
-					const isMember = issuerData.staff.entities.some(
-						(staffMember) => staffMember.email === primaryEmail,
-					);
-					this.router.navigate([isMember ? '/issuer/issuers/' : '/public/issuers/', issuerData.slug]);
-				});
+			this.router.navigate(['/public/issuers/', issuer.slug]);
+			return;
 		}
+
+		this.profileManager.userProfilePromise.then(() => {
+			this.router.navigate(['/issuer/issuers/', issuer.slug]);
+		});
 	}
-}
 
-class MatchingIssuerCategory {
-	constructor(
-		public category: string,
-		public issuer,
-		public issuers: Issuer[] = [],
-	) {}
+	get theme() {
+		return this.configService.theme;
+	}
 
-	addIssuer(issuer) {
-		if (issuer.category === this.category) {
-			if (this.issuers.indexOf(issuer) < 0) {
-				this.issuers.push(issuer);
-			}
-		}
+	get issuersPluralWord(): string {
+		return this.totalCount() === 1 ? '1 Institution' : this.translate.instant('General.institutions');
 	}
 }

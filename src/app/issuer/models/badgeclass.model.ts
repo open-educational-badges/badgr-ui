@@ -72,6 +72,14 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		this.apiModel.recipient_count = count;
 	}
 
+	get courseUrl(): string {
+		return this.apiModel.course_url;
+	}
+
+	set courseUrl(c: string) {
+		this.apiModel.course_url = c;
+	}
+
 	get criteria_text(): string {
 		return this.apiModel.criteria_text;
 	}

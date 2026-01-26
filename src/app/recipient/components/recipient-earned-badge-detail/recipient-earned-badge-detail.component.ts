@@ -172,6 +172,7 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 					badgeLoadingImageUrl: this.badgeLoadingImageUrl,
 					badgeFailedImageUrl: this.badgeFailedImageUrl,
 					badgeImage: this.badge.image,
+					evidence_items: this.badge.evidence_items,
 					competencies: this.competencies as CompetencyType[],
 					license: this.badge.getExtension('extensions:LicenseExtension', {}) ? true : false,
 					shareButton: true,
@@ -182,6 +183,7 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 					networkImage: this.badge.networkImage,
 					networkName: this.badge.networkName,
 					sharedOnNetwork: this.badge.sharedOnNetwork,
+					courseUrl: this.badge.courseUrl,
 				};
 			})
 			.finally(() => {

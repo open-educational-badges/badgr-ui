@@ -169,10 +169,7 @@
 		[fieldType]="'url'"
 		errorMessage="{{ 'Issuer.enterURL' | translate }}"
 		#issuer_url_field
-	></oeb-input>
-	@if (networkForm()) {
-		<span class="tw-text-purple tw-text-lg tw-italic">{{ 'Network.addPartnerNext' | translate }}</span>
-	}
+	/>
 
 	@if (!networkForm()) {
 		<div class="tw-mt-6 md:tw-mt-8">
@@ -182,8 +179,7 @@
 				[text]="'Issuer.herebyIConfirm' | translate"
 				[control]="issuerForm.rawControlMap.verify_intended_use"
 				[multiLineText]="true"
-			>
-			</oeb-checkbox>
+			/>
 		</div>
 
 		@if (!existingIssuer) {
@@ -195,6 +191,9 @@
 		}
 	}
 
+	@if (networkForm()) {
+		<p class="tw-text-purple tw-text-lg tw-italic tw-mt-14">{{ 'Network.addPartnerNext' | translate }}</p>
+	}
 	<div class="tw-flex tw-justify-between tw-flex-wrap sm:tw-flex-nowrap tw-gap-2 tw-mt-8">
 		<oeb-button
 			type="button"
@@ -209,9 +208,9 @@
 			<oeb-button
 				type="submit"
 				width="max_content"
-				[disabled]="!!addIssuerFinished"
+				[disabled]="!!addPromiseFinished"
 				text="{{ existingIssuer ? ('General.save' | translate) : ('Network.create' | translate) }}"
-				[loading-promises]="[addIssuerFinished]"
+				[loading-promises]="[addPromiseFinished]"
 				[loading-message]="'General.add' | translate"
 			>
 			</oeb-button>
@@ -219,9 +218,9 @@
 			<oeb-button
 				type="submit"
 				width="max_content"
-				[disabled]="!!addIssuerFinished"
+				[disabled]="!!addPromiseFinished"
 				text="{{ existingIssuer ? ('General.save' | translate) : ('Issuer.createInstitution' | translate) }}"
-				[loading-promises]="[addIssuerFinished]"
+				[loading-promises]="[addPromiseFinished]"
 				loading-message="Hinzufügen"
 			>
 			</oeb-button>

@@ -1,3 +1,5 @@
+import { ApiBadgeInstanceEvidenceItem } from '~/issuer/models/badgeinstance-api.model';
+
 // export type RecipientBadgeClassSlug = string;
 export type RecipientBadgeInstanceUrl = string;
 export type RecipientBadgeInstanceSlug = string;
@@ -31,7 +33,7 @@ export interface ApiRecipientBadgeInstance {
 	recipient_identifier: string;
 	acceptance: RecipientBadgeAcceptance;
 	narrative: string;
-	evidence_items: Array<unknown>;
+	evidence_items: ApiBadgeInstanceEvidenceItem[];
 	alignment?: Array<unknown>;
 	imagePreview: {
 		type: 'image';
@@ -42,6 +44,7 @@ export interface ApiRecipientBadgeInstance {
 		id: string;
 	};
 	shareUrl?: string;
+	courseUrl?: string;
 	extensions?: object;
 	pending?: boolean;
 	imported?: boolean;
