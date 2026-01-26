@@ -1,0 +1,134 @@
+<div class="oeb-dashboard-institutions">
+	<div class="tw-mb-8">
+		<h2 class="tw-text-2xl tw-font-bold tw-mb-2" style="color: var(--color-purple);">
+			{{ 'Dashboard.Institutions.title' | translate }}
+		</h2>
+		<p class="tw-text-gray-600">
+			{{ 'Dashboard.Institutions.description' | translate }}
+		</p>
+	</div>
+
+	<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-6 tw-mb-8">
+		<div class="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-6 tw-border-2" style="border-color: var(--color-midgrey);">
+			<div class="tw-flex tw-items-center tw-space-x-3 tw-mb-2">
+				<div class="tw-p-2 tw-rounded-lg" style="background-color: var(--color-lavender);">
+					<div class="tw-w-6 tw-h-6 tw-rounded" style="background-color: var(--color-purple);"></div>
+				</div>
+				<h3 class="tw-text-sm tw-font-medium tw-text-gray-500">
+					{{ 'Dashboard.Institutions.total' | translate }}
+				</h3>
+			</div>
+			<p class="tw-text-3xl tw-font-bold" style="color: var(--color-black);">
+				{{ totalInstitutions }}
+			</p>
+		</div>
+
+		<div class="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-6 tw-border-2" style="border-color: var(--color-midgrey);">
+			<div class="tw-flex tw-items-center tw-space-x-3 tw-mb-2">
+				<div class="tw-p-2 tw-rounded-lg" style="background-color: var(--color-lavender);">
+					<div class="tw-w-6 tw-h-6 tw-rounded" style="background-color: var(--color-purple);"></div>
+				</div>
+				<h3 class="tw-text-sm tw-font-medium tw-text-gray-500">
+					{{ 'Dashboard.Institutions.newLastMonth' | translate }}
+				</h3>
+			</div>
+			<p class="tw-text-3xl tw-font-bold" style="color: var(--color-black);">
+				{{ newInstitutionsCount }}
+			</p>
+			<div class="tw-flex tw-items-center tw-text-sm tw-mt-2">
+				<span class="tw-text-green-500">↗</span>
+				<span class="tw-text-gray-600 tw-ml-1">
+					{{ 'Dashboard.Institutions.newInstitutions' | translate }}
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="tw-mb-8">
+		<div class="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-6 tw-border-2" style="border-color: var(--color-midgrey);">
+			<div class="tw-flex tw-items-center tw-space-x-3 tw-mb-6">
+				<div class="tw-w-6 tw-h-6 tw-rounded" style="background-color: var(--color-purple);"></div>
+				<h2 class="tw-text-xl tw-font-semibold" style="color: var(--color-black);">{{ 'Dashboard.Institutions.coveredRegions' | translate }}</h2>
+			</div>
+			<app-zip-code-map (zipCodeClicked)="onZipCodeRegionClick($event)"></app-zip-code-map>
+		</div>
+	</div>
+
+	@if (loading) {
+		<div class="tw-flex tw-items-center tw-justify-center tw-py-12">
+			<div class="tw-text-center">
+				<div class="tw-animate-spin tw-rounded-full tw-h-12 tw-w-12 tw-border-b-2 tw-mx-auto tw-mb-4" style="border-color: var(--color-purple);"></div>
+				<p class="tw-text-gray-600">{{ 'Dashboard.Institutions.loading' | translate }}</p>
+			</div>
+		</div>
+	}
+
+	@if (!loading) {
+		<div class="tw-mb-6">
+			<h3 class="tw-text-xl tw-font-semibold tw-mb-4" style="color: var(--color-purple);">
+				{{ 'Dashboard.Institutions.allInstitutions' | translate }}
+			</h3>
+			<p class="tw-text-sm tw-text-gray-600 tw-mb-4">
+				{{ 'Dashboard.Institutions.showing' | translate }} <span class="tw-font-bold" style="color: var(--color-purple);">{{ institutions.length }}</span> {{ 'Dashboard.Institutions.institutions' | translate }}
+			</p>
+		</div>
+
+		<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-4">
+			@for (institution of institutions; track institution.id) {
+				<div class="tw-bg-white tw-border-2 tw-rounded-lg tw-p-4 hover:tw-shadow-md tw-transition-shadow tw-relative" style="border-color: var(--color-midgrey);">
+					@if (isNewInstitution(institution)) {
+						<div class="tw-absolute tw-top-2 tw-right-2">
+							<span class="tw-px-2 tw-py-1 tw-text-xs tw-font-semibold tw-rounded-full tw-bg-green-100 tw-text-green-800">
+								{{ 'Dashboard.Institutions.new' | translate }}
+							</span>
+						</div>
+					}
+
+					<div class="tw-mb-3">
+						<h4 class="tw-text-base tw-font-semibold tw-mb-1 tw-pr-12" style="color: var(--color-purple);">
+							{{ institution.name }}
+						</h4>
+						<p class="tw-text-xs tw-text-gray-500 tw-mb-2">
+							{{ institution.type }}
+						</p>
+						<div class="tw-text-sm tw-text-gray-600 tw-space-y-1">
+							<div class="tw-flex tw-items-center tw-gap-2">
+								<svg class="tw-w-4 tw-h-4 tw-text-gray-400 tw-flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+								</svg>
+								<span class="tw-text-xs tw-truncate">{{ institution.address }}</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-pt-3 tw-border-t tw-border-gray-100">
+						<div class="tw-flex tw-items-center tw-justify-between tw-mb-2">
+							<div class="tw-flex tw-gap-4 tw-text-xs tw-text-gray-600">
+								<div>
+									<span class="tw-font-semibold">{{ institution.badgesIssued }}</span> {{ 'Dashboard.Institutions.badges' | translate }}
+								</div>
+								<div>
+									<span class="tw-font-semibold">{{ institution.activeUsers }}</span> {{ 'Dashboard.Institutions.users' | translate }}
+								</div>
+							</div>
+						</div>
+						<div class="tw-flex tw-items-center tw-justify-between tw-text-xs tw-text-gray-500">
+							<span>{{ 'Dashboard.zipCode' | translate }} {{ institution.zipCode }}</span>
+							<span>{{ 'Dashboard.Institutions.joined' | translate }}: {{ formatDate(institution.joinedDate) }}</span>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+
+		@if (institutions.length === 0) {
+			<div class="tw-text-center tw-py-12">
+				<svg class="tw-w-16 tw-h-16 tw-mx-auto tw-mb-4 tw-text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+				</svg>
+				<p class="tw-text-gray-500">{{ 'Dashboard.Institutions.noInstitutions' | translate }}</p>
+			</div>
+		}
+	}
+</div>

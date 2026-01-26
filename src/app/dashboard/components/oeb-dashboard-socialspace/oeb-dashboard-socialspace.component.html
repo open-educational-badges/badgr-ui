@@ -1,0 +1,395 @@
+<div class="oeb-dashboard-socialspace">
+
+	@if (selectedPostalCode(); as postalCode) {
+		@if (detailLoading()) {
+			<div class="tw-flex tw-items-center tw-justify-center tw-p-12">
+				<div class="tw-flex tw-flex-col tw-items-center tw-space-y-4">
+					<div class="tw-w-12 tw-h-12 tw-border-4 tw-border-purple-200 tw-border-t-purple-600 tw-rounded-full tw-animate-spin"></div>
+					<p class="tw-text-gray-600 tw-font-medium">{{ 'General.loading' | translate }}</p>
+				</div>
+			</div>
+		}
+
+		@if (!detailLoading() && postalData(); as data) {
+
+			@if (showLearnerDetail()) {
+				<section class="tw-flex tw-gap-4 tw-items-center tw-mb-6">
+					<div class="tw-flex tw-flex-col">
+						<h1 class="tw-font-black tw-text-3xl tw-text-purple">{{ 'Dashboard.zipCodeDetail.learnerAnalysis' | translate }}</h1>
+						<p class="tw-text-oebblack tw-text-lg">
+							{{ data.city }}
+						</p>
+					</div>
+				</section>
+
+				<div class="kpi-card-grid kpi-card-grid--one tw-mb-6">
+					<div class="kpi-card">
+						<div class="kpi-card__content">
+							<div class="kpi-card__top">
+								<div class="kpi-card__icon">
+									<ng-icon name="lucideUserStar" size="80px" style="color: #492E98;" />
+								</div>
+								<div class="kpi-card__main">
+									<div class="kpi-card__value">{{ data.learnerCount || 0 | number }}</div>
+									<div class="kpi-card__description">{{ 'Network.Dashboard.socialspace.learnersInInstitutionsFromCity' | translate: { city: data.city } }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				@if (learnersData()?.genderDistribution) {
+					<div class="tw-mt-6">
+						<div class="tw-flex tw-items-center tw-gap-2 tw-mb-4">
+							<h2 class="tw-text-[22px] tw-font-bold" style="color: var(--color-purple);">
+								{{ 'Dashboard.zipCodeDetail.genderDistribution' | translate }}
+							</h2>
+							<info-icon [width]="350">
+								{{ 'Dashboard.genderAssignmentInfo' | translate }}
+							</info-icon>
+						</div>
+						<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								@if (getGenderDistributionBarItems().length > 0) {
+									<app-horizontal-bar-chart
+										[items]="getGenderDistributionBarItems()"
+										[labelWidthPercent]="25"
+										barContentType="custom"
+										[showBarIcon]="false"
+										[showAfterBarText]="true"
+										[clickable]="false"
+										variant="neutral">
+									</app-horizontal-bar-chart>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				}
+
+				@if (learnersData()?.residenceDistribution) {
+					<div class="tw-mt-6">
+						<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+							{{ 'Dashboard.zipCodeDetail.learnerResidence.title' | translate }}
+						</h2>
+						<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								@if (getLearnerResidenceBarItems().length > 0) {
+									<app-horizontal-bar-chart
+										[items]="getLearnerResidenceBarItems()"
+										[labelWidthPercent]="25"
+										barContentType="custom"
+										[showBarIcon]="false"
+										[showAfterBarText]="true"
+										[clickable]="false"
+										variant="neutral">
+									</app-horizontal-bar-chart>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				}
+
+			} @else if (showCompetencyDetail()) {
+				<section class="tw-flex tw-gap-4 tw-items-center tw-mb-6">
+					<div class="tw-flex tw-flex-col">
+						<h1 class="tw-font-black tw-text-3xl tw-text-purple">{{ 'Dashboard.zipCodeDetail.competencyAnalysis' | translate }}</h1>
+						<p class="tw-text-oebblack tw-text-lg">
+							{{ data.city }}
+						</p>
+					</div>
+				</section>
+
+				<div class="kpi-card-grid kpi-card-grid--one tw-mb-6">
+					<div class="kpi-card">
+						<div class="kpi-card__content">
+							<div class="kpi-card__top">
+								<div class="kpi-card__icon">
+									<ng-icon name="lucideClock" size="80px" style="color: #492E98;" />
+								</div>
+								<div class="kpi-card__main">
+									<div class="kpi-card__value">{{ getTotalCompetencyHours() | number }}</div>
+									<div class="kpi-card__description">{{ 'Dashboard.zipCodeDetail.totalCompetencyHours' | translate }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				@if (zipCodeStrengthenedCompetencies(); as strengthenedData) {
+					<div class="tw-mt-6">
+						<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+							{{ 'Dashboard.zipCodeDetail.strengthenedCompetencies' | translate }}
+						</h2>
+						<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								@if (getStrengthenedCompetencyBarItems().length > 0) {
+									<app-horizontal-bar-chart
+										[items]="getStrengthenedCompetencyBarItems()"
+										[labelWidthPercent]="35"
+										barContentType="custom"
+										[showBarIcon]="true"
+										barIconName="lucideClockFading"
+										[showEscoLink]="true"
+										[clickable]="false">
+									</app-horizontal-bar-chart>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				}
+
+			} @else {
+
+				<section class="tw-flex tw-gap-4 tw-items-center tw-mb-6">
+					<div class="tw-flex tw-flex-col">
+						<h1 class="tw-font-black tw-text-3xl tw-text-purple">{{ data.city }}</h1>
+						<p class="tw-text-oebblack tw-text-lg">
+							{{ 'Dashboard.zipCodeDetail.regionalAnalysis' | translate }}
+						</p>
+					</div>
+				</section>
+
+				<div class="kpi-card-grid kpi-card-grid--four">
+					<div class="kpi-card kpi-card--clickable"
+						(click)="navigateToLearnerDetail()"
+						[attr.aria-label]="'Dashboard.zipCodeDetail.viewLearnerAnalysis' | translate"
+						[title]="'Dashboard.zipCodeDetail.viewLearnerAnalysis' | translate"
+						role="button"
+						tabindex="0"
+						(keydown.enter)="navigateToLearnerDetail()"
+						(keydown.space)="navigateToLearnerDetail()">
+						<div class="kpi-card__content">
+							<div class="kpi-card__top">
+								<div class="kpi-card__icon">
+									<ng-icon name="lucideUserStar" size="80px" style="color: #492E98;" />
+								</div>
+								<div class="kpi-card__main">
+									<div class="kpi-card__value">{{ data.learnerCount || 0 | number }}</div>
+									<div class="kpi-card__description">{{ 'Network.Dashboard.socialspace.learnersInInstitutionsFromCity' | translate: { city: data.city } }}</div>
+								</div>
+							</div>
+							<div class="kpi-card__arrow">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#492E98" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M5 12h14"/>
+									<path d="m12 5 7 7-7 7"/>
+								</svg>
+							</div>
+						</div>
+					</div>
+
+					<div class="kpi-card">
+						<div class="kpi-card__content">
+							<div class="kpi-card__top">
+								<div class="kpi-card__icon">
+									<ng-icon name="lucideAward" size="80px" style="color: #492E98;" />
+								</div>
+								<div class="kpi-card__main">
+									<div class="kpi-card__value">{{ data.totalBadges | number }}</div>
+									<div class="kpi-card__description">{{ 'Dashboard.zipCodeDetail.totalBadges' | translate }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="kpi-card">
+						<div class="kpi-card__content">
+							<div class="kpi-card__top">
+								<div class="kpi-card__icon">
+									<ng-icon name="lucideSchool" size="80px" style="color: #492E98;" />
+								</div>
+								<div class="kpi-card__main">
+									<div class="kpi-card__value">{{ data.institutions | number }}</div>
+									<div class="kpi-card__description">{{ 'Dashboard.zipCodeDetail.institutions' | translate: { city: data.city } }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="kpi-card kpi-card--clickable"
+						(click)="navigateToCompetencyDetail()"
+						[attr.aria-label]="'Dashboard.zipCodeDetail.viewCompetencyAnalysis' | translate"
+						[title]="'Dashboard.zipCodeDetail.viewCompetencyAnalysis' | translate"
+						role="button"
+						tabindex="0"
+						(keydown.enter)="navigateToCompetencyDetail()"
+						(keydown.space)="navigateToCompetencyDetail()">
+						<div class="kpi-card__content">
+							<div class="kpi-card__top">
+								<div class="kpi-card__icon">
+									<ng-icon name="lucideClock" size="80px" style="color: #492E98;" />
+								</div>
+								<div class="kpi-card__main">
+									<div class="kpi-card__value">{{ getTotalCompetencyHours() | number }}</div>
+									<div class="kpi-card__description">{{ 'Dashboard.zipCodeDetail.totalCompetencyHours' | translate }}</div>
+								</div>
+							</div>
+							<div class="kpi-card__arrow">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#492E98" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M5 12h14"/>
+									<path d="m12 5 7 7-7 7"/>
+								</svg>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mt-6 tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-6">
+					<div>
+						<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+							{{ 'Dashboard.badgeDistributionByType' | translate }}
+						</h2>
+						<div class="tw-w-full tw-p-6 tw-h-full" style="background-color: #F5F5F5; border-radius: 5px;">
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid tw-h-full" style="border-width: 1px; border-color: var(--color-purple);">
+								@if (getBadgeTypePieChartSegments().length > 0) {
+									<app-badge-distribution-pie-chart
+										[segments]="getBadgeTypePieChartSegments()"
+										[total]="getTotalBadgesForPieChart()"
+										totalLabel="Dashboard.total"
+										[translateTotalLabel]="true"
+										labelPosition="left"
+										[labelsClickable]="false"
+										size="medium">
+									</app-badge-distribution-pie-chart>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+
+					<div>
+						<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+							{{ 'Dashboard.zipCodeDetail.topInstitutions' | translate }}
+						</h2>
+						<div class="tw-w-full tw-p-6 tw-h-full" style="background-color: #F5F5F5; border-radius: 5px;">
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid tw-h-full" style="border-width: 1px; border-color: var(--color-purple);">
+								@if (top3Institutions().length > 0) {
+									<app-dashboard-top-badges
+										[top3Badges]="top3Institutions()"
+										[countLabelKey]="'Dashboard.zipCodeDetail.badgesCount'"
+										[enableRouting]="false"
+										[clickable]="true"
+										(itemClick)="onInstitutionRankingClick($event)"
+										[useOctagonFrame]="true">
+									</app-dashboard-top-badges>
+
+									@if (additionalInstitutions().length > 0) {
+										<div class="tw-mt-6 tw-pt-6 tw-border-t tw-border-gray-200">
+											<div class="tw-space-y-3">
+												@for (inst of additionalInstitutions(); track inst.name; let i = $index) {
+													<div class="tw-flex tw-items-center tw-gap-4 tw-p-3 tw-rounded-lg" style="background-color: #F5F5F5; border: 1px solid #492E98;">
+														<div class="tw-flex-shrink-0 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded-full tw-font-normal tw-text-sm" style="background-color: #DEDEDE; color: #492E98;">
+															{{ i + 4 }}
+														</div>
+														<div class="tw-flex-shrink-0">
+															@if (inst.image) {
+																<img [src]="inst.image" [alt]="inst.name" class="tw-w-12 tw-h-12 tw-object-contain tw-rounded">
+															} @else {
+																<div class="tw-w-12 tw-h-12 tw-bg-gray-200 tw-rounded tw-flex tw-items-center tw-justify-center">
+																	<ng-icon name="lucideSchool" size="24px" style="color: #492E98;" />
+																</div>
+															}
+														</div>
+														<div class="tw-flex-grow tw-min-w-0">
+															<span class="tw-font-normal tw-truncate tw-block" style="color: #492E98;">
+																{{ inst.name }}
+															</span>
+														</div>
+														<div class="tw-flex-shrink-0 tw-text-right">
+															<span class="tw-font-normal" style="color: #492E98;">{{ inst.badgeCount }}</span>
+															<span class="tw-text-xs tw-text-gray-600 tw-ml-1">{{ 'Dashboard.zipCodeDetail.badgesCount' | translate }}</span>
+														</div>
+													</div>
+												}
+											</div>
+										</div>
+									}
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+
+			}
+		}
+	} @else {
+
+		<div class="kpi-card-grid kpi-card-grid--one">
+			<div class="kpi-card">
+				<div class="kpi-card__content">
+					<div class="kpi-card__top">
+						<div class="kpi-card__icon">
+							<ng-icon name="lucideSchool" size="80px" style="color: #492E98;" />
+						</div>
+						<div class="kpi-card__main">
+							<div class="kpi-card__value">{{ totalInstitutions | number }}</div>
+							<div class="kpi-card__description">{{ 'Network.Dashboard.socialspace.totalInstitutions' | translate }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		@if (loading) {
+			<div class="tw-mt-6 tw-flex tw-items-center tw-justify-center tw-p-12">
+				<div class="tw-flex tw-flex-col tw-items-center tw-space-y-4">
+					<div class="tw-w-12 tw-h-12 tw-border-4 tw-border-purple-200 tw-border-t-purple-600 tw-rounded-full tw-animate-spin"></div>
+					<p class="tw-text-gray-600 tw-font-medium">{{ 'General.loading' | translate }}</p>
+				</div>
+			</div>
+		}
+
+		@if (!loading) {
+			<div class="tw-mt-6">
+				<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+					{{ 'Network.Dashboard.socialspace.coveredRegions' | translate }}
+				</h2>
+				<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+					<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+						@if (citiesData().length > 0) {
+							<app-zip-code-map
+								[cities]="citiesData()"
+								(zipCodeClicked)="onCityClick($event)">
+							</app-zip-code-map>
+						} @else {
+							<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+								{{ 'Dashboard.noDataAvailable' | translate }}
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+
+			<div class="tw-mt-6">
+				<h2 class="tw-text-[22px] tw-font-bold tw-mb-6" style="color: var(--color-purple);">
+					{{ 'Network.Dashboard.socialspace.allInstitutions' | translate }}
+				</h2>
+				@if (institutionsTableData.length > 0) {
+					<app-institutions-table [institutions]="institutionsTableData"></app-institutions-table>
+				} @else {
+					<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border tw-border-solid tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500" style="border-color: var(--color-purple);">
+						{{ 'Network.Dashboard.socialspace.noInstitutions' | translate }}
+					</div>
+				}
+			</div>
+		}
+	}
+</div>

@@ -1,0 +1,129 @@
+<div class="gender-competency-analysis">
+	@if (loading) {
+		<div class="tw-flex tw-items-center tw-justify-center tw-p-12">
+			<div class="tw-flex tw-flex-col tw-items-center tw-space-y-4">
+				<div class="tw-w-12 tw-h-12 tw-border-4 tw-border-purple-200 tw-border-t-purple-600 tw-rounded-full tw-animate-spin"></div>
+				<p class="tw-text-gray-600 tw-font-medium">{{ 'General.loading' | translate }}</p>
+			</div>
+		</div>
+	}
+
+	@if (!loading && data) {
+		<div class="kpi-card-grid kpi-card-grid--one tw-mb-8">
+			<div class="kpi-card">
+				<div class="kpi-card__content">
+					<div class="kpi-card__top">
+						<div class="kpi-card__icon">
+							<ng-icon name="lucideAward" size="80px" style="color: #492E98;" />
+						</div>
+						<div class="kpi-card__main">
+							<div class="kpi-card__value">{{ data.totalBadges | number }}</div>
+							<div class="kpi-card__description">{{ 'Network.Dashboard.kpi.badgesAwarded' | translate }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="tw-mb-6">
+			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+				{{ 'Dashboard.genderDetail.topCompetencyAreas' | translate }}
+			</h2>
+			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+					@if (skillVisualisationData.length > 0) {
+						<recipient-skill-visualisation
+							[skills]="skillVisualisationData"
+							[introTextKey]="'RecBadge.skillVisualisationIntroLearners'"
+							[enableAreaClick]="true"
+							(areaClick)="onCompetencyAreaClick($event)">
+						</recipient-skill-visualisation>
+					} @else {
+						<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+							{{ 'Dashboard.noDataAvailable' | translate }}
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="tw-mb-6">
+			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+				{{ 'Dashboard.genderDetail.topIndividualCompetencies' | translate }}
+			</h2>
+			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+					@if (data.topEinzelkompetenzen.length > 0) {
+						<app-horizontal-bar-chart
+							[items]="getCompetencyBarItems()"
+							[labelWidthPercent]="25"
+							barContentType="hours"
+							barValueSuffix="h"
+							[showBarIcon]="true"
+							barIconName="lucideClockFading"
+							[showEscoLink]="true"
+							[clickable]="false">
+						</app-horizontal-bar-chart>
+					} @else {
+						<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+							{{ 'Dashboard.noDataAvailable' | translate }}
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="tw-mb-6">
+			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+				{{ 'Dashboard.genderDetail.topBadges' | translate }}
+			</h2>
+			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+					@if (top3BadgesForDisplay.length > 0) {
+						<app-dashboard-top-badges
+							[top3Badges]="top3BadgesForDisplay">
+						</app-dashboard-top-badges>
+
+						@if (additionalBadges.length > 0) {
+							<div class="tw-mt-6 tw-pt-6 tw-border-t tw-border-gray-200">
+								<div class="tw-space-y-3">
+									@for (badge of additionalBadges; track badge.name; let i = $index) {
+										<div class="tw-flex tw-items-center tw-gap-4 tw-p-3 tw-rounded-lg" style="background-color: #F5F5F5; border: 1px solid #492E98;">
+											<div class="tw-flex-shrink-0 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded-full tw-font-normal tw-text-sm" style="background-color: #DEDEDE; color: #492E98;">
+												{{ i + 4 }}
+											</div>
+											<div class="tw-flex-shrink-0">
+												@if (badge.image) {
+													<img [src]="badge.image" [alt]="badge.name" class="tw-w-12 tw-h-12 tw-object-contain tw-rounded">
+												} @else {
+													<div class="tw-w-12 tw-h-12 tw-bg-gray-200 tw-rounded tw-flex tw-items-center tw-justify-center">
+														<ng-icon name="lucideMedal" size="24px" style="color: #492E98;" />
+													</div>
+												}
+											</div>
+											<div class="tw-flex-grow tw-min-w-0">
+												<a [routerLink]="['/public/badges', badge.badgeId]"
+													class="tw-font-normal tw-truncate tw-block tw-no-underline hover:tw-underline"
+													style="color: #492E98;">
+													{{ badge.name }}
+												</a>
+											</div>
+											<div class="tw-flex-shrink-0 tw-text-right">
+												<span class="tw-font-normal" style="color: #492E98;">{{ badge.count }}</span>
+												<span class="tw-text-xs tw-text-gray-600 tw-ml-1">{{ 'Dashboard.badgesAwarded' | translate }}</span>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+						}
+					} @else {
+						<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+							{{ 'Dashboard.noDataAvailable' | translate }}
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	}
+</div>

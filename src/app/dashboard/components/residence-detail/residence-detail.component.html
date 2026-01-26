@@ -1,0 +1,105 @@
+<!-- Residence Detail Component - Sub-component of Lernende -->
+<!-- Note: Back button is positioned in the network-dashboard header (next to network name) -->
+<div class="residence-detail">
+	<!-- Loading State -->
+	@if (loading) {
+		<div class="tw-flex tw-items-center tw-justify-center tw-p-12">
+			<div class="tw-flex tw-flex-col tw-items-center tw-space-y-4">
+				<div class="tw-w-12 tw-h-12 tw-border-4 tw-border-purple-200 tw-border-t-purple-600 tw-rounded-full tw-animate-spin"></div>
+				<p class="tw-text-gray-600 tw-font-medium">{{ 'General.loading' | translate }}</p>
+			</div>
+		</div>
+	}
+
+	@if (!loading && data) {
+		<!-- Title Section (like Geschlecht in gender-competency-analysis) -->
+		<div class="tw-mb-8">
+			<h2 class="tw-text-[28px] tw-font-bold tw-mb-2" style="color: var(--color-purple);">
+				@if (data.city === 'other') {
+					{{ 'Dashboard.Learners.otherResidences' | translate }}
+				} @else {
+					{{ data.city }}
+				}
+			</h2>
+			<p class="tw-text-lg tw-text-gray-600">
+				{{ 'Dashboard.residenceDetail.competencyAnalysisDescription' | translate }}
+			</p>
+		</div>
+
+		<!-- KPI Cards Section - 1 KPI -->
+		<div class="kpi-card-grid kpi-card-grid--one tw-mb-8">
+			<!-- Total Learners KPI Card -->
+			<div class="kpi-card">
+				<div class="kpi-card__content">
+					<div class="kpi-card__top">
+						<div class="kpi-card__icon">
+							<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#492E98" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+								<circle cx="9" cy="7" r="4"/>
+								<path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+								<path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+							</svg>
+						</div>
+						<div class="kpi-card__main">
+							<div class="kpi-card__value">{{ data.learnerCount | number }}</div>
+							<div class="kpi-card__description">{{ 'Dashboard.residenceDetail.totalLearners' | translate }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Top Kompetenzbereiche - Using skill visualisation component (like recipient badges) -->
+		<div class="tw-mb-6">
+			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+				{{ 'Dashboard.genderDetail.topCompetencyAreas' | translate }}
+			</h2>
+			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+					<!-- Use skill visualisation when ESCO data is available -->
+					@if (skillVisualisationData.length > 0) {
+						<recipient-skill-visualisation
+							[skills]="skillVisualisationData"
+							[introTextKey]="'RecBadge.skillVisualisationIntroLearners'"
+							[enableAreaClick]="true"
+							(areaClick)="onCompetencyAreaClick($event)">
+						</recipient-skill-visualisation>
+					} @else {
+						<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+							{{ 'Dashboard.residenceDetail.noCompetencyData' | translate }}
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+
+		<!-- Top Einzelkompetenzen - Bar View with learner count inside bar -->
+		<div class="tw-mb-6">
+			<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+				{{ 'Dashboard.genderDetail.topIndividualCompetencies' | translate }}
+			</h2>
+			<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+				<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+					@if (data.topStrengthenedCompetencies.length > 0) {
+						<app-horizontal-bar-chart
+							[items]="getCompetencyBarItems()"
+							[labelWidthPercent]="25"
+							barContentType="hours"
+							barValueSuffix="h"
+							[showBarIcon]="true"
+							barIconName="lucideClockFading"
+							[showAfterBarText]="true"
+							afterBarTranslationKey="Dashboard.Learners.learners"
+							[showEscoLink]="true"
+							[clickable]="false">
+						</app-horizontal-bar-chart>
+					} @else {
+						<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+							{{ 'Dashboard.residenceDetail.noCompetencyData' | translate }}
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	}
+</div>

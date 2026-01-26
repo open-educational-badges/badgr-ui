@@ -1,0 +1,66 @@
+<div class="kpi-card" (click)="onCardClick()">
+  <!-- Info Icon - Top Right (when tooltip is provided) -->
+  <div *ngIf="cardData.tooltip" class="kpi-card__info-icon">
+    <info-icon [width]="300">
+      {{ cardData.tooltip }}
+    </info-icon>
+  </div>
+
+  <!-- Standard Variant -->
+  <div *ngIf="isStandard()" class="kpi-card__content">
+    <div class="kpi-card__top">
+      <div class="kpi-card__icon">
+        <ng-icon
+          [name]="'lucide' + cardData.icon.name"
+          [size]="cardData.icon.size + 'px'"
+          [style.color]="cardData.icon.color"
+        />
+      </div>
+      <div class="kpi-card__main">
+        <div class="kpi-card__value">{{ cardData.value.display }}</div>
+        <div class="kpi-card__description">{{ cardData.description }}</div>
+      </div>
+    </div>
+
+    <div *ngIf="cardData.growth" class="kpi-card__growth" [class.positive]="cardData.growth.isPositive">
+      {{ cardData.growth.label }}
+    </div>
+  </div>
+
+  <!-- Dual Variant -->
+  <div *ngIf="isDual()" class="kpi-card__content kpi-card__content--dual">
+    <div class="kpi-card__dual-section">
+      <div class="kpi-card__icon kpi-card__icon--small"
+           [class.kpi-card__icon--filled]="cardData.icon.filled"
+           [class.kpi-card__icon--bordered]="cardData.icon.borderColor"
+           [style.--icon-fill-color]="cardData.icon.color"
+           [style.--icon-border-color]="cardData.icon.borderColor">
+        <ng-icon
+          [name]="'lucide' + cardData.icon.name"
+          [size]="cardData.icon.size + 'px'"
+        />
+      </div>
+      <div class="kpi-card__main kpi-card__main--inline">
+        <div class="kpi-card__value">{{ cardData.value.display }}</div>
+        <div class="kpi-card__description" [innerHTML]="formatDescription(cardData.description)"></div>
+      </div>
+    </div>
+
+    <div class="kpi-card__dual-section">
+      <div class="kpi-card__icon kpi-card__icon--small"
+           [class.kpi-card__icon--filled]="cardData.iconSecondary?.filled"
+           [class.kpi-card__icon--bordered]="cardData.iconSecondary?.borderColor"
+           [style.--icon-fill-color]="cardData.iconSecondary?.color"
+           [style.--icon-border-color]="cardData.iconSecondary?.borderColor">
+        <ng-icon
+          [name]="'lucide' + cardData.iconSecondary!.name"
+          [size]="cardData.iconSecondary!.size + 'px'"
+        />
+      </div>
+      <div class="kpi-card__main kpi-card__main--inline">
+        <div class="kpi-card__value">{{ cardData.valueSecondary!.display }}</div>
+        <div class="kpi-card__description" [innerHTML]="formatDescription(cardData.descriptionSecondary)"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,14 +4,9 @@
 			<bg-breadcrumbs [linkentries]="crumbs"> </bg-breadcrumbs>
 		</div>
 		@if (activeTab === 'overview') {
-			<div class="tw-flex tw-mt-20">
-				<h1 hlmH1 class="tw-text-purple tw-font-black tw-pb-14">
-					{{ 'Network.welcomeDashboard' | translate }}
-				</h1>
-				@if (role === 'creator') {
-					<oeb-button [variant]="'secondary'" [text]="'General.edit' | translate" [routerLink]="['./edit']" />
-				}
-			</div>
+			<h1 hlmH1 class="tw-text-purple tw-font-black tw-mt-20 tw-pb-14">
+				{{ 'Network.welcomeDashboard' | translate }}
+			</h1>
 		}
 		<ng-template [bgAwaitPromises]="[networkLoaded]">
 			<section
@@ -33,9 +28,34 @@
 						}}</span
 					>
 				</div>
-				@if (network().current_user_network_role !== 'staff') {
+				@if (isInDetailSubView()) {
 					<div class="tw-ml-auto">
+						<oeb-button
+							variant="secondary"
+							(click)="activeTab === 'learners' ? onBackFromLearnerSubView() : onBackFromSocialspaceSubView()"
+							[text]="'General.back' | translate">
+						</oeb-button>
+					</div>
+				}
+				@if (network().current_user_network_role !== 'staff' && !isInDetailSubView()) {
+					<div class="tw-ml-auto tw-relative tw-z-50">
 						@switch (activeTab) {
+							@case ('overview') {
+								<oeb-dropdown
+									[trigger]="dropdownTrigger"
+									[menuItems]="networkActionsMenuItems"
+									class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
+								>
+								</oeb-dropdown>
+								<ng-template #dropdownTrigger>
+									<svg
+										class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[62px] md:tw-h-[62px]"
+										fill="var(--color-purple)"
+										icon="icon_more"
+									></svg>
+									<span class="visuallyhidden">Mehr</span>
+								</ng-template>
+							}
 							@case ('badges') {
 								@if (network().badgeClassCount) {
 									<oeb-button
@@ -73,7 +93,7 @@
 				}
 			</section>
 			@if (activeTab === 'overview') {
-				<p class="tw-text-oebblack tw-text-lg tw-mt-4 tw-pb-8">
+				<p class="tw-text-oebblack tw-text-lg tw-mt-4 tw-pb-8 tw-w-1/2">
 					{{ network().description }}
 				</p>
 			}
@@ -82,19 +102,50 @@
 				(onTabChanged)="onTabChange($event)"
 				[activeTab]="activeTab"
 				[tabs]="tabs"
+				[hideTabBar]="isInDetailSubView()"
 			>
 			</oeb-tabs>
 		</ng-template>
 		<ng-template #overviewTemplate>
-			<div class="tw-my-12">
-				<oeb-button
-					[variant]="partnerIssuers().length ? 'secondary' : 'default'"
-					(click)="openDialog()"
-					[text]="'Network.inviteInstitutions' | translate"
-					[disabled]="network().current_user_network_role !== 'owner'"
-				>
-				</oeb-button>
-			</div>
+			@if (network().current_user_network_role === 'owner' || network().current_user_network_role === 'creator' || network().current_user_network_role === 'editor') {
+				@if (partnerIssuers().length > 0) {
+					<app-oeb-dashboard-overview [networkSlug]="network().slug"></app-oeb-dashboard-overview>
+				} @else {
+					<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
+						<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
+							<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+							</svg>
+						</div>
+						<h2 class="tw-text-2xl tw-font-bold tw-mb-3" style="color: var(--color-purple);">
+							{{ 'Network.emptyDashboard.title' | translate }}
+						</h2>
+						<p class="tw-text-gray-600 tw-text-lg tw-mb-8 tw-max-w-md">
+							{{ 'Network.emptyDashboard.description' | translate }}
+						</p>
+						@if (network().current_user_network_role === 'owner' || network().current_user_network_role === 'creator') {
+							<oeb-button
+								[text]="'Network.addInstitutions' | translate"
+								(click)="openDialog()">
+							</oeb-button>
+						}
+					</div>
+				}
+			} @else {
+				<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
+					<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
+						<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+						</svg>
+					</div>
+					<h2 class="tw-text-2xl tw-font-bold tw-mb-3" style="color: var(--color-purple);">
+						{{ 'Network.noAccessDashboard.title' | translate }}
+					</h2>
+					<p class="tw-text-gray-600 tw-text-lg tw-max-w-md">
+						{{ 'Network.noAccessDashboard.description' | translate }}
+					</p>
+				</div>
+			}
 		</ng-template>
 	</div>
 </div>
@@ -124,4 +175,48 @@
 
 <ng-template #learningPathsTemplate>
 	<network-learningpaths [network]="network()"> </network-learningpaths>
+</ng-template>
+
+<ng-template #socialspaceTemplate>
+	@if (network().current_user_network_role === 'owner' || network().current_user_network_role === 'creator' || network().current_user_network_role === 'editor') {
+		<div class="page-padding">
+			<app-oeb-dashboard-socialspace #socialspaceComponentRef [networkSlug]="network().slug" (viewStateChange)="onSocialspaceViewStateChange($event)"></app-oeb-dashboard-socialspace>
+		</div>
+	} @else {
+		<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
+			<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
+				<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+				</svg>
+			</div>
+			<h2 class="tw-text-2xl tw-font-bold tw-mb-3" style="color: var(--color-purple);">
+				{{ 'Network.noAccessDashboard.title' | translate }}
+			</h2>
+			<p class="tw-text-gray-600 tw-text-lg tw-max-w-md">
+				{{ 'Network.noAccessDashboard.description' | translate }}
+			</p>
+		</div>
+	}
+</ng-template>
+
+<ng-template #learnersTemplate>
+	@if (network().current_user_network_role === 'owner' || network().current_user_network_role === 'creator' || network().current_user_network_role === 'editor') {
+		<div class="page-padding">
+			<app-oeb-dashboard-learners #learnersComponentRef [networkSlug]="network().slug" (viewStateChange)="onLearnerViewStateChange($event)"></app-oeb-dashboard-learners>
+		</div>
+	} @else {
+		<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-16 tw-px-8 tw-text-center">
+			<div class="tw-w-24 tw-h-24 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-mb-6" style="background-color: var(--color-lavender);">
+				<svg class="tw-w-12 tw-h-12" style="color: var(--color-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+				</svg>
+			</div>
+			<h2 class="tw-text-2xl tw-font-bold tw-mb-3" style="color: var(--color-purple);">
+				{{ 'Network.noAccessDashboard.title' | translate }}
+			</h2>
+			<p class="tw-text-gray-600 tw-text-lg tw-max-w-md">
+				{{ 'Network.noAccessDashboard.description' | translate }}
+			</p>
+		</div>
+	}
 </ng-template>

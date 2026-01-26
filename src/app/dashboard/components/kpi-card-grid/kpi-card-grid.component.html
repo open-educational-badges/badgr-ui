@@ -1,0 +1,7 @@
+<div class="kpi-card-grid">
+  <app-kpi-card
+    *ngFor="let card of cards"
+    [cardData]="card"
+    (cardClick)="onCardClick($event)"
+  />
+</div>

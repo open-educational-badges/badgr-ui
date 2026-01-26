@@ -1,0 +1,108 @@
+.stats-bar {
+	margin-bottom: 2rem;
+	background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%);
+	border-radius: 1rem;
+	padding: 2rem;
+	box-shadow: 0 4px 20px rgba(20, 0, 255, 0.15);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 25px rgba(20, 0, 255, 0.2);
+	}
+}
+
+.stats-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 2rem;
+	align-items: center;
+}
+
+.stat-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	color: white;
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+}
+
+.stat-icon {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 3rem;
+	height: 3rem;
+	background-color: rgba(255, 255, 255, 0.15);
+	border-radius: 0.75rem;
+	backdrop-filter: blur(10px);
+
+	::ng-deep ng-icon {
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.stat-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.stat-value {
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1.2;
+	color: white;
+	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.9);
+	margin-top: 0.25rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+	.stats-bar {
+		padding: 1.5rem;
+	}
+
+	.stats-container {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.5rem;
+	}
+
+	.stat-value {
+		font-size: 1.75rem;
+	}
+
+	.stat-icon {
+		font-size: 2rem;
+		width: 2.5rem;
+		height: 2.5rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.stats-container {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.stat-item {
+		padding: 0.75rem;
+	}
+}

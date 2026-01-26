@@ -15,13 +15,15 @@
 				text-align: center;
 				height: 100%;
 				width: 100%;
-				padding: 4px;
-				line-height: 1.2em;
+				padding: 8px; // Increased padding to ensure text stays within bounds
+				line-height: 1.15em; // Slightly reduced line height for better fit
 				color: inherit;
 				// cursor: pointer;
 				// word-break: break-all;
 				hyphens: auto;
 				text-wrap: balance;
+				overflow: hidden; // Ensure text doesn't overflow the container
+				word-wrap: break-word; // Break long words if necessary
 
 				&.description {
 					position: relative;

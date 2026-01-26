@@ -1,0 +1,213 @@
+// Socialspace Dashboard Component Styles - Network Dashboard Unified Style
+
+.oeb-dashboard-socialspace {
+	// Component-specific styles matching network dashboard overview
+}
+
+// KPI Card Grid - same as overview (10px gap)
+.kpi-card-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+	width: 100%;
+
+	// One-column variant for single KPI
+	&--one {
+		grid-template-columns: 1fr;
+		max-width: 400px;
+	}
+
+	// Two-column variant for Socialspace page
+	&--two {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	// Four-column variant for PLZ Detail page
+	&--four {
+		grid-template-columns: repeat(4, 1fr);
+
+		// Tablet: 2 columns
+		@media (max-width: 1024px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		// Mobile: 1 column
+		@media (max-width: 640px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	// Tablet: 2 columns
+	@media (max-width: 1024px) {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 10px;
+	}
+
+	// Mobile: 1 column
+	@media (max-width: 640px) {
+		grid-template-columns: 1fr;
+		gap: 10px;
+	}
+}
+
+// KPI Card - height fits content
+.kpi-card {
+	width: 100%;
+	height: 100%;
+	background-color: #F5F5F5;
+	border-radius: 10px;
+	padding: 20px;
+	cursor: default;
+	transition: all 0.3s ease;
+	position: relative;
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	&__top {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+	}
+
+	&__icon {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		svg,
+		svg * {
+			stroke-width: 1.5px !important;
+		}
+
+		svg {
+			width: 80px;
+			height: 80px;
+		}
+
+		::ng-deep ng-icon svg,
+		::ng-deep ng-icon svg * {
+			stroke-width: 1.5px !important;
+		}
+	}
+
+	&__main {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	&__value {
+		font-family: 'Rubik', sans-serif;
+		font-weight: 900;
+		font-size: 32pt;
+		line-height: 1;
+		color: #492E98;
+	}
+
+	&__description {
+		font-family: 'Rubik', sans-serif;
+		font-weight: 400;
+		font-size: 12pt;
+		color: #333;
+	}
+
+	&__growth {
+		display: inline-flex;
+		align-items: center;
+		padding: 4px 12px;
+		background-color: white;
+		border-radius: 6px;
+		font-family: 'Rubik', sans-serif;
+		font-weight: 500;
+		font-size: 10pt;
+		color: #492E98;
+		align-self: flex-end;
+		margin-top: 8px;
+
+		&.positive {
+			color: #492E98;
+		}
+
+		&.negative {
+			color: #EF4444;
+		}
+	}
+
+	// Arrow indicator for clickable cards - absolute positioning
+	&__arrow {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: 40px;
+		height: 40px;
+		background-color: white;
+		border-radius: 5px;
+		transition: all 0.3s ease;
+		position: absolute;
+		bottom: 20px;
+		right: 20px;
+
+		svg {
+			transition: transform 0.3s ease;
+		}
+	}
+
+	// Clickable card variant with enhanced hover state
+	&--clickable {
+		cursor: pointer;
+		border: 2px solid transparent;
+		transition: all 0.3s ease;
+
+		// Add padding to prevent text overlapping with arrow
+		.kpi-card__main {
+			padding-right: 50px; // Space for arrow (40px) + gap (10px)
+		}
+
+		&:hover {
+			border-color: #492E98;
+
+			.kpi-card__arrow {
+				background-color: #492E98;
+
+				svg {
+					stroke: white;
+					transform: translateX(3px);
+				}
+			}
+		}
+
+		&:focus {
+			outline: none;
+			border-color: #492E98;
+		}
+
+		&:active {
+			transform: translateY(0);
+		}
+	}
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+	.kpi-card {
+		width: 100%;
+		height: auto;
+		min-height: 150px;
+
+		&__value {
+			font-size: 24pt;
+		}
+
+		&__icon svg {
+			width: 60px;
+			height: 60px;
+		}
+	}
+}

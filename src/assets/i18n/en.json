@@ -1,5 +1,7 @@
 {
 	"General": {
+		"unknown": "Unknown",
+		"back": "Back",
 		"yes": "Yes",
 		"no": "No",
 		"name": "Name",
@@ -27,6 +29,7 @@
 		"more": "More",
 		"edit": "Edit",
 		"editS": "Edit",
+		"exportData": "Export data",
 		"delete": "Delete",
 		"view": "View",
 		"contact": "Contact",
@@ -134,7 +137,8 @@
 		"openMenu": "Open menu",
 		"logout": "Log out",
 		"myProfile": "My account",
-		"faq": "FAQ"
+		"faq": "FAQ",
+		"dashboard": "Dashboard"
 	},
 	"Start": {
 		"desc1": "A learner-centered approach",
@@ -444,6 +448,14 @@
 		"partners": "Network members",
 		"noInstitutionAddedYet": "You have not yet added any institutions to your network.",
 		"addInstitutionToIssue": "The network itself does not award badges. Add institutions to your network to award badges.",
+		"emptyDashboard": {
+			"title": "No statistics available yet",
+			"description": "Add institutions to your network to see statistics and analytics."
+		},
+		"noAccessDashboard": {
+			"title": "No access to dashboard",
+			"description": "You don't have permission to view the dashboard. Please contact a network administrator."
+		},
 		"partnerIssuers": "Partners",
 		"notifiedIssuerOwners": "We have notified the owners of the institutions by email.",
 		"visibleAfterConfirmation": "Once they have confirmed the invitation, they will be visible on the partner page.",
@@ -475,7 +487,101 @@
 		"website": "Network website",
 		"createLpInfo": "To create a <span class='tw-font-bold'>network learning path</span>, at least two badges must be created in the network or approved for the network by partner institutions.",
 		"pendingInvites": "Unconfirmed invitations",
-		"edit": "Edit network"
+		"edit": "Edit network",
+		"Dashboard": {
+			"kpi": {
+				"institutionsCount": "Institutions in Network",
+				"badgesCreated": "different Badges created",
+				"badgesAwarded": "Badges awarded in total",
+				"participationBadges": "PARTICIPATION Badges",
+				"competencyBadges": "COMPETENCY Badges",
+				"competencyHours": "Hours of competencies strengthened in total",
+				"learnersCount": "Learners have received Badges",
+				"badgesPerMonth": "Badges awarded on average per month",
+				"learnersWithPaths": "Learners have completed Network paths"
+			},
+			"unit": {
+				"badges": "Badges",
+				"hours": "Hours",
+				"persons": "Persons"
+			},
+			"trend": {
+				"thisMonth": "this month",
+				"lastMonth": "last month"
+			},
+			"recentActivity": {
+				"title": "RECENT ACTIVITIES",
+				"date": "Date",
+				"badge": "Badge",
+				"awardedBy": "Awarded by",
+				"recipients": "Recipients"
+			},
+			"competencyTracking": {
+				"title": "COMPETENCY TRACKING"
+			},
+			"badgeAnalysis": {
+				"title": "BADGE ANALYSIS",
+				"tabs": {
+					"topCompetencyAreas": "Top Competency Areas",
+					"topIndividualCompetencies": "Top Individual Competencies",
+					"regions": "Regions"
+				},
+				"deliveryMethod": {
+					"online": "Online",
+					"inPerson": "In-Person"
+				},
+				"regions": {
+					"other": "Other"
+				}
+			},
+			"badgeDistribution": {
+				"title": "BADGE DISTRIBUTION"
+			},
+			"badgeTimeline": {
+				"title": "BADGE TIMELINE",
+				"filter": {
+					"allTypes": "All Types",
+					"competencyBadges": "Competency Badges",
+					"participationBadges": "Participation Badges",
+					"learningPaths": "Micro Degrees (Learning Paths)"
+				},
+				"months": {
+					"january": { "label": "January", "short": "JAN" },
+					"february": { "label": "February", "short": "FEB" },
+					"march": { "label": "March", "short": "MAR" },
+					"april": { "label": "April", "short": "APR" },
+					"may": { "label": "May", "short": "MAY" },
+					"june": { "label": "June", "short": "JUN" },
+					"july": { "label": "July", "short": "JUL" },
+					"august": { "label": "August", "short": "AUG" },
+					"september": { "label": "September", "short": "SEP" },
+					"october": { "label": "October", "short": "OCT" },
+					"november": { "label": "November", "short": "NOV" },
+					"december": { "label": "December", "short": "DEC" }
+				}
+			},
+			"socialspace": {
+				"tabTitle": "Social Area",
+				"totalInstitutions": "Institutions in Network",
+				"newInstitutions": "New Institutions (last month)",
+				"coveredRegions": "Covered Locations",
+				"allInstitutions": "All Institutions",
+				"noInstitutions": "No institutions found",
+				"badges": "Badges",
+				"users": "Users",
+				"zipCode": "ZIP",
+				"joined": "Joined",
+				"new": "New",
+				"learnersInInstitutionsFromCity": "Learners in institutions from {{city}}",
+				"table": {
+					"institution": "Institution",
+					"city": "City",
+					"badges": "Badges",
+					"users": "Learners",
+					"joined": "Join Date"
+				}
+			}
+		}
 	},
 	"Badge": {
 		"groupBy": "Group by",
@@ -872,6 +978,7 @@
 		"versionUploadInfo": "We validate badges in the 2.0 standard when they are uploaded. We can currently only validate badges in the 3.0 standard to a minimal extent. You can find more information on this in our <a class=\"tw-text-link tw-underline\" href=\"/public/faq\">FAQ</a>.",
 		"addingBadge": "Adding Badge ...",
 		"skillVisualisationIntro": "These are the areas in which you have strengthened your skills the most:",
+		"skillVisualisationIntroLearners": "These are the areas in which the learners have strengthened their skills the most:",
 		"skillVisualisationHelp": "Move the mouse pointer over the circles to see the associated skills.",
 		"skillVisualisationSingleIntro": "Your skills in the area of ",
 		"FutureSkillsAccrodingToNextSkills": "Future Skills according to the NextSkills-Framework",
@@ -1202,5 +1309,409 @@
 		"searchIcon": "Search Icon",
 		"loading": "Loading...",
 		"noIconsFoundFor": "No icons found for"
+	},
+	"Dashboard": {
+		"title": "OEB Dashboard",
+		"description": "Overview of competencies, badges and educational offerings in your region",
+		"selectedRegion": "Your Region",
+		"changeRegion": "Change",
+		"errorLoading": "Error Loading",
+		"retry": "Retry",
+		"noDataAvailable": "No data available",
+		"regionType": {
+			"city": "Independent City",
+			"district": "District"
+		},
+		"Stats": {
+			"badges": "Badges",
+			"competencyHours": "Competency Hours",
+			"institutions": "Institutions",
+			"learners": "Learners"
+		},
+		"Tabs": {
+			"overview": "Overview",
+			"badges": "Badges",
+			"competencies": "Competencies",
+			"institutions": "Social Area",
+			"learners": "Learners"
+		},
+		"Overview": {
+			"title": "Overview",
+			"description": "The most important key figures at a glance. Click on a key figure to see detailed information."
+		},
+		"Badges": {
+			"title": "Badge Analysis",
+			"description": "Detailed statistics and analyses of badges awarded in your region",
+			"totalBadges": "Total badges awarded",
+			"badgesLastMonth": "New badges last month",
+			"newBadges": "New Badges",
+			"analysis": "Detailed Badge Analysis"
+		},
+		"Competencies": {
+			"title": "Competency Tracking",
+			"description": "Overview of acquired competencies and competency distribution",
+			"totalHours": "Total competency hours",
+			"totalHoursTooltip": "Total number of competency hours recorded in all badges",
+			"totalCompetencies": "Total competencies strengthened",
+			"totalCompetenciesTooltip": "Total number of competencies addressed in all badges",
+			"hoursLastMonth": "New hours last month",
+			"newHours": "New competency hours",
+			"tracking": "Competency Tracking Details"
+		},
+		"Institutions": {
+			"title": "Social Area",
+			"description": "All institutions using Open Educational Badges in your region",
+			"total": "Total participating institutions",
+			"newLastMonth": "New institutions last month",
+			"newInstitutions": "New Institutions",
+			"loading": "Loading institutions...",
+			"allInstitutions": "All Institutions",
+			"showing": "Showing",
+			"institutions": "Institutions",
+			"new": "NEW",
+			"badges": "Badges",
+			"users": "Users",
+			"joined": "Joined",
+			"noInstitutions": "No institutions found",
+			"coveredRegions": "Covered Sub-regions"
+		},
+		"Learners": {
+			"title": "Learners",
+			"description": "Overview of all learners in your region",
+			"totalCount": "Number of Learners",
+			"totalLearnersLabel": "Learners who received badges",
+			"residenceDistribution": "Learner Residence",
+			"genderDistribution": "Gender Distribution",
+			"learners": "Learners",
+			"noResidenceData": "No residence data available",
+			"noGenderData": "No gender distribution data available",
+			"otherResidences": "Other Residences"
+		},
+		"KpiDetail": {
+			"back": "Back to overview",
+			"notFound": "KPI not found",
+			"notFoundDescription": "The requested key figure could not be found.",
+			"currentValue": "Current Value",
+			"change": "Change",
+			"period": "Period",
+			"lastMonth": "Last Month",
+			"addedItems": "Added items last month",
+			"noDetails": "No details available"
+		},
+		"kpi": {
+			"institutions": "Participating Institutions",
+			"totalBadges": "Badges Awarded",
+			"totalHours": "Total Competency Hours",
+			"hoursPerCompetency": "Average Competency Hours per Competency",
+			"diversityIndex": "Offering Diversity Index",
+			"portfolioWidth": "Covered Sub-regions",
+			"badgeDensity": "Badge Density (Spatial)",
+			"competenciesCount": "Competencies Addressed",
+			"zipCodeDistribution": "ZIP Code Distribution"
+		},
+		"unit": {
+			"institutions": "Institutions",
+			"badges": "Badges",
+			"learners": "Learners",
+			"hours": "Hours",
+			"hoursPerCompetency": "Hours/Competency",
+			"index": "Competencies/Course",
+			"zipCodeAreas": "ZIP Code Areas",
+			"badgesPerKm": "Badges/km²",
+			"competencies": "Competencies"
+		},
+		"tooltip": {
+			"totalHours": "Number of competency hours that all badges have received",
+			"competenciesCount": "Total number of competencies addressed in all badges.",
+			"diversityIndex": "Average number of competencies addressed per course",
+			"zipCodeDistribution": "Distribution of learners by postal code"
+		},
+		"socialArea": {
+			"title": "Social Area"
+		},
+		"learnerResidence": {
+			"title": "Learner Residence",
+			"analysis": "Learner Residence Analysis"
+		},
+		"zipCodeDetail": {
+			"title": "Postal Code Area Details",
+			"subtitle": "Detailed statistics for this postal code area",
+			"totalLearners": "Total Learners",
+			"totalZipCodeAreas": "ZIP Areas",
+			"avgLearnersPerArea": "Avg. Learners per Area",
+			"competencyDistribution": "Competency Distribution",
+			"competencyDistributionDesc": "Distribution of acquired competencies in this area",
+			"zipCodeList": "ZIP Code List",
+			"zipCodeListDesc": "All postal codes in this area",
+			"column": {
+				"zipCode": "ZIP Code",
+				"region": "Region",
+				"learners": "Learners",
+				"percentage": "Share",
+				"trend": "Trend"
+			},
+			"overview": "Overview",
+			"badges": "Badges",
+			"competencies": "Competencies",
+			"statistics": "Statistics",
+			"totalBadges": "Badges awarded",
+			"institutions": "Institutions in {{city}}",
+			"totalCompetencies": "Total Competencies",
+			"totalCompetencyHours": "Hours of competencies strengthened",
+			"competencyAnalysis": "Competency Analysis",
+			"viewCompetencyAnalysis": "View Competency Analysis",
+			"learnerAnalysis": "Learner Analysis",
+			"viewLearnerAnalysis": "View Learner Analysis",
+			"postalCode": "Postal Code",
+			"regionalAnalysis": "Regional Analysis",
+			"learners": "Learners",
+			"badgeDistribution": "Badge Distribution by Type",
+			"participation": "Participation",
+			"competency": "Competency",
+			"learningPath": "Learning Path",
+			"badgesCount": "Badges",
+			"topInstitutions": "Top Institutions",
+			"topCompetencies": "Top Competencies",
+			"genderDistribution": "Gender Distribution",
+			"male": "Male",
+			"female": "Female",
+			"diverse": "Diverse",
+			"noAnswer": "No answer",
+			"summaryStatistics": "Summary Statistics",
+			"participationBadges": "Participation Badges",
+			"competencyBadges": "Competency Badges",
+			"learningPathBadges": "Learning Path Badges",
+			"eventAndActivityBadges": "Event & activity badges",
+			"skillVerificationBadges": "Skill verification badges",
+			"courseCompletionBadges": "Course completion badges",
+			"learnerResidence": {
+				"title": "Learner Residence",
+				"description": "Distribution of learners by postal code of residence",
+				"otherZipCode": "Other ZIP codes",
+				"otherResidences": "Other residences",
+				"zipCode": "ZIP Code",
+				"region": "Region",
+				"learners": "Learners",
+				"percentage": "Share",
+				"noData": "No data available"
+			},
+			"topCompetencyAreas": "Top Competency Areas",
+			"topCompetencyAreasDescription": "The most frequently addressed competency areas for this postal code",
+			"strengthenedCompetencies": "Most Strengthened Individual Competencies",
+			"strengthenedCompetenciesDescription": "The specific competencies that have been most developed in this area",
+			"noData": "No data available",
+			"competencyAreaDetail": {
+				"title": "Competency Area Details",
+				"backToOverview": "Back to Overview",
+				"percentage": "Share",
+				"ofCompetencies": "of competencies",
+				"users": "Users",
+				"haveAcquiredCompetencies": "have acquired competencies",
+				"institutions": "Institutions",
+				"offerCompetencies": "offer competencies",
+				"badges": "Badges",
+				"totalAwarded": "total awarded",
+				"totalHours": "Total Hours",
+				"hours": "Hrs.",
+				"averageHoursPerUser": "Avg. Hours per User",
+				"topCompetencies": "Top 5 Individual Competencies",
+				"topInstitutions": "Top 5 Institutions",
+				"badgesAwarded": "Badges",
+				"usersReached": "Users reached"
+			}
+		},
+		"action": {
+			"back": "Back",
+			"viewDetails": "View Details",
+			"clickForDetails": "Click for details",
+			"clickLocationForDetails": "Click on locations for detailed metrics",
+			"showDetailsFor": "Show details for"
+		},
+		"legend": {
+			"low": "Low",
+			"high": "High"
+		},
+		"zipCodeOverview": {
+			"widgetTitle": "ZIP Code Distribution",
+			"zipCode": "ZIP Code",
+			"learnerCount": "Learner Count",
+			"loading": "Loading ZIP code statistics...",
+			"noData": "No ZIP code statistics available",
+			"error": "Error loading ZIP code statistics"
+		},
+		"lastUpdated": "Last Updated",
+		"topCompetencyAreas": "Top Competency Areas",
+		"top3Badges": "Top 3 Badges",
+		"top3AwardedBadges": "Top 3 Awarded Badges",
+		"institutionsRanking": "Institutions Ranking",
+		"mostStrengthenedCompetencies": "Most Strengthened Individual Competencies",
+		"competencyDetail": {
+			"subtitle": "Individual Competency Details",
+			"hours": "Hours of competencies strengthened",
+			"badges": "Badges awarded",
+			"users": "Learners who received badges",
+			"institutions": "Institutions awarded badges",
+			"institutionsTitle": "Institutions offering this competency",
+			"table": {
+				"institution": "Institution",
+				"badges": "Badges",
+				"users": "Learners"
+			}
+		},
+		"competencyAreaDetail": {
+			"subtitle": "Competency Area Details",
+			"hours": "Hours of competencies strengthened",
+			"badges": "Badges awarded",
+			"users": "Learners who received badges",
+			"institutions": "Institutions awarded badges",
+			"topCompetenciesTitle": "Top Individual Competencies in this Area",
+			"institutionsTitle": "Institutions offering competencies in this area",
+			"table": {
+				"institution": "Institution",
+				"badges": "Badges",
+				"users": "Learners"
+			}
+		},
+		"competenciesByGender": "Competencies by Gender",
+		"genderAssignmentInfo": "Gender assignment of learners is based on first names. Therefore, identification of diverse persons is not possible. If no assignment is possible, this is marked as 'no specification'.",
+		"competenciesLastMonth": "Competencies Taught Last Month",
+		"competencyHoursByGender": "Competency Hours by Gender",
+		"badges": "Badges",
+		"badgesTooltip": "{{count}} Badges",
+		"pageTitle": {
+			"competencyTracking": "Competency Tracking - {{network}}"
+		},
+		"error": {
+			"topBadgesLoadFailed": "Failed to load top badges"
+		},
+		"category": "Category",
+		"deliveryMethod": "Delivery Method",
+		"deliveryMethodBadges": "Delivery Method Badges",
+		"total": "Total",
+		"badgesAwarded": "Badges awarded",
+		"online": "Online",
+		"inPerson": "In-Person",
+		"badgeDistributionByType": "Badges Awarded by Type",
+		"awards": "Awards",
+		"badgesAwardedInYear": "Badges Awarded in Year",
+		"year": "Year",
+		"allMonths": "All Months",
+		"type": "Type",
+		"zipCode": "ZIP Code",
+		"participationCertificate": "Participation-Badge",
+		"badge": "Badge",
+		"microDegrees": "Micro Degrees",
+		"badgeDensity": "Badge Density",
+		"awardedBadgeDensity": "Awarded Badges per 1,000 Residents",
+		"badgesPer1000Residents": "Badges per 1,000 Residents",
+		"vsLastYear": "vs. Last Year",
+		"badgeDensityExplanation": "The badge density shows the number of badges awarded per 1,000 residents in the region.",
+		"badgesAwardedLastMonth": "Badges Awarded Last Month",
+		"regionalSelection": {
+			"title": "Regional Selection",
+			"description": "Select your region to view regional dashboard data",
+			"yourRegion": "Your Region",
+			"independentCity": "Independent City",
+			"district": "District",
+			"regionFromZipCode": "Region is automatically determined from your postal code",
+			"filter": "Filter",
+			"searchNameOrZip": "Search (Name or ZIP)",
+			"searchPlaceholder": "e.g. Munich or 80331",
+			"federalState": "Federal State",
+			"allFederalStates": "All Federal States",
+			"allTypes": "All Types",
+			"resetFilters": "Reset Filters",
+			"availableRegions": "Available Regions",
+			"ofCitiesAndDistricts": "of 400 Independent Cities and Districts",
+			"noRegionsFound": "No Regions Found",
+			"changeFilterCriteria": "Please change your filter criteria"
+		},
+		"genderDetail": {
+			"title": "Gender Competency Distribution",
+			"competencyAnalysis": "Competency Analysis by Gender",
+			"competencyAnalysisDescription": "Detailed overview of competency areas, individual competencies and top badges",
+			"detailedOverview": "Detailed overview of competency areas, individual competencies and top badges for",
+			"topCompetencyAreas": "Top Competency Areas",
+			"badges": "Badges",
+			"share": "Share",
+			"topIndividualCompetencies": "Top Individual Competencies",
+			"hours": "Hours",
+			"topBadges": "Top Badges",
+			"amount": "Amount"
+		},
+		"residenceDetail": {
+			"title": "Residence Competencies",
+			"competencyAnalysis": "Competency Analysis by Residence",
+			"competencyAnalysisDescription": "Detailed overview of competency areas and individual competencies for this region",
+			"topCompetencyAreas": "Top Competency Areas",
+			"topIndividualCompetencies": "Top Individual Competencies",
+			"totalLearners": "Total Learners",
+			"noCompetencyData": "No competency data available"
+		},
+		"lastMonthChange": "last month",
+		"competency": {
+			"area": {
+				"itDigital": "IT & Digital",
+				"managementLeadership": "Management & Leadership",
+				"communication": "Communication",
+				"creativeDesign": "Creative Design",
+				"languages": "Languages",
+				"healthSocial": "Health & Social",
+				"sustainability": "Sustainability",
+				"handwerk": "Crafts & Trades"
+			},
+			"programming": "Programming",
+			"dataAnalysis": "Data Analysis",
+			"dataAnalytics": "Data Analytics",
+			"projectManagement": "Project Management",
+			"digitalMarketing": "Digital Marketing",
+			"webDevelopment": "Web Development",
+			"communicationSkills": "Communication Skills",
+			"leadership": "Leadership",
+			"problemSolving": "Problem Solving",
+			"teamwork": "Teamwork",
+			"teamLeadership": "Team Leadership",
+			"french": "French",
+			"english": "English",
+			"publicSpeaking": "Public Speaking",
+			"socialMedia": "Social Media",
+			"strategicPlanning": "Strategic Planning",
+			"sustainableDevelopment": "Sustainable Development",
+			"changeManagement": "Change Management",
+			"cloudComputing": "Cloud Computing",
+			"healthcareManagement": "Healthcare Management",
+			"environmentalPolicy": "Environmental Policy",
+			"internationalRelations": "International Relations",
+			"diplomacy": "Diplomacy",
+			"crossCulturalCommunication": "Cross-Cultural Communication",
+			"italian": "Italian",
+			"german": "German",
+			"graphicDesign": "Graphic Design",
+			"uxUiDesign": "UX/UI Design",
+			"businessAnalysis": "Business Analysis",
+			"supplyChainManagement": "Supply Chain Management",
+			"nursingCare": "Nursing Care",
+			"contentCreation": "Content Creation",
+			"renewableEnergy": "Renewable Energy",
+			"automotiveTechnology": "Automotive Technology",
+			"electricalEngineering": "Electrical Engineering",
+			"batteryTechnology": "Battery Technology",
+			"cnc": "CNC Technology",
+			"automation": "Automation",
+			"programmingPlc": "PLC Programming",
+			"mechanicalEngineering": "Mechanical Engineering",
+			"qualityManagement": "Quality Management",
+			"metalworking": "Metalworking",
+			"welding": "Welding",
+			"electricalInstallation": "Electrical Installation",
+			"safetyManagement": "Safety Management",
+			"hospitalityManagement": "Hospitality Management",
+			"customerService": "Customer Service",
+			"culinaryArts": "Culinary Arts",
+			"eventManagement": "Event Management",
+			"selfManagement": "Self-Management",
+			"basicProgramming": "Basic Programming",
+			"digitalLiteracy": "Digital Literacy"
+		}
 	}
 }

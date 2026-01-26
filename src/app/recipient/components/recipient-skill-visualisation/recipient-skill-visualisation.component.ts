@@ -1,4 +1,14 @@
-import { Component, ElementRef, input, OnChanges, SimpleChanges, OnDestroy, inject, viewChild } from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	input,
+	OnChanges,
+	SimpleChanges,
+	OnDestroy,
+	inject,
+	viewChild,
+	output,
+} from '@angular/core';
 import { ApiRootSkill, ApiSkill } from '../../../common/model/ai-skills.model';
 import { debounceTime, fromEvent, Subject, takeUntil, tap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,7 +19,7 @@ import { NgIcon } from '@ng-icons/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { CompetencyAccordionComponent } from '../../../components/accordion.component';
 import { HourPipe } from '../../../common/pipes/hourPipe';
-import { VISUALISATION_BREAKPOINT_MAX_WIDTH } from '../recipient-earned-badge-list/recipient-earned-badge-list.component';
+import { VISUALISATION_BREAKPOINT_MAX_WIDTH } from '../../constants/visualisation.constants';
 import { lucideClockFading } from '@ng-icons/lucide';
 import {
 	lucideLifeBuoy,
@@ -72,6 +82,21 @@ interface SkillLink {
 	target: string;
 }
 
+/**
+ * Data emitted when a top-level competency area bubble is clicked.
+ * Contains information needed to fetch detailed statistics from the backend.
+ */
+export interface CompetencyAreaClickData {
+	/** Display name of the competency area */
+	areaName: string;
+	/** ESCO concept URI of the area (for identification) */
+	areaConceptUri: string;
+	/** Total study load (hours) for this area */
+	studyLoad: number;
+	/** ESCO URIs of all individual competencies belonging to this area */
+	competencyUris: string[];
+}
+
 const skillIconMap = {
 	'/esco/skill/b94686e3-cce5-47a2-a8d8-402a0d0ed44e': lucideLifeBuoy,
 	'/esco/skill/8267ecb5-c976-4b6a-809b-4ceecb954967': lucideLightbulb,
@@ -126,6 +151,53 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	readonly d3canvas = viewChild.required<ElementRef<HTMLElement>>('d3canvas');
 
 	skills = input<ApiRootSkill[]>([]);
+
+	/**
+	 * Whether to show the intro text above the visualisation
+	 * Default: true (shows intro text)
+	 */
+	showIntroText = input<boolean>(true);
+
+	/**
+	 * i18n key for the intro text. Use different keys for different contexts:
+	 * - 'RecBadge.skillVisualisationIntro' (default): "In diesen Bereichen hast du am meisten Kompetenzen gestärkt:"
+	 * - 'RecBadge.skillVisualisationIntroLearners': "In diesen Bereichen haben die Lernenden am meisten Kompetenzen gestärkt:"
+	 */
+	introTextKey = input<string>('RecBadge.skillVisualisationIntro');
+
+	/**
+	 * Whether to show the help text (mouse hover instruction)
+	 * Default: true
+	 */
+	showHelpText = input<boolean>(true);
+
+	/**
+	 * Whether to show the legend (ESCO-Bereiche, Future Skills)
+	 * Default: true
+	 */
+	showLegend = input<boolean>(true);
+
+	/**
+	 * Whether clicking on a top-level competency area should emit an event
+	 * for opening a detail view (instead of just showing description).
+	 * Default: false (original behavior - shows description on click)
+	 */
+	enableAreaClick = input<boolean>(false);
+
+	/**
+	 * Compact mode: only shows top-level area bubbles without hover expansion.
+	 * Useful for dashboard overview where space is limited.
+	 * Default: false (full visualization with hover effects)
+	 */
+	compactMode = input<boolean>(false);
+
+	/**
+	 * Emitted when a top-level competency area bubble is clicked
+	 * (only when enableAreaClick is true).
+	 * Contains the area data including all ESCO URIs of child competencies.
+	 */
+	areaClick = output<CompetencyAreaClickData>();
+
 	skillTree: Map<string, ExtendedApiSkill>;
 	d3data: { nodes: ExtendedApiSkill[]; links: SkillLink[] } = {
 		nodes: [],
@@ -369,11 +441,14 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	}
 
 	initD3() {
-		const width = this.mobile ? 540 : 1144;
-		const height = width;
+		// Compact mode uses smaller canvas optimized for only top-level bubbles
+		// This makes the bubbles fill more of the available space percentage-wise
+		const width = this.compactMode() ? 320 : this.mobile ? 540 : 1144;
+		const height = this.compactMode() ? 320 : width;
 
-		const nodeBaseSize = this.showSingleNode ? 100 : 60;
-		const nodeMaxAdditionalSize = 100;
+		// Larger relative node sizes in compact mode to fill available space
+		const nodeBaseSize = this.compactMode() ? 50 : this.showSingleNode ? 100 : 60;
+		const nodeMaxAdditionalSize = this.compactMode() ? 45 : 100;
 		const topLevelSkills = this.getTopLevelSkills();
 		const maxStudyLoad = topLevelSkills.reduce((current, d) => Math.max(current, d.studyLoad), 0);
 		const minStudyLoad = topLevelSkills.reduce(
@@ -412,7 +487,11 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		// so that re-evaluating this cell produces the same result.
 		let links = [];
 		let nodes = [];
-		if (!this.mobile) {
+		// compactMode: only show top-level (depth 1) nodes without links
+		if (this.compactMode()) {
+			nodes = this.d3data.nodes.filter((d) => d.depth == 1).map((d) => ({ ...d }));
+			// No links in compact mode
+		} else if (!this.mobile) {
 			links = this.d3data.links.map((d) => ({ ...d }));
 			nodes = this.d3data.nodes.map((d) => ({ ...d }));
 		} else {
@@ -424,16 +503,26 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		}
 
 		// Create a simulation with several forces.
+		// Compact mode: tighter packing, stronger center force, smaller boundary
+		const boundaryFactor = this.compactMode() ? 0.42 : 0.46;
+		const chargeStrength = this.compactMode() ? -300 : -1000;
+		const collisionMultiplier = this.compactMode() ? 1.05 : 1.1;
+
 		const simulation = d3
 			.forceSimulation(nodes)
 			// center all nodes on the middle
-			.force('center', d3.forceCenter(0, 0).strength(1))
+			.force('center', d3.forceCenter(0, 0).strength(this.compactMode() ? 1.5 : 1))
 			// keep nodes inside SVG bounds
 			.force(
 				'bounds',
-				d3ForceBoundary(width * -0.46, height * -0.46, width * 0.46, height * 0.46)
-					.strength(0.1)
-					.border(10),
+				d3ForceBoundary(
+					width * -boundaryFactor,
+					height * -boundaryFactor,
+					width * boundaryFactor,
+					height * boundaryFactor,
+				)
+					.strength(this.compactMode() ? 0.2 : 0.1)
+					.border(this.compactMode() ? 5 : 10),
 			)
 			// force between links
 			.force(
@@ -448,13 +537,13 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			.force(
 				'charge',
 				d3.forceManyBody().strength((d) => {
-					return (d as ExtendedApiSkill).depth == 1 ? -1000 : -500;
+					return (d as ExtendedApiSkill).depth == 1 ? chargeStrength : -500;
 				}),
 			)
 			// prevent overlapping nodes
 			.force(
 				'collide',
-				d3.forceCollide((d) => nodeRadius(d) * 1.1),
+				d3.forceCollide((d) => nodeRadius(d) * collisionMultiplier),
 			)
 			// forces nodes into "rings", basically creating a ring of nodes for each depth level
 			// which helps keeping distances uniform
@@ -509,6 +598,8 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		node.append('circle').attr('r', (d) => nodeRadius(d));
 
 		// add foreignObject for text styling / positioning
+		// Compact mode uses slightly smaller font for tighter layout
+		const fontSizeMultiplier = this.compactMode() ? 0.16 : 0.175;
 		const nodeText = node
 			.append('foreignObject')
 			.attr('x', (d) => nodeRadius(d) * -1)
@@ -519,7 +610,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			.append('xhtml:div')
 			// DEBUG: output studyload if not 0
 			// .text(d => { return d.name.replace("/", " / ") + (d.studyLoad !== 0 ? ` (${d.studyLoad} min)` : '') })
-			.attr('style', (d) => `font-size: ${nodeRadius(d) * 0.175}px;`)
+			.attr('style', (d) => `font-size: ${nodeRadius(d) * fontSizeMultiplier}px;`)
 			.attr('class', 'name');
 
 		if (this.mobile) {
@@ -652,6 +743,22 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				this.initD3();
 				return;
 			}
+
+			// If area click is enabled and this is a top-level node (depth == 1),
+			// emit the click event instead of showing description
+			if (this.enableAreaClick() && d.depth === 1) {
+				// Collect all leaf competency URIs that belong to this top-level area
+				const competencyUris = this.collectCompetencyUris(d);
+				const clickData: CompetencyAreaClickData = {
+					areaName: d.name,
+					areaConceptUri: d.concept_uri,
+					studyLoad: d.studyLoad,
+					competencyUris: competencyUris,
+				};
+				this.areaClick.emit(clickData);
+				return;
+			}
+
 			// TODO: dynamically resize description popover, reposition if out of screen?
 
 			if (d.description) {
@@ -683,8 +790,11 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
 				for (const n of descriptionNodes) n.classList.remove('show-description');
 			}
-		})
-			.on('mouseenter', (e, d) => {
+		});
+
+		// Only add hover effects if not in compactMode
+		if (!this.compactMode()) {
+			node.on('mouseenter', (e, d) => {
 				// find all node parents and links to toggle show
 				let ancestors = [d.id];
 				if (d.depth > 1) {
@@ -707,8 +817,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 						n.classList.add('show');
 					});
 				});
-			})
-			.on('mouseout', (e, d) => {
+			}).on('mouseout', (e, d) => {
 				let ancestors = [d.id];
 				if (d.depth > 1) {
 					ancestors = Array.from(d.ancestors.values());
@@ -734,6 +843,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
 				for (const n of descriptionNodes) n.classList.remove('show-description');
 			});
+		}
 
 		// clear previous versions (on mobile change)
 		const d3canvas = this.d3canvas();
@@ -743,6 +853,19 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 	selectSkillForSingleView(skill: ExtendedApiSkill, index: number) {
 		if (this.mobile) {
+			// If area click is enabled, emit event instead of showing single view
+			if (this.enableAreaClick() && skill.depth === 1) {
+				const competencyUris = this.collectCompetencyUris(skill);
+				const clickData: CompetencyAreaClickData = {
+					areaName: skill.name,
+					areaConceptUri: skill.concept_uri,
+					studyLoad: skill.studyLoad,
+					competencyUris: competencyUris,
+				};
+				this.areaClick.emit(clickData);
+				return;
+			}
+
 			this.selectedNode = skill;
 			this.showSingleNode = true;
 			this.selectedNodeNumber = this.padStart(index);
@@ -766,5 +889,29 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 	getFormattedSkillText(idx: number, name: string): string {
 		return `<span class="tw-font-extrabold tw-mr-1">${this.padStart(idx + 1)}</span> ${name}`;
+	}
+
+	/**
+	 * Collect all ESCO URIs of leaf competencies belonging to a top-level skill area.
+	 * These URIs are needed for the backend to aggregate statistics.
+	 */
+	private collectCompetencyUris(topLevelSkill: ExtendedApiSkill): string[] {
+		const uris: string[] = [];
+
+		// Use the leafs array that was populated during data preparation
+		if (topLevelSkill.leafs && topLevelSkill.leafs.length > 0) {
+			for (const leafId of topLevelSkill.leafs) {
+				const leaf = this.skillTree.get(leafId);
+				if (leaf && leaf.concept_uri) {
+					// Convert relative ESCO URI to full URI format
+					const fullUri = leaf.concept_uri.startsWith('http')
+						? leaf.concept_uri
+						: `http://data.europa.eu${leaf.concept_uri}`;
+					uris.push(fullUri);
+				}
+			}
+		}
+
+		return uris;
 	}
 }

@@ -1,0 +1,532 @@
+<div class="oeb tw-relative tw-w-full">
+	<div class="page-padding">
+		<div class="oeb-breadcrumbs">
+			<bg-breadcrumbs [linkentries]="crumbs"></bg-breadcrumbs>
+		</div>
+
+		<h1 hlmH1 class="tw-text-purple tw-font-black tw-mt-20 tw-pb-14">
+			{{ 'Network.Dashboard.badgeAnalysis.title' | translate }}
+		</h1>
+
+		<ng-template [bgAwaitPromises]="[networkLoaded]">
+			<section class="tw-flex tw-gap-4 tw-items-center tw-pb-8">
+				<div class="tw-bg-white tw-aspect-square tw-flex tw-flex-shrink-0 tw-items-center tw-justify-center">
+					<img width="70px" [src]="network().image" alt="Network Logo" />
+				</div>
+				<div class="tw-flex tw-flex-col">
+					<span class="tw-font-bold tw-text-3xl tw-text-oebblack">{{ network().name }}</span>
+					<span class="tw-text-oebblack tw-text-lg tw-font-semibold tw-mt-2">
+						{{
+							'Network.yourRole'
+								| translate
+									: {
+											role: 'Network.role.' + role | translate,
+									  }
+						}}
+					</span>
+				</div>
+				<div class="tw-ml-auto">
+					@if (currentView === 'delivery-method-detail') {
+						<oeb-button
+							variant="secondary"
+							(click)="backToDefaultView()"
+							[text]="'General.back' | translate"
+						></oeb-button>
+					} @else {
+						<oeb-button
+							variant="secondary"
+							(click)="navigateBack()"
+							[text]="'General.back' | translate"
+						></oeb-button>
+					}
+				</div>
+			</section>
+
+			<div class="tw-mt-8">
+				@if (isLoading || isLoadingDeliveryMethod) {
+					<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-20">
+						<div class="tw-animate-spin tw-rounded-full tw-h-12 tw-w-12 tw-border-b-2" style="border-color: var(--color-purple);"></div>
+						<p class="tw-mt-4 tw-text-gray-600">{{ 'General.loading' | translate }}...</p>
+					</div>
+				} @else if (currentView === 'delivery-method-detail' && deliveryMethodData(); as dmData) {
+					<div class="tw-mb-8">
+						<h2 class="tw-text-[28px] tw-font-bold tw-mb-2" style="color: var(--color-purple);">
+							{{ dmData.methodLabel }} Badges
+						</h2>
+						<p class="tw-text-lg tw-text-gray-600">
+							Detaillierte Ansicht der {{ dmData.methodLabel }}-Badges mit Top-Kompetenzbereichen und Einzelstunden
+						</p>
+					</div>
+
+					<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-6 tw-mb-8">
+						<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+							<div class="tw-flex tw-items-center tw-gap-3">
+								<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+									<ng-icon name="lucideMedal" size="60" style="color: var(--color-purple);"></ng-icon>
+								</div>
+								<div class="tw-flex tw-flex-col tw-gap-1">
+									<p class="tw-font-black tw-leading-none" style="font-size: 28pt; color: #492E98;">{{ dmData.totalBadges }}</p>
+									<p class="tw-font-normal tw-text-gray-700" style="font-size: 11pt;">Badges insgesamt vergeben</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+							<div class="tw-flex tw-items-center tw-gap-3">
+								<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+									<ng-icon name="lucideClock" size="60" style="color: var(--color-purple);"></ng-icon>
+								</div>
+								<div class="tw-flex tw-flex-col tw-gap-1">
+									<p class="tw-font-black tw-leading-none" style="font-size: 28pt; color: #492E98;">{{ dmData.totalHours }}</p>
+									<p class="tw-font-normal tw-text-gray-700" style="font-size: 11pt;">Stunden insgesamt für Badges aufgewendet</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+							<div class="tw-flex tw-items-center tw-gap-3">
+								<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+									<ng-icon name="lucideTarget" size="60" style="color: var(--color-purple);"></ng-icon>
+								</div>
+								<div class="tw-flex tw-flex-col tw-gap-1">
+									<p class="tw-font-black tw-leading-none" style="font-size: 28pt; color: #492E98;">{{ dmData.topCompetencyAreas.length }}</p>
+									<p class="tw-font-normal tw-text-gray-700" style="font-size: 11pt;">Angesprochene Kompetenzen</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<oeb-tabs
+						[variant]="'lightpurple'"
+						(onTabChanged)="onDeliveryMethodTabChange($event)"
+						[activeTab]="activeDeliveryMethodTab"
+						[tabs]="deliveryMethodTabs"
+					>
+					</oeb-tabs>
+
+					<div class="tw-mt-8">
+						@if (activeDeliveryMethodTab === 'competencyAreas') {
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								@if (skillVisualisationData.length > 0) {
+									<recipient-skill-visualisation
+										[skills]="skillVisualisationData"
+										[showIntroText]="false"
+										[showHelpText]="false"
+										[showLegend]="false"
+										[enableAreaClick]="true"
+										(areaClick)="onCompetencyAreaClick($event)">
+									</recipient-skill-visualisation>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+						}
+
+						@if (activeDeliveryMethodTab === 'topIndividualCompetencies') {
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								@if (dmData.individualCompetencies && dmData.individualCompetencies.length > 0) {
+									<app-horizontal-bar-chart
+										[items]="getIndividualCompetenciesAsBarItems()"
+										[labelWidthPercent]="40"
+										[barContentType]="'hours'"
+										[showBarIcon]="true"
+										[showEscoLink]="true">
+									</app-horizontal-bar-chart>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+						}
+
+						@if (activeDeliveryMethodTab === 'regions' && dmData.method === 'in-person' && dmData.plzDistribution) {
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								<div class="tw-space-y-3">
+									@for (plz of dmData.plzDistribution; track plz.zipCode) {
+										<div class="tw-flex tw-items-center tw-gap-3 tw-w-full">
+											<div class="tw-flex-shrink-0 tw-flex tw-items-center tw-min-h-8" style="width: 30%;">
+												<span class="tw-font-normal tw-text-gray-700 tw-text-right tw-block tw-w-full tw-pr-2"
+													[style.font-size.px]="getPlzFontSize(plz.regionName)"
+													[style.line-height]="1.25"
+													style="word-break: break-word; hyphens: auto;" lang="de">{{ plz.regionName }}@if (!isOtherPlzCategory(plz.regionName)) { ({{ plz.zipCode }})}</span>
+											</div>
+											<div class="tw-flex tw-items-center" style="width: 70%;">
+												<div
+													class="tw-h-8 tw-flex tw-items-center tw-justify-end tw-px-3 tw-transition-all tw-duration-500"
+													style="background-color: #F5F5F5; border: 1px solid var(--color-purple); border-radius: 3px; min-width: 50px;"
+													[style.width.%]="getPlzBarWidth(plz.learnerCount)">
+													<ng-icon name="lucideAward" size="14px" class="tw-mr-1" style="color: #492E98;"></ng-icon>
+													<span class="tw-text-xs tw-font-normal tw-whitespace-nowrap" style="color: var(--color-purple);">{{ plz.learnerCount }} Badges</span>
+												</div>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+						}
+					</div>
+				} @else {
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Network.Dashboard.badgeDistribution.title' | translate }}
+					</h2>
+					<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+						<div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-3 tw-gap-6">
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.deliveryMethodBadges' | translate }}</h3>
+
+								@if (hasDeliveryMethodData) {
+									<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-4">
+										<div class="tw-relative" style="width: 200px; height: 200px; padding: 4px;">
+											<svg viewBox="-3 -3 313 313" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
+												@for (stat of deliveryMethodChartData; let i = $index; track stat.type) {
+													<circle
+														cx="153.5"
+														cy="153.5"
+														r="128.5"
+														fill="none"
+														[attr.stroke]="stat.color"
+														stroke-width="47"
+														[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage)"
+														[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i)">
+													</circle>
+												}
+												@for (stat of deliveryMethodChartData; let i = $index; track stat.type) {
+													<circle
+														cx="153.5"
+														cy="153.5"
+														r="152"
+														fill="none"
+														[attr.stroke]="stat.borderColor"
+														stroke-width="3"
+														[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage, 152)"
+														[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i, 152)">
+													</circle>
+													<circle
+														cx="153.5"
+														cy="153.5"
+														r="105"
+														fill="none"
+														[attr.stroke]="stat.borderColor"
+														stroke-width="3"
+														[attr.stroke-dasharray]="getDeliveryMethodDasharray(stat.percentage, 105)"
+														[attr.stroke-dashoffset]="getDeliveryMethodDashoffset(i, 105)">
+													</circle>
+													@if (!isDeliveryMethodFullCircle()) {
+														<line
+															[attr.x1]="getDeliveryMethodRadialCoord(i, 105, 'x')"
+															[attr.y1]="getDeliveryMethodRadialCoord(i, 105, 'y')"
+															[attr.x2]="getDeliveryMethodRadialCoord(i, 152, 'x')"
+															[attr.y2]="getDeliveryMethodRadialCoord(i, 152, 'y')"
+															[attr.stroke]="stat.borderColor"
+															stroke-width="3"
+															stroke-linecap="round">
+														</line>
+														<line
+															[attr.x1]="getDeliveryMethodRadialCoord(i, 105, 'x', true)"
+															[attr.y1]="getDeliveryMethodRadialCoord(i, 105, 'y', true)"
+															[attr.x2]="getDeliveryMethodRadialCoord(i, 152, 'x', true)"
+															[attr.y2]="getDeliveryMethodRadialCoord(i, 152, 'y', true)"
+															[attr.stroke]="stat.borderColor"
+															stroke-width="3"
+															stroke-linecap="round">
+														</line>
+													}
+												}
+											</svg>
+										</div>
+
+										<div class="tw-flex tw-flex-col tw-gap-3 tw-w-full">
+											@for (stat of deliveryMethodChartData; track stat.type) {
+												<div
+													class="tw-flex tw-items-center tw-gap-3 tw-cursor-pointer hover:tw-bg-gray-50 tw-rounded-lg tw-p-2 tw-transition-colors"
+													(click)="navigateToDeliveryMethod(stat.type === 'online' ? 'online' : 'in-person')">
+													<div class="tw-w-5 tw-h-5 tw-rounded-full tw-flex-shrink-0" [style.background-color]="stat.borderColor"></div>
+													<div class="tw-flex tw-justify-between tw-items-center tw-flex-1">
+														<span class="tw-text-sm tw-font-normal tw-text-gray-800 hover:tw-underline">{{ stat.label }}</span>
+														<span class="tw-text-sm tw-text-gray-600">{{ stat.count }} ({{ stat.percentage }}%)</span>
+													</div>
+												</div>
+											}
+										</div>
+									</div>
+								} @else {
+									<div class="tw-flex tw-items-center tw-justify-center tw-h-48 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid tw-flex tw-flex-col" style="border-width: 1px; border-color: var(--color-purple);">
+								<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.badgeDistributionByType' | translate }}</h3>
+
+								@if (hasBadgeTypeData) {
+									<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-4">
+										<div class="tw-relative" style="width: 200px; height: 200px; padding: 4px;">
+											<svg viewBox="-3 -3 313 313" style="width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible;">
+												@for (stat of badgeTypeStats; let i = $index; track stat.type) {
+													<circle
+													cx="153.5"
+													cy="153.5"
+													r="128.5"
+													fill="none"
+													[attr.stroke]="stat.color"
+													stroke-width="47"
+													[attr.stroke-dasharray]="getStrokeDasharrayWithGap(stat.percentage)"
+													[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i)">
+												</circle>
+											}
+											@for (stat of badgeTypeStats; let i = $index; track stat.type) {
+												<circle
+													cx="153.5"
+													cy="153.5"
+													r="152"
+													fill="none"
+													[attr.stroke]="stat.borderColor"
+													stroke-width="3"
+													[attr.stroke-dasharray]="getStrokeDasharrayWithGap(stat.percentage, 152)"
+													[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i, 152)">
+												</circle>
+												<circle
+													cx="153.5"
+													cy="153.5"
+													r="105"
+													fill="none"
+													[attr.stroke]="stat.borderColor"
+													stroke-width="3"
+													[attr.stroke-dasharray]="getStrokeDasharrayWithGap(stat.percentage, 105)"
+													[attr.stroke-dashoffset]="getStrokeDashoffsetWithGap(i, 105)">
+												</circle>
+												<line
+													[attr.x1]="getRadialLineCoord(i, 105, 'x')"
+													[attr.y1]="getRadialLineCoord(i, 105, 'y')"
+													[attr.x2]="getRadialLineCoord(i, 152, 'x')"
+													[attr.y2]="getRadialLineCoord(i, 152, 'y')"
+													[attr.stroke]="stat.borderColor"
+													stroke-width="3"
+													stroke-linecap="round">
+												</line>
+												<line
+													[attr.x1]="getRadialLineCoord(i, 105, 'x', true)"
+													[attr.y1]="getRadialLineCoord(i, 105, 'y', true)"
+													[attr.x2]="getRadialLineCoord(i, 152, 'x', true)"
+													[attr.y2]="getRadialLineCoord(i, 152, 'y', true)"
+													[attr.stroke]="stat.borderColor"
+													stroke-width="3"
+													stroke-linecap="round">
+												</line>
+											}
+										</svg>
+									</div>
+
+									<div class="tw-flex tw-flex-col tw-gap-3 tw-w-full">
+										@for (stat of badgeTypeStats; track stat.type) {
+											<div class="tw-flex tw-items-center tw-gap-3">
+												<div class="tw-w-5 tw-h-5 tw-rounded-full tw-flex-shrink-0" [style.background-color]="stat.borderColor"></div>
+												<div class="tw-flex tw-justify-between tw-items-center tw-flex-1">
+													<span class="tw-text-sm tw-font-normal tw-text-gray-800">{{ stat.label }}</span>
+													<span class="tw-text-sm tw-text-gray-600">{{ stat.count }} ({{ stat.percentage }}%)</span>
+												</div>
+											</div>
+										}
+									</div>
+								</div>
+								} @else {
+									<div class="tw-flex tw-flex-1 tw-items-center tw-justify-center tw-min-h-48 tw-text-gray-500">
+										{{ 'Dashboard.noDataAvailable' | translate }}
+									</div>
+								}
+							</div>
+
+							<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.top3AwardedBadges' | translate }}</h3>
+								<app-dashboard-top-badges
+									[top3Badges]="top3Badges">
+								</app-dashboard-top-badges>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Network.Dashboard.badgeTimeline.title' | translate }}
+					</h2>
+					<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+						<div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-4 tw-gap-6">
+							<div class="lg:tw-col-span-3 tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+								<h3 class="tw-text-xl tw-font-semibold tw-mb-4" style="color: var(--color-black);">{{ 'Dashboard.badgesAwardedInYear' | translate }}</h3>
+
+								<app-badges-yearly-line-chart
+									[data]="badgeAwardsByTime"
+									[selectedYear]="selectedYear"
+									[selectedMonth]="selectedMonth"
+									[selectedBadgeType]="selectedBadgeType"
+									[availableYears]="availableYears"
+									[badgeTypes]="badgeTypes"
+									[showYearFilter]="true"
+									[showMonthFilter]="true"
+									[showTypeFilter]="true"
+									[chartHeight]="400"
+									[isVisible]="currentView === 'default'"
+									[isLoading]="isLoadingTimeline"
+									(yearChange)="onYearChange($event)"
+									(monthChange)="onMonthChange($event)"
+									(typeChange)="onBadgeTypeChange($event)">
+								</app-badges-yearly-line-chart>
+							</div>
+
+							<div class="lg:tw-col-span-1 tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid tw-flex tw-flex-col" style="border-width: 1px; border-color: var(--color-purple);">
+								<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black);">{{ 'Dashboard.awardedBadgeDensity' | translate }}</h3>
+
+								<div class="tw-flex-1 tw-flex tw-flex-col tw-justify-center tw-items-center">
+									<div class="tw-text-center tw-mb-6">
+										<p class="tw-text-5xl tw-font-bold tw-mb-2" style="color: var(--color-purple);">
+											{{ badgeDensity | number:'1.1-1' }}
+										</p>
+										<p class="tw-text-sm tw-text-gray-600">
+											{{ 'Dashboard.badgesPer1000Residents' | translate }}
+										</p>
+									</div>
+
+									<div class="tw-flex tw-items-center tw-space-x-2 tw-text-sm tw-mt-3">
+										<span class="tw-text-2xl" [ngClass]="getTrendColorClass(badgeDensityTrend)">
+											{{ getTrendSymbol(badgeDensityTrend) }}
+										</span>
+										<span class="tw-text-gray-600">
+											{{ badgeDensityTrendValue }}% {{ 'Dashboard.vsLastYear' | translate }}
+										</span>
+									</div>
+
+									<div class="tw-mt-6 tw-p-4 tw-rounded-lg" style="background-color: var(--color-lavender);">
+										<p class="tw-text-xs tw-text-gray-700">
+											{{ 'Dashboard.badgeDensityExplanation' | translate }}
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.badgesAwardedLastMonth' | translate }} ({{ totalMonthlyBadges }})
+					</h2>
+					<div>
+						<table hlmTable oeb-table class="tw-table-fixed tw-w-full">
+							<thead hlmTHead>
+								@for (headerRow of monthlyBadgesTable.getHeaderGroups(); track headerRow.id) {
+									<tr hlmTr>
+										@for (headerCell of headerRow.headers; track headerCell.id) {
+											@if (!headerCell.isPlaceholder) {
+												<th hlmTh
+													[class.tw-text-right]="headerCell.id === 'General.count'"
+													[class.tw-w-40]="headerCell.id === 'Badge.createdOn'"
+													[class.tw-whitespace-nowrap]="headerCell.id === 'Badge.createdOn'"
+													[class.tw-w-28]="headerCell.id === 'General.count'"
+													[class.tw-whitespace-nowrap]="headerCell.id === 'General.count'"
+												>
+													<div
+														class="tw-flex tw-flex-row tw-items-center tw-gap-2 [&[data-sortable='true']]:tw-cursor-pointer"
+														[class.tw-justify-end]="headerCell.id === 'General.count'"
+														(click)="headerCell.column.toggleSorting()"
+														[attr.data-sortable]="headerCell.column.getCanSort()"
+													>
+														<div>
+															{{ headerCell.id | translate }}
+														</div>
+														@if (headerCell.column.getIsSorted()) {
+															@if (headerCell.column.getNextSortingOrder() === 'asc') {
+																<ng-icon hlm size="base" name="lucideChevronDown" />
+															} @else {
+																<ng-icon hlm size="base" name="lucideChevronUp" />
+															}
+														} @else if (headerCell.column.getCanSort()) {
+															<ng-icon hlm size="base" name="lucideChevronsUpDown" />
+														}
+													</div>
+												</th>
+											}
+										}
+									</tr>
+								}
+							</thead>
+							<tbody hlmTBody>
+								@if (monthlyBadges && monthlyBadges.length > 0) {
+									@for (row of monthlyBadgesTable.getRowModel().rows; track row.id) {
+										<tr hlmTr>
+											<td hlmTd class="tw-whitespace-nowrap tw-w-40 tw-align-top">
+												<div class="tw-flex tw-items-center tw-h-10">
+													{{ formatBadgeDate(row.original.date) }}
+												</div>
+											</td>
+											<td hlmTd class="tw-align-top">
+												<div class="tw-flex tw-items-start tw-gap-4">
+													<div class="tw-flex-shrink-0 tw-w-10 tw-h-10 tw-relative">
+														<div class="tw-absolute tw-inset-0 tw-rounded tw-flex tw-items-center tw-justify-center" style="background-color: var(--color-lavender);">
+															<span class="tw-text-lg" style="color: var(--color-purple);">🏅</span>
+														</div>
+														@if (row.original.image) {
+															<img
+																[src]="row.original.image"
+																[alt]="row.original.title"
+																class="tw-absolute tw-inset-0 tw-rounded tw-object-cover tw-w-10 tw-h-10"
+																width="40"
+																height="40"
+																style="background-color: white;"
+																(error)="$event.target.style.display='none'"
+															/>
+														}
+													</div>
+													<div class="tw-flex tw-flex-col tw-gap-1 tw-flex-1 tw-min-w-0">
+														<a
+															class="tw-cursor-pointer tw-font-normal hover:tw-underline"
+															style="color: inherit; text-decoration: none;"
+															[routerLink]="['/public/badges', row.original.badgeKey]"
+														>
+															{{ row.original.title }}
+														</a>
+														@if (row.original.skills && row.original.skills.length > 0) {
+															<div class="tw-flex tw-flex-wrap tw-gap-1">
+																@for (skill of row.original.skills; track skill.name) {
+																	<span class="tw-text-xs tw-px-2 tw-py-0.5 tw-rounded-full" style="background-color: #f2f2f2; color: #000000;">{{ skill.name }}&nbsp;<a
+																			[href]="skill.escoUri"
+																			target="_blank"
+																			rel="noopener noreferrer"
+																			class="hover:tw-underline"
+																			style="color: #1400FF;"
+																			title="ESCO Kompetenz öffnen"
+																		>(E)</a></span>
+																}
+															</div>
+														}
+													</div>
+												</div>
+											</td>
+											<td hlmTd class="tw-text-right tw-w-28 tw-align-top">
+												<div class="tw-flex tw-items-center tw-justify-end tw-h-10">
+													{{ row.original.value }}
+												</div>
+											</td>
+										</tr>
+									}
+								} @else {
+									<tr hlmTr>
+										<td hlmTd colspan="3" class="tw-text-center tw-py-8 tw-text-sm tw-text-gray-500">
+											{{ 'Dashboard.noDataAvailable' | translate }}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				}
+			</div>
+		</ng-template>
+	</div>
+</div>

@@ -1,0 +1,62 @@
+<div
+	class="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-6 tw-border-2 tw-transition-all"
+	style="border-color: var(--color-midgrey);">
+
+	<!-- KPI Header -->
+	<div class="tw-flex tw-items-center tw-justify-between tw-mb-4">
+		<div class="tw-flex tw-items-center tw-space-x-3">
+			<div class="tw-p-2 tw-rounded-lg" style="background-color: var(--color-lavender);">
+				<div class="tw-w-6 tw-h-6 tw-rounded" style="background-color: var(--color-purple);"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- KPI Label -->
+	<div class="tw-mb-2">
+		<h3 class="tw-text-sm tw-font-medium tw-text-gray-500 tw-mb-1">
+			{{ 'Dashboard.kpi.zipCodeDistribution' | translate }}
+		</h3>
+
+		<!-- Total Learners and ZIP Code Areas -->
+		<div class="tw-flex tw-items-baseline tw-gap-4 tw-mb-3">
+			<div>
+				<p class="tw-text-3xl tw-font-bold" style="color: var(--color-black);">
+					{{ totalLearners }}
+					<span class="tw-text-sm tw-font-normal tw-text-gray-500 tw-ml-1">
+						{{ 'Dashboard.unit.learners' | translate }}
+					</span>
+				</p>
+			</div>
+			<div>
+				<p class="tw-text-xl tw-font-semibold tw-text-gray-600">
+					{{ totalZipCodeAreas }}
+					<span class="tw-text-xs tw-font-normal tw-text-gray-500 tw-ml-1">
+						{{ 'Dashboard.unit.zipCodeAreas' | translate }}
+					</span>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- Top 3 ZIP Code Areas -->
+	@if (hasData()) {
+		<div class="tw-space-y-2 tw-mb-3">
+			@for (area of getTopZipCodeAreas(); track area.zipCode) {
+				<div class="tw-flex tw-items-center tw-justify-between tw-text-sm">
+					<div class="tw-flex tw-items-center tw-gap-2">
+						<span class="tw-font-medium" style="color: var(--color-purple);">
+							{{ area.zipCode }}
+						</span>
+						<span class="tw-text-gray-600">{{ area.regionName }}</span>
+					</div>
+					<div class="tw-flex tw-items-center tw-gap-2">
+						<span class="tw-font-semibold">{{ area.learnerCount }}</span>
+						<span class="tw-text-xs" [style.color]="getTrendColor(area.trend)">
+							{{ getTrendIcon(area.trend) }}
+						</span>
+					</div>
+				</div>
+			}
+		</div>
+	}
+</div>

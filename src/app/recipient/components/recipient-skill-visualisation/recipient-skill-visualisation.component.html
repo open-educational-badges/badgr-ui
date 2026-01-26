@@ -1,28 +1,32 @@
-<p class="tw-mt-6 tw-mb-2 tw-text-oebblack tw-text-[16px] tw-leading-[120%] tw-font-semibold">
-	{{
-		showSingleNode
-			? ('RecBadge.skillVisualisationSingleIntro' | translate) + `"${selectedNode.name}":`
-			: ('RecBadge.skillVisualisationIntro' | translate)
-	}}
-</p>
+@if (showIntroText()) {
+	<p class="tw-mt-6 tw-mb-2 tw-text-oebblack tw-text-[16px] tw-leading-[120%] tw-font-semibold">
+		{{
+			showSingleNode
+				? ('RecBadge.skillVisualisationSingleIntro' | translate) + `"${selectedNode.name}":`
+				: (introTextKey() | translate)
+		}}
+	</p>
+}
 <div class="tw-bg-white">
 	@if (showSingleNode) {
 		<button (click)="goBackToFullView()" class="tw-flex tw-gap-1 tw-p-4 tw-items-center">
 			<ng-icon class="tw-w-8 tw-h-8 tw-text-purple" name="lucideChevronLeft"></ng-icon>
 			<span class="tw-underline tw-italic tw-text-link tw-lowercase">{{ 'General.previous' | translate }}</span>
 		</button>
-	} @else {
+	} @else if (showHelpText()) {
 		<p class="tw-p-4 tw-text-purple tw-italic">{{ 'RecBadge.skillVisualisationHelp' | translate }}</p>
 	}
 	<div #d3canvas></div>
-	<div class="tw-p-2 visualiser-legend">
-		<span class="visualiser-legend__esco">{{ 'RecBadge.ESCOAreas' | translate }}</span>
-		@if (hasFutureSkills) {
-			<span class="visualiser-legend__future">{{
-				'RecBadge.FutureSkillsAccrodingToNextSkills' | translate
-			}}</span>
-		}
-	</div>
+	@if (showLegend()) {
+		<div class="tw-p-2 visualiser-legend">
+			<span class="visualiser-legend__esco">{{ 'RecBadge.ESCOAreas' | translate }}</span>
+			@if (hasFutureSkills) {
+				<span class="visualiser-legend__future">{{
+					'RecBadge.FutureSkillsAccrodingToNextSkills' | translate
+				}}</span>
+			}
+		</div>
+	}
 
 	@if (mobile) {
 		<div class="mobile-overview tw-p-2">

@@ -1,0 +1,9 @@
+.badges-yearly-line-chart {
+	width: 100%;
+
+	// Chart tooltip styles
+	.chart-tooltip {
+		pointer-events: none;
+		z-index: 1000;
+	}
+}

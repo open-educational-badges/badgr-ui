@@ -1,0 +1,9 @@
+:host {
+	display: block;
+}
+
+// Reduce stroke-width for ng-icon elements to match dashboard overview
+::ng-deep ng-icon svg,
+::ng-deep ng-icon svg * {
+	stroke-width: 1.5px !important;
+}

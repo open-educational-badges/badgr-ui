@@ -20,6 +20,8 @@ import { NetworkCreateComponent } from './components/network-create/network-crea
 import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
 import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
 import { NetworkEditComponent } from './components/network-edit/network-edit.component';
+import { NetworkBadgeAnalysisComponent } from './components/network-badge-analysis/network-badge-analysis.component';
+import { NetworkCompetencyTrackingComponent } from './components/network-competency-tracking/network-competency-tracking.component';
 
 export const routes = [
 	/* Issuer */
@@ -42,6 +44,18 @@ export const routes = [
 	{
 		path: 'networks/:networkSlug/edit',
 		component: NetworkEditComponent,
+	},
+	{
+		path: 'networks/:networkSlug/badge-analysis',
+		component: NetworkBadgeAnalysisComponent,
+	},
+	{
+		path: 'networks/:networkSlug/competency-tracking',
+		component: NetworkCompetencyTrackingComponent,
+	},
+	{
+		path: 'networks/:networkSlug/competency-tracking/:competencyId',
+		component: NetworkCompetencyTrackingComponent,
 	},
 	{
 		path: 'networks/invite/:inviteSlug',

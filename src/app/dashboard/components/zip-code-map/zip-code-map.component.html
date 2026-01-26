@@ -1,0 +1,33 @@
+<div class="zip-code-map-container">
+	<!-- Munich ZIP Code Districts Grid with varying sizes -->
+	<div class="tw-grid tw-grid-cols-5 tw-auto-rows-fr tw-gap-2 tw-mb-6">
+		@for (region of zipCodeRegions; track region.code; let idx = $index) {
+			<div
+				[class]="'tw-p-3 tw-rounded-lg tw-border-2 tw-border-white tw-text-center tw-transition-all tw-flex tw-flex-col tw-items-center tw-justify-center tw-overflow-hidden ' + getGridSize(idx) + (region.count > 0 ? ' tw-cursor-pointer hover:tw-opacity-80 hover:tw-scale-105' : ' tw-cursor-default tw-opacity-60')"
+				[style.background-color]="getColorIntensity(region.percentage)"
+				[title]="region.count > 0 ? (region.name + ': ' + region.count + ' Badges - ' + ('Dashboard.action.clickForDetails' | translate)) : (region.name + ': ' + region.count + ' Badges')"
+				(click)="region.count > 0 && onZipCodeClick(region.code)">
+				<div class="tw-text-white tw-font-bold tw-text-sm tw-mb-1 tw-leading-tight tw-break-words tw-w-full tw-hyphens-auto" lang="de">{{ region.name }}</div>
+				<div class="tw-text-white tw-text-xs tw-mt-1 tw-whitespace-nowrap">{{ region.count }} Badges</div>
+			</div>
+		}
+	</div>
+
+	<!-- Legend -->
+	<div class="tw-flex tw-items-center tw-justify-between tw-text-sm tw-text-gray-600">
+		<div class="tw-flex tw-items-center tw-space-x-2">
+			<span>{{ 'Dashboard.legend.low' | translate }}</span>
+			<div class="tw-flex tw-space-x-1">
+				<div class="tw-w-6 tw-h-4 tw-rounded" style="background-color: rgba(73, 46, 152, 0.2);"></div>
+				<div class="tw-w-6 tw-h-4 tw-rounded" style="background-color: rgba(73, 46, 152, 0.4);"></div>
+				<div class="tw-w-6 tw-h-4 tw-rounded" style="background-color: rgba(73, 46, 152, 0.6);"></div>
+				<div class="tw-w-6 tw-h-4 tw-rounded" style="background-color: rgba(73, 46, 152, 0.8);"></div>
+				<div class="tw-w-6 tw-h-4 tw-rounded" style="background-color: rgba(73, 46, 152, 1);"></div>
+			</div>
+			<span>{{ 'Dashboard.legend.high' | translate }}</span>
+		</div>
+		<div class="tw-text-xs">
+			{{ 'Dashboard.action.clickLocationForDetails' | translate }}
+		</div>
+	</div>
+</div>

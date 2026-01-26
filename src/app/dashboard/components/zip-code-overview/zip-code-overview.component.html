@@ -1,0 +1,141 @@
+<div class="oeb tw-relative tw-w-full">
+	<div class="page-padding tw-max-w-7xl tw-mx-auto">
+		<!-- Header -->
+		<div class="tw-mb-8">
+			<div class="tw-flex tw-items-center tw-gap-4 tw-mb-4">
+				<button
+					(click)="backToDashboard()"
+					class="tw-p-2 tw-rounded-lg tw-transition-colors hover:tw-bg-gray-100"
+					style="color: var(--color-purple);">
+					<svg class="tw-w-6 tw-h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+					</svg>
+				</button>
+				<div class="tw-flex-1">
+					<h1 class="tw-text-3xl tw-font-bold" style="color: var(--color-purple);">
+						{{ 'Dashboard.zipCodeOverview.widgetTitle' | translate }}
+					</h1>
+					<p class="tw-text-gray-600 tw-mt-1">
+						{{ 'Dashboard.tooltip.zipCodeDistribution' | translate }}
+					</p>
+				</div>
+			</div>
+
+			<!-- Summary Stats -->
+			<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-4">
+				<div class="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-4 tw-border-2" style="border-color: var(--color-purple);">
+					<p class="tw-text-sm tw-text-gray-500 tw-mb-1">{{ 'Dashboard.zipCodeOverview.widgetTitle' | translate }}</p>
+					<p class="tw-text-2xl tw-font-bold" style="color: var(--color-purple);">{{ zipCodeStatistics.length }}</p>
+				</div>
+				<div class="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-4 tw-border-2" style="border-color: var(--color-midgrey);">
+					<p class="tw-text-sm tw-text-gray-500 tw-mb-1">{{ 'Dashboard.unit.learners' | translate }}</p>
+					<p class="tw-text-2xl tw-font-bold" style="color: var(--color-black);">{{ totalLearners }}</p>
+				</div>
+				<div class="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-4 tw-border-2" style="border-color: var(--color-midgrey);">
+					<p class="tw-text-sm tw-text-gray-500 tw-mb-1">{{ 'General.lastUpdated' | translate }}</p>
+					<p class="tw-text-sm tw-font-medium tw-text-gray-700">
+						{{ metadata?.lastUpdated ? (metadata.lastUpdated | date: 'short') : '-' }}
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Loading State -->
+		@if (loading) {
+			<div class="tw-flex tw-items-center tw-justify-center tw-min-h-[400px]">
+				<div class="tw-text-center">
+					<div class="tw-animate-spin tw-rounded-full tw-h-16 tw-w-16 tw-border-b-2 tw-mx-auto tw-mb-4" style="border-color: var(--color-purple);"></div>
+					<p class="tw-text-gray-600">{{ 'Dashboard.zipCodeOverview.loading' | translate }}</p>
+				</div>
+			</div>
+		}
+
+		<!-- Error State -->
+		@if (error && !loading) {
+			<div class="tw-bg-red-50 tw-border-2 tw-border-red-200 tw-rounded-lg tw-p-6">
+				<div class="tw-flex tw-items-center tw-space-x-3">
+					<svg class="tw-w-6 tw-h-6 tw-text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+					<p class="tw-text-red-700">{{ error | translate }}</p>
+				</div>
+			</div>
+		}
+
+		<!-- ZIP Code Statistics List -->
+		@if (!loading && !error && zipCodeStatistics.length > 0) {
+			<div class="tw-bg-white tw-rounded-lg tw-shadow-md tw-overflow-hidden">
+				<!-- Table Header -->
+				<div class="tw-grid tw-grid-cols-12 tw-gap-4 tw-p-4 tw-bg-gray-50 tw-border-b-2 tw-font-semibold tw-text-sm" style="border-color: var(--color-midgrey);">
+					<div class="tw-col-span-2">{{ 'Dashboard.zipCodeOverview.zipCode' | translate }}</div>
+					<div class="tw-col-span-3">{{ 'General.region' | translate }}</div>
+					<div class="tw-col-span-4">{{ 'Dashboard.zipCodeOverview.learnerCount' | translate }}</div>
+					<div class="tw-col-span-2">{{ 'General.percentage' | translate }}</div>
+					<div class="tw-col-span-1">{{ 'General.trend' | translate }}</div>
+				</div>
+
+				<!-- Table Rows -->
+				@for (stat of zipCodeStatistics; track stat.zipCode) {
+					<div
+						class="tw-grid tw-grid-cols-12 tw-gap-4 tw-p-4 tw-border-b">
+
+						<!-- ZIP Code -->
+						<div class="tw-col-span-2 tw-font-semibold" style="color: var(--color-purple);">
+							{{ stat.zipCode }}
+						</div>
+
+						<!-- Region Name -->
+						<div class="tw-col-span-3 tw-text-gray-700">
+							{{ stat.regionName || '-' }}
+						</div>
+
+						<!-- Learner Count with Bar -->
+						<div class="tw-col-span-4">
+							<div class="tw-flex tw-items-center tw-gap-3">
+								<div class="tw-flex-1">
+									<div class="tw-w-full tw-bg-gray-200 tw-rounded-full tw-h-6 tw-relative tw-overflow-hidden">
+										<div
+											class="tw-h-full tw-rounded-full tw-flex tw-items-center tw-justify-center tw-text-xs tw-font-semibold tw-text-white tw-transition-all"
+											[style.width.%]="getBarWidth(stat.learnerCount)"
+											style="background-color: var(--color-purple);">
+											@if (getBarWidth(stat.learnerCount) > 15) {
+												<span>{{ stat.learnerCount }}</span>
+											}
+										</div>
+									</div>
+								</div>
+								@if (getBarWidth(stat.learnerCount) <= 15) {
+									<span class="tw-text-sm tw-font-semibold tw-text-gray-700">{{ stat.learnerCount }}</span>
+								}
+							</div>
+						</div>
+
+						<!-- Percentage -->
+						<div class="tw-col-span-2 tw-text-gray-600">
+							{{ stat.percentage }}%
+						</div>
+
+						<!-- Trend -->
+						<div class="tw-col-span-1 tw-flex tw-items-center tw-justify-center">
+							<span
+								class="tw-text-2xl tw-font-bold"
+								[style.color]="getTrendColor(stat.trend)">
+								{{ getTrendIcon(stat.trend) }}
+							</span>
+						</div>
+					</div>
+				}
+			</div>
+		}
+
+		<!-- Empty State -->
+		@if (!loading && !error && zipCodeStatistics.length === 0) {
+			<div class="tw-bg-gray-50 tw-rounded-lg tw-p-12 tw-text-center">
+				<svg class="tw-w-16 tw-h-16 tw-mx-auto tw-mb-4 tw-text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+				</svg>
+				<p class="tw-text-gray-600">{{ 'Dashboard.zipCodeOverview.noData' | translate }}</p>
+			</div>
+		}
+	</div>
+</div>

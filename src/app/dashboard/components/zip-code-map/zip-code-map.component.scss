@@ -1,0 +1,26 @@
+// PLZ Map Component Styles
+.plz-map-container {
+	width: 100%;
+	padding: 0;
+}
+
+// Ensure grid items have minimum height for visibility
+.tw-grid > div {
+	min-height: 60px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+// Hover effect enhancement
+.tw-cursor-pointer {
+	position: relative;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(73, 46, 152, 0.3);
+		z-index: 10;
+	}
+}

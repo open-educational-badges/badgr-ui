@@ -1,0 +1,73 @@
+<div class="horizontal-bar-chart">
+	<div class="tw-space-y-3">
+		@for (item of items(); track trackByItem($index, item)) {
+			<div class="tw-flex tw-items-center tw-gap-2 tw-w-full">
+				<!-- Label Area (Left Side) -->
+				<div
+					class="tw-flex-shrink-0 tw-flex tw-items-center"
+					[style.width.%]="labelWidthPercent()">
+					<span
+						class="bar-label tw-font-normal tw-text-gray-700 tw-text-right tw-block tw-w-full tw-pr-2"
+						lang="de">
+						{{ item.label }}@if (showEscoLink() && item.escoUri) {<span class="tw-whitespace-nowrap">&nbsp;<a
+								[href]="item.escoUri"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="tw-font-normal tw-no-underline hover:tw-underline"
+								style="color: #1400FF;"
+								title="ESCO Skill"
+								(click)="$event.stopPropagation()">(E)</a></span>}
+					</span>
+				</div>
+
+				<!-- Bar Area (Right Side) -->
+				<div
+					class="tw-flex tw-items-center tw-gap-2"
+					[style.width.%]="computedBarAreaWidth()">
+					<!-- The Bar -->
+					<div
+						class="tw-h-8 tw-flex tw-items-center tw-justify-end tw-pl-3 tw-pr-2 tw-transition-opacity"
+						[class.tw-cursor-pointer]="clickable()"
+						[class.hover:tw-opacity-90]="clickable()"
+						[style.background-color]="variant() === 'neutral' ? '#c5d1ff' : '#F5F5F5'"
+						[style.border]="variant() === 'neutral' ? '1px solid #6a6a6a' : '1px solid var(--color-purple)'"
+						style="border-radius: 3px; min-width: 50px;"
+						[style.width.%]="getBarWidth(item.value)"
+						(click)="onBarClick(item)"
+						[attr.role]="clickable() ? 'button' : null"
+						[attr.tabindex]="clickable() ? 0 : null"
+						[attr.aria-label]="clickable() ? ('Dashboard.action.showDetailsFor' | translate) + ' ' + item.label : null">
+
+						<!-- Bar Content: Icon + Value -->
+						@if (showBarIcon()) {
+							<ng-icon
+								[name]="barIconName()"
+								size="14px"
+								[style.color]="variant() === 'neutral' ? '#2c2c2c' : 'var(--color-purple)'"
+								style="margin-right: 4px;" />
+						}
+						<span
+							class="tw-text-xs tw-font-normal tw-whitespace-nowrap"
+							[style.color]="variant() === 'neutral' ? '#2c2c2c' : 'var(--color-purple)'">
+							{{ getBarDisplayValue(item) }}
+						</span>
+					</div>
+
+					<!-- Text After Bar (Optional) -->
+					@if (showAfterBarText() && (item.afterBarText || afterBarTranslationKey())) {
+						<span
+							class="tw-text-xs tw-font-normal tw-whitespace-nowrap"
+							[style.color]="variant() === 'neutral' ? '#2c2c2c' : 'var(--color-purple)'">
+							@if (item.afterBarText) {
+								{{ item.afterBarText }}
+							}
+							@if (afterBarTranslationKey()) {
+								{{ afterBarTranslationKey() | translate }}
+							}
+						</span>
+					}
+				</div>
+			</div>
+		}
+	</div>
+</div>

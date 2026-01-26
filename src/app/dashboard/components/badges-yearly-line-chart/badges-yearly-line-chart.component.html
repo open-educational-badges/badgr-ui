@@ -1,0 +1,64 @@
+<div class="badges-yearly-line-chart">
+	<!-- Filters Row - Year, Month and optional Badge Type filter -->
+	@if ((showYearFilter && availableYears.length > 0) || showMonthFilter || (showTypeFilter && badgeTypes.length > 0)) {
+		<div class="tw-flex tw-items-center tw-justify-end tw-gap-4 tw-mb-4 tw-relative">
+			<!-- Year Filter -->
+			@if (showYearFilter && availableYears.length > 0) {
+				<select
+					[ngModel]="selectedYear"
+					(ngModelChange)="onYearChange($event)"
+					class="tw-px-3 tw-py-1.5 tw-rounded-lg tw-text-sm tw-font-bold tw-bg-white tw-cursor-pointer tw-appearance-none tw-pr-8"
+					style="border: 1px solid #492E98; color: #492E98; background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23492E98%27 stroke-width=%272%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 8px center;">
+					@for (year of availableYears; track year) {
+						<option [value]="year">{{ year }}</option>
+					}
+				</select>
+			}
+
+			<!-- Month Filter -->
+			@if (showMonthFilter) {
+				<select
+					[ngModel]="selectedMonth"
+					(ngModelChange)="onMonthChange($event ? +$event : null)"
+					class="tw-px-3 tw-py-1.5 tw-rounded-lg tw-text-sm tw-font-bold tw-bg-white tw-cursor-pointer tw-appearance-none tw-pr-8"
+					style="border: 1px solid #492E98; color: #492E98; background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23492E98%27 stroke-width=%272%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 8px center;">
+					<option [ngValue]="null">{{ 'Dashboard.allMonths' | translate }}</option>
+					@for (month of availableMonths; track month.value) {
+						<option [ngValue]="month.value">{{ month.label }}</option>
+					}
+				</select>
+			}
+
+			<!-- Badge Type Filter -->
+			@if (showTypeFilter && badgeTypes.length > 0) {
+				<select
+					#badgeTypeSelect
+					[ngModel]="selectedBadgeType"
+					(ngModelChange)="onBadgeTypeChange($event)"
+					class="tw-px-3 tw-py-1.5 tw-rounded-lg tw-text-sm tw-font-bold tw-bg-white tw-cursor-pointer tw-appearance-none tw-pr-8"
+					style="border: 1px solid #492E98; color: #492E98; background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23492E98%27 stroke-width=%272%27%3E%3Cpath d=%27M6 9l6 6 6-6%27/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 8px center;">
+					@for (type of badgeTypes; track type.value) {
+						<option [value]="type.value">{{ type.label }}</option>
+					}
+				</select>
+				<span #badgeTypeTextMeasure class="tw-absolute tw-invisible tw-whitespace-nowrap tw-text-sm tw-font-bold" style="padding: 0 12px;">{{ getSelectedBadgeTypeLabel() }}</span>
+			}
+		</div>
+	}
+
+	<!-- Line Chart Container -->
+	<div class="tw-relative tw-w-full" [style.height.px]="chartHeight">
+		<svg #lineChartSvg class="tw-w-full tw-h-full">
+			<!-- Chart will be rendered here by D3 -->
+		</svg>
+
+		<!-- Tooltip (shown on hover, transparent background with OEB Blue border) -->
+		<div
+			#chartTooltip
+			class="tw-absolute tw-hidden tw-px-3 tw-py-2 tw-text-sm tw-pointer-events-none tw-z-50 tw-text-left tw-rounded-md"
+			style="transition: all 0.2s ease; border: 1px solid #492E98; background-color: rgba(255, 255, 255, 0.95);">
+			<div class="tw-font-normal tw-text-sm" style="color: #000000;" #tooltipDate></div>
+			<div class="tw-font-normal tw-text-sm" style="color: #492E98;" #tooltipContent></div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,553 @@
+<div class="oeb tw-relative tw-w-full">
+	<div class="page-padding">
+		<div class="oeb-breadcrumbs">
+			<bg-breadcrumbs [linkentries]="crumbs"></bg-breadcrumbs>
+		</div>
+
+		<h1 hlmH1 class="tw-text-purple tw-font-black tw-mt-20 tw-pb-14">
+			{{ 'Network.Dashboard.competencyTracking.title' | translate }}
+		</h1>
+
+		<ng-template [bgAwaitPromises]="[networkLoaded]">
+			@if (viewState === 'overview') {
+				<section class="tw-flex tw-gap-4 tw-items-center tw-pb-8">
+					<div class="tw-bg-white tw-aspect-square tw-flex tw-flex-shrink-0 tw-items-center tw-justify-center">
+						<img width="70px" [src]="network()?.image" alt="Network Logo" />
+					</div>
+					<div class="tw-flex tw-flex-col">
+						<span class="tw-font-bold tw-text-3xl tw-text-oebblack">{{ network()?.name }}</span>
+						<span class="tw-text-oebblack tw-text-lg tw-font-semibold tw-mt-2">
+							{{
+								'Network.yourRole'
+									| translate
+										: {
+												role: 'Network.role.' + role | translate,
+										  }
+							}}
+						</span>
+					</div>
+					<div class="tw-ml-auto">
+						<oeb-button
+							variant="secondary"
+							(click)="goBack()"
+							[text]="'General.back' | translate"
+						></oeb-button>
+					</div>
+				</section>
+			}
+
+			@if (isLoading) {
+				<div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-20">
+					<div class="tw-animate-spin tw-rounded-full tw-h-12 tw-w-12 tw-border-b-2" style="border-color: var(--color-purple);"></div>
+					<p class="tw-mt-4 tw-text-gray-600">{{ 'General.loading' | translate }}...</p>
+				</div>
+			} @else if (viewState === 'overview') {
+				<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-[10px] tw-mb-8">
+					<div class="tw-rounded-[10px] tw-relative" style="background-color: #F5F5F5; height: 170px; padding: 22.97px 10px 10px 10px;">
+						<div class="tw-absolute tw-top-2 tw-right-2">
+							<info-icon [width]="300">
+								{{ 'Dashboard.Competencies.totalHoursTooltip' | translate }}
+							</info-icon>
+						</div>
+						<div class="tw-h-full tw-flex tw-flex-col tw-justify-between">
+							<div class="tw-flex tw-items-start tw-gap-3">
+								<div class="tw-flex-shrink-0">
+									<ng-icon name="lucideClock" size="80" style="color: #492E98;"></ng-icon>
+								</div>
+								<div class="tw-flex tw-flex-col tw-gap-1">
+									<p class="tw-font-black tw-leading-none" style="font-family: 'Rubik', sans-serif; font-size: 32pt; color: #492E98;">{{ totalCompetencyHours() | number }}</p>
+									<p style="font-family: 'Rubik', sans-serif; font-weight: 400; font-size: 12pt; color: #333;">{{ 'Dashboard.Competencies.totalHours' | translate }}</p>
+								</div>
+							</div>
+							@if (competencyHoursTrend() && competencyHoursTrend()!.trend === 'up' && competencyHoursTrend()!.trendValue > 0) {
+								<div class="tw-self-end tw-inline-flex tw-items-center tw-px-3 tw-py-1 tw-bg-white tw-rounded-md" style="font-family: 'Rubik', sans-serif; font-weight: 500; font-size: 10pt; color: #492E98;">
+									+{{ competencyHoursTrend()!.trendValue | number }}% {{ 'Network.Dashboard.trend.thisMonth' | translate }}
+								</div>
+							}
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px] tw-relative" style="background-color: #F5F5F5; height: 170px; padding: 22.97px 10px 10px 10px;">
+						<div class="tw-absolute tw-top-2 tw-right-2">
+							<info-icon [width]="300">
+								{{ 'Dashboard.Competencies.totalCompetenciesTooltip' | translate }}
+							</info-icon>
+						</div>
+						<div class="tw-h-full tw-flex tw-flex-col tw-justify-between">
+							<div class="tw-flex tw-items-start tw-gap-3">
+								<div class="tw-flex-shrink-0">
+									<ng-icon name="lucideAward" size="80" style="color: #492E98;"></ng-icon>
+								</div>
+								<div class="tw-flex tw-flex-col tw-gap-1">
+									<p class="tw-font-black tw-leading-none" style="font-family: 'Rubik', sans-serif; font-size: 32pt; color: #492E98;">{{ totalCompetencies() | number }}</p>
+									<p style="font-family: 'Rubik', sans-serif; font-weight: 400; font-size: 12pt; color: #333;">{{ 'Dashboard.Competencies.totalCompetencies' | translate }}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px]" style="background-color: #F5F5F5; height: 170px; padding: 22.97px 10px 10px 10px;">
+						<div class="tw-h-full tw-flex tw-flex-col tw-justify-between">
+							<div class="tw-flex tw-items-start tw-gap-3">
+								<div class="tw-flex-shrink-0">
+									<ng-icon name="lucideCircleSlash2" size="80" style="color: #492E98;"></ng-icon>
+								</div>
+								<div class="tw-flex tw-flex-col tw-gap-1">
+									<p class="tw-font-black tw-leading-none" style="font-family: 'Rubik', sans-serif; font-size: 32pt; color: #492E98;">{{ averageCompetencyHours() | number:'1.1-1' }}</p>
+									<p style="font-family: 'Rubik', sans-serif; font-weight: 400; font-size: 12pt; color: #333;">{{ 'Dashboard.kpi.hoursPerCompetency' | translate }}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.topCompetencyAreas' | translate }}
+					</h2>
+					<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+						<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+							@if (skillVisualisationData.length > 0) {
+								<recipient-skill-visualisation
+									[skills]="skillVisualisationData"
+									[showIntroText]="false"
+									[showHelpText]="false"
+									[showLegend]="false"
+									[enableAreaClick]="true"
+									(areaClick)="onCompetencyAreaClick($event)">
+								</recipient-skill-visualisation>
+							} @else {
+								<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+									{{ 'Dashboard.noDataAvailable' | translate }}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.mostStrengthenedCompetencies' | translate }}
+					</h2>
+					<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+						<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+							@if (individualCompetencyData.length === 0) {
+								<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+									{{ 'Dashboard.noDataAvailable' | translate }}
+								</div>
+							} @else {
+								<app-horizontal-bar-chart
+									[items]="getCompetencyBarItems()"
+									[labelWidthPercent]="40"
+									barContentType="hours"
+									[showBarIcon]="true"
+									barIconName="lucideClockFading"
+									[showEscoLink]="true"
+									[clickable]="true"
+									(itemClick)="onCompetencyBarClick($event)">
+								</app-horizontal-bar-chart>
+							}
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<div class="tw-flex tw-items-center tw-gap-2 tw-mb-4">
+						<h2 class="tw-text-[22px] tw-font-bold" style="color: var(--color-purple);">
+							{{ 'Dashboard.competenciesByGender' | translate }}
+						</h2>
+						<info-icon [width]="350">
+							{{ 'Dashboard.genderAssignmentInfo' | translate }}
+						</info-icon>
+					</div>
+					<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+						<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+							@if (genderCompetencyHours.length === 0) {
+								<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+									{{ 'Dashboard.noDataAvailable' | translate }}
+								</div>
+							} @else {
+								<app-horizontal-bar-chart
+									[items]="getGenderBarItems()"
+									[labelWidthPercent]="25"
+									barContentType="hours"
+									[showBarIcon]="true"
+									barIconName="lucideClock"
+									[clickable]="true"
+									(itemClick)="onGenderBarClick($event)"
+									variant="neutral">
+								</app-horizontal-bar-chart>
+							}
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.competenciesLastMonth' | translate }} ({{ lastMonthCompetencies.length }})
+					</h2>
+					<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+						<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+							@if (lastMonthCompetencies.length === 0) {
+								<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+									{{ 'Dashboard.noDataAvailable' | translate }}
+								</div>
+							} @else {
+								<div class="tw-space-y-3">
+									@for (comp of lastMonthCompetencies; track comp.name) {
+										<div class="tw-flex tw-items-center tw-gap-3 tw-w-full">
+											<div class="tw-flex-shrink-0 tw-flex tw-items-center tw-min-h-8" style="width: 40%;">
+												<span class="tw-font-normal tw-text-gray-700 tw-text-right tw-block tw-w-full tw-pr-2"
+													[style.font-size.px]="getCompetencyFontSize(comp.name)"
+													style="word-break: break-word; hyphens: auto;" lang="de">
+													{{ comp.name }}@if (comp.escoUri) {<span class="tw-whitespace-nowrap">&nbsp;<a
+														[href]="comp.escoUri"
+														target="_blank"
+														rel="noopener noreferrer"
+														class="hover:tw-underline"
+														[style.font-size.px]="getCompetencyFontSize(comp.name)"
+														style="color: #1400FF;"
+														[attr.aria-label]="'ESCO competency for ' + comp.name"
+														(click)="$event.stopPropagation()">(E)</a></span>}
+												</span>
+											</div>
+											<div class="tw-flex tw-items-center" style="width: 60%;">
+												<div
+													class="tw-h-8 tw-flex tw-items-center tw-justify-end tw-px-3 tw-transition-all tw-duration-500"
+													style="background-color: #F5F5F5; border: 1px solid var(--color-purple); border-radius: 3px; min-width: 50px;"
+													[style.width.%]="getLastMonthCompetencyBarWidth(comp.count)">
+													<ng-icon name="lucideAward" size="14px" class="tw-mr-1" style="color: #492E98;"></ng-icon>
+													<span class="tw-text-xs tw-font-normal tw-whitespace-nowrap" style="color: var(--color-purple);">{{ comp.count }} {{ 'Dashboard.badges' | translate }}</span>
+												</div>
+											</div>
+										</div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			} @else if (viewState === 'gender-detail' && selectedGender) {
+				<section class="tw-flex tw-gap-4 tw-items-center tw-mb-6">
+					<div class="tw-flex tw-flex-col">
+						<h1 class="tw-font-black tw-text-3xl tw-text-purple">{{ getGenderLabel(selectedGender) }}</h1>
+						<p class="tw-text-oebblack tw-text-lg">
+							{{ 'Dashboard.genderDetail.competencyAnalysisDescription' | translate }}
+						</p>
+					</div>
+					<div class="tw-ml-auto">
+						<oeb-button
+							variant="secondary"
+							(click)="onBackFromGenderDetail()"
+							[text]="'General.back' | translate">
+						</oeb-button>
+					</div>
+				</section>
+
+				<app-gender-competency-analysis
+					[gender]="selectedGender"
+					[networkSlug]="networkSlug"
+					(back)="onBackFromGenderDetail()"
+					(areaClick)="onCompetencyAreaClick($event)">
+				</app-gender-competency-analysis>
+			} @else if (viewState === 'competency-detail' && selectedCompetency) {
+				<section class="tw-flex tw-gap-4 tw-items-center tw-mb-6">
+					<div class="tw-flex tw-flex-col">
+						<h1 class="tw-font-black tw-text-3xl tw-text-purple">{{ selectedCompetency.title }}</h1>
+						<p class="tw-text-oebblack tw-text-lg">
+							{{ 'Dashboard.competencyDetail.subtitle' | translate }}
+							@if (selectedCompetency.escoUri) {
+								<a
+									[href]="selectedCompetency.escoUri"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="hover:tw-underline tw-ml-2"
+									style="color: #1400FF;">
+									(ESCO)
+								</a>
+							}
+						</p>
+					</div>
+					<div class="tw-ml-auto">
+						<oeb-button
+							variant="secondary"
+							(click)="onBackFromCompetencyDetail()"
+							[text]="'General.back' | translate">
+						</oeb-button>
+					</div>
+				</section>
+
+				<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-[10px] tw-mb-8">
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideClock" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetency.hours | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyDetail.hours' | translate }}</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideAward" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetency.badgeCount | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyDetail.badges' | translate }}</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideUserStar" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetency.userCount | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyDetail.users' | translate }}</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideSchool" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetency.institutionCount | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyDetail.institutions' | translate }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.competencyDetail.institutionsTitle' | translate }}
+					</h2>
+
+					@if (selectedCompetency.institutions.length === 0) {
+						<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border tw-border-solid tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500" style="border-color: var(--color-purple);">
+							{{ 'Dashboard.noDataAvailable' | translate }}
+						</div>
+					} @else {
+						<div class="tw-overflow-x-auto">
+							<table class="tw-min-w-max tw-w-full tw-mb-8 tw-text-lg tw-text-left tw-rounded-lg tw-border tw-border-solid tw-border-purple tw-border-separate" style="background-color: var(--color-purple);">
+								<thead class="tw-font-semibold tw-text-white">
+									<tr>
+										<th class="tw-px-4 tw-py-4 tw-leading-8 tw-border-b tw-border-solid tw-border-purple tw-align-middle">
+											{{ 'Dashboard.competencyDetail.table.institution' | translate }}
+										</th>
+										<th class="tw-px-4 tw-py-4 tw-leading-8 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+											{{ 'Dashboard.competencyDetail.table.badges' | translate }}
+										</th>
+										<th class="tw-px-4 tw-py-4 tw-leading-8 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+											{{ 'Dashboard.competencyDetail.table.users' | translate }}
+										</th>
+									</tr>
+								</thead>
+								<tbody class="tw-bg-white">
+									@for (inst of selectedCompetency.institutions; track inst.id) {
+										<tr>
+											<td class="tw-px-4 tw-py-4 tw-leading-7 tw-border-b tw-border-solid tw-border-purple tw-align-middle">
+												<a
+													[routerLink]="['/issuer/issuers', inst.slug || inst.id]"
+													class="tw-flex tw-items-center tw-gap-3 tw-no-underline tw-cursor-pointer">
+													<div class="tw-flex-shrink-0">
+														@if (inst.image) {
+															<img
+																class="tw-rounded tw-object-cover"
+																[src]="inst.image"
+																[alt]="inst.name"
+																width="40"
+																height="40"
+															/>
+														} @else {
+															<div class="tw-w-10 tw-h-10 tw-rounded tw-flex tw-items-center tw-justify-center" style="background-color: #F5F5F5;">
+																<ng-icon name="lucideSchool" size="24" style="color: var(--color-purple);"></ng-icon>
+															</div>
+														}
+													</div>
+													<span class="tw-font-normal tw-text-gray-800">{{ inst.name }}</span>
+												</a>
+											</td>
+											<td class="tw-px-4 tw-py-4 tw-leading-7 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+												<span class="tw-font-normal tw-text-gray-800">{{ inst.badgeCount | number }}</span>
+											</td>
+											<td class="tw-px-4 tw-py-4 tw-leading-7 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+												<span class="tw-font-normal tw-text-gray-800">{{ inst.userCount | number }}</span>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			} @else if (viewState === 'area-detail' && selectedCompetencyArea) {
+				<section class="tw-flex tw-gap-4 tw-items-center tw-mb-6">
+					<div class="tw-flex tw-flex-col">
+						<h1 class="tw-font-black tw-text-3xl tw-text-purple">{{ selectedCompetencyArea.areaName }}</h1>
+						<p class="tw-text-oebblack tw-text-lg">
+							{{ 'Dashboard.competencyAreaDetail.subtitle' | translate }}
+						</p>
+					</div>
+					<div class="tw-ml-auto">
+						<oeb-button
+							variant="secondary"
+							(click)="onBackFromAreaDetail()"
+							[text]="'General.back' | translate">
+						</oeb-button>
+					</div>
+				</section>
+
+				<div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-[10px] tw-mb-8">
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideClock" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetencyArea.totalHours | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyAreaDetail.hours' | translate }}</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideAward" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetencyArea.badgeCount | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyAreaDetail.badges' | translate }}</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideUserStar" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetencyArea.userCount | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyAreaDetail.users' | translate }}</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="tw-rounded-[10px] tw-p-4" style="background-color: #F5F5F5;">
+						<div class="tw-flex tw-items-center tw-gap-3">
+							<div class="tw-flex-shrink-0 tw-w-[60px] tw-h-[60px] tw-flex tw-items-center tw-justify-center">
+								<ng-icon name="lucideSchool" size="60" style="color: var(--color-purple);"></ng-icon>
+							</div>
+							<div class="tw-flex tw-flex-col tw-gap-1">
+								<p class="tw-font-black tw-leading-none" style="font-size: 32pt; color: #492E98;">{{ selectedCompetencyArea.institutionCount | number }}</p>
+								<p class="tw-font-normal" style="font-size: 12pt; color: #333;">{{ 'Dashboard.competencyAreaDetail.institutions' | translate }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.competencyAreaDetail.topCompetenciesTitle' | translate }}
+						({{ selectedCompetencyArea.topCompetencies.length }})
+					</h2>
+					<div class="tw-w-full tw-p-6" style="background-color: #F5F5F5; border-radius: 5px;">
+						<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid" style="border-width: 1px; border-color: var(--color-purple);">
+							@if (selectedCompetencyArea.topCompetencies.length === 0) {
+								<div class="tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500">
+									{{ 'Dashboard.noDataAvailable' | translate }}
+								</div>
+							} @else {
+								<app-horizontal-bar-chart
+									[items]="getAreaTopCompetencyBarItems()"
+									[labelWidthPercent]="30"
+									barContentType="hours"
+									[showBarIcon]="true"
+									barIconName="lucideClockFading"
+									[showEscoLink]="true"
+									[clickable]="true"
+									(itemClick)="onAreaTopCompetencyBarClick($event)">
+								</app-horizontal-bar-chart>
+							}
+						</div>
+					</div>
+				</div>
+
+				<div class="tw-mb-6">
+					<h2 class="tw-text-[22px] tw-font-bold tw-mb-4" style="color: var(--color-purple);">
+						{{ 'Dashboard.competencyAreaDetail.institutionsTitle' | translate }}
+					</h2>
+
+					@if (selectedCompetencyArea.institutions.length === 0) {
+						<div class="tw-bg-white tw-rounded-lg tw-p-6 tw-border tw-border-solid tw-flex tw-items-center tw-justify-center tw-h-32 tw-text-gray-500" style="border-color: var(--color-purple);">
+							{{ 'Dashboard.noDataAvailable' | translate }}
+						</div>
+					} @else {
+						<div class="tw-overflow-x-auto">
+							<table class="tw-min-w-max tw-w-full tw-mb-8 tw-text-lg tw-text-left tw-rounded-lg tw-border tw-border-solid tw-border-purple tw-border-separate" style="background-color: var(--color-purple);">
+								<thead class="tw-font-semibold tw-text-white">
+									<tr>
+										<th class="tw-px-4 tw-py-4 tw-leading-8 tw-border-b tw-border-solid tw-border-purple tw-align-middle">
+											{{ 'Dashboard.competencyAreaDetail.table.institution' | translate }}
+										</th>
+										<th class="tw-px-4 tw-py-4 tw-leading-8 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+											{{ 'Dashboard.competencyAreaDetail.table.badges' | translate }}
+										</th>
+										<th class="tw-px-4 tw-py-4 tw-leading-8 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+											{{ 'Dashboard.competencyAreaDetail.table.users' | translate }}
+										</th>
+									</tr>
+								</thead>
+								<tbody class="tw-bg-white">
+									@for (inst of selectedCompetencyArea.institutions; track inst.id) {
+										<tr>
+											<td class="tw-px-4 tw-py-4 tw-leading-7 tw-border-b tw-border-solid tw-border-purple tw-align-middle">
+												<a
+													[routerLink]="['/issuer/issuers', inst.slug || inst.id]"
+													class="tw-flex tw-items-center tw-gap-3 tw-no-underline tw-cursor-pointer">
+													<div class="tw-flex-shrink-0">
+														@if (inst.image) {
+															<img
+																class="tw-rounded tw-object-cover"
+																[src]="inst.image"
+																[alt]="inst.name"
+																width="40"
+																height="40"
+															/>
+														} @else {
+															<div class="tw-w-10 tw-h-10 tw-rounded tw-flex tw-items-center tw-justify-center" style="background-color: #F5F5F5;">
+																<ng-icon name="lucideSchool" size="24" style="color: var(--color-purple);"></ng-icon>
+															</div>
+														}
+													</div>
+													<span class="tw-font-normal tw-text-gray-800">{{ inst.name }}</span>
+												</a>
+											</td>
+											<td class="tw-px-4 tw-py-4 tw-leading-7 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+												<span class="tw-font-normal tw-text-gray-800">{{ inst.badgeCount | number }}</span>
+											</td>
+											<td class="tw-px-4 tw-py-4 tw-leading-7 tw-border-b tw-border-solid tw-border-purple tw-align-middle tw-text-right">
+												<span class="tw-font-normal tw-text-gray-800">{{ inst.userCount | number }}</span>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			}
+		</ng-template>
+	</div>
+</div>
