@@ -60,12 +60,38 @@ export class CatalogService extends BaseHttpApiService {
 	}
 
 	/**
+	 * Gets a list of areas for a given entity type
+	 * @param entityType The type of entity to get areas for (so far only implemented for 'badges')
+	 * @returns An array of available areas
+	 */
+	private async getEntityAreas(entityType: 'badges'): Promise<string[]> {
+		try {
+			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/${entityType}/areas`);
+
+			if (response.ok) return response.body;
+			else {
+				console.warn(
+					`Request for ${entityType} areas did not return ok, got ${response.status}: ${response.statusText}`,
+				);
+				return [];
+			}
+		} catch (e) {
+			console.warn(e);
+			return [];
+		}
+	}
+
+	/**
 	 * Gets a list of tags, whose entries may be used as input for
 	 * the tags parameter of the {@link getBadges} method
 	 * @returns An array of available tags to filter badges by
 	 */
 	async getBadgeTags(): Promise<string[]> {
 		return this.getEntityTags('badges');
+	}
+
+	async getBadgeAreas(): Promise<string[]> {
+		return this.getEntityAreas('badges');
 	}
 
 	/**

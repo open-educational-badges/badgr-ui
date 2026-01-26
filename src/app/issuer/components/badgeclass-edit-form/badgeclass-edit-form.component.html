@@ -941,17 +941,20 @@
 					</cdk-step>
 				}
 
-				<cdk-step label="Tags" [optional]="true" errorMessage="Bitte Tags auswählen">
+				<cdk-step
+					label="{{'CreateBadge.tagsAndAreaStep' | translate}}"
+					[optional]="true"
+				>
 					<div class="section tw-text-oebblack tw-mt-6">
 						<div>
 							@if (badgeCategory !== 'competency' || existingBadgeClass) {
 								<h2 hlmH2 class="tw-font-bold">
-									{{ selectedStep + 1 + '.' }} {{ 'CreateBadge.addTags' | translate }}
+									{{ selectedStep + 1 + 'a.' }} {{ 'CreateBadge.addTags' | translate }}
 								</h2>
 							}
 							@if (badgeCategory === 'competency' && !existingBadgeClass) {
 								<h2 hlmH2 class="tw-font-bold">
-									{{ selectedStep + 1 + '.' }} {{ 'CreateBadge.addTags' | translate }}
+									{{ selectedStep + 1 + 'a.' }} {{ 'CreateBadge.addTags' | translate }}
 								</h2>
 							}
 						</div>
@@ -1008,6 +1011,81 @@
 												(click)="removeTag(tag)"
 												icon="lucideCircleX"
 												text="{{ tag }}"
+											>
+											</oeb-button>
+										</div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+
+					<div class="section tw-text-oebblack tw-mt-6">
+						<div>
+							@if (badgeCategory !== 'competency' || existingBadgeClass) {
+								<h2 hlmH2 class="tw-font-bold">
+									{{ selectedStep + 1 + 'b.' }} {{ 'CreateBadge.addAreas' | translate }}
+								</h2>
+							}
+							@if (badgeCategory === 'competency' && !existingBadgeClass) {
+								<h2 hlmH2 class="tw-font-bold">
+									{{ selectedStep + 1 + 'b.' }} {{ 'CreateBadge.addAreas' | translate }}
+								</h2>
+							}
+						</div>
+						<p
+							class="tw-italic tw-text-purple tw-mt-2"
+							[translate]="'CreateBadge.areaInfo'"
+							[translateParams]="{ items: 'Badges', items2: 'Badges' }"
+						></p>
+						<div class="formsection-x-body tw-mt-4">
+							<div class="tw-flex tw-gap-4 tw-items-center tw-mb-2">
+								<span class="tw-font-semibold tw-text-lg tw-text-oebblack tw-uppercase"> Area</span>
+
+								<div class="ng-autocomplete">
+									<ng-autocomplete
+										name="addarea"
+										id="addarea"
+										#newAreaInput
+										[data]="existingAreas"
+										maxlength="50"
+										[isLoading]="existingAreasLoading"
+										searchKeyword="name"
+										[placeholder]="newArea"
+										(keypress)="handleAreaInputKeyPress($event)"
+										[itemTemplate]="itemTemplate"
+										[notFoundTemplate]="notFoundAreaTemplate"
+									>
+									</ng-autocomplete>
+
+									<ng-template #itemTemplate let-item>
+										<a [innerHTML]="item.name"></a>
+									</ng-template>
+
+									<ng-template #notFoundAreaTemplate let-notFound>
+										<div>{{ 'CreateBadge.areaDoesNotExist' | translate }}</div>
+									</ng-template>
+								</div>
+
+								<oeb-button
+									[id]="'add-area-btn'"
+									size="sm"
+									type="button"
+									(click)="addArea()"
+									text="{{ 'General.add' | translate }}"
+								>
+								</oeb-button>
+							</div>
+							@if (areas.size > 0) {
+								<div class="tw-flex tw-flex-wrap tw-gap-4 tw-w-[70%] tw-ml-[3.2rem]">
+									@for (area of areas; track area) {
+										<div class="tw-flex tw-items-center tw-rounded-full tw-py-1 tw-mb-2">
+											<oeb-button
+												variant="secondary"
+												size="xxs"
+												(click)="removeArea(area)"
+												icon="lucideCircleX"
+												text="{{ area }}"
 											>
 											</oeb-button>
 										</div>

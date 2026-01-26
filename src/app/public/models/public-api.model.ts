@@ -150,6 +150,7 @@ export interface PublicApiBadgeClass {
 		targetCode?: string;
 	}>;
 	tags: string[];
+	areas: string[];
 	// Extension to the spec containing the original URL of this assertion if it is not stored by Badgr
 	sourceUrl?: string;
 	courseUrl?: string;
