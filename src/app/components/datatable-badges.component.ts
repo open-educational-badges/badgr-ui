@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { Component, input, output, signal, TemplateRef, viewChild, inject } from '@angular/core';
@@ -25,7 +25,6 @@ import { PublicApiBadgeClass } from '~/public/models/public-api.model';
 		...OebTableImports,
 		FlexRenderDirective,
 		HlmIconModule,
-		CommonModule,
 		OebButtonComponent,
 		TranslateModule,
 		RouterModule,
