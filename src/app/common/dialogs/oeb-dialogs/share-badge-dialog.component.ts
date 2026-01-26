@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, inject, NgZone, signal, WritableSignal } from '@angular/core';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { OebDialogComponent } from '~/components/oeb-dialog.component';
 import { OebButtonComponent } from '~/components/oeb-button.component';
@@ -18,7 +18,7 @@ const COPY_NOTIF_TIMEOUT_MS: number = 3000;
 @Component({
 	selector: 'share-badge-dialog',
 	standalone: true,
-	imports: [CommonModule, TranslateModule, OebDialogComponent, OebButtonComponent, HlmDialogModule, HlmH3, HlmP],
+	imports: [TranslateModule, OebDialogComponent, OebButtonComponent, HlmDialogModule, HlmH3, HlmP],
 	template: `
 		<oeb-dialog [variant]="'default'">
 			<hlm-dialog-header>

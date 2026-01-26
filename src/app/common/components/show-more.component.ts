@@ -32,6 +32,7 @@ export class ShowMore implements AfterViewChecked {
 	containerRef: ElementRef;
 
 	isOpen = false;
+	loaded = false;
 
 	get contentElem() {
 		return this.contentRef.nativeElement as HTMLElement;
@@ -42,9 +43,6 @@ export class ShowMore implements AfterViewChecked {
 	get componentElem() {
 		return this.componentRef.nativeElement as HTMLElement;
 	}
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
 
 	constructor() {}
 

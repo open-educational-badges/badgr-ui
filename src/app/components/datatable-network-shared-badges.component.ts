@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { Component, input, output, signal, TemplateRef, viewChild } from '@angular/core';
@@ -27,7 +27,6 @@ import { SharedBadgeWithRequests } from '~/issuer/components/network-badges/netw
 		FormsModule,
 		...HlmTableImports,
 		...OebTableImports,
-		CommonModule,
 		TranslateModule,
 		RouterModule,
 		FlexRenderDirective,

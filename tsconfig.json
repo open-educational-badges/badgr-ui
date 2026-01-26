@@ -11,8 +11,9 @@
 		"noImplicitAny": false,
 		"target": "ES2022",
 		"types": ["node"],
-		"typeRoots": ["node_modules/@types"],
-		"lib": ["dom", "es2022"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
 		"module": "es2022",
 		"baseUrl": "./",
 		"useDefineForClassFields": false,

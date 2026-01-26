@@ -1,4 +1,10 @@
-import { enableProdMode, importProvidersFrom, provideAppInitializer, inject } from '@angular/core';
+import {
+	enableProdMode,
+	importProvidersFrom,
+	provideAppInitializer,
+	inject,
+	provideZoneChangeDetection,
+} from '@angular/core';
 
 import { environment } from './environments/environment';
 import { RecipientBadgeApiService } from './app/recipient/services/recipient-badges-api.service';
@@ -33,6 +39,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
 	providers: [
+		provideZoneChangeDetection(),
 		{ provide: AUTH_PROVIDER, useClass: SessionService },
 		provideHttpClient(),
 		importProvidersFrom(

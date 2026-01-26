@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, OnInit, input } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { TypedFormGroup, TypedFormArray, TypedFormControl } from '~/common/util/typed-forms';
 import { OebCheckboxComponent } from '~/components/oeb-checkbox.component';
@@ -14,7 +14,6 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 	selector: 'oeb-optional-details',
 	standalone: true,
 	imports: [
-		CommonModule,
 		TranslateModule,
 		OebCheckboxComponent,
 		OebInputComponent,

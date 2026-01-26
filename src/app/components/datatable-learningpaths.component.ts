@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { RouterModule } from '@angular/router';
@@ -26,7 +26,6 @@ import { NgIcon } from '@ng-icons/core';
 		...OebTableImports,
 		FlexRenderDirective,
 		HlmIconModule,
-		CommonModule,
 		OebButtonComponent,
 		TranslateModule,
 		RouterModule,
