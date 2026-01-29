@@ -28,7 +28,7 @@ export const environment: BadgrEnvironment = {
 				},
 			],
 			useColorNavbar: true,
-			termsOfServiceLink: 'public/impressum',
+			termsOfServiceLink: 'page/impressum',
 			privacyPolicyLink: 'public/privacy',
 			showApiDocsLink: false,
 			cssCustomProps: {
