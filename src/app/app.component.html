@@ -343,9 +343,9 @@
 			</div>
 			<div class="tw-flex md:tw-hidden tw-flex-col tw-gap-[7px] tw-text-sm md:tw-text-base tw-text-oebblack">
 				<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']">FAQ</a>
-				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'Start.imprint' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.imprintLink">{{ 'Start.imprint' | translate }}</a>
 				<a class="tw-text-oebblack" [href]="theme.privacyPolicyLink">{{ 'Start.privacyPolicy' | translate }}</a>
-				<a class="tw-text-oebblack" [routerLink]="['/public/terms']">{{ 'General.tos' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
 			</div>
 		</div>
 
@@ -410,9 +410,9 @@
 				}
 			} @else {
 				<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']">FAQ</a>
-				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'Start.imprint' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.imprintLink">{{ 'Start.imprint' | translate }}</a>
 				<a class="tw-text-oebblack" [href]="theme.privacyPolicyLink">{{ 'Start.privacyPolicy' | translate }}</a>
-				<a class="tw-text-oebblack" [routerLink]="['/public/terms']">{{ 'General.tos' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
 			}
 		</div>
 	</div>

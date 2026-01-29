@@ -34,6 +34,7 @@ export interface BadgrTheme {
 	 */
 	termsOfServiceLink?: string;
 	privacyPolicyLink?: string;
+	imprintLink?: string;
 
 	/**
 	 * Must agree to this when creating an Issuer
