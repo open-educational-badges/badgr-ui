@@ -797,7 +797,7 @@
 	"TermsOfService": {
 		"newTerms": "Neue Nutzungsbedingungen",
 		"weReworkedTerms": "Wir haben unsere Nutzungsbedingungen überarbeitet. Bitte bestätige, dass du sie gelesen hast und akzeptierst.",
-		"iConfirm": "Ich habe die <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/terms'> Nutzungsbedingungen</a> gelesen und stimme ihnen zu.",
+		"iConfirm": "Ich habe die <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='page/nutzungsbedingungen'> Nutzungsbedingungen</a> gelesen und stimme ihnen zu.",
 		"sendConfirmation": "Bestätigung absenden",
 		"cantUseWithoutConfirmation": "Ohne Bestätigung der Nutzungsbedingungen kannst du Open Educational Badges leider nicht nutzen.",
 		"backToTerms": "Zurück zu den Nutzungsbedingungen"

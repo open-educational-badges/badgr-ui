@@ -702,7 +702,7 @@
 		"repeatPassword": "Repeat password",
 		"createAccount": "Create account",
 		"readTerms": "Please read the terms of use and agree to them if you wish to continue.",
-		"agreeToTerms1": "I have read the <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/terms'>terms of use</a> and agree to them. ",
+		"agreeToTerms1": "I have read the <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='page/terms-of-use'>terms of use</a> and agree to them. ",
 		"registerWithUs": "Register with",
 		"provideInfo": ", by providing the following information",
 		"signUpWith": "Sign up with",
