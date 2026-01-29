@@ -91,7 +91,7 @@ export class ShadowDomComponent implements OnChanges {
 			const a = e.target as HTMLAnchorElement;
 
 			// manual handling of umami data attributes because umami-tracker does not handle shadow dom contents
-			if (a.dataset.umamiEvent && window['umami']) {
+			if (a.dataset.umamiEvent) {
 				if (window['umami']) window['umami'].track(a.dataset.umamiEvent);
 			}
 
