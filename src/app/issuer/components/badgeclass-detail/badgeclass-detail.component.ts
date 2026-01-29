@@ -93,8 +93,8 @@ export class BadgeClassDetailComponent
 	protected userProfileManager = inject(UserProfileManager);
 	protected badgeInstanceApiService = inject(BadgeInstanceApiService);
 
-	readonly qrAwards = viewChild.required<ElementRef>('qrAwards');
-	readonly batchAwards = viewChild.required<ElementRef>('batchAwards');
+	readonly qrAwards = viewChild<ElementRef>('qrAwards');
+	readonly batchAwards = viewChild<ElementRef>('batchAwards');
 
 	readonly issuerSelection = viewChild<TemplateRef<void>>('issuerSelection');
 
