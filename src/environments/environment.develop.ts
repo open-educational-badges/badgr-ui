@@ -13,11 +13,6 @@ export const environment: BadgrEnvironment = {
 			welcomeMessage: 'Willkommen auf Open Educational Badges',
 			serviceName: 'Open Educational Badges',
 			showPoweredByBadgr: true,
-			showPoweredByOSL: true,
-			providedBy: {
-				name: 'openSenseLab gGmbH',
-				url: 'https://opensenselab.org',
-			},
 			logoImg: {
 				small: 'assets/logos/Logo-Oeb.png',
 				desktop: 'assets/logos/Logo-Oeb.png',
