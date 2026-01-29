@@ -5,8 +5,8 @@ import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authenti
 import { BaseHttpApiService } from '~/common/services/base-http-api.service';
 import { MessageService } from '~/common/services/message.service';
 import { BadgeClassV3, IBadgeClassV3 } from '~/issuer/models/badgeclassv3.model';
-import { Issuer } from '~/issuer/models/issuer.model';
 import { IIssuerV3, IssuerV3 } from '~/issuer/models/issuerv3.model';
+import { LearningPathV3 } from '~/issuer/models/learningpathv3.model';
 import { INetworkV3, NetworkV3 } from '~/issuer/models/networkv3.model';
 
 const ENDPOINT = 'v3/issuer';
@@ -38,18 +38,18 @@ export class CatalogService extends BaseHttpApiService {
 	}
 
 	/**
-	 * Gets a list of tags, whose entries may be used as input for
-	 * the tags parameter of the {@link getBadges} method
-	 * @returns An array of available tags to filter badges by
+	 * Gets a list of tags for a given entity type
+	 * @param entityType The type of entity to get tags for (e.g., 'badges', 'learningpaths')
+	 * @returns An array of available tags to filter by
 	 */
-	async getBadgeTags(): Promise<string[]> {
+	private async getEntityTags(entityType: 'badges' | 'learningpaths'): Promise<string[]> {
 		try {
-			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/badges/tags`);
+			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/${entityType}/tags`);
 
 			if (response.ok) return response.body;
 			else {
 				console.warn(
-					`Request for badge tags did not return ok, got ${response.status}: ${response.statusText}`,
+					`Request for ${entityType} tags did not return ok, got ${response.status}: ${response.statusText}`,
 				);
 				return [];
 			}
@@ -57,6 +57,24 @@ export class CatalogService extends BaseHttpApiService {
 			console.warn(e);
 			return [];
 		}
+	}
+
+	/**
+	 * Gets a list of tags, whose entries may be used as input for
+	 * the tags parameter of the {@link getBadges} method
+	 * @returns An array of available tags to filter badges by
+	 */
+	async getBadgeTags(): Promise<string[]> {
+		return this.getEntityTags('badges');
+	}
+
+	/**
+	 * Gets a list of tags, whose entries may be used as input for
+	 * the tags parameter of the {@link getLearningPaths} method
+	 * @returns An array of available tags to filter learning paths by
+	 */
+	async getLearningPathTags(): Promise<string[]> {
+		return this.getEntityTags('learningpaths');
 	}
 
 	/**
@@ -171,6 +189,72 @@ export class CatalogService extends BaseHttpApiService {
 	}
 
 	/**
+	 * Gets a paginated list of learning paths, optionally filtered by name and/or tags.
+	 * Offset-based pagination is used, so pagination is achieved by setting the limit and offset
+	 * by multiples of the limit to go through pages (e.g. limit = 3, offset = 6 results in a request
+	 * for page 3, giving you the values from 7 to 9)
+	 * @param offset Offset for offset-based pagination
+	 * @param limit Limit for offset-based pagination
+	 * @param nameQuery Filter to apply to the name of learning paths pre application of offset and limit
+	 * @param tags A list of tags that all learning paths must contain pre application of offset and limit
+	 * @param orderBy Order of the returned list
+	 * @param issuerId Optional filter by issuer entity_id
+	 * @param activated Optional filter by activation status (only applicable for staff users)
+	 * @returns An object containing the url of the next and previous page
+	 * (if any) and the contents of the given page as array of learning path objects
+	 */
+	async getLearningPaths(
+		offset: number = 0,
+		limit: number = 20,
+		nameQuery?: string,
+		tags?: string[],
+		orderBy?: 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc',
+		issuerId?: string,
+		activated?: boolean,
+	): Promise<PaginatedLearningPath | null> {
+		try {
+			let params = new HttpParams({
+				fromObject: {
+					offset: offset,
+					limit: limit,
+				},
+			});
+
+			if (nameQuery) params = params.append('name', nameQuery);
+			if (tags && tags.length > 0) params = params.append('tags', tags.join(','));
+			if (orderBy) {
+				const ascOrDesc = orderBy.indexOf('asc') > -1 ? '' : '-';
+				const nameOrDate = orderBy.indexOf('name') > -1 ? 'name' : 'created_at';
+				// backend expects e.g. a '-name' for descending ordering of the name property and
+				// e.g. 'name' for ascending ordering. Same for 'created_at'
+				params = params.append('ordering', `${ascOrDesc}${nameOrDate}`);
+			}
+			if (issuerId) params = params.append('issuer_id', issuerId);
+			if (activated !== undefined) params = params.append('activated', activated.toString());
+
+			const response = await this.get<PaginatedLearningPath>(
+				`${this.baseUrl}/${ENDPOINT}/learningpaths/`,
+				params,
+			);
+
+			if (response.ok)
+				return {
+					...response.body,
+					results: response.body.results.map((r) => new LearningPathV3(r)),
+				};
+			else {
+				console.warn(
+					`Paginated request to get learning paths did not return ok, got ${response.status}: ${response.statusText}`,
+				);
+				return null;
+			}
+		} catch (e) {
+			console.warn(e);
+			return null;
+		}
+	}
+
+	/**
 	 * Gets a paginated list of networks, optionally filtered by name.
 	 * Offset-based pagination is used, so pagination is achieved by setting the limit and offset
 	 * by multiples of the limit to go through pages (e.g. limit = 3, offset = 6 results in a request
@@ -230,5 +314,6 @@ export interface Paginated<T> {
 }
 
 export type PaginatedBadgeClass = Paginated<BadgeClassV3>;
-export type PaginatedNetwork = Paginated<NetworkV3>;
 export type PaginatedIssuer = Paginated<IssuerV3>;
+export type PaginatedLearningPath = Paginated<LearningPathV3>;
+export type PaginatedNetwork = Paginated<NetworkV3>;

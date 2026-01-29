@@ -571,7 +571,8 @@
 		"networkAssertionsGetTracked": "All badge awards are included in the network's data evaluation.",
 		"cantRemoveFromNetwork": "The badge CANNOT be removed from the network.",
 		"shareBadgeOnNetwork": "Share badge on network",
-		"alreadyShared": "The badge was already shared on a network."
+		"alreadyShared": "The badge was already shared on a network.",
+		"unknownRecipient": "Recipient unknown"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
@@ -1180,7 +1181,8 @@
 		"confirmDelete": "Are you sure you want to delete this learning path?",
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
-		"institutions": "institutions"
+		"institutions": "institutions",
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",
