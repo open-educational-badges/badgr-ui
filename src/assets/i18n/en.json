@@ -717,7 +717,7 @@
 		"reachedResendEmailLimit": "You have reached the limit for resending confirmation emails. Check your inbox for an existing message or try again after 5 minutes.",
 		"resendEmailFailed": "Resending the confirmation email failed. Please contact support.",
 		"newEmailSent": "A new confirmation email has been sent to: ",
-		"infoPersonalDataProcessing": "Information on the processing of your personal data can be found in our <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/privacy'>privacy policy</a>.",
+		"infoPersonalDataProcessing": "Information on the processing of your personal data can be found in our <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='page/data-privacy'>privacy policy</a>.",
 		"enterValidEmail": "Please enter a valid email address.",
 		"enterFirstName": "Please enter a first name",
 		"enterLastName": "Please enter a last name",

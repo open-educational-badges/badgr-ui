@@ -716,7 +716,7 @@
 		"reachedResendEmailLimit": "Du hast das Limit für das erneute Senden von Bestätigungs-E-Mails erreicht. Überprüfe deinen Posteingang auf eine vorhandene Nachricht oder versuche es nach 5 Minuten erneut.",
 		"resendEmailFailed": "Das erneute Senden der Bestätigungs-E-Mail ist fehlgeschlagen. Bitte wende dich an den Support.",
 		"newEmailSent": "Eine neue Bestätigungs-E-Mail wurde gesendet an: ",
-		"infoPersonalDataProcessing": "Informationen zur Verarbeitung Deiner personenbezogenen Daten findest du in unserer <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/privacy'> Datenschutzerklärung</a>.",
+		"infoPersonalDataProcessing": "Informationen zur Verarbeitung Deiner personenbezogenen Daten findest du in unserer <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='page/privacy-policy'> Datenschutzerklärung</a>.",
 		"enterValidEmail": "Bitte gib eine gültige Email Adresse ein.",
 		"enterFirstName": "Bitte gib einen Vornamen an",
 		"enterLastName": "Bitte gib einen Nachnamen an",
