@@ -1,0 +1,14 @@
+<form-message></form-message>
+<div class="tw-relative tw-w-full">
+	<div class="oeb page-padding">
+		<div class="oeb-headline-container-sm">
+			<h1
+				hlmH1
+				class="tw-text-purple tw-font-extrabold tw-text-[46px] tw-leading-[115%]"
+				[innerHTML]="'Network.edit' | translate"
+			></h1>
+		</div>
+
+		<issuer-edit-form [issuerOrNetwork]="network" [issuerOrNetworkSlug]="networkSlug" [networkForm]="true" />
+	</div>
+</div>

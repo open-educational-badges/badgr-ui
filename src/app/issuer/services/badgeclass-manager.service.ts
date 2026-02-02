@@ -16,7 +16,7 @@ import { IssuerUrl } from '../models/issuer-api.model';
 import { AnyRefType, EntityRef } from '../../common/model/entity-ref';
 import { ManagedEntityGrouping } from '../../common/model/entity-set';
 import { MessageService } from '../../common/services/message.service';
-import { from, Observable } from 'rxjs';
+import { firstValueFrom, from, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { first, map } from 'rxjs/operators';
 import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authentication-service';
@@ -160,15 +160,33 @@ export class BadgeClassManager extends BaseHttpApiService {
 		return badges.find((badge) => badge.slug === badgeSlug) || null;
 	}
 
-	badgeByIssuerUrlAndSlug(issuerId: IssuerUrl, badgeSlug: BadgeClassSlug): Promise<BadgeClass> {
-		return this.allBadges$
-			.pipe(first())
-			.toPromise()
-			.then(
-				(badges) =>
-					badges.find((b) => b.issuerUrl === issuerId && b.slug === badgeSlug) ||
-					this.throwError(`Issuer ID '${issuerId}' has no badge with slug '${badgeSlug}'`),
-			);
+	async badgeByIssuerUrlAndSlug(issuerId: IssuerUrl, badgeSlug: BadgeClassSlug): Promise<BadgeClass> {
+		const badges = await firstValueFrom(this.allBadges$);
+
+		const badgeOwnedByIssuer = badges.find((b) => b.issuerUrl === issuerId && b.slug === badgeSlug);
+		if (badgeOwnedByIssuer) {
+			return badgeOwnedByIssuer;
+		}
+
+		// If not found, check if it's a network badge this issuer can award
+		const issuerSlug = (issuerId.match(/\/public\/issuers\/([^\/]+)/) || [])[1];
+
+		if (!issuerSlug) {
+			return this.throwError(`Invalid issuer URL format: '${issuerId}'`);
+		}
+
+		try {
+			const awardableBadges = await this.getAwardableBadgesForIssuer(issuerSlug);
+			const networkBadge = awardableBadges.find((b) => b.slug === badgeSlug);
+
+			if (networkBadge) {
+				return networkBadge;
+			}
+		} catch (error) {
+			console.error('Error fetching awardable badges:', error);
+		}
+
+		return this.throwError(`Issuer ID '${issuerId}' has no badge with slug '${badgeSlug}'`);
 	}
 
 	badgeBySlug(badgeSlug: BadgeClassSlug): Promise<BadgeClass> {

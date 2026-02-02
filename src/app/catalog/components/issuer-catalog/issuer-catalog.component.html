@@ -1,11 +1,12 @@
 <form-message></form-message>
+
 <div class="oeb page-padding">
 	<div class="oeb-section-sm">
 		<header class="oeb-headline-container tw-relative tw-flex tw-flex-col">
 			<oeb-header-text [text1]="'Issuer.institutionsHeadline'" [text2Template]="text2Template" />
 			<ng-template #text2Template>
-				<ng-template [showLoader]="false" [bgAwaitPromises]="[issuersLoaded]">
-					<span [countUp]="issuers.length">{{ issuers.length }}</span>
+				<ng-template [showLoader]="false" [bgAwaitPromises]="pageReadyPromise">
+					<span [countUp]="totalCount()">{{ totalCount() }}</span>
 					<span>
 						{{ issuersPluralWord }}
 					</span>
@@ -14,117 +15,135 @@
 		</header>
 	</div>
 
-	<div>
-		<ng-template [showLoader]="true" [bgAwaitPromises]="[issuersLoaded]">
-			<section>
-				<div class="tw-flex tw-items-center tw-rounded-lg tw-p-4 tw-bg-[#ECFEED] tw-mb-4">
+	<ng-template [showLoader]="true" [bgAwaitPromises]="pageReadyPromise">
+		<section>
+			<div class="tw-flex tw-items-center tw-rounded-lg tw-p-4 tw-bg-[#ECFEED] tw-mb-4">
+				<div
+					class="tw-flex tw-flex-col tw-gap-4 tw-w-full min-[880px]:tw-items-center min-[880px]:tw-justify-between min-[880px]:tw-flex-row"
+				>
+					@if (badgesDisplay !== 'map') {
+						<div class="tw-flex tw-flex-col min-[880px]:tw-flex-row min-[880px]:tw-items-center tw-gap-6">
+							<div class="tw-flex tw-relative tw-items-center">
+								<input
+									hlmInput
+									class="!tw-bg-white tw-w-full tw-border-1 tw-border-purple min-[880px]:tw-w-96 tw-border-solid tw-h-12 tw-rounded-lg tw-p-2"
+									placeholder="{{ 'Issuer.searchInstitutions' | translate }}"
+									[ngModel]="searchQuery()"
+									(ngModelChange)="onSearchQueryChange($event)"
+								/>
+								<ng-icon
+									hlm
+									name="lucideSearch"
+									class="tw-w-8 tw-h-8 tw-absolute tw-top-1/2 tw-right-2 -tw-translate-y-1/2 tw-pointer-events-none tw-text-purple"
+								></ng-icon>
+							</div>
+
+							<oeb-global-sort-select
+								placeholder="{{ 'Badge.sortBy' | translate }}"
+								class="oeb tw-w-[12rem]"
+								[options]="sortOptions"
+								[control]="sortControl"
+							></oeb-global-sort-select>
+
+							<oeb-select
+								[actionBar]="true"
+								class="md:tw-w-[180px] oeb"
+								[options]="categoryOptions"
+								[control]="categoryControl"
+								placeholder="{{ 'Issuer.categories.allCategories' | translate }}"
+								[autofocus]="true"
+								[noTopMargin]="true"
+							></oeb-select>
+						</div>
+					}
+
 					<div
-						class="tw-flex tw-flex-col tw-gap-4 tw-w-full min-[880px]:tw-items-center min-[880px]:tw-justify-between min-[880px]:tw-flex-row"
+						class="tw-flex tw-gap-4 tw-items-center"
+						[ngClass]="{ 'tw-w-full tw-justify-end': badgesDisplay === 'map' }"
 					>
 						@if (badgesDisplay !== 'map') {
-							<div
-								class="tw-flex tw-flex-col min-[880px]:tw-flex-row min-[880px]:tw-items-center tw-gap-6"
-							>
-								<div class="tw-flex tw-relative tw-items-center">
-									<input
-										hlmInput
-										class="!tw-bg-white tw-w-full tw-border-1 tw-border-purple min-[880px]:tw-w-96 tw-border-solid tw-h-12 tw-rounded-lg tw-p-2"
-										placeholder="{{ 'Issuer.searchInstitutions' | translate }}"
-										[(ngModel)]="searchQuery"
-									/>
-									<ng-icon
-										hlm
-										name="lucideSearch"
-										class="tw-w-8 tw-h-8 tw-absolute tw-top-1/2 tw-right-2 -tw-translate-y-1/2 tw-pointer-events-none tw-text-purple"
-									></ng-icon>
-								</div>
-								<span>{{ 'Badge.sortBy' | translate }} </span>
-								<oeb-global-sort-select
-									placeholder="{{ 'Badge.sortBy' | translate }}"
-									class="oeb tw-w-[12rem]"
-									[disabled]="!!categoryControl.value && categoryControl.value !== '---'"
-									[control]="sortControl"
-								>
-								</oeb-global-sort-select>
-								<oeb-select
-									[actionBar]="true"
-									class="md:tw-w-[180px] oeb"
-									[options]="categoryOptions"
-									[control]="categoryControl"
-									placeholder="{{ 'Issuer.categories.allCategories' | translate }}"
-									[autofocus]="true"
-									[noTopMargin]="true"
-								></oeb-select>
-							</div>
+							<oeb-button size="icon" (click)="openMap()" icon="lucideMapPin"></oeb-button>
 						}
-
-						<div
-							class="tw-flex tw-gap-4 tw-items-center"
-							[ngClass]="{ 'tw-w-full tw-justify-end': badgesDisplay === 'map' }"
-						>
-							@if (badgesDisplay !== 'map') {
-								<oeb-button size="icon" (click)="openMap()" icon="lucideMapPin"> </oeb-button>
-							}
-							@if (badgesDisplay === 'map') {
-								<oeb-button size="icon" (click)="openGrid()" icon="lucideGrid2x2"> </oeb-button>
-							}
-						</div>
+						@if (badgesDisplay === 'map') {
+							<oeb-button size="icon" (click)="openGrid()" icon="lucideGrid2x2"></oeb-button>
+						}
 					</div>
 				</div>
-
-				@if (badgesDisplay === 'grid') {
-					<div class="tw-grid sm:tw-grid-cols-issuer tw-gap-6 tw-w-full" [@stagger]>
-						@for (issuer of issuerResults; track issuer) {
-							<oeb-issuer-card
-								@appearAnimation
-								[plural]="plural"
-								[issuer]="issuer"
-								(navigate)="navigateToIssuer(issuer)"
-							></oeb-issuer-card>
-						}
-					</div>
-				}
-
-				@if (
-					(issuerResults.length >= 30 || (currentPage === totalPages && currentPage !== 1)) &&
-					badgesDisplay !== 'map'
-				) {
-					<div class="tw-mt-8">
-						<oeb-numbered-pagination
-							[totalProducts]="isFiltered() ? filteredIssuers.length : issuers.length"
-							[(page)]="currentPage"
-						>
-						</oeb-numbered-pagination>
-					</div>
-				}
-			</section>
-		</ng-template>
-		<div id="mapWrapper" class="tw-h-[45vh]" [hidden]="badgesDisplay !== 'map'">
-			<div id="map" #map></div>
-			<div id="map-legend">
-				<ul>
-					<li>
-						<div class="color cluster"></div>
-						Cluster
-					</li>
-					<li>
-						<div class="color schule"></div>
-						{{ 'Issuer.categories.schule' | translate }}
-					</li>
-					<li>
-						<div class="color hochschule"></div>
-						{{ 'Issuer.categories.hochschule' | translate }}
-					</li>
-					<li>
-						<div class="color jugendhilfe"></div>
-						{{ 'Issuer.categories.jugendhilfe' | translate }}
-					</li>
-					<li>
-						<div class="color andere"></div>
-						{{ 'Issuer.categories.andere' | translate }}
-					</li>
-				</ul>
 			</div>
+
+			@if (badgesDisplay === 'grid') {
+				<div class="tw-grid sm:tw-grid-cols-issuer tw-gap-6 tw-w-full" [@stagger]>
+					@for (issuer of issuers(); track issuer.slug) {
+						<oeb-issuer-card
+							@appearAnimation
+							[plural]="plural"
+							[issuer]="issuer"
+							(navigate)="navigateToIssuer(issuer)"
+						></oeb-issuer-card>
+					}
+				</div>
+
+				@if (!issuers().length && !hasNext()) {
+					<p
+						class="tw-m-auto tw-max-w-[300px] tw-p-4 tw-border-solid tw-border-[1px] tw-border-[var(--color-blue)] tw-rounded-lg tw-bg-[var(--color-lightpurple)] tw-text-center"
+					>
+						{{ 'General.noResults' | translate }}
+					</p>
+				}
+			}
+		</section>
+	</ng-template>
+
+	@if (badgesDisplay !== 'map') {
+		<div #loadMore class="oeb-section-sm">
+			<ng-template [showLoader]="false" [bgAwaitPromises]="pageReadyPromise">
+				@if (hasNext()) {
+					@if (!observeScrolling()) {
+						<loading-dots />
+					} @else {
+						<oeb-button
+							variant="secondary"
+							size="sm"
+							type="button"
+							text="{{ 'General.loadMore' | translate }}"
+							(click)="onLoadMoreClicked()"
+							class="tw-mx-auto tw-block tw-w-max"
+						/>
+					}
+				} @else {
+					<h4 hlmH4 class="tw-text-oebblack tw-text-center">
+						{{ 'Issuer.catalogAllLoaded' | translate }}
+					</h4>
+				}
+			</ng-template>
+		</div>
+	}
+
+	<div id="mapWrapper" class="tw-h-[45vh]" [hidden]="badgesDisplay !== 'map'">
+		<div id="map" #map></div>
+		<div id="map-legend">
+			<ul>
+				<li>
+					<div class="color cluster"></div>
+					Cluster
+				</li>
+				<li>
+					<div class="color schule"></div>
+					{{ 'Issuer.categories.schule' | translate }}
+				</li>
+				<li>
+					<div class="color hochschule"></div>
+					{{ 'Issuer.categories.hochschule' | translate }}
+				</li>
+				<li>
+					<div class="color jugendhilfe"></div>
+					{{ 'Issuer.categories.jugendhilfe' | translate }}
+				</li>
+				<li>
+					<div class="color andere"></div>
+					{{ 'Issuer.categories.andere' | translate }}
+				</li>
+			</ul>
 		</div>
 	</div>
 </div>

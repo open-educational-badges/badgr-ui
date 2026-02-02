@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy, signal } from '@angular/core';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -54,7 +54,7 @@ import { Subscription } from 'rxjs';
 	styles: [
 		`
 			:host ::ng-deep {
-				brn-collapsible[data-state='open'] button span {
+				brn-collapsible[data-state='open'] > button > span {
 					font-weight: bold !important;
 				}
 			}
@@ -99,6 +99,8 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = '../../../breakdown/static/images/badge-failed.svg';
+
+	readonly badgeInstanceCourseUrl = signal<string | null>(null);
 
 	breadcrumbLinkEntries: LinkEntry[] = [];
 
@@ -170,6 +172,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		.addControl('activity_zip', '')
 		.addControl('activity_city', '')
 		.addControl('activity_online', false)
+		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('notify_earner', true)
 		.addArray(
 			'evidence_items',
@@ -210,6 +213,9 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				.then((badgeClass) => {
 					this.badgeClass = badgeClass;
 
+					this.badgeInstanceCourseUrl.set(this.badgeClass.courseUrl ?? null);
+					this.issueForm.controls.courseUrl.setValue(this.badgeInstanceCourseUrl());
+
 					const category = badgeClass.extension['extensions:CategoryExtension'].Category;
 
 					this.badgeClassManager
@@ -245,6 +251,9 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	ngOnInit() {
 		super.ngOnInit();
 		this.subscriptions.push(...setupActivityOnlineSync(this.issueForm));
+		if (this.issueForm.controls.evidence_items.length === 0) {
+			this.issueForm.controls.evidence_items.addFromTemplate();
+		}
 	}
 
 	ngOnDestroy() {
@@ -261,6 +270,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		}
 
 		const formState = this.issueForm.value;
+
 		const cleanedEvidence = formState.evidence_items.filter((e) => e.narrative !== '' || e.evidence_url !== '');
 		const cleanedName = striptags(formState.recipientprofile_name);
 
@@ -310,6 +320,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
+				course_url: formState.courseUrl,
 			})
 			.then(() => this.badgeClass.update())
 			.then(

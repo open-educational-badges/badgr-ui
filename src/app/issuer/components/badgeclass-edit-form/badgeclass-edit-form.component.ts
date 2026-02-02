@@ -395,6 +395,7 @@ export class BadgeClassEditFormComponent
 				.addControl('target_framework', '')
 				.addControl('target_code', ''),
 		)
+		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('expiration', null, [(control) => PositiveIntegerOrNullValidator.valid(control, this.translate)])
 		.addControl('expiration_unit', 'days', Validators.required)
 		.addArray('criteria', this.criteriaForm)
@@ -585,6 +586,7 @@ export class BadgeClassEditFormComponent
 				target_framework: alignment.target_framework,
 				target_code: alignment.target_code,
 			})),
+			courseUrl: badgeClass.courseUrl,
 			expiration: badgeClass.expiration,
 			expiration_unit: 'days', // api always returns expiration in days
 			criteria: badgeClass.apiModel.criteria,
@@ -1369,6 +1371,7 @@ export class BadgeClassEditFormComponent
 				this.existingBadgeClass.imageFrame = imageFrame;
 				this.existingBadgeClass.alignments = this.alignmentsEnabled ? formState.alignments : [];
 				this.existingBadgeClass.tags = Array.from(this.tags);
+				this.existingBadgeClass.courseUrl = formState.courseUrl;
 				this.existingBadgeClass.criteria = formState.criteria;
 				this.existingBadgeClass.expiration = expirationDays;
 				this.existingBadgeClass.criteria_text = '';
@@ -1427,6 +1430,7 @@ export class BadgeClassEditFormComponent
 					alignment: this.alignmentsEnabled ? formState.alignments : [],
 					expiration: expirationDays,
 					criteria: formState.criteria,
+					course_url: formState.courseUrl,
 					extensions: {
 						'extensions:StudyLoadExtension': {
 							'@context': studyLoadExtensionContextUrl,

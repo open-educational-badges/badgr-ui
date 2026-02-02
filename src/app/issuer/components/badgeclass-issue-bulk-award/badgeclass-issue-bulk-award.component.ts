@@ -91,9 +91,6 @@ export class BadgeClassIssueBulkAwardComponent extends BaseAuthenticatedRoutable
 
 	breadcrumbLinkEntries: LinkEntry[] = [];
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const sessionService = inject(SessionService);
 		const router = inject(Router);

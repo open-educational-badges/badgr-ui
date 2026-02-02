@@ -139,7 +139,6 @@
 	"Start": {
 		"desc1": "A learner-centered approach",
 		"desc2": "for documenting & feedback on the learning process",
-		"poweredBy": "Open Educational Badges is a joint project by <a href='https://matrix-gruppe.de/matrix-gemeinnuetzig/'>matrix gGmbH</a>, <a href='https://mycelia.education/'>mycelia gGmbH</a> and <a href='https://opensenselab.org/'>openSenseLab gGmbH</a>.",
 		"imprint": "Imprint",
 		"privacyPolicy": "Privacy Policy",
 		"ourIdeaTitle": "Our Idea",
@@ -374,7 +373,7 @@
 		"memberView": "Member view",
 		"partOfNetwork": "Part of the network",
 		"notNetworkPartnerYet": "The institution is not yet part of a network.",
-		"contract26": "By clicking on “Create institution,” the agreement <a class='tw-underline tw-text-link' target='_blank' href='https://oeb-cms.mycelia.education/wp-content/uploads/2025/09/EN-Vereinbarung-ueber-die-gemeinsame-Verantwortlichkeit-GVV_Institution_082025.pdf'>available here</a> pursuant to Article 26(1) GDPR on the joint data protection responsibility of the institution with its partners becomes effective.",
+		"contract26": "By clicking on “Create institution,” the agreement <a class='tw-underline tw-text-link' target='_blank' href='https://oeb-cms.mycelia.education/wp-content/uploads/2026/01/EN-Vereinbarung-ueber-die-gemeinsame-Verantwortlichkeit-GVV_Institution_2026.pdf'>available here</a> pursuant to Article 26(1) GDPR on the data protection responsibility of the institution with its provider becomes effective.",
 		"linkedInId": "<span class=\"tw-italic tw-font-normal\">Optional: </span> LinkedIn-ID",
 		"linkedInIdUse1": "For ",
 		"linkedInIdUseLink": "badge display",
@@ -406,9 +405,13 @@
 		"addOptionalDetails": "Add optional details",
 		"evidence": "Proof of successful participation",
 		"addNewEvidence": "Add another evidence",
-		"evidenceUrl": "Evidence URL",
-		"evidenceNarrative": "Textual narrative",
-		"youthWelfare": "Independent youth welfare organization"
+		"evidenceUrl": "Evidence URL (link to e.g. materials or photos that prove learning success)",
+		"evidenceNarrative": "Textual narrative (story/background information on badge awarding; max. 600 characters)",
+		"narrative": "Evidence / narrative",
+		"addEvidenceUrl": "Add another URL",
+		"youthWelfare": "Independent youth welfare organization",
+		"catalogAllLoaded": "All institutions matching your search criteria loaded.",
+		"badgeCount": "Badge Count"
 	},
 	"Network": {
 		"networksNav": "Networks A-Z",
@@ -449,7 +452,8 @@
 		"role": {
 			"owner": "Owner",
 			"editor": "Editor",
-			"staff": "Member"
+			"staff": "Member",
+			"creator": "Creator / Owner"
 		},
 		"confirmNetworkInvitation": "Confirm the <span class='tw-font-bold'>network invitation from {{networkName}}</span> for your institution <span class='tw-italic'>{{issuerName}}</span> by clicking the button:",
 		"partnerSince": "Network Partner since",
@@ -469,7 +473,8 @@
 		"sharedOn": "Shared on",
 		"website": "Network website",
 		"createLpInfo": "To create a <span class='tw-font-bold'>network learning path</span>, at least two badges must be created in the network or approved for the network by partner institutions.",
-		"pendingInvites": "Unconfirmed invitations"
+		"pendingInvites": "Unconfirmed invitations",
+		"edit": "Edit network"
 	},
 	"Badge": {
 		"groupBy": "Group by",
@@ -565,7 +570,8 @@
 		"networkAssertionsGetTracked": "All badge awards are included in the network's data evaluation.",
 		"cantRemoveFromNetwork": "The badge CANNOT be removed from the network.",
 		"shareBadgeOnNetwork": "Share badge on network",
-		"alreadyShared": "The badge was already shared on a network."
+		"alreadyShared": "The badge was already shared on a network.",
+		"unknownRecipient": "Recipient unknown"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
@@ -681,7 +687,10 @@
 		"activityStartDateRequired": "Start date is required",
 		"selectIssuer": "For which of your institutions should the badge be created or edited?",
 		"noIssuersAvailable": "You are not part of an institution and therefore cannot create or edit badges.",
-		"selectBadge": "Select the badge you want to edit or create a new one"
+		"selectBadge": "Select the badge you want to edit or create a new one",
+		"linkToCourse": "Link to Course Offering",
+		"course": "Course Offering",
+		"websiteUrl": "Website URL"
 	},
 	"Signup": {
 		"youHaveAccount": "Already have an account?",
@@ -927,7 +936,8 @@
 		"sureToRemove": "Are you sure you want to remove {{badgeName}} from your badges?",
 		"downloadMicroDegree": "Download Micro Degree",
 		"pdfDownload": "Download PDF-Certificate",
-		"place": "Place"
+		"place": "Place",
+		"expiryAfter": "Validity from Date of Award"
 	},
 	"BadgeCollection": {
 		"addCollection": "Add collection",
@@ -1170,7 +1180,8 @@
 		"confirmDelete": "Are you sure you want to delete this learning path?",
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
-		"institutions": "institutions"
+		"institutions": "institutions",
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",

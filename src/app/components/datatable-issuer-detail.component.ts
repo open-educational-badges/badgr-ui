@@ -288,7 +288,7 @@ export class IssuerDetailDatatableComponent {
 		{
 			id: 'RecBadgeDetail.issuedOn',
 			header: () => this.translateHeaderIDCellTemplate(),
-			accessorFn: (row): Date => new Date(row.json.issuedOn),
+			accessorFn: (row): Date => new Date(row.issuedOn),
 			cell: (info) => {
 				const value = info.getValue();
 				return formatDate(value as Date, 'dd.MM.yyyy', 'de-DE');

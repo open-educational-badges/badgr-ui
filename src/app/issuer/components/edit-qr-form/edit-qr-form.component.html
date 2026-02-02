@@ -57,11 +57,16 @@
 					<oeb-optional-details
 						[parentForm]="qrForm"
 						[showExpiration]="true"
-						[showEvidence]="false"
+						[showEvidence]="true"
 						[showLocation]="true"
 						[showCourseDate]="true"
-					>
-					</oeb-optional-details>
+						(addEvidenceEvent)="addEvidence()"
+						(removeEvidenceEvent)="removeEvidence($event)"
+						[showCourseUrl]="true"
+						[courseUrlDefaultOpen]="
+							badgeInstanceCourseUrl() !== null && badgeInstanceCourseUrl().length > 0
+						"
+					/>
 				</div>
 
 				<!-- Notifications Section -->

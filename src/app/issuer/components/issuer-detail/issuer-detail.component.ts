@@ -65,9 +65,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 
 	myInstitutions = 'Meine Institutionen';
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const loginService = inject(SessionService);
 		const router = inject(Router);

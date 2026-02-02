@@ -25,6 +25,25 @@
 					</div>
 				</section>
 
+				<section class="section tw-text-oebblack tw-mt-6">
+					<h2 hlmH2 class="!tw-text-oebblack tw-pb-4">
+						{{ 'CreateBadge.linkToCourse' | translate }}
+					</h2>
+					<div class="tw-w-full tw-flex tw-gap-4 tw-text-oebblack tw-text-lg tw-mt-4 tw-mb-4">
+						<oeb-input
+							id="course-url"
+							class="tw-w-full"
+							[control]="badgeClassForm.rawControlMap.courseUrl"
+							[noTopMargin]="true"
+							[label]="'CreateBadge.websiteUrl' | translate"
+							[placeholder]="'https://'"
+							[urlField]="true"
+							[fieldType]="'url'"
+							errorMessage="{{ 'Issuer.enterURL' | translate }}"
+						/>
+					</div>
+				</section>
+
 				<section class="section tw-text-oebblack tw-text-lg">
 					<h2 hlmH2 class="!tw-text-oebblack tw-mb-4">{{ 'CreateBadge.expiration' | translate }}</h2>
 					<div class="tw-w-fit tw-flex tw-gap-4 tw-text-oebblack tw-text-lg tw-mt-4 tw-mb-4">
