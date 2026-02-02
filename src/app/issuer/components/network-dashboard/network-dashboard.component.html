@@ -91,7 +91,10 @@
 					[variant]="partnerIssuers().length ? 'secondary' : 'default'"
 					(click)="openDialog()"
 					[text]="'Network.inviteInstitutions' | translate"
-					[disabled]="network().current_user_network_role !== 'owner'"
+					[disabled]="
+						network().current_user_network_role !== 'owner' &&
+						network().current_user_network_role !== 'creator'
+					"
 				>
 				</oeb-button>
 			</div>
