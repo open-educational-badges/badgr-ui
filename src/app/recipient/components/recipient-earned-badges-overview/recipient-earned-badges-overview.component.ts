@@ -108,6 +108,7 @@ import { TranslateService } from '@ngx-translate/core';
 								[issuerSlug]="b.badgeClass.issuer.slug"
 								[badgeSlug]="b.slug"
 								[competencies]="b.getExtension('extensions:CompetencyExtension', [{}])"
+								[category]="b.getExtension('extensions:CategoryExtension', '').Category"
 								[imported]="b.imported"
 								[publicUrl]="this.isEmbedded() ? b.shareUrl : null"
 								[publicIssuerUrl]="this.isEmbedded() ? b.badgeClass.issuer.id : null"

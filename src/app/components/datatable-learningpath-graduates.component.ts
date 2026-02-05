@@ -97,6 +97,12 @@ import { NgIcon } from '@ng-icons/core';
 			{{ context.header.id | translate }}
 		</ng-template>
 
+		<ng-template #nameCellTemplate let-context>
+			<p class="tw-max-w-[26ch] tw-whitespace-normal tw-break-words tw-leading-tight">
+				{{ context.getValue() }}
+			</p>
+		</ng-template>
+
 		<ng-template #badgeActionsCellTemplate let-context>
 			<div class="tw-flex tw-flex-col tw-gap-1 md:tw-gap-2 tw-leading-relaxed">
 				<oeb-button
@@ -122,6 +128,7 @@ export class LearningPathGraduatesDatatableComponent {
 
 	translateHeaderIDCellTemplate = viewChild.required<TemplateRef<any>>('translateHeaderIDCellTemplate');
 	badgeActionsTemplate = viewChild.required<TemplateRef<any>>('badgeActionsCellTemplate');
+	nameCellTemplate = viewChild.required<TemplateRef<any>>('nameCellTemplate');
 
 	readonly tableSorting = signal<SortingState>([
 		{
@@ -135,7 +142,7 @@ export class LearningPathGraduatesDatatableComponent {
 			id: 'General.name',
 			header: () => this.translateHeaderIDCellTemplate(),
 			accessorFn: (row) => `${row.user.first_name} ${row.user.last_name}`,
-			cell: (ctx) => ctx.getValue(),
+			cell: () => this.nameCellTemplate(),
 			sortDescFirst: false,
 		},
 		{

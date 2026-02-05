@@ -123,7 +123,8 @@
 		"notNow": "Not Now",
 		"notFound": "Not found",
 		"start": "Start",
-		"end": "End"
+		"end": "End",
+		"archive": "archive"
 	},
 	"NavItems": {
 		"register": "Register",
@@ -681,7 +682,7 @@
 		"subjectMatter": "Write down what your learning program teaches in terms of <u>subject matter</u>.",
 		"howLearningWorks": "Also describe <u>how</u> the learning takes place.",
 		"inAddition": "In addition to subject-specific skills, <u>soft skills</u> such as social, communication, or problem-solving skills can often be acquired through teamwork, experimentation or planning.",
-		"aiAssistantNote": "Note: AI support – the Badge Assistant can make mistakes. Therefore, please check the suggestions and report any incorrect results by <a class='tw-text-[var(--color-link)] tw-underline' href='mailto:support@openbadges.education'>email.</a> <a class='tw-text-[var(--color-link)] tw-underline' href='https://openbadges.education/public/privacy' target='_blank'>Data protection at OEB.</a>",
+		"aiAssistantNote": "Note: AI support – the Badge Assistant can make mistakes. Therefore, please check the suggestions and report any incorrect results by <a class='tw-text-[var(--color-link)] tw-underline' href='mailto:support@openbadges.education'>email.</a> <a class='tw-text-[var(--color-link)] tw-underline' href='https://openbadges.education/page/data-privacy' target='_blank'>Data protection at OEB.</a>",
 		"successfullyCreated": "Badge successfully created!",
 		"activityEndDateRequired": "End date is required and may not be before the start date",
 		"activityStartDateRequired": "Start date is required",
@@ -702,7 +703,7 @@
 		"repeatPassword": "Repeat password",
 		"createAccount": "Create account",
 		"readTerms": "Please read the terms of use and agree to them if you wish to continue.",
-		"agreeToTerms1": "I have read the <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/terms'>terms of use</a> and agree to them. ",
+		"agreeToTerms1": "I have read the <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='page/terms-of-use'>terms of use</a> and agree to them. ",
 		"registerWithUs": "Register with",
 		"provideInfo": ", by providing the following information",
 		"signUpWith": "Sign up with",
@@ -717,7 +718,7 @@
 		"reachedResendEmailLimit": "You have reached the limit for resending confirmation emails. Check your inbox for an existing message or try again after 5 minutes.",
 		"resendEmailFailed": "Resending the confirmation email failed. Please contact support.",
 		"newEmailSent": "A new confirmation email has been sent to: ",
-		"infoPersonalDataProcessing": "Information on the processing of your personal data can be found in our <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/privacy'>privacy policy</a>.",
+		"infoPersonalDataProcessing": "Information on the processing of your personal data can be found in our <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='page/data-privacy'>privacy policy</a>.",
 		"enterValidEmail": "Please enter a valid email address.",
 		"enterFirstName": "Please enter a first name",
 		"enterLastName": "Please enter a last name",
@@ -1064,7 +1065,7 @@
 		"fillForm": "Fill out the form fields to request your badge.",
 		"requestBadgeInfo1": "Your request will then be approved by a person from",
 		"requestBadgeInfo2": ". Once this has happened, the badge will be sent to you by email.",
-		"personalDataInfo": "Information on the processing of your personal data can be found in our <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='public/privacy'>privacy policy</a>.",
+		"personalDataInfo": "Information on the processing of your personal data can be found in our <a class='tw-underline tw-text-[#1400FF]' target='_blank' href='page/data-privacy'>privacy policy</a>.",
 		"ageConfirmation": "I confirm that I am <b>16 years or older. If I am younger than 16 years old:</b> My parents or legal guardians know that I am providing my personal data for the use of the Open Educational Badges platform. I confirm that they agree to this.",
 		"successMessage": "<span class='tw-font-bold'>You have successfully requested the badge.</span><br>",
 		"successMessage2": "As soon as your request has been confirmed, you will receive the badge by email.",
@@ -1181,7 +1182,11 @@
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
 		"institutions": "institutions",
-		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded.",
+		"archive": "Archiving instead of deletion",
+		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
+		"canOnlyBeArchived": "It can therefore only be archived.",
+		"mdArchived": "We have archived the micro degree."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",

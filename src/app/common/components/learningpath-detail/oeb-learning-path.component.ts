@@ -1,8 +1,7 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, TemplateRef, viewChild, ViewChild } from '@angular/core';
 import { animate, animateChild, query, stagger, style, transition, trigger } from '@angular/animations';
 import { LearningPathApiService } from '../../services/learningpath-api.service';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
-import { DangerDialogComponentTemplate } from '../../dialogs/oeb-dialogs/danger-dialog-template.component';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SuccessDialogComponent } from '../../dialogs/oeb-dialogs/success-dialog.component';
 import { CommonDialogsService } from '../../services/common-dialogs.service';
@@ -18,6 +17,9 @@ import { HlmH2, HlmP, HlmH3 } from '@spartan-ng/helm/typography';
 import { ApiLearningPathParticipant } from '~/common/model/learningpath-api.model';
 import { Issuer } from '~/issuer/models/issuer.model';
 import { Network } from '~/issuer/network.model';
+import { DialogComponent } from '~/components/dialog.component';
+import { HlmIconModule } from '@spartan-ng/helm/icon';
+import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 
 @Component({
 	selector: 'oeb-learning-path',
@@ -42,6 +44,7 @@ import { Network } from '~/issuer/network.model';
 		BgBadgecard,
 		LearningPathGraduatesDatatableComponent,
 		TranslatePipe,
+		HlmIconModule,
 	],
 })
 export class OebLearningPathDetailComponent extends BaseRoutableComponent implements OnInit {
@@ -52,6 +55,8 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 	router: Router;
 	private translate = inject(TranslateService);
 
+	archiveLpTemplate = viewChild.required<TemplateRef<any>>('archiveLpTemplate');
+
 	@Input() learningPath;
 	@Input() issuer: Issuer | Network;
 	@Input() badges;
@@ -61,8 +66,7 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 
 	learningPathEditLink;
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
+	dialogRef: BrnDialogRef<any> = null;
 
 	constructor() {
 		const router = inject(Router);
@@ -91,15 +95,28 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 		];
 	}
 
-	public deleteLearningPath(learningPathSlug, issuer) {
-		const dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
+	public deleteLearningPath() {
+		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
-				delete: () => this.deleteLearningPathApi(learningPathSlug, issuer),
-				// qrCodeRequested: () => {},
 				variant: 'danger',
-				text: this.translate.instant('LearningPath.deleteWarning'),
-				title: this.translate.instant('General.delete'),
+				content: this.archiveLpTemplate(),
 			},
+		});
+		this.dialogRef = dialogRef;
+	}
+
+	public archiveLearningPath() {
+		this.closeDialog();
+		this.learningPathApiService.archiveLearningPath(this.issuer.slug, this.learningPath.slug).then(() => {
+			const dialogRef = this._hlmDialogService.open(SuccessDialogComponent, {
+				context: {
+					text: this.translate.instant('LearningPath.mdArchived'),
+					variant: 'success',
+				},
+			});
+			this.router.navigate(['issuer/issuers/', this.issuer.slug], {
+				queryParams: { tab: 'micro-degrees' },
+			});
 		});
 	}
 
@@ -174,5 +191,9 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 
 	get learningPathReverseBadges() {
 		return [...this.learningPath.badges].reverse();
+	}
+
+	closeDialog() {
+		this.dialogRef.close();
 	}
 }

@@ -263,6 +263,19 @@
 						(onNavigateToDetail)="redirectToLearningPathDetail($event, issuer)"
 					></learningpaths-datatable>
 
+					<!-- <div *ngIf="!public && archivedLearningPaths.length" class="tw-mt-10">
+						<h3 class="tw-text-lg tw-font-semibold tw-mb-4">
+							{{ 'Issuer.archivedLearningPaths' | translate }}
+						</h3>
+
+						<learningpaths-datatable
+							[learningPaths]="archivedLearningPaths"
+							[issuer]="isFullIssuer(issuer) ? issuer : null"
+							(onNavigateToDetail)="redirectToLearningPathDetail($event, issuer)"
+						>
+						</learningpaths-datatable>
+					</div> -->
+
 					<ng-container *ngIf="public">
 						<div class="tw-grid tw-grid-cols-learningpaths tw-gap-6">
 							@for (lp of learningPaths; track lp) {
@@ -276,7 +289,6 @@
 										[studyLoad]="calculateStudyLoad(lp)"
 										[completed]="false"
 										[requested]="lp.requested"
-										[matchOrProgress]="undefined"
 										[badgeImage]="lp.participationBadge_image"
 									></bg-learningpathcard>
 								}

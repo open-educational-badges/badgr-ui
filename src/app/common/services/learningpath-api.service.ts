@@ -17,9 +17,6 @@ export class LearningPathApiService extends BaseHttpApiService {
 	protected configService: AppConfigService;
 	protected messageService: MessageService;
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const loginService = inject(AUTH_PROVIDER);
 		const http = inject(HttpClient);
@@ -42,8 +39,17 @@ export class LearningPathApiService extends BaseHttpApiService {
 		return this.get<ApiLearningPath>(`/public/learningpaths/${lpSlug}`, null, false, true).then((r) => r.body);
 	}
 
-	getLearningPathsForIssuer(issuerSlug: string) {
-		return this.get<ApiLearningPath[]>(`/v1/issuer/issuers/${issuerSlug}/learningpath`).then((r) => r.body);
+	getLearningPathsForIssuer(issuerSlug: string, archived?: 'true' | 'false' | 'all') {
+		const params = archived ? { archived } : {};
+		return this.get<ApiLearningPath[]>(`/v1/issuer/issuers/${issuerSlug}/learningpath`, params).then((r) => r.body);
+	}
+
+	getArchivedLearningPathsForIssuer(issuerSlug: string) {
+		return this.getLearningPathsForIssuer(issuerSlug, 'true');
+	}
+
+	getAllLearningPathsForIssuer(issuerSlug: string) {
+		return this.getLearningPathsForIssuer(issuerSlug, 'all');
 	}
 
 	getLearningPathsForBadgeClass(badgeClassSlug: string) {
@@ -72,6 +78,12 @@ export class LearningPathApiService extends BaseHttpApiService {
 
 	deleteLearningPath(issuerSlug: string, lpSlug: string) {
 		return this.delete(`/v1/issuer/issuers/${issuerSlug}/learningpath/${lpSlug}`);
+	}
+
+	archiveLearningPath(issuerSlug: string, lpSlug: string) {
+		return this.post<ApiLearningPath>(`/v1/issuer/issuers/${issuerSlug}/learningpath/${lpSlug}/archive`, {}).then(
+			(r) => r.body,
+		);
 	}
 
 	deleteLearningPathRequest(reqId: string) {

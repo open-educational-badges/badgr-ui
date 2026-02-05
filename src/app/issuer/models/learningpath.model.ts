@@ -84,6 +84,14 @@ export class LearningPath extends ManagedEntity<ApiLearningPath, LearningPathRef
 		this.apiModel.activated = active;
 	}
 
+	get archived(): boolean {
+		return this.apiModel.archived;
+	}
+
+	get archived_at(): Date {
+		return this.apiModel.archived_at;
+	}
+
 	constructor(
 		commonManager: CommonEntityManager,
 		initialEntity: ApiLearningPath = null,

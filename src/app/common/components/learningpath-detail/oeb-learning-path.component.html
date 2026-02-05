@@ -52,7 +52,7 @@
 								[text]="'General.delete' | translate"
 								variant="secondary"
 								width="full_width"
-								(click)="deleteLearningPath(learningPath.slug, issuer)"
+								(click)="deleteLearningPath()"
 								[disabled-when-requesting]="true"
 								[disabled]="!issuer.canCreateBadge"
 								[class]="
@@ -209,3 +209,19 @@
 		</div>
 	</div>
 </div>
+
+<ng-template #archiveLpTemplate>
+	<div class="tw-items-center tw-w-full tw-justify-center tw-flex tw-flex-col tw-text-lg">
+		<span class="tw-text-oebblack tw-pb-4 tw-font-bold">{{ 'LearningPath.archive' | translate }}</span>
+		<p class="tw-text-oebblack tw-pb-4 tw-text-center">
+			{{ 'LearningPath.alreadyAwarded' | translate }}
+		</p>
+		<span class="tw-italic tw-text-purple tw-pb-4">
+			{{ 'LearningPath.canOnlyBeArchived' | translate }}
+		</span>
+		<div class="tw-flex tw-gap-4 tw-justify-center">
+			<oeb-button size="sm" variant="secondary" [text]="'General.cancel' | translate"> </oeb-button>
+			<oeb-button size="sm" (click)="archiveLearningPath()" [text]="'General.archive' | translate"> </oeb-button>
+		</div>
+	</div>
+</ng-template>
