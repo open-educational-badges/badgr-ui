@@ -110,7 +110,16 @@ import { NgIcon } from '@ng-icons/core';
 						width="40"
 					/>
 				</div>
-				<p>{{ context.getValue() }}</p>
+				<p
+					class="
+						tw-max-w-[26ch]
+						tw-whitespace-normal
+						tw-break-words
+						tw-leading-tight
+					"
+				>
+					{{ context.getValue() }}
+				</p>
 			</div>
 		</ng-template>
 

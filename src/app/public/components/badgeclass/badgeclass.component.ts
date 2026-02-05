@@ -117,14 +117,14 @@ export class PublicBadgeClassComponent implements OnInit {
 					badgeImage: badge.image,
 					competencies: badge['extensions:CompetencyExtension'],
 					license: badge['extensions:LicenseExtension'] ? true : false,
-					crumbs: [{ title: 'Badges', routerLink: ['/catalog/badges'] }, { title: badge.name }],
+					crumbs: [{ title: 'Badges A-Z', routerLink: ['/catalog/badges'] }, { title: badge.name }],
 					learningPaths: this.learningPaths,
 					copy_permissions: badge.copy_permissions,
 					networkBadge: badge.isNetworkBadge,
 					networkImage: badge.networkImage,
 					networkName: badge.networkName,
-					courseUrl: badge.badgeClass.courseUrl,
-					expiration: badge.badgeClass.expiration,
+					courseUrl: badge.courseUrl,
+					expiration: badge.expiration,
 				};
 
 				// wait for user profile, emails, issuer to check if user can copy

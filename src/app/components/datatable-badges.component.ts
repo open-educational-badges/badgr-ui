@@ -114,7 +114,16 @@ import { PublicApiBadgeClass } from '~/public/models/public-api.model';
 						width="40"
 					/>
 				</div>
-				<p>{{ context.getValue() }}</p>
+				<p
+					class="
+						tw-max-w-[26ch]
+						tw-whitespace-normal
+						tw-break-words
+						tw-leading-tight
+					"
+				>
+					{{ context.getValue() }}
+				</p>
 			</div>
 		</ng-template>
 
@@ -215,9 +224,6 @@ export class DatatableComponent {
 			updater instanceof Function ? this.tableSorting.update(updater) : this.tableSorting.set(updater),
 		enableSortingRemoval: false, // ensures at least one column is sorted
 	}));
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
 
 	constructor() {}
 }
