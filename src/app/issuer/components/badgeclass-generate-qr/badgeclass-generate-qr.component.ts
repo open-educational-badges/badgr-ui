@@ -70,7 +70,7 @@ export class BadgeClassGenerateQrComponent extends BaseAuthenticatedRoutableComp
 	qrData: string;
 	qrTitle: string;
 	qrCodeCSS: string =
-		'tw-border-solid tw-border-purple tw-border-[3px] tw-p-2 tw-rounded-2xl tw-max-w-[265px] md:tw-max-w-[350px]';
+		'tw-border-solid tw-border-purple tw-border-[3px] tw-p-2 tw-rounded-2xl tw-max-w-[265px] md:tw-max-w-[350px] tw-self-start';
 	issuer: string;
 	creator: string;
 	valid: boolean = true;
