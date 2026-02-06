@@ -655,7 +655,6 @@ export class BadgeClassDetailComponent
 		processedCount,
 	) {
 		if (!newInstances || newInstances.length === 0) return;
-		console.log(newInstances);
 		const current = this.recipients();
 		const merged = [
 			...new Map(
