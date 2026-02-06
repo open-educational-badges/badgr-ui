@@ -297,9 +297,12 @@
 												[name]="'lucideExternalLink'"
 												[size]="'20px'"
 												class="tw-me-1"
-											/><a href="{{ config.courseUrl }}" class="tw-underline tw-text-link">{{
-												'CreateBadge.course' | translate
-											}}</a>
+											/><a
+												href="{{ config.courseUrl }}"
+												class="tw-underline tw-text-link"
+												target="_blank"
+												>{{ 'CreateBadge.course' | translate }}</a
+											>
 										</div>
 									}
 									@if (config.duration) {
