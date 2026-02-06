@@ -18,9 +18,6 @@ export class PdfService {
 
 	baseUrl: string;
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 	}
