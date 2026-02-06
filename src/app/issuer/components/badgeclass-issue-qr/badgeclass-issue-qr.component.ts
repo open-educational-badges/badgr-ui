@@ -52,9 +52,6 @@ export class BadgeClassIssueQrComponent extends BaseAuthenticatedRoutableCompone
 		.addControl('badgeclass_id', '', Validators.required)
 		.addControl('issuer_id', '', Validators.required);
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const route = inject(ActivatedRoute);
 		const router = inject(Router);
@@ -72,21 +69,22 @@ export class BadgeClassIssueQrComponent extends BaseAuthenticatedRoutableCompone
 					this.translate.instant('IssueQr.list4.2');
 
 				this.crumbs = [
-					{ title: 'Issuers', routerLink: ['/issuer'] },
+					{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer'] },
 					{
-						// title: issuer.name,
-						title: 'issuer',
+						title: this.badgeClass.issuerName,
 						routerLink: ['/issuer/issuers', this.issuerSlug],
 					},
 					{
-						title: 'badges',
+						title: this.translate.instant('General.badges'),
 						routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/'],
 					},
 					{
 						title: badgeClass.name,
 						routerLink: ['/issuer/issuers', this.issuerSlug, 'badges', badgeClass.slug],
 					},
-					{ title: 'Award Badge' },
+					{
+						title: this.translate.instant('Issuer.giveQr'),
+					},
 				];
 			});
 
