@@ -134,14 +134,13 @@ export class BadgeClassGenerateQrComponent extends BaseAuthenticatedRoutableComp
 				});
 
 				this.crumbs = [
-					{ title: 'Issuers', routerLink: ['/issuer'] },
+					{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer'] },
 					{
-						// title: issuer.name,
-						title: 'issuer',
+						title: this.badgeClass.issuerName,
 						routerLink: ['/issuer/issuers', this.issuerSlug],
 					},
 					{
-						title: 'badges',
+						title: this.translate.instant('General.badges'),
 						routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/'],
 					},
 					{
@@ -149,11 +148,11 @@ export class BadgeClassGenerateQrComponent extends BaseAuthenticatedRoutableComp
 						routerLink: ['/issuer/issuers', this.issuerSlug, 'badges', badgeClass.slug],
 					},
 					{
-						title: 'Award Badge',
+						title: this.translate.instant('Issuer.giveQr'),
 						routerLink: ['/issuer/issuers', this.issuerSlug, 'badges', badgeClass.slug, 'qr'],
 					},
 					{
-						title: 'Generate QR',
+						title: this.translate.instant('QrCode.qrAward'),
 					},
 				];
 			});
