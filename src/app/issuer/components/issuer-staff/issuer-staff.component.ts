@@ -205,9 +205,6 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 	dialogRef: BrnDialogRef<any> = null;
 	selectedStaffRequestEmail: string | null = null;
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const loginService = inject(SessionService);
 		const router = inject(Router);
@@ -296,7 +293,6 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 				(error) => {
 					const err = BadgrApiFailure.from(error);
 					console.log(err);
-					this.closeDialog();
 					this.error.set(
 						BadgrApiFailure.messageIfThrottableError(err.overallMessage) ||
 							''.concat(this.translate.instant('Issuer.addMember_failed'), ': ', err.firstMessage),
