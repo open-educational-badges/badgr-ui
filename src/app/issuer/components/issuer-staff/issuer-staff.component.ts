@@ -352,6 +352,8 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 		if (!this.checkQuotasDialog()) {
 			return false;
 		}
+		// reset last selection
+		this.staffCreateForm.rawControlMap.staffRole.reset();
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				headerTemplate: this.dialogHeaderTemplate(),
@@ -383,6 +385,14 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 	}
 
 	confirmStaffRequest(event: ApiStaffRequest) {
+		if (!this.checkQuotasDialog()) {
+			this.quotasExceededDialog.openDialog();
+			return false;
+		}
+
+		// reset selection
+		this.staffRequestRoleForm.rawControlMap.staffRole.reset();
+
 		this.selectedStaffRequestEmail = event.user.email;
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {

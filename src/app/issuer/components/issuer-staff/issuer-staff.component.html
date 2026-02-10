@@ -201,6 +201,7 @@
 					[value]="role.value"
 					sublabel="{{ role.description | translate }}"
 					[last]="last"
+					[disabled]="checkRoleDisabled(role.value)"
 					errorMessage="{{ 'Issuer.addMember_selectRole' | translate }}"
 				></bg-formfield-radio>
 			}
