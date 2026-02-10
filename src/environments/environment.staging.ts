@@ -12,11 +12,6 @@ export const environment: BadgrEnvironment = {
 			welcomeMessage: 'Willkommen auf Open Educational Badges',
 			serviceName: 'Open Educational Badges',
 			showPoweredByBadgr: true,
-			showPoweredByOSL: true,
-			providedBy: {
-				name: 'openSenseLab gGmbH',
-				url: 'https://opensenselab.org',
-			},
 			logoImg: {
 				small: 'assets/logos/Logo-Oeb.png',
 				desktop: 'assets/logos/Logo-Oeb.png',
@@ -32,8 +27,9 @@ export const environment: BadgrEnvironment = {
 				},
 			],
 			useColorNavbar: true,
-			termsOfServiceLink: 'public/impressum',
-			privacyPolicyLink: 'public/privacy',
+			imprintLink: 'page/impressum',
+			termsOfServiceLink: 'page/nutzungsbedingungen',
+			privacyPolicyLink: 'page/privacy-policy',
 			showApiDocsLink: false,
 			cssCustomProps: {
 				'--color-interactive1': '#492E98',

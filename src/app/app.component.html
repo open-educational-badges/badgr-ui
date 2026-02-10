@@ -333,9 +333,6 @@
 		class="page-padding oeb-footer tw-py-14 tw-font-[rubik] tw-text-left tw-flex md:tw-flex-row md:tw-justify-between md:tw-gap-0 tw-flex-col-reverse tw-gap-[2em]"
 	>
 		<div class="tw-flex tw-flex-col tw-gap-2 tw-text-[18px] tw-leading-[23.4px] tw-text-oebblack">
-			@if (theme.showPoweredByOSL && theme.providedBy) {
-				<p class="md:tw-w-2/3 tw-mt#-[10px]" [innerHTML]="'Start.poweredBy' | translate"></p>
-			}
 			<div class="tw-flex tw-gap-2 tw-items-center tw-mt-[10px] md:tw-w-2/3">
 				<img
 					src="assets/oeb/images/issuerPage/oeb-beta-logo.svg"
@@ -346,9 +343,9 @@
 			</div>
 			<div class="tw-flex md:tw-hidden tw-flex-col tw-gap-[7px] tw-text-sm md:tw-text-base tw-text-oebblack">
 				<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']">FAQ</a>
-				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'Start.imprint' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.imprintLink">{{ 'Start.imprint' | translate }}</a>
 				<a class="tw-text-oebblack" [href]="theme.privacyPolicyLink">{{ 'Start.privacyPolicy' | translate }}</a>
-				<a class="tw-text-oebblack" [routerLink]="['/public/terms']">{{ 'General.tos' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
 			</div>
 		</div>
 
@@ -413,9 +410,9 @@
 				}
 			} @else {
 				<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']">FAQ</a>
-				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'Start.imprint' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.imprintLink">{{ 'Start.imprint' | translate }}</a>
 				<a class="tw-text-oebblack" [href]="theme.privacyPolicyLink">{{ 'Start.privacyPolicy' | translate }}</a>
-				<a class="tw-text-oebblack" [routerLink]="['/public/terms']">{{ 'General.tos' | translate }}</a>
+				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
 			}
 		</div>
 	</div>
