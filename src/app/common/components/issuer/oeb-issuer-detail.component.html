@@ -432,3 +432,7 @@
 		}
 	</ng-template>
 </div>
+
+@if (isFullIssuer(issuer)) {
+	<quota-exceeded-dialog #quotasExceededDialog [issuer]="issuer"></quota-exceeded-dialog>
+}

@@ -1,4 +1,14 @@
-import { Component, Input, OnInit, Output, EventEmitter, inject, TemplateRef, viewChild } from '@angular/core';
+import {
+	Component,
+	Input,
+	OnInit,
+	Output,
+	EventEmitter,
+	inject,
+	TemplateRef,
+	viewChild,
+	ViewChild,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -48,6 +58,7 @@ import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model'
 import { environment } from 'src/environments/environment';
 import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
 import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
+import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -75,6 +86,7 @@ import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 		TranslateModule,
 		NgTemplateOutlet,
 		QuotaInformationComponent,
+		QuotaExceededDialog,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit {
@@ -159,6 +171,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
 	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
 	readonly networkBadgesTemplate = viewChild<TemplateRef<any>>('networkBadgesTemplate');
+	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
 
 	badgeResults: BadgeResult[] = [];
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
@@ -490,6 +503,9 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	routeToBadgeAward(badge: BadgeClass, issuer) {
+		if (!this.checkQuotasDialog()) {
+			return false;
+		}
 		this.qrCodeApiService.getQrCodesForIssuerByBadgeClass(this.issuer.slug, badge.slug).then((qrCodes) => {
 			if (badge.recipientCount === 0 && qrCodes.length === 0) {
 				const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
@@ -615,6 +631,16 @@ export class OebIssuerDetailComponent implements OnInit {
 			const studyLoad = b?.badge?.['extensions:StudyLoadExtension']?.StudyLoad ?? 0;
 			return acc + studyLoad;
 		}, 0);
+	}
+
+	checkQuotasDialog() {
+		if (this.isFullIssuer(this.issuer) && this.issuer.quotas) {
+			if (this.issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
+				this.quotasExceededDialog().openDialog();
+				return false;
+			}
+		}
+		return true;
 	}
 }
 

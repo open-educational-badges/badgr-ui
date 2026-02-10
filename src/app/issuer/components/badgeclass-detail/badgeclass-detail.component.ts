@@ -47,6 +47,8 @@ import { PublicApiService } from '~/public/services/public-api.service';
 import { SelectNetworkComponent } from '../select-network/select-network.component';
 import { BadgeInstanceV3 } from '~/issuer/models/badgeinstancev3.model';
 import { SuccessDialogComponent } from '~/common/dialogs/oeb-dialogs/success-dialog.component';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 
 interface groupedInstances {
 	has_access: boolean;
@@ -68,6 +70,7 @@ interface groupedInstances {
 		TranslatePipe,
 		OebTabsComponent,
 		SelectNetworkComponent,
+		QuotaExceededDialog,
 	],
 })
 export class BadgeClassDetailComponent
@@ -109,6 +112,8 @@ export class BadgeClassDetailComponent
 	readonly networkSelection = viewChild<TemplateRef<void>>('networkSelection');
 
 	readonly networkSearchInputModel = viewChild<NgModel>('networkSearchInputModel');
+
+	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
 
 	readonly badgeFailedImageUrl = '../../../../breakdown/static/images/badge-failed.svg';
 	readonly badgeLoadingImageUrl = '../../../../breakdown/static/images/badge-loading.svg';
@@ -858,6 +863,9 @@ export class BadgeClassDetailComponent
 	}
 
 	routeToBadgeAward(badge: BadgeClass, issuer) {
+		if (!this.checkQuotasDialog()) {
+			return false;
+		}
 		if (this.config.headerButton.disabled) return;
 		this.qrCodeApiService.getQrCodesForIssuerByBadgeClass(this.issuer.slug, badge.slug).then((qrCodes) => {
 			if (badge.recipientCount === 0 && qrCodes.length === 0 && !this.issuer.is_network) {
@@ -981,5 +989,13 @@ export class BadgeClassDetailComponent
 			if (batchAwards.nativeElement.offsetTop > 0) this.hasScrolled = true;
 			batchAwards.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		}
+	}
+
+	checkQuotasDialog() {
+		if (this.issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
+			this.quotasExceededDialog().openDialog();
+			return false;
+		}
+		return true;
 	}
 }

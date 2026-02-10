@@ -202,3 +202,5 @@
 <ng-template #networkSelection>
 	<select-network [badge]="badgeClass" [issuer]="issuer" (closeSelect)="closeDialog()"></select-network>
 </ng-template>
+
+<quota-exceeded-dialog #quotasExceededDialog [issuer]="issuer"></quota-exceeded-dialog>

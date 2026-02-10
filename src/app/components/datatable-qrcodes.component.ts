@@ -46,6 +46,9 @@ import { OebCheckboxComponent } from './oeb-checkbox.component';
 import { OebTableImports } from './oeb-table';
 import { HlmButtonModule } from './spartan/ui-button-helm/src';
 import { ApiQRCode } from '~/issuer/models/qrcode-api.model';
+import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { Network } from '~/issuer/network.model';
+import { Issuer } from '~/issuer/models/issuer.model';
 
 export type RequestedBadge = {
 	email: string;
@@ -75,6 +78,7 @@ export type RequestedBadge = {
 		FlexRenderDirective,
 		OebCheckboxComponent,
 		TitleCasePipe,
+		QuotaExceededDialog,
 	],
 	template: `
 		@if (this.isTaskProcessing() || this.isTaskPending()) {
@@ -201,6 +205,8 @@ export type RequestedBadge = {
 			[text]="this.rowSelectionCount() > 1 ? ('Issuer.giveBadges' | translate) : ('Issuer.giveBadge' | translate)"
 		>
 		</oeb-button>
+
+		<quota-exceeded-dialog #quotasExceededDialog [issuer]="issuer()"></quota-exceeded-dialog>
 	`,
 })
 export class QrCodeDatatableComponent implements OnInit, OnDestroy {
@@ -215,6 +221,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 
 	qrCode = input.required<ApiQRCode>();
 	badgeSlug = input.required<string>();
+	issuer = input.required<Issuer | Network>();
 	issuerSlug = input.required<string>();
 	qrBadgeAward = output<number>();
 	requestCountChanged = output<number>();
@@ -224,6 +231,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 	headerCheckbox = viewChild.required<TemplateRef<any>>('headerCheckbox');
 	rowCheckbox = viewChild.required<TemplateRef<any>>('rowCheckbox');
 	deleteButton = viewChild.required<TemplateRef<any>>('deleteButton');
+	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
 
 	rowSelectionCount = computed(() => Object.keys(this.rowSelection()).length);
 	isTaskPending = computed(
@@ -362,6 +370,11 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 	};
 
 	async issueBadges() {
+		if (!this.checkQuotasDialog()) {
+			return false;
+		}
+		return false;
+
 		if (this.rowSelectionCount() === 0 || this.isTaskProcessing() || this.isTaskPending()) return;
 
 		const assertions: BadgeInstanceBatchAssertion[] = [];
@@ -516,5 +529,13 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 				},
 			},
 		});
+	}
+
+	checkQuotasDialog() {
+		if (this.issuer().quotas?.quotas['BADGE_AWARD']?.quota - this.rowSelectionCount() < 0) {
+			this.quotasExceededDialog().openDialog();
+			return false;
+		}
+		return true;
 	}
 }
