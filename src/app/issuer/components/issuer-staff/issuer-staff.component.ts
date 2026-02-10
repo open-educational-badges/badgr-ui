@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, TemplateRef, viewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, TemplateRef, ViewChild, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { SessionService } from '../../../common/services/session.service';
@@ -46,6 +46,7 @@ import { TitleCasePipe } from '@angular/common';
 import { UserProfileManager } from '~/common/services/user-profile-manager.service';
 import { UserProfile } from '~/common/model/user-profile.model';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 @Component({
 	templateUrl: './issuer-staff.component.html',
@@ -86,6 +87,7 @@ import { QuotaInformationComponent } from '../quota-information/quota-informatio
 		TranslatePipe,
 		TitleCasePipe,
 		QuotaInformationComponent,
+		QuotaExceededDialog,
 	],
 })
 export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
@@ -206,6 +208,9 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 	);
 	dialogRef: BrnDialogRef<any> = null;
 	selectedStaffRequestEmail: string | null = null;
+
+	@ViewChild('quotasExceededDialog')
+	private quotasExceededDialog: QuotaExceededDialog;
 
 	constructor() {
 		const loginService = inject(SessionService);
@@ -344,6 +349,9 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 	}
 
 	public openDialog(text: string) {
+		if (!this.checkQuotasDialog()) {
+			return false;
+		}
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				headerTemplate: this.dialogHeaderTemplate(),
@@ -388,5 +396,28 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 			},
 		});
 		this.dialogRef = dialogRef;
+	}
+
+	checkQuotasDialog() {
+		if (
+			this.issuer().quotas?.quotas['ACCOUNTS_ADMIN']?.quota === 0 &&
+			this.issuer().quotas?.quotas['ACCOUNTS_MEMBER']?.quota === 0
+		) {
+			this.quotasExceededDialog.openDialog();
+			return false;
+		}
+
+		return true;
+	}
+
+	checkRoleDisabled(role: string, current?: string) {
+		if (role === 'owner' || role === 'editor') {
+			return (
+				(!current || (current != 'owner' && current != 'editor')) &&
+				this.issuer().quotas?.quotas['ACCOUNTS_ADMIN']?.quota === 0
+			);
+		} else {
+			return this.issuer().quotas?.quotas['ACCOUNTS_MEMBER']?.quota === 0;
+		}
 	}
 }

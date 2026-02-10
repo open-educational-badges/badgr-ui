@@ -139,9 +139,9 @@
 			error="{{ 'Issuer.addMember_newEmail' | translate }}"
 		>
 		</oeb-input>
-		<span class="tw-mt-6 tw-text-oebblack tw-text-lg tw-font-bold">{{
-			'Issuer.addMember_chooseRole' | translate
-		}}</span>
+		<div class="tw-mt-6 tw-mb-2 tw-text-oebblack tw-text-lg tw-font-bold">
+			{{ 'Issuer.addMember_chooseRole' | translate }}
+		</div>
 		@for (role of issuerStaffRoleOptions; track role; let last = $last) {
 			<bg-formfield-radio
 				[control]="staffCreateForm.rawControlMap.staffRole"
@@ -150,6 +150,7 @@
 				[value]="role.value"
 				[sublabel]="role.description | translate"
 				[last]="last"
+				[disabled]="checkRoleDisabled(role.value)"
 				errorMessage="{{ 'Issuer.addMember_selectRole' | translate }}"
 			></bg-formfield-radio>
 		}
@@ -253,11 +254,11 @@
 					#memberSelect
 					class="!tw-border-purple !tw-border-solid !tw-text-oebblack tw-rounded-[10px] tw-text-lg"
 					[ngModel]="context.getValue()"
-					[disabled]="context.getValue() === 'owner'"
+					[disabled]="isStaffMemberLoggedInUser(userProfile(), context.row.original)"
 					(change)="changeMemberRole(context.row.original, $any(memberSelect.value))"
 				>
 					@for (role of issuerStaffRoleOptions; track role) {
-						<option [value]="role.value">
+						<option [value]="role.value" [disabled]="checkRoleDisabled(role.value, context.getValue())">
 							{{ role.label | translate }}
 						</option>
 					}
@@ -278,3 +279,4 @@
 		/>
 	}
 </ng-template>
+<quota-exceeded-dialog #quotasExceededDialog [issuer]="issuer()"></quota-exceeded-dialog>

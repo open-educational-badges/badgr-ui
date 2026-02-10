@@ -1,4 +1,5 @@
 import {
+	AfterViewChecked,
 	AfterViewInit,
 	Component,
 	ElementRef,
@@ -29,7 +30,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 			</label>
 
 			@if (sublabel) {
-				<p class="u-margin-left3p5x u-text-small u-margin-bottom2x">{{ sublabel }}</p>
+				<p class="u-margin-left3p5x u-text-small u-margin-bottom2x">
+					<span [class]="{ 'tw-text-[#dedede]': disabled }">{{ sublabel }}</span>
+				</p>
 			}
 		</div>
 		@if (!control.valid && control.dirty && last) {
@@ -38,7 +41,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 	`,
 	imports: [FormsModule, ReactiveFormsModule],
 })
-export class FormFieldRadio implements OnChanges, AfterViewInit {
+export class FormFieldRadio implements OnChanges, AfterViewInit, AfterViewChecked {
 	set unlocked(unlocked: boolean) {
 		this._unlocked = unlocked;
 		this.updateDisabled();
@@ -119,6 +122,8 @@ export class FormFieldRadio implements OnChanges, AfterViewInit {
 
 	@Input() autofocus = false;
 
+	@Input() disabled = false;
+
 	@ViewChild('radioInput') radioInput: ElementRef;
 
 	private _unlocked = false;
@@ -134,6 +139,14 @@ export class FormFieldRadio implements OnChanges, AfterViewInit {
 	ngAfterViewInit() {
 		if (this.autofocus) {
 			this.focus();
+		}
+	}
+
+	ngAfterViewChecked() {
+		if (this.disabled) {
+			this.radioInput.nativeElement.setAttribute('disabled', '');
+		} else {
+			this.radioInput.nativeElement.removeAttribute('disabled');
 		}
 	}
 

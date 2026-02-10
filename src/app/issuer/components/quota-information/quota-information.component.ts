@@ -34,17 +34,19 @@ export class QuotaInformationComponent {
 	constructor() {
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
-			this.issuer = issuer;
-			const quotas = this.quotas();
-			if (Array.isArray(quotas)) {
-				this.quotaKeys = quotas;
-				this.quotaValues = quotas.map((q) => {
-					return issuer.quotas.quotas[q];
-				});
-			} else {
-				this.quotaKeys = [quotas];
-				this.quotaValues = [issuer.quotas.quotas[quotas]];
-			}
+			issuer.changed$.subscribe((issuer) => {
+				this.issuer = issuer;
+				const quotas = this.quotas();
+				if (Array.isArray(quotas)) {
+					this.quotaKeys = quotas;
+					this.quotaValues = quotas.map((q) => {
+						return issuer.quotas.quotas[q];
+					});
+				} else {
+					this.quotaKeys = [quotas];
+					this.quotaValues = [issuer.quotas.quotas[quotas]];
+				}
+			});
 		});
 	}
 
