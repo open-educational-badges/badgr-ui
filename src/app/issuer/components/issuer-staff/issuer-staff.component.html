@@ -270,7 +270,10 @@
 </ng-template>
 
 <ng-template #badgeActionsCellTemplate let-context>
-	@if (!isStaffMemberLoggedInUser(userProfile(), context.row.original)) {
+	@if (
+		!isStaffMemberLoggedInUser(userProfile(), context.row.original) &&
+		(!context.row.original.isOwner || isCurrentUserIssuerOwner())
+	) {
 		<oeb-button
 			variant="secondary"
 			(click)="removeMember(context.row.original)"
