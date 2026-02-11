@@ -1,5 +1,6 @@
 import { Component, computed, effect, ElementRef, inject, input, OnInit, Renderer2 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BaseDialog } from '~/common/dialogs/base-dialog';
 import { OebButtonComponent } from '~/components/oeb-button.component';
@@ -9,7 +10,7 @@ import { Network } from '~/issuer/network.model';
 	selector: 'quota-exceeded-dialog',
 	templateUrl: 'issuer-quotas-quota-exceeded-dialog.component.html',
 	styleUrl: 'issuer-quotas-quota-exceeded-dialog.component.scss',
-	imports: [OebButtonComponent, TranslatePipe, RouterLink],
+	imports: [OebButtonComponent, TranslatePipe, RouterLink, NgIcon],
 })
 
 // TODO component for displaying quotas exceeded notice
@@ -29,6 +30,8 @@ export class QuotaExceededDialog extends BaseDialog {
 	// 	return this.issuer()?.quotas?.level;
 	// });
 
+	page: 'start' | 'upgrade' | 'individual' = 'start';
+
 	constructor() {
 		const componentElem = inject(ElementRef);
 		const renderer = inject(Renderer2);
@@ -46,6 +49,11 @@ export class QuotaExceededDialog extends BaseDialog {
 	}
 
 	closeDialog() {
+		this.changePage('start');
 		this.closeModal();
+	}
+
+	changePage(page: 'start' | 'upgrade' | 'individual') {
+		this.page = page;
 	}
 }

@@ -4,72 +4,110 @@
 	class="dialog dialog-is-active l-dialog"
 	role="dialog"
 >
-	<div class="dialog-x-box o-container">
-		<div class="dialog-x-header u-background-light3">
-			<h1>Entdecke die nächste Stufe mit OEB!</h1>
-			<button (click)="closeDialog()" class="buttonicon buttonicon-link">
-				<svg icon="icon_close"></svg>
-				<span class="visuallyhidden">Close</span>
-			</button>
-		</div>
+	@if (page === 'start') {
+		<div class="dialog-x-box o-container">
+			<div class="dialog-x-header u-background-light3">
+				<h1>Entdecke die nächste Stufe mit OEB!</h1>
+				<button (click)="closeDialog()" class="buttonicon buttonicon-link">
+					<ng-icon hlm name="lucideX" />
+					<span class="visuallyhidden">Close</span>
+				</button>
+			</div>
 
-		<div class="category u-margin-top2x warning">
-			<div class="tw-flex tw-gap-8 tw-p-8">
-				<div>
-					<figure>
-						<img src="/assets/oeb/images/quotas/logo_pro.svg" width="152" />
-						<figcaption class="tw-text-center tw-pr-3 tw-w-[152px]">
-							<h3 class="tw-text-yellow tw-font-bold tw-text-[18px]/[1.2em] tw-mt-2">
-								{{ nextLevel() }}
-							</h3>
-							<p class="tw-font-semibold tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2">
-								{{ nextPrice() }}€ / Jahr
-							</p>
-							<small class="tw-block tw-text-center tw-italic tw-text-darkgrey"
-								>12 Monate Laufzeit, Zahlung monatlich oder jährlich
-							</small>
-						</figcaption>
-					</figure>
-				</div>
-				<div>
-					<h2 class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold">
-						Dafür ist ein Upgrade auf unser <em>{{ nextLevel() }}-Paket</em> erforderlich.
-					</h2>
-					@if (nextQuotas()) {
-						<div class="tw-mb-8">
-							<h3 class="tw-underline tw-text-[18px]/[1.2em] tw-mb-2 tw-font-bold">
-								Deine neuen Vorteile im damit:
-							</h3>
-							<ul>
-								<li>bis zu {{ nextQuotas().BADGE_CREATE }} verschiedene Badge erstellen</li>
-								<li>
-									bis zu {{ nextQuotas().LEARNINGPATH_CREATE }} Lernpfade (Micro Degrees) erstellen
-								</li>
-								<li>bis zu {{ nextQuotas().BADGE_AWARD }} Badges vergeben</li>
-								<li>{{ nextQuotas().ACCOUNTS_ADMIN }} Admin-Accounts</li>
-								<li>{{ nextQuotas().ACCOUNTS_MEMBER }} Mitarbeitenden-Accounts</li>
-								<li>Badge-KI-Assistent: {{ nextQuotas().AISKILLS_REQUESTS }} Anfragen pro Monat</li>
-								@if (nextQuotas().PDFEDITOR) {
-									<li>Individuelles Branding der PDF-Zertifikate</li>
-								}
-							</ul>
+			<div class="category u-margin-top2x warning">
+				<div class="tw-flex tw-gap-8 tw-p-8">
+					<div>
+						<figure>
+							<img src="/assets/oeb/images/quotas/logo_pro.svg" width="152" />
+							<figcaption class="tw-text-center tw-pr-3 tw-w-[152px]">
+								<h3 class="tw-text-yellow tw-font-bold tw-text-[18px]/[1.2em] tw-mt-2">
+									{{ nextLevel() }}
+								</h3>
+								<p class="tw-font-semibold tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2">
+									{{ nextPrice() }}€ / Jahr
+								</p>
+								<small class="tw-block tw-text-center tw-italic tw-text-darkgrey"
+									>12 Monate Laufzeit, Zahlung monatlich oder jährlich
+								</small>
+							</figcaption>
+						</figure>
+					</div>
+					<div>
+						<h2 class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold">
+							Dafür ist ein Upgrade auf unser <em>{{ nextLevel() }}-Paket</em> erforderlich.
+						</h2>
+						@if (nextQuotas()) {
+							<div class="tw-mb-8">
+								<h3 class="tw-underline tw-text-[18px]/[1.2em] tw-mb-2 tw-font-bold">
+									Deine neuen Vorteile im damit:
+								</h3>
+								<ul>
+									<li>bis zu {{ nextQuotas().BADGE_CREATE }} verschiedene Badge erstellen</li>
+									<li>
+										bis zu {{ nextQuotas().LEARNINGPATH_CREATE }} Lernpfade (Micro Degrees)
+										erstellen
+									</li>
+									<li>bis zu {{ nextQuotas().BADGE_AWARD }} Badges vergeben</li>
+									<li>{{ nextQuotas().ACCOUNTS_ADMIN }} Admin-Accounts</li>
+									<li>{{ nextQuotas().ACCOUNTS_MEMBER }} Mitarbeitenden-Accounts</li>
+									<li>Badge-KI-Assistent: {{ nextQuotas().AISKILLS_REQUESTS }} Anfragen pro Monat</li>
+									@if (nextQuotas().PDFEDITOR) {
+										<li>Individuelles Branding der PDF-Zertifikate</li>
+									}
+								</ul>
+							</div>
+						}
+						<p class="tw-mb-8">
+							<a
+								class="tw-text-right tw-text-link tw-underline tw-mt-6"
+								target="_blank"
+								[href]="this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'"
+								>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
+							>
+						</p>
+						<div class="tw-flex tw-flex-col tw-gap-4">
+							<oeb-button text="Upgrade anfragen" width="full_width" (click)="changePage('upgrade')" />
+							<p class="tw-text-center tw-italic">Oder</p>
+							<oeb-button
+								variant="secondary"
+								width="full_width"
+								text="Individuelles Angebot anfragen"
+								(click)="changePage('individual')"
+							/>
 						</div>
-					}
-					<p class="tw-mb-8">
-						<a
-							class="tw-text-right tw-text-link tw-underline tw-mt-6"
-							target="_blank"
-							[href]="this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'"
-							>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
-						>
-					</p>
-					<div class="tw-flex tw-flex-col tw-gap-4">
-						<oeb-button text="Upgrade anfragen" width="full_width" />
-						<p class="tw-text-center tw-italic">Oder</p>
-						<oeb-button variant="secondary" width="full_width" text="Individuelles Angebot anfragen" />
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	}
+	@if (page === 'upgrade') {
+		<div class="dialog-x-box o-container">
+			<div class="dialog-x-header u-background-light3">
+				<h1>Upgrade anfragen</h1>
+				<button (click)="closeDialog()" class="buttonicon buttonicon-link">
+					<ng-icon hlm name="lucideX" />
+					<span class="visuallyhidden">Close</span>
+				</button>
+			</div>
+
+			<div class="category u-margin-top2x warning">
+				<div class="tw-flex tw-gap-8 tw-p-8"></div>
+			</div>
+		</div>
+	}
+	@if (page === 'individual') {
+		<div class="dialog-x-box o-container">
+			<div class="dialog-x-header u-background-light3">
+				<h1>Upgrade anfragen</h1>
+				<button (click)="closeDialog()" class="buttonicon buttonicon-link">
+					<ng-icon hlm name="lucideX" />
+					<span class="visuallyhidden">Close</span>
+				</button>
+			</div>
+
+			<div class="category u-margin-top2x warning">
+				<div class="tw-flex tw-gap-8 tw-p-8"></div>
+			</div>
+		</div>
+	}
 </dialog>
