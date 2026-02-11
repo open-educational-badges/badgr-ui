@@ -137,7 +137,8 @@ export class OebIssuerDetailComponent implements OnInit {
 		},
 	];
 
-	menuItems: MenuItem[] = [
+	menuItemsMember: MenuItem[] = [];
+	menuItemsOwner: MenuItem[] = [
 		{
 			title: 'General.edit',
 			routerLink: ['./edit'],
@@ -155,6 +156,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			icon: 'lucideUsers',
 		},
 	];
+	menuItems: MenuItem[] = [];
 
 	networkGroups: Map<string, { network: any; badges: BadgeResult[]; sharedAt: string }> = new Map();
 	networkGroupsArray: { network: any; badges: BadgeResult[]; sharedAt: string }[] = [];
@@ -425,11 +427,17 @@ export class OebIssuerDetailComponent implements OnInit {
 
 	async ngOnInit() {
 		if (this.isFullIssuer(this.issuer) && this.issuer.quotas) {
-			this.menuItems.unshift({
+			if (this.issuer.canUpdateDeleteIssuer) {
+				this.menuItems = this.menuItemsOwner;
+			} else {
+				this.menuItems = this.menuItemsMember;
+			}
+			const menuItemQuotas = {
 				title: 'Quotas.QuotasMenuItem',
 				routerLink: ['./quotas'],
 				icon: 'lucidePuzzle',
-			});
+			};
+			this.menuItems.unshift(menuItemQuotas);
 		}
 
 		// initialize counts as 0 and update after data has loaded
