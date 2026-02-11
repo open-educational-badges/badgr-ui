@@ -373,7 +373,6 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 		if (!this.checkQuotasDialog()) {
 			return false;
 		}
-		return false;
 
 		if (this.rowSelectionCount() === 0 || this.isTaskProcessing() || this.isTaskPending()) return;
 
