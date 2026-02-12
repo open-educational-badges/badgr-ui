@@ -242,7 +242,6 @@ export class PublicBadgeAssertionComponent {
 							title: 'RecBadgeDetail.downloadPDF',
 							icon: 'lucideFileText',
 							action: () => this.downloadCertificate(),
-							disabled: !this.sessionService.isLoggedIn,
 						},
 						// Disabled for now
 						// {
