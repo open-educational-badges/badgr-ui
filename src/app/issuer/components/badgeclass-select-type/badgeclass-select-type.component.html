@@ -24,7 +24,7 @@
 						<a
 							(click)="checkQuotasDialog('BADGE_CREATE')"
 							[routerLink]="
-								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0
+								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0 || !issuer?.quotas
 									? ['/issuer/issuers', issuerSlug, 'badges', 'create', 'participation']
 									: null
 							"
@@ -36,15 +36,17 @@
 								<p [innerHTML]="'Badge.participationBadgeInfo' | translate"></p>
 							</div>
 
-							<quota-information
-								quotas="BADGE_CREATE"
-								class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
-							/>
+							@if (issuer.quotas) {
+								<quota-information
+									quotas="BADGE_CREATE"
+									class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
+								/>
+							}
 						</a>
 						<a
 							(click)="checkQuotasDialog('BADGE_CREATE')"
 							[routerLink]="
-								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0
+								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0 || !issuer?.quotas
 									? ['/issuer/issuers', issuerSlug, 'badges', 'create', 'competency']
 									: null
 							"
@@ -55,16 +57,18 @@
 								<strong>{{ 'Badge.categories.competency' | translate }}</strong>
 								<p [innerHTML]="'Badge.competencyBadgeInfo' | translate"></p>
 							</div>
-							<quota-information
-								quotas="BADGE_CREATE"
-								class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
-							/>
+							@if (issuer.quotas) {
+								<quota-information
+									quotas="BADGE_CREATE"
+									class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
+								/>
+							}
 						</a>
 						@if (canCreateLp) {
 							<a
 								(click)="checkQuotasDialog('LEARNINGPATH_CREATE')"
 								[routerLink]="
-									issuer?.quotas?.quotas['LEARNINGPATH_CREATE'].quota > 0
+									issuer?.quotas?.quotas['LEARNINGPATH_CREATE'].quota > 0 || !issuer?.quotas
 										? ['/issuer/issuers', issuerSlug, 'learningpaths', 'create']
 										: null
 								"
@@ -75,10 +79,12 @@
 									<strong>{{ 'Badge.categories.learningpath' | translate }}</strong>
 									<p [innerHTML]="'Badge.learningPathBadgeInfo' | translate"></p>
 								</div>
-								<quota-information
-									quotas="LEARNINGPATH_CREATE"
-									class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
-								/>
+								@if (issuer.quotas) {
+									<quota-information
+										quotas="LEARNINGPATH_CREATE"
+										class="tw-bg-white tw-text-center tw-italic tw-text-[14px] tw-mt-3 tw-text-oebblack tw-px-4 tw-py-2"
+									/>
+								}
 							</a>
 						}
 					</div>

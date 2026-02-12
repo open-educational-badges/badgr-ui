@@ -426,18 +426,20 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	async ngOnInit() {
-		if (this.isFullIssuer(this.issuer) && this.issuer.quotas) {
+		if (this.isFullIssuer(this.issuer)) {
 			if (this.issuer.canUpdateDeleteIssuer) {
 				this.menuItems = this.menuItemsOwner;
 			} else {
 				this.menuItems = this.menuItemsMember;
 			}
-			const menuItemQuotas = {
-				title: 'Quotas.QuotasMenuItem',
-				routerLink: ['./quotas'],
-				icon: 'lucidePuzzle',
-			};
-			this.menuItems.unshift(menuItemQuotas);
+			if (this.issuer.quotas) {
+				const menuItemQuotas = {
+					title: 'Quotas.QuotasMenuItem',
+					routerLink: ['./quotas'],
+					icon: 'lucidePuzzle',
+				};
+				this.menuItems.unshift(menuItemQuotas);
+			}
 		}
 
 		// initialize counts as 0 and update after data has loaded

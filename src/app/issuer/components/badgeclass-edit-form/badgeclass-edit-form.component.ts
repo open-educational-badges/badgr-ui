@@ -68,6 +68,7 @@ import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-int
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { CatalogService } from '~/catalog/catalog.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -102,6 +103,7 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		TranslatePipe,
 		TranslateModule,
 		QuotaInformationComponent,
+		QuotaExceededDialog,
 	],
 })
 export class BadgeClassEditFormComponent
@@ -424,6 +426,7 @@ export class BadgeClassEditFormComponent
 	@ViewChild('keywordCompetenciesInput') keywordCompetenciesInput: ElementRef<HTMLInputElement>;
 	@ViewChild('keywordCompetenciesInputModel') keywordCompetenciesInputModel: NgModel;
 	@ViewChild('keywordCompetenciesLanguageSelectModel') keywordCompetenciesLanguageSelectModel: NgModel;
+	@ViewChild('quotasExceededDialog') quotasExceededDialog: QuotaExceededDialog;
 
 	existingBadgeClass: BadgeClass | null = null;
 
@@ -985,12 +988,15 @@ export class BadgeClassEditFormComponent
 	 * (@see badgeClassForm.controls.aiCompetencies) (and removes the old ones).
 	 */
 	suggestCompetencies() {
+		if (!this.checkQuotasDialog('AISKILLS_REQUESTS')) {
+			return false;
+		}
 		if (this.aiCompetenciesDescription.length < 70) {
 			return;
 		}
 		this.aiCompetenciesLoading = true;
 		this.aiSkillsService
-			.getAiSkills(this.aiCompetenciesDescription)
+			.getAiSkillsForIssuer(this.aiCompetenciesDescription, this.issuer.slug)
 			.then((skills) => {
 				let aiCompetencies = this.badgeClassForm.controls.aiCompetencies;
 				const selectedAiCompetencies = aiCompetencies.value
@@ -1016,6 +1022,8 @@ export class BadgeClassEditFormComponent
 						});
 					}
 				});
+				// this.issuer.addQuota('AISKILLS_REQUESTS');
+				this.issuer.update();
 				this.aiCompetenciesLoading = false;
 			})
 			.catch((error) => {
@@ -1754,5 +1762,13 @@ export class BadgeClassEditFormComponent
 			return rect.height + 2;
 		}
 		return null;
+	}
+
+	checkQuotasDialog(quota: string) {
+		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
+			this.quotasExceededDialog.openDialog();
+			return false;
+		}
+		return true;
 	}
 }

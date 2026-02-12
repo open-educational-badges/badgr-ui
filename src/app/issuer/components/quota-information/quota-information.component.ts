@@ -1,8 +1,10 @@
 import { Component, inject, input } from '@angular/core';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { ApiQuotas, ApiQuotasBooleanQuota, ApiQuotasNumberQuota } from '~/issuer/models/issuer-api.model';
 import { Issuer } from '~/issuer/models/issuer.model';
+import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 
 type QuotaName =
@@ -23,7 +25,7 @@ export class QuotaInformationComponent {
 	protected issuerManager = inject(IssuerManager);
 	protected route = inject(ActivatedRoute);
 	issuerSlug: string;
-	issuer: Issuer;
+	issuer: Issuer | Network;
 
 	issuerLoaded: Promise<unknown>;
 
@@ -33,9 +35,13 @@ export class QuotaInformationComponent {
 
 	constructor() {
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
-			issuer.changed$.subscribe((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
+			// typescript union signatures hack https://github.com/microsoft/TypeScript/issues/33591
+			(issuer.changed$ as Observable<Issuer | Network>).subscribe((issuer) => {
 				this.issuer = issuer;
+				if (!issuer.quotas) {
+					return false;
+				}
 				const quotas = this.quotas();
 				if (Array.isArray(quotas)) {
 					this.quotaKeys = quotas;

@@ -121,6 +121,13 @@ export class Network extends ManagedEntity<ApiNetwork, IssuerRef> {
 		return this.apiModel.quotas;
 	}
 
+	public addQuota(quota: string) {
+		if (this.apiModel.quotas?.quotas[quota]) {
+			this.apiModel.quotas.quotas[quota].used += 1;
+			this.apiModel.quotas.quotas[quota].quota -= 1;
+		}
+	}
+
 	get partnerCount(): number {
 		return this.partner_issuers.length;
 	}
@@ -165,5 +172,13 @@ export class Network extends ManagedEntity<ApiNetwork, IssuerRef> {
 	 */
 	get canEditBadge(): boolean {
 		return this.currentUserStaffMember?.canEditBadge ?? false;
+	}
+
+	private get networkApiService() {
+		return this.commonManager.issuerManager.networkApiService;
+	}
+	async update(): Promise<this> {
+		this.applyApiModel(await this.networkApiService.getNetwork(this.slug), true);
+		return this;
 	}
 }

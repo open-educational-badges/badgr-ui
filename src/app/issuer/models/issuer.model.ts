@@ -127,6 +127,15 @@ export class Issuer extends ManagedEntity<ApiIssuer, IssuerRef> {
 		return this.apiModel.quotas;
 	}
 
+	public addQuota(quota: string) {
+		if (this.apiModel.quotas?.quotas[quota]) {
+			this.apiModel.quotas.quotas[quota].used += 1;
+			this.apiModel.quotas.quotas[quota].quota -= 1;
+
+			this.applyApiModel(this.apiModel);
+		}
+	}
+
 	get badgeClassCount(): number {
 		const badges = this.commonManager.badgeManager.badgesList;
 

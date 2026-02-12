@@ -359,10 +359,12 @@
 													</span>
 												}
 											</div>
-											<quota-information
-												quotas="AISKILLS_REQUESTS"
-												class="tw-inline-block tw-bg-white tw-text-[18px]/[1.3em] tw-italic tw-mt-6 tw-py-1 tw-px-2 tw-rounded-[4px]"
-											/>
+											@if (issuer.quotas) {
+												<quota-information
+													quotas="AISKILLS_REQUESTS"
+													class="tw-inline-block tw-bg-white tw-text-[18px]/[1.3em] tw-italic tw-mt-6 tw-py-1 tw-px-2 tw-rounded-[4px]"
+												/>
+											}
 											<div class="tw-mt-6 tw-flex tw-gap-4">
 												<oeb-button
 													[id]="'suggest-competencies-btn'"
@@ -1278,3 +1280,5 @@
 		</div>
 	</form>
 </div>
+
+<quota-exceeded-dialog #quotasExceededDialog [issuer]="issuer"></quota-exceeded-dialog>
