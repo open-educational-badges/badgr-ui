@@ -1,10 +1,10 @@
-<form-message></form-message>
+f<form-message></form-message>
 <div class="oeb page-padding">
 	<div class="oeb-section-sm">
 		<header class="oeb-headline-container tw-relative tw-flex tw-flex-col">
 			<oeb-header-text [text1]="'Network.networksHeadline'" [text2Template]="text2Template" />
 			<ng-template #text2Template>
-				<span [countUp]="totalNetworkCount()">{{ totalNetworkCount() }}</span>
+				<span [countUp]="totalNetworkCount()" [options]="{ separator: '.' }">{{ totalNetworkCount() }}</span>
 				<span>
 					{{ networksPluralWord }}
 				</span>
