@@ -29,6 +29,7 @@ export interface ApiLearningPath extends Omit<ApiLearningPathForCreation, 'badge
 	name: string;
 	description: string;
 	tags: string[];
+	area: string[];
 	badges: Array<{ badge: any; order: number }>;
 	required_badges_count: number;
 	completed_badges?: Array<any>;

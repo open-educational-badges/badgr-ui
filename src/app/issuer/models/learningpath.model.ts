@@ -25,6 +25,13 @@ export class LearningPath extends ManagedEntity<ApiLearningPath, LearningPathRef
 		this.apiModel.tags = tags;
 	}
 
+	get area(): string[] {
+		return this.apiModel.area;
+	}
+	set area(area: string[]) {
+		this.apiModel.area = area;
+	}
+
 	get badges(): Array<{ badge: any; order: number }> {
 		return this.apiModel.badges;
 	}

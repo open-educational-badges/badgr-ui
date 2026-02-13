@@ -150,7 +150,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 	isUnsupportedBrowser = false;
 	issuers = signal<Issuer[] | undefined>(undefined);
 	showIssuersTab = computed(() => {
-		return !this.features.disableIssuers && this.issuers() !== undefined;
+		// return !this.features.disableIssuers && this.issuers() !== undefined; this line was triggering errors
+		return !this.features.disableIssuers;
 	});
 
 	copyrightYear = new Date().getFullYear();
@@ -257,25 +258,23 @@ export class AppComponent implements OnInit, AfterViewInit {
 	refreshProfile = () => {
 		this.profileManager.userProfileSet.changed$.subscribe((set) => {
 			if (set.entities.length && set.entities[0].agreedTermsVersion !== set.entities[0].latestTermsVersion) {
-				this.commonDialogsService.newTermsDialog.openDialog();
+				// Dialog will be opened by the auth guard or new-terms page
+				// Don't call openDialog() here as commonDialogsService is not initialized yet
 			}
 
-			// for issuers tab which can only be loaded when the user is verified
+			// for issuers tab
 			this.profileManager.userProfile.emails.updateList().then(() => {
-				if (this.profileManager.userProfile.isVerified)
-					this.issuerManager.myIssuers$.subscribe(
-						(issuers) => {
-							this.issuers.set(
-								issuers.slice().sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
-							);
-						},
-						(error) => {
-							this.messageService.reportAndThrowError(
-								this.translate.instant('Issuer.failLoadissuers'),
-								error,
-							);
-						},
-					);
+				this.issuerManager.myIssuers$.subscribe(
+					(issuers) => {
+						this.issuers.set(issuers.slice().sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()));
+					},
+					(error) => {
+						this.messageService.reportAndThrowError(
+							this.translate.instant('Issuer.failLoadissuers'),
+							error,
+						);
+					},
+				);
 			});
 		});
 

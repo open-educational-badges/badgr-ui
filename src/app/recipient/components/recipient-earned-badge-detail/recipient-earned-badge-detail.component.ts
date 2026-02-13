@@ -166,6 +166,7 @@ export class RecipientEarnedBadgeDetailComponent extends BaseAuthenticatedRoutab
 							? 'Online'
 							: null,
 					tags: this.badge.badgeClass.tags,
+					area: this.badge.badgeClass.area,
 					issuerName: this.badge.badgeClass.issuer.name,
 					issuerImagePlacholderUrl: this.issuerImagePlacholderUrl,
 					issuerImage: this.badge.badgeClass?.issuer?.image,
