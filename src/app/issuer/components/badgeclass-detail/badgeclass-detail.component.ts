@@ -650,12 +650,20 @@ export class BadgeClassDetailComponent
 		}
 	}
 
-	private appendPartialResults(newInstances: any[], processedCount) {
+	private appendPartialResults(
+		newInstances: { badge_instance: ApiBadgeInstance; request_entity_id: number | undefined }[],
+		processedCount,
+	) {
 		if (!newInstances || newInstances.length === 0) return;
-
 		const current = this.recipients();
-		const merged = [...new Map([...current, ...newInstances].map((item) => [item.slug, item])).values()];
-
+		const merged = [
+			...new Map(
+				[...current, ...newInstances.map((i) => new BadgeInstanceV3(i.badge_instance))].map((item) => [
+					item.slug,
+					item,
+				]),
+			).values(),
+		];
 		this.recipients.set(merged);
 		this.recipientCount = this.totalInstanceCount + processedCount;
 	}
