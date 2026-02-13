@@ -472,6 +472,7 @@ export class BadgeClassDetailComponent
 			duration: badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad,
 			category: badgeClass.extension['extensions:CategoryExtension']?.Category,
 			tags: badgeClass.tags,
+			areas: badgeClass.areas,
 			issuerName: badgeClass.issuerName,
 			issuerImagePlacholderUrl: this.issuerImagePlacholderUrl,
 			issuerImage: this.issuer.image,
