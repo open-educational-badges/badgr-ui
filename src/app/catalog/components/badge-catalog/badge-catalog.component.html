@@ -6,7 +6,10 @@
 			<oeb-header-text [text1]="'Badge.catalogHeadline'" [text2Template]="text2Template" />
 			<ng-template #text2Template>
 				<ng-template [showLoader]="false" [bgAwaitPromises]="[pageReadyPromise]">
-					<span [countUp]="totalBadgeCount()">{{ totalBadgeCount() }}</span>
+					<span [countUp]="totalBadgeCount()" [options]="{ separator: '.' }">
+						{{ totalBadgeCount() }}
+					</span>
+
 					<span>
 						{{ badgesPluralWord() }} in
 						@if (issuers().length > 1) {
