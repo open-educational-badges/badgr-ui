@@ -192,6 +192,7 @@ import { BadgeClassApiService } from '~/issuer/services/badgeclass-api.service';
 			</div>
 		}
 	`,
+	styleUrl: './oeb-badgeclass-edit-form.component.css',
 	imports: [
 		BadgeClassEditFormComponent,
 		AsyncPipe,

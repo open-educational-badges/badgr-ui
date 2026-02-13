@@ -1,0 +1,7 @@
+.oeb-breadcrumbs {
+	display: none;
+}
+
+badgeclass-edit-form > .edit form > div > oeb-button:first-child {
+	display: none;
+}
