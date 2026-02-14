@@ -6,7 +6,7 @@ import { UserProfileManager } from '../../../common/services/user-profile-manage
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { BgImageStatusPlaceholderDirective } from '../../directives/bg-image-status-placeholder.directive';
-import { NgIf } from '@angular/common';
+
 import { PublicApiIssuer } from '../../../public/models/public-api.model';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
@@ -32,7 +32,6 @@ import { NgTemplateOutlet } from '@angular/common';
 	imports: [
 		BgImageStatusPlaceholderDirective,
 		HlmH1,
-		NgIf,
 		HlmP,
 		OebButtonComponent,
 		TranslatePipe,
