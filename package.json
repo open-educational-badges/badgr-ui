@@ -44,7 +44,7 @@
 		"@ng-icons/core": "^32.1.0",
 		"@ng-icons/lucide": "^32.1.0",
 		"@ngx-translate/core": "^16.0.4",
-		"@ngx-translate/http-loader": "^16.0.0",
+		"@ngx-translate/http-loader": "^17.0.0",
 		"@spartan-ng/brain": "^0.0.1-alpha.498",
 		"@spartan-ng/ui-core": "0.0.1-alpha.380",
 		"@tanstack/angular-table": "^8.21.3",
