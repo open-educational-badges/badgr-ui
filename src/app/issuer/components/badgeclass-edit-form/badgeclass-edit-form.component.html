@@ -1,10 +1,4 @@
-<div
-	class="{{
-		!existingBadgeClass && !initialisedBadgeClass
-			? 'oeb create'
-			: 'oeb edit'
-	}}"
->
+<div class="{{ !existingBadgeClass && !initialisedBadgeClass ? 'oeb create' : 'oeb edit' }}">
 	<form-message></form-message>
 	@if (showLegend) {
 		<app-badge-legend (closed)="closeLegend()"></app-badge-legend>
