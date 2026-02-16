@@ -32,6 +32,8 @@ import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { RouterLink } from '@angular/router';
 import { Network } from '~/issuer/network.model';
 import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
+import { OebDropdownComponent } from '~/components/oeb-dropdown.component';
+import { SvgIconComponent } from '~/common/components/svg-icon.component';
 @Component({
 	selector: 'network-dashboard',
 	templateUrl: './network-dashboard.component.html',
@@ -49,6 +51,8 @@ import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
 		NetworkLearningPathsComponent,
 		RouterLink,
 		NgClass,
+		SvgIconComponent,
+		OebDropdownComponent,
 	],
 })
 export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit, AfterContentInit {

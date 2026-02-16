@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, HostBinding, inject, input } from '@angular/core';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -19,6 +19,13 @@ type QuotaName =
 @Component({
 	selector: 'quota-information',
 	templateUrl: './quota-information.component.html',
+	styles: [
+		`
+			:host.hidden {
+				display: none;
+			}
+		`,
+	],
 	imports: [RouterLink, TranslatePipe],
 })
 export class QuotaInformationComponent {
@@ -32,6 +39,11 @@ export class QuotaInformationComponent {
 	quotas = input.required<QuotaName | QuotaName[]>();
 	quotaKeys: string[];
 	quotaValues: (ApiQuotasNumberQuota | ApiQuotasBooleanQuota)[];
+
+	// hide if unlimited quotas
+	@HostBinding('class.hidden') get hidden() {
+		return this.quotaValues.every((v) => typeof v.quota !== 'number' || v.quota <= 0);
+	}
 
 	constructor() {
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];

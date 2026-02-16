@@ -8,9 +8,34 @@
 				<h1 hlmH1 class="tw-text-purple tw-font-black tw-pb-14">
 					{{ 'Network.welcomeDashboard' | translate }}
 				</h1>
-				@if (role === 'creator') {
-					<oeb-button [variant]="'secondary'" [text]="'General.edit' | translate" [routerLink]="['./edit']" />
-				}
+				<div class="tw-flex tw-items-start tw-gap-2">
+					@if (role === 'creator') {
+						<oeb-button
+							[variant]="'secondary'"
+							[text]="'General.edit' | translate"
+							[routerLink]="['./edit']"
+						/>
+					}
+					<oeb-dropdown
+						[trigger]="svgTrigger"
+						class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
+						[menuItems]="[
+							{
+								title: 'Quotas.QuotasMenuItem',
+								routerLink: ['./quotas'],
+								icon: 'lucidePuzzle',
+							},
+						]"
+					></oeb-dropdown>
+					<ng-template #svgTrigger>
+						<svg
+							class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[62px] md:tw-h-[62px]"
+							fill="var(--color-purple)"
+							icon="icon_more"
+						></svg>
+						<span class="visuallyhidden">Mehr</span>
+					</ng-template>
+				</div>
 			</div>
 		}
 		<ng-template [bgAwaitPromises]="[networkLoaded]">

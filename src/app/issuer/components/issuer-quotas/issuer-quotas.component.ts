@@ -11,6 +11,7 @@ import { SessionService } from '~/common/services/session.service';
 import { OebButtonComponent } from '~/components/oeb-button.component';
 import { ApiQuotasBooleanQuota, ApiQuotasNumberQuota } from '~/issuer/models/issuer-api.model';
 import { Issuer } from '~/issuer/models/issuer.model';
+import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 
 @Component({
@@ -22,7 +23,7 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 	protected issuerManager = inject(IssuerManager);
 	protected messageService = inject(MessageService);
 	protected translate = inject(TranslateService);
-	issuer: Issuer;
+	issuer: Issuer | Network;
 	issuerSlug: string;
 
 	issuerLoaded: Promise<unknown>;
@@ -38,7 +39,7 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then(
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
 			(issuer) => {
 				this.issuer = issuer;
 			},

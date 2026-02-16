@@ -121,6 +121,10 @@ export const routes = [
 		component: IssuerQuotasComponent,
 	},
 	{
+		path: 'networks/:issuerSlug/quotas',
+		component: IssuerQuotasComponent,
+	},
+	{
 		path: '**',
 		component: IssuerListComponent,
 	},
