@@ -34,6 +34,9 @@ import { Network } from '~/issuer/network.model';
 import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
 import { OebDropdownComponent } from '~/components/oeb-dropdown.component';
 import { SvgIconComponent } from '~/common/components/svg-icon.component';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 @Component({
 	selector: 'network-dashboard',
 	templateUrl: './network-dashboard.component.html',
@@ -53,10 +56,12 @@ import { SvgIconComponent } from '~/common/components/svg-icon.component';
 		NgClass,
 		SvgIconComponent,
 		OebDropdownComponent,
+		QuotaInformationComponent,
+		QuotaExceededDialog,
 	],
 })
 export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit, AfterContentInit {
-	private networkManager = inject(NetworkManager);
+	private issuerManager = inject(IssuerManager);
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
@@ -101,6 +106,8 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	readonly issuerSearchInputModel = viewChild<NgModel>('issuerSearchInputModel');
 
+	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
+
 	constructor() {
 		const loginService = inject(SessionService);
 		const router = inject(Router);
@@ -114,7 +121,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this.networkInvites.set(invites);
 		});
 
-		this.networkLoaded = this.networkManager.networkBySlug(this.networkSlug).then((network) => {
+		this.networkLoaded = this.issuerManager.networkBySlug(this.networkSlug).then((network) => {
 			this.network.set(network);
 			this.partnerIssuers.set(network.partner_issuers.entities);
 			this.title.setTitle(
@@ -179,6 +186,9 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	public openDialog() {
+		if (!this.checkQuotasDialog()) {
+			return false;
+		}
 		const role = this.network().current_user_network_role;
 		if (!['owner', 'creator'].includes(role)) return;
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
@@ -264,5 +274,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	get role() {
 		return this.network()?.current_user_network_role;
+	}
+
+	checkQuotasDialog() {
+		if (this.network().quotas?.quotas['NETWORK_MEMBERSHIPS']?.quota === 0) {
+			this.quotasExceededDialog().openDialog();
+			return false;
+		}
+
+		return true;
 	}
 }

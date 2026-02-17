@@ -14,7 +14,8 @@ type QuotaName =
 	| 'ACCOUNTS_ADMIN'
 	| 'ACCOUNTS_MEMBER'
 	| 'AISKILLS_REQUESTS'
-	| 'PDFEDITOR';
+	| 'PDFEDITOR'
+	| 'NETWORK_MEMBERSHIPS';
 
 @Component({
 	selector: 'quota-information',
@@ -42,30 +43,35 @@ export class QuotaInformationComponent {
 
 	// hide if unlimited quotas
 	@HostBinding('class.hidden') get hidden() {
-		return this.quotaValues.every((v) => typeof v.quota !== 'number' || v.quota <= 0);
+		return false; // this.quotaValues?.every((v) => typeof v.quota !== 'number' || v.quota < 0) || !this.quotaValues;
 	}
 
 	constructor() {
-		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
-		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
-			// typescript union signatures hack https://github.com/microsoft/TypeScript/issues/33591
-			(issuer.changed$ as Observable<Issuer | Network>).subscribe((issuer) => {
-				this.issuer = issuer;
-				if (!issuer.quotas) {
-					return false;
-				}
-				const quotas = this.quotas();
-				if (Array.isArray(quotas)) {
-					this.quotaKeys = quotas;
-					this.quotaValues = quotas.map((q) => {
-						return issuer.quotas.quotas[q];
+		this.issuerSlug = this.route.snapshot.params['issuerSlug'] || this.route.snapshot.params['networkSlug'];
+		if (this.issuerSlug) {
+			this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
+				if (issuer) {
+					// typescript union signatures hack https://github.com/microsoft/TypeScript/issues/33591
+					(issuer.changed$ as Observable<Issuer | Network>).subscribe((issuer) => {
+						this.issuer = issuer;
+						if (!issuer.quotas) {
+							return false;
+						}
+
+						const quotas = this.quotas();
+						if (Array.isArray(quotas)) {
+							this.quotaKeys = quotas;
+							this.quotaValues = quotas.map((q) => {
+								return issuer.quotas.quotas[q];
+							});
+						} else {
+							this.quotaKeys = [quotas];
+							this.quotaValues = [issuer.quotas.quotas[quotas]];
+						}
 					});
-				} else {
-					this.quotaKeys = [quotas];
-					this.quotaValues = [issuer.quotas.quotas[quotas]];
 				}
 			});
-		});
+		}
 	}
 
 	quotaWarning(quota: ApiQuotasNumberQuota | ApiQuotasBooleanQuota) {

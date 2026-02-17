@@ -91,6 +91,7 @@ export interface ApiQuotas {
 			ACCOUNTS_MEMBER: number;
 			AISKILLS_REQUESTS: number;
 			PDFEDITOR: boolean;
+			NETWORK_MEMBERSHIPS: number;
 		};
 	};
 	periodStart: string;
@@ -104,6 +105,7 @@ export interface ApiQuotas {
 		ACCOUNTS_MEMBER: ApiQuotasNumberQuota;
 		AISKILLS_REQUESTS: ApiQuotasNumberQuota;
 		PDFEDITOR: ApiQuotasBooleanQuota;
+		NETWORK_MEMBERSHIPS: ApiQuotasNumberQuota;
 	};
 }
 

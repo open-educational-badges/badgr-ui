@@ -31,7 +31,10 @@
 											<span>(Individuelle Konditionen*)</span>
 										}
 									</p>
-									<p class="tw-text-purple tw-text-[18px]/[1.2em]">Aktiv · Laufzeit bis xxx</p>
+									<p class="tw-text-purple tw-text-[18px]/[1.2em]">
+										Aktiv · Laufzeit bis
+										<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
+									</p>
 								</div>
 							</div>
 						</hgroup>

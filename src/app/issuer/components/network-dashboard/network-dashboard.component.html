@@ -94,6 +94,7 @@
 							[text]="'Network.shortInviteInstitutions' | translate"
 							(click)="openDialog()"
 						></oeb-button>
+						<quota-information quotas="NETWORK_MEMBERSHIPS" class="tw-block tw-mt-2 tw-text-right" />
 					</div>
 				}
 			</section>
@@ -153,3 +154,5 @@
 <ng-template #learningPathsTemplate>
 	<network-learningpaths [network]="network()"> </network-learningpaths>
 </ng-template>
+
+<quota-exceeded-dialog #quotasExceededDialog [issuer]="network()"></quota-exceeded-dialog>

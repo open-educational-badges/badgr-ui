@@ -18,13 +18,13 @@ export class QuotaExceededDialog extends BaseDialog {
 	protected translate = inject(TranslateService);
 	issuer = input.required<Issuer | Network>();
 	nextLevel = computed(() => {
-		return this.issuer()?.quotas?.nextLevel.level;
+		return this.issuer()?.quotas?.nextLevel?.level;
 	});
 	nextPrice = computed(() => {
-		return this.issuer()?.quotas?.nextLevel.price;
+		return this.issuer()?.quotas?.nextLevel?.price;
 	});
 	nextQuotas = computed(() => {
-		return this.issuer()?.quotas?.nextLevel.quotas;
+		return this.issuer()?.quotas?.nextLevel?.quotas;
 	});
 	// nextLevel = computed(() => {
 	// 	return this.issuer()?.quotas?.level;

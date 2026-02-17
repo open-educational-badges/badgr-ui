@@ -1213,6 +1213,7 @@
 		"Info_ACCOUNTS_ADMIN": "Admin Accounts (Owners, Editors)",
 		"Info_ACCOUNTS_MEMBER": "Staff Accounts used",
 		"Info_AISKILLS_REQUESTS": "Queries used",
+		"Info_NETWORK_MEMBERSHIPS": "Network members added",
 		"FeatureListPlanComparison": "Feature list: OEB plans compared"
 	}
 }

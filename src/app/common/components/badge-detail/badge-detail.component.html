@@ -177,7 +177,7 @@
 								@if (config.copy_permissions && !config.copy_permissions.includes('none')) {
 									<div
 										class="tw-flex tw-flex-row tw-text-oebblack tw-italic tw-mb-2"
-										[class.tw-pb-2]="hasCriteria || config.competencies.length"
+										[class.tw-pb-2]="hasCriteria || config.competencies?.length"
 									>
 										<dt [innerHTML]="('Badge.copyableFor' | translate) + ':&nbsp;'"></dt>
 										<dd
@@ -189,7 +189,7 @@
 										></dd>
 									</div>
 								}
-								@if (hasCriteria || config.competencies.length) {
+								@if (hasCriteria || config.competencies?.length) {
 									<div class="tw-bg-white tw-mb-4 tw-rounded-[10px] tw-p-2">
 										<oeb-collapsible
 											[trigger]="collapseCriteriaTrigger"
@@ -441,7 +441,7 @@
 						</section>
 
 						<!-- Kompetenzen -->
-						@if (config.competencies && config.competencies.length > 0) {
+						@if (config.competencies && config.competencies?.length > 0) {
 							<section class="tw-text-oebblack tw-mb-10">
 								<h3 hlmH3 class="tw-font-semibold tw-text-oebblack">
 									{{ 'RecBadgeDetail.competencies' | translate }}
