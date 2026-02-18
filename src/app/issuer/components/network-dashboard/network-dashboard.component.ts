@@ -106,8 +106,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	readonly issuerSearchInputModel = viewChild<NgModel>('issuerSearchInputModel');
 
-	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
-
 	constructor() {
 		const loginService = inject(SessionService);
 		const router = inject(Router);
@@ -278,7 +276,12 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	checkQuotasDialog() {
 		if (this.network().quotas?.quotas['NETWORK_MEMBERSHIPS']?.quota === 0) {
-			this.quotasExceededDialog().openDialog();
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.network(),
+					variant: 'new_design',
+				},
+			});
 			return false;
 		}
 

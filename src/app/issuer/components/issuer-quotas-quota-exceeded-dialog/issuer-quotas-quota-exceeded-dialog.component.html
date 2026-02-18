@@ -1,19 +1,12 @@
-<dialog
-	aria-labelledby="exportPdfDialog"
-	aria-describedby="dialog1Desc"
-	class="dialog dialog-is-active l-dialog"
-	role="dialog"
->
-	@if (page === 'start') {
-		@if (nextLevel()) {
-			<div class="dialog-x-box o-container">
-				<div class="dialog-x-header u-background-light3">
-					<h1>Entdecke die nächste Stufe mit OEB!</h1>
-					<button (click)="closeDialog()" class="buttonicon buttonicon-link">
-						<ng-icon hlm name="lucideX" />
-						<span class="visuallyhidden">Close</span>
-					</button>
-				</div>
+<div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px]">
+	<div class="dialog-x-box o-container">
+		@if (page === 'start') {
+			@if (nextLevel()) {
+				<hlm-dialog-header>
+					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+						Entdecke die nächste Stufe mit OEB!
+					</h2>
+				</hlm-dialog-header>
 
 				<div class="category u-margin-top2x warning">
 					<div class="tw-flex tw-gap-8 tw-p-8">
@@ -85,16 +78,12 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		} @else {
-			<div class="dialog-x-box o-container">
-				<div class="dialog-x-header u-background-light3">
-					<h1>Obergrenze erreicht</h1>
-					<button (click)="closeDialog()" class="buttonicon buttonicon-link">
-						<ng-icon hlm name="lucideX" />
-						<span class="visuallyhidden">Close</span>
-					</button>
-				</div>
+			} @else {
+				<hlm-dialog-header>
+					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+						Obergrenze erreicht
+					</h2>
+				</hlm-dialog-header>
 
 				<div class="category u-margin-top2x warning tw-text-center tw-p-8">
 					<div class="tw-p-8">
@@ -108,37 +97,124 @@
 						<oeb-button size="sm" text="E-Mail an OEB schreiben" (click)="closeDialog()" />
 					</div>
 				</div>
+			}
+		}
+		@if (page === 'upgrade') {
+			<hlm-dialog-header>
+				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+					{{ 'Quotas.packageFormHeadline' | translate }}
+				</h2>
+			</hlm-dialog-header>
+
+			<div class="tw-mt-8">
+				<form class="tw-w-full" [formGroup]="upgradeRequestForm.rawControl" (ngSubmit)="onSubmitPackage()" novalidate>
+					<oeb-input
+						[label]="'Quotas.packageFormNameFieldLabel' | translate"
+						[control]="upgradeRequestForm.rawControlMap.name"
+						[readonly]="true"
+						[noTopMargin]="true"
+					></oeb-input>
+
+					<oeb-input
+						class="tw-block tw-pt-1"
+						[label]="'Quotas.packageFormEmailFieldLabel' | translate"
+						[control]="upgradeRequestForm.rawControlMap.email"
+						[readonly]="true"
+					></oeb-input>
+
+					<oeb-select
+						class="tw-block tw-pt-1"
+						[label]="'Quotas.packageFormIssuerFieldLabel' | translate"
+						[options]="issuerOptions"
+						[control]="upgradeRequestForm.rawControlMap.issuer"
+						[disabled]="true"
+					></oeb-select>
+
+					<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
+						<label class="tw-block tw-pb-[2px] tw-pl-[3px]">
+							<span class="tw-text-oebblack tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]">
+								{{ 'Quotas.packageFormOptionsLabel' | translate }}
+							</span>
+						</label>
+
+						<div class="tw-mt-6">
+							@for (package of packageOptions; track package; let last = $last) {
+								<bg-formfield-radio
+									class="tw-mt-4"
+									[control]="upgradeRequestForm.rawControlMap.package"
+									name="package"
+									label="{{ package.label | translate }}"
+									[value]="package.value"
+									[last]="last"
+									errorMessage="{{ 'Quotas.packageFormOptionsError' | translate }}"
+								></bg-formfield-radio>
+							}
+						</div>
+					</div>
+
+					<oeb-button
+						type="submit"
+						[text]="'Quotas.packageFormSubmitLabel' | translate"
+						[disabled]="upgradeRequestForm.invalid"
+						width="full_width"
+					>
+						{{ 'Quotas.packageFormSubmitLabel' | translate }}
+					</oeb-button>
+				</form>
 			</div>
 		}
-	}
-	@if (page === 'upgrade') {
-		<div class="dialog-x-box o-container">
-			<div class="dialog-x-header u-background-light3">
-				<h1>Upgrade anfragen</h1>
-				<button (click)="closeDialog()" class="buttonicon buttonicon-link">
-					<ng-icon hlm name="lucideX" />
-					<span class="visuallyhidden">Close</span>
-				</button>
-			</div>
+		@if (page === 'individual') {
+			<hlm-dialog-header>
+				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+					{{ 'Quotas.individualFormHeadline' | translate }}
+				</h2>
+			</hlm-dialog-header>
 
-			<div class="category u-margin-top2x warning">
-				<div class="tw-flex tw-gap-8 tw-p-8"></div>
-			</div>
-		</div>
-	}
-	@if (page === 'individual') {
-		<div class="dialog-x-box o-container">
-			<div class="dialog-x-header u-background-light3">
-				<h1>Upgrade anfragen</h1>
-				<button (click)="closeDialog()" class="buttonicon buttonicon-link">
-					<ng-icon hlm name="lucideX" />
-					<span class="visuallyhidden">Close</span>
-				</button>
-			</div>
+			<p class="tw-text-oebblack tw-text-[18px] tw-leading-[130%] tw-mt-7 md:tw-mt-8">
+				<span class="tw-italic">Bei individuellen Anfragen erhältst du zunächst ein verbindliches Angebot.</span><br>
+				<span class="tw-italic">Nach deiner Zustimmung aktivieren wir OEB und senden dir die Rechnung.</span><br>
+				<span class="tw-font-bold tw-text-purple">Buche gerne auch einen Call mit uns, um dein Anliegen zu besprechen:</span><br>
+				<a class="tw-italic">Call buchen</a>
+			</p>
 
-			<div class="category u-margin-top2x warning">
-				<div class="tw-flex tw-gap-8 tw-p-8"></div>
+			<div class="tw-mt-8">
+				<form class="tw-w-full" [formGroup]="individualRequestForm.rawControl" (ngSubmit)="onSubmitIndividual()" novalidate>
+					<oeb-input
+						[label]="'Quotas.packageFormNameFieldLabel' | translate"
+						[control]="upgradeRequestForm.rawControlMap.name"
+						[readonly]="true"
+						[noTopMargin]="true"
+					></oeb-input>
+
+					<oeb-input
+						class="tw-block tw-pt-1"
+						[label]="'Quotas.packageFormEmailFieldLabel' | translate"
+						[control]="upgradeRequestForm.rawControlMap.email"
+						[readonly]="true"
+					></oeb-input>
+
+					<oeb-select
+						class="tw-block tw-pt-1"
+						[label]="'Quotas.packageFormIssuerFieldLabel' | translate"
+						[options]="issuerOptions"
+						[control]="upgradeRequestForm.rawControlMap.issuer"
+						[disabled]="true"
+					></oeb-select>
+
+					<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
+
+					</div>
+
+					<oeb-button
+						type="submit"
+						[text]="'Quotas.packageFormSubmitLabel' | translate"
+						[disabled]="upgradeRequestForm.invalid"
+						width="full_width"
+					>
+						{{ 'Quotas.packageFormSubmitLabel' | translate }}
+					</oeb-button>
+				</form>
 			</div>
-		</div>
-	}
-</dialog>
+		}
+	</div>
+</div>

@@ -5,3 +5,15 @@ ul {
 		margin-left: 8px;
 	}
 }
+
+::ng-deep {
+	oeb-select {
+		label {
+			display: block;
+		}
+
+		> * {
+			max-width: 217px !important;
+		}
+	}
+}

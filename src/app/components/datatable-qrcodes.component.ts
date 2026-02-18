@@ -205,8 +205,6 @@ export type RequestedBadge = {
 			[text]="this.rowSelectionCount() > 1 ? ('Issuer.giveBadges' | translate) : ('Issuer.giveBadge' | translate)"
 		>
 		</oeb-button>
-
-		<quota-exceeded-dialog #quotasExceededDialog [issuer]="issuer()"></quota-exceeded-dialog>
 	`,
 })
 export class QrCodeDatatableComponent implements OnInit, OnDestroy {
@@ -231,7 +229,6 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 	headerCheckbox = viewChild.required<TemplateRef<any>>('headerCheckbox');
 	rowCheckbox = viewChild.required<TemplateRef<any>>('rowCheckbox');
 	deleteButton = viewChild.required<TemplateRef<any>>('deleteButton');
-	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
 
 	rowSelectionCount = computed(() => Object.keys(this.rowSelection()).length);
 	isTaskPending = computed(
@@ -532,7 +529,12 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 
 	checkQuotasDialog() {
 		if (this.issuer().quotas?.quotas['BADGE_AWARD']?.quota - this.rowSelectionCount() < 0) {
-			this.quotasExceededDialog().openDialog();
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer(),
+					variant: 'new_design',
+				},
+			});
 			return false;
 		}
 		return true;

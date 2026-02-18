@@ -113,8 +113,6 @@ export class BadgeClassDetailComponent
 
 	readonly networkSearchInputModel = viewChild<NgModel>('networkSearchInputModel');
 
-	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
-
 	readonly badgeFailedImageUrl = '../../../../breakdown/static/images/badge-failed.svg';
 	readonly badgeLoadingImageUrl = '../../../../breakdown/static/images/badge-loading.svg';
 
@@ -993,7 +991,12 @@ export class BadgeClassDetailComponent
 
 	checkQuotasDialog() {
 		if (this.issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
-			this.quotasExceededDialog().openDialog();
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer,
+					variant: 'new_design',
+				},
+			});
 			return false;
 		}
 		return true;

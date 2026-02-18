@@ -209,9 +209,6 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 	dialogRef: BrnDialogRef<any> = null;
 	selectedStaffRequestEmail: string | null = null;
 
-	@ViewChild('quotasExceededDialog')
-	private quotasExceededDialog: QuotaExceededDialog;
-
 	constructor() {
 		const loginService = inject(SessionService);
 		const router = inject(Router);
@@ -386,7 +383,12 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 
 	confirmStaffRequest(event: ApiStaffRequest) {
 		if (!this.checkQuotasDialog()) {
-			this.quotasExceededDialog.openDialog();
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer(),
+					variant: 'new_design',
+				},
+			});
 			return false;
 		}
 
@@ -413,7 +415,12 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 			this.issuer().quotas?.quotas['ACCOUNTS_ADMIN']?.quota === 0 &&
 			this.issuer().quotas?.quotas['ACCOUNTS_MEMBER']?.quota === 0
 		) {
-			this.quotasExceededDialog.openDialog();
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer(),
+					variant: 'new_design',
+				},
+			});
 			return false;
 		}
 

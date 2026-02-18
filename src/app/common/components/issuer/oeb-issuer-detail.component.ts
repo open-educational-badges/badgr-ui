@@ -173,7 +173,6 @@ export class OebIssuerDetailComponent implements OnInit {
 	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
 	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
 	readonly networkBadgesTemplate = viewChild<TemplateRef<any>>('networkBadgesTemplate');
-	readonly quotasExceededDialog = viewChild<QuotaExceededDialog>('quotasExceededDialog');
 
 	badgeResults: BadgeResult[] = [];
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
@@ -646,7 +645,12 @@ export class OebIssuerDetailComponent implements OnInit {
 	checkQuotasDialog() {
 		if (this.isFullIssuer(this.issuer) && this.issuer.quotas) {
 			if (this.issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
-				this.quotasExceededDialog().openDialog();
+				this._hlmDialogService.open(QuotaExceededDialog, {
+					context: {
+						issuer: this.issuer,
+						variant: 'new_design',
+					},
+				});
 				return false;
 			}
 		}

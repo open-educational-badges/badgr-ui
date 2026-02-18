@@ -1213,6 +1213,17 @@
 		"Info_ACCOUNTS_MEMBER": "Mitarbeitenden-Accounts vergeben",
 		"Info_AISKILLS_REQUESTS": "Anfragen genutzt",
 		"Info_NETWORK_MEMBERSHIPS": "Netzwerk-Mitgliedern hinzugefügt",
-		"FeatureListPlanComparison": "Feature-Liste: OEB-Pakete im Vergleich"
+		"FeatureListPlanComparison": "Feature-Liste: OEB-Pakete im Vergleich",
+		"packageFormHeadline": "Upgrade anfragen",
+		"packageFormNameFieldLabel": "Name",
+		"packageFormEmailFieldLabel": "E-Mail-Adresse",
+		"packageFormIssuerFieldLabel": "Institution",
+		"packageFormOptionsLabel": "Paket-Buchung",
+		"packageFormOptionsPRO": "Ich möchte auf das PRO-Paket upgraden",
+		"packageFormOptionsENTERPRISE": "Ich möchte auf das ENTERPRISE-Paket upgraden",
+		"packageFormOptionsNETWORK": "Ich möchte auf das NETZWERK-Paket upgraden",
+		"packageFormOptionsError": "Bitte wähle ein Paket aus",
+		"packageFormSubmitLabel": "Anfrage senden",
+		"individualFormHeadline": "Individuelles Angebot anfragen"
 	}
 }

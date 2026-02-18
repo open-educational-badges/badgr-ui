@@ -69,6 +69,7 @@ import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/u
 import { CatalogService } from '~/catalog/catalog.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -118,6 +119,7 @@ export class BadgeClassEditFormComponent
 	private translate = inject(TranslateService);
 	private navService = inject(NavigationService);
 	protected catalogService = inject(CatalogService);
+	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	baseUrl: string;
 	badgeCategory: string;
@@ -426,7 +428,6 @@ export class BadgeClassEditFormComponent
 	@ViewChild('keywordCompetenciesInput') keywordCompetenciesInput: ElementRef<HTMLInputElement>;
 	@ViewChild('keywordCompetenciesInputModel') keywordCompetenciesInputModel: NgModel;
 	@ViewChild('keywordCompetenciesLanguageSelectModel') keywordCompetenciesLanguageSelectModel: NgModel;
-	@ViewChild('quotasExceededDialog') quotasExceededDialog: QuotaExceededDialog;
 
 	existingBadgeClass: BadgeClass | null = null;
 
@@ -1766,7 +1767,12 @@ export class BadgeClassEditFormComponent
 
 	checkQuotasDialog(quota: string) {
 		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
-			this.quotasExceededDialog.openDialog();
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer,
+					variant: 'new_design',
+				},
+			});
 			return false;
 		}
 		return true;

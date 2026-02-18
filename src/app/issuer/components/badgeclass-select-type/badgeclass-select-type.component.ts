@@ -13,6 +13,7 @@ import { Network } from '~/issuer/network.model';
 import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
 
 @Component({
 	selector: 'badgeclass-select-type',
@@ -35,14 +36,12 @@ export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComp
 	protected issuerManager = inject(IssuerManager);
 	private configService = inject(AppConfigService);
 	private translate = inject(TranslateService);
+	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	issuerSlug: string;
 	issuer: Issuer | Network;
 	issuerLoaded: Promise<unknown>;
 	breadcrumbLinkEntries: LinkEntry[] = [];
-
-	@ViewChild('quotasExceededDialog')
-	private quotasExceededDialog: QuotaExceededDialog;
 
 	constructor() {
 		super();
@@ -71,7 +70,12 @@ export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComp
 
 	checkQuotasDialog(quota: string) {
 		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
-			this.quotasExceededDialog.openDialog();
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer,
+					variant: 'new_design',
+				},
+			});
 		}
 	}
 }
