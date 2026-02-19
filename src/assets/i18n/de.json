@@ -1239,6 +1239,7 @@
 		"packageFormOptionsError": "Bitte wähle ein Paket aus",
 		"requestFormSubmitLabel": "Anfrage senden",
 		"individualFormHeadline": "Individuelles Angebot anfragen",
-		"individualFormSubline": "<span class=\"tw-italic\">Bei individuellen Anfragen erhältst du zunächst ein verbindliches Angebot.</span><br><span class=\"tw-italic\">Nach deiner Zustimmung aktivieren wir OEB und senden dir die Rechnung.</span><br><span class=\"tw-font-bold tw-text-purple\">Buche gerne auch einen Call mit uns, um dein Anliegen zu besprechen:</span><br><a class=\"tw-italic\">Call buchen</a>"
+		"individualFormSubline": "<span class=\"tw-italic\">Bei individuellen Anfragen erhältst du zunächst ein verbindliches Angebot.</span><br><span class=\"tw-italic\">Nach deiner Zustimmung aktivieren wir OEB und senden dir die Rechnung.</span><br><span class=\"tw-font-bold tw-text-purple\">Buche gerne auch einen Call mit uns, um dein Anliegen zu besprechen:</span><br><a class=\"tw-italic\">Call buchen</a>",
+		"requestFormSuccess": "Danke für deine Anfrage.<br><strong>Wir melden uns bei dir.</strong>"
 	}
 }

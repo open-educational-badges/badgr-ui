@@ -4,7 +4,6 @@ import {
 	computed,
 	ElementRef,
 	inject,
-	input,
 	Renderer2,
 	signal
 } from '@angular/core';
@@ -31,7 +30,7 @@ export interface QuotaExceededDialogContext {
 	issuer: Issuer | Network;
 }
 
-export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'individual';
+export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'individual' | 'success';
 
 export const quotaPackages = [
 	{
@@ -51,7 +50,10 @@ export const quotaPackages = [
 @Component({
 	selector: 'quota-exceeded-dialog',
 	templateUrl: 'issuer-quotas-quota-exceeded-dialog.component.html',
-	styleUrl: 'issuer-quotas-quota-exceeded-dialog.component.scss',
+	styleUrls: [
+		'issuer-quotas-quota-exceeded-dialog.component.scss',
+		'../../../common/dialogs/oeb-dialogs/success-dialog.component.scss'
+	],
 	imports: [
 		OebButtonComponent,
 		TranslatePipe,
@@ -100,8 +102,6 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 				value: this.issuer().slug
 			}];
 
-			console.log(this.context);
-
 			this.upgradeRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
 			this.upgradeRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
 			this.upgradeRequestForm.controls.issuer.setValue(this.issuer().slug);
@@ -138,13 +138,9 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		super(componentElem, renderer);
 	}
 
-	openDialog() {
-		this.showModal();
-	}
-
 	closeDialog() {
+		this.dialogRef.close();
 		this.changePage('start');
-		this.closeModal();
 	}
 
 	changePage(page: QuotaExceededDialogPageType) {
@@ -167,7 +163,7 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 				package: formState.package,
 			}
 		).then(() => {
-			console.log("TODO");
+			this.changePage('success');
 		});
 	}
 
@@ -187,7 +183,7 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 				message: formState.message,
 			}
 		).then(() => {
-			console.log("TODO");
+			this.changePage('success');
 		});
 	}
 }

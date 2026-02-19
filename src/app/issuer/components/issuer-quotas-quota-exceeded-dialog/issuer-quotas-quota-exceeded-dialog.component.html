@@ -216,5 +216,31 @@
 				</form>
 			</div>
 		}
+
+		@if (page === 'success') {
+			<div variant="success" class="tw-text-center tw-text-purple tw-mt-[-59px] tw-mx-10">
+				<div class="tw-flex tw-justify-center">
+					<div class="oeb-icon-circle tw-my-6">
+						<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+							<circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+							<path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+						</svg>
+					</div>
+				</div>
+				<p
+					class="tw-text-oebblack tw-text-[18px]/[1.3em]"
+					[innerHTML]="'Quotas.requestFormSuccess' | translate"
+				></p>
+				<oeb-button
+					class="tw-block tw-mt-8"
+					type="button"
+					text="OK"
+					size="sm"
+					(click)="closeDialog()"
+				>
+					OK
+				</oeb-button>
+			</div>
+		}
 	</div>
 </div>
