@@ -24,6 +24,8 @@ import { FormFieldSelectOption } from '../../../common/components/formfield-sele
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmDialogModule } from '@spartan-ng/helm/dialog';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
+import { QuotaRequestApiService } from '../../services/quotarequest-api.service';
+import { TitleCasePipe } from '@angular/common';
 
 export interface QuotaExceededDialogContext {
 	issuer: Issuer | Network;
@@ -33,15 +35,15 @@ export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'individual';
 
 export const quotaPackages = [
 	{
-		slug: 'pro',
+		value: 'pro',
 		label: 'PRO',
 	},
 	{
-		slug: 'enterprise',
+		value: 'enterprise',
 		label: 'ENTERPRISE',
 	},
 	{
-		slug: 'network',
+		value: 'network',
 		label: 'NETWORK',
 	}
 ];
@@ -63,19 +65,24 @@ export const quotaPackages = [
 		HlmDialogModule,
 		HlmH2,
 		HlmP,
+		TitleCasePipe,
 	],
 })
 
-// TODO component for displaying quotas exceeded notice
 export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 	protected translate = inject(TranslateService);
+	protected quotaRequestApiService = inject(QuotaRequestApiService);
+
 	issuer = signal<Issuer|Network>(undefined);
+
 	nextLevel = computed(() => {
 		return this.issuer()?.quotas?.nextLevel?.level;
 	});
+
 	nextPrice = computed(() => {
 		return this.issuer()?.quotas?.nextLevel?.price;
 	});
+
 	nextQuotas = computed(() => {
 		return this.issuer()?.quotas?.nextLevel?.quotas;
 	});
@@ -93,31 +100,36 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 				value: this.issuer().slug
 			}];
 
+			console.log(this.context);
+
 			this.upgradeRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
 			this.upgradeRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
 			this.upgradeRequestForm.controls.issuer.setValue(this.issuer().slug);
+
+			this.individualRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
+			this.individualRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
+			this.individualRequestForm.controls.issuer.setValue(this.issuer().slug);
 		}
 	}
 
 	page: QuotaExceededDialogPageType = 'start';
 
-	upgradeRequestForm = typedFormGroup()
+	quotaRequestForm = typedFormGroup()
 		.addControl('name', '', [Validators.required, Validators.maxLength(254)])
 		.addControl('email', '', [Validators.required, Validators.maxLength(254)])
-		.addControl('issuer', '', [Validators.required])
+		.addControl('issuer', '', [Validators.required]);
+
+	upgradeRequestForm = this.quotaRequestForm.clone()
 		.addControl('package', 'pro', [Validators.required]);
 
-	individualRequestForm = typedFormGroup()
-		.addControl('name', '', [Validators.required, Validators.maxLength(254)])
-		.addControl('email', '', [Validators.required, Validators.maxLength(254)])
-		.addControl('issuer', '', [Validators.required])
+	individualRequestForm = this.quotaRequestForm.clone()
 		.addControl('message', '', [Validators.required]);
 
 	issuerOptions: FormFieldSelectOption[];
 
-	packageOptions: FormFieldSelectOption[] = quotaPackages.map((p) => ({
-		value: p.slug,
-		label: this.translate.instant('Quotas.packageFormOptions' + p.label),
+	packageOptions: FormFieldSelectOption[] = quotaPackages.map((qp) => ({
+		value: qp.value,
+		label: this.translate.instant('Quotas.packageFormOptions' + qp.label),
 	}));
 
 	constructor() {
@@ -143,11 +155,39 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		if (!this.upgradeRequestForm.markTreeDirtyAndValidate()) {
 			return;
 		}
+
+		const formState = this.upgradeRequestForm.value;
+
+		this.quotaRequestApiService.createUpgradeQuotaRequest(
+			formState.issuer,
+			{
+				name: formState.name,
+				email: formState.email,
+				issuer_id: formState.issuer,
+				package: formState.package,
+			}
+		).then(() => {
+			console.log("TODO");
+		});
 	}
 
 	onSubmitIndividual() {
-		if (!this.upgradeRequestForm.markTreeDirtyAndValidate()) {
+		if (!this.individualRequestForm.markTreeDirtyAndValidate()) {
 			return;
 		}
+
+		const formState = this.individualRequestForm.value;
+
+		this.quotaRequestApiService.createIndividualQuotaRequest(
+			formState.issuer,
+			{
+				name: formState.name,
+				email: formState.email,
+				issuer_id: formState.issuer,
+				message: formState.message,
+			}
+		).then(() => {
+			console.log("TODO");
+		});
 	}
 }

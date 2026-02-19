@@ -4,7 +4,7 @@
 			@if (nextLevel()) {
 				<hlm-dialog-header>
 					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
-						Entdecke die nächste Stufe mit OEB!
+						{{ 'Quotas.nextLevelHeadline' | translate }}
 					</h2>
 				</hlm-dialog-header>
 
@@ -18,7 +18,7 @@
 										{{ nextLevel() }}
 									</h3>
 									<p class="tw-font-semibold tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2">
-										{{ nextPrice() }}€ / Jahr
+										{{ nextPrice() }}{{ 'Quotas.euroPerYear' | translate }}
 									</p>
 									<!-- <small class="tw-block tw-text-center tw-italic tw-text-darkgrey"
 										>12 Monate Laufzeit, Zahlung monatlich oder jährlich
@@ -27,28 +27,24 @@
 							</figure>
 						</div>
 						<div>
-							<h2 class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold">
-								Dafür ist ein Upgrade auf unser <em>{{ nextLevel() }}-Paket</em> erforderlich.
-							</h2>
+							<h2
+								class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold"
+								[innerHTML]="'Quotas.upgradeToPackage' | translate: { package: nextLevel() }"
+							></h2>
 							@if (nextQuotas()) {
 								<div class="tw-mb-8">
 									<h3 class="tw-underline tw-text-[18px]/[1.2em] tw-mb-2 tw-font-bold">
-										Deine neuen Vorteile im damit:
+										{{ 'Quotas.nextQuotasProsHeadline' | translate }}
 									</h3>
 									<ul>
-										<li>bis zu {{ nextQuotas().BADGE_CREATE }} verschiedene Badge erstellen</li>
-										<li>
-											bis zu {{ nextQuotas().LEARNINGPATH_CREATE }} Lernpfade (Micro Degrees)
-											erstellen
-										</li>
-										<li>bis zu {{ nextQuotas().BADGE_AWARD }} Badges vergeben</li>
-										<li>{{ nextQuotas().ACCOUNTS_ADMIN }} Admin-Accounts</li>
-										<li>{{ nextQuotas().ACCOUNTS_MEMBER }} Mitarbeitenden-Accounts</li>
-										<li>
-											Badge-KI-Assistent: {{ nextQuotas().AISKILLS_REQUESTS }} Anfragen pro Monat
-										</li>
+										<li>{{ 'Quotas.nextQuotasProsBadges' | translate: { value: nextQuotas().BADGE_CREATE } }}</li>
+										<li>{{ 'Quotas.nextQuotasProsLearningpaths' | translate: { value: nextQuotas().LEARNINGPATH_CREATE } }}</li>
+										<li>{{ 'Quotas.nextQuotasProsAwards' | translate: { value: nextQuotas().BADGE_AWARD } }}</li>
+										<li>{{ 'Quotas.nextQuotasProsAdmins' | translate: { value: nextQuotas().ACCOUNTS_ADMIN } }}</li>
+										<li>{{ 'Quotas.nextQuotasProsMembers' | translate: { value: nextQuotas().ACCOUNTS_MEMBER } }}</li>
+										<li>{{ 'Quotas.nextQuotasProsKI' | translate: { value: nextQuotas().AISKILLS_REQUESTS } }}</li>
 										@if (nextQuotas().PDFEDITOR) {
-											<li>Individuelles Branding der PDF-Zertifikate</li>
+											<li>{{ 'Quotas.nextQuotasProsPdfeditor' | translate }}</li>
 										}
 									</ul>
 								</div>
@@ -67,7 +63,7 @@
 									width="full_width"
 									(click)="changePage('upgrade')"
 								/>
-								<p class="tw-text-center tw-italic">Oder</p>
+								<p class="tw-text-center tw-italic">{{ 'General.or' | translate | titlecase }}</p>
 								<oeb-button
 									variant="secondary"
 									width="full_width"
@@ -81,16 +77,16 @@
 			} @else {
 				<hlm-dialog-header>
 					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
-						Obergrenze erreicht
+						{{ 'Quotas.exceedDialogUpperLimitHeadline' | translate }}
 					</h2>
 				</hlm-dialog-header>
 
 				<div class="category u-margin-top2x warning tw-text-center tw-p-8">
 					<div class="tw-p-8">
 						<p class="tw-font-bold">
-							Du hast für dieses Feature die Obergrenze des gebuchten Leistungsumfangs erreicht.
+							{{ 'Quotas.exceedDialogUpperLimitSubline' | translate }}
 						</p>
-						<p class="tw-italic tw-text-purple">Schreibe uns, wenn du upgraden möchtest.</p>
+						<p class="tw-italic tw-text-purple">{{ 'Quotas.exceedDialogUpperLimitCta' | translate }}</p>
 					</div>
 					<div class="tw-flex tw-justify-center tw-gap-2">
 						<oeb-button size="sm" text="Abbrechen" variant="secondary" (click)="closeDialog()" />
@@ -109,7 +105,7 @@
 			<div class="tw-mt-8">
 				<form class="tw-w-full" [formGroup]="upgradeRequestForm.rawControl" (ngSubmit)="onSubmitPackage()" novalidate>
 					<oeb-input
-						[label]="'Quotas.packageFormNameFieldLabel' | translate"
+						[label]="'Quotas.requestFormNameFieldLabel' | translate"
 						[control]="upgradeRequestForm.rawControlMap.name"
 						[readonly]="true"
 						[noTopMargin]="true"
@@ -117,14 +113,14 @@
 
 					<oeb-input
 						class="tw-block tw-pt-1"
-						[label]="'Quotas.packageFormEmailFieldLabel' | translate"
+						[label]="'Quotas.requestFormEmailFieldLabel' | translate"
 						[control]="upgradeRequestForm.rawControlMap.email"
 						[readonly]="true"
 					></oeb-input>
 
 					<oeb-select
 						class="tw-block tw-pt-1"
-						[label]="'Quotas.packageFormIssuerFieldLabel' | translate"
+						[label]="'Quotas.requestFormIssuerFieldLabel' | translate"
 						[options]="issuerOptions"
 						[control]="upgradeRequestForm.rawControlMap.issuer"
 						[disabled]="true"
@@ -154,11 +150,11 @@
 
 					<oeb-button
 						type="submit"
-						[text]="'Quotas.packageFormSubmitLabel' | translate"
+						[text]="'Quotas.requestFormSubmitLabel' | translate"
 						[disabled]="upgradeRequestForm.invalid"
 						width="full_width"
 					>
-						{{ 'Quotas.packageFormSubmitLabel' | translate }}
+						{{ 'Quotas.requestFormSubmitLabel' | translate }}
 					</oeb-button>
 				</form>
 			</div>
@@ -170,17 +166,15 @@
 				</h2>
 			</hlm-dialog-header>
 
-			<p class="tw-text-oebblack tw-text-[18px] tw-leading-[130%] tw-mt-7 md:tw-mt-8">
-				<span class="tw-italic">Bei individuellen Anfragen erhältst du zunächst ein verbindliches Angebot.</span><br>
-				<span class="tw-italic">Nach deiner Zustimmung aktivieren wir OEB und senden dir die Rechnung.</span><br>
-				<span class="tw-font-bold tw-text-purple">Buche gerne auch einen Call mit uns, um dein Anliegen zu besprechen:</span><br>
-				<a class="tw-italic">Call buchen</a>
-			</p>
+			<p
+				class="tw-text-oebblack tw-text-[18px] tw-leading-[130%] tw-mt-7 md:tw-mt-8"
+				[innerHTML]="'Quotas.individualFormSubline' | translate"
+			></p>
 
 			<div class="tw-mt-8">
 				<form class="tw-w-full" [formGroup]="individualRequestForm.rawControl" (ngSubmit)="onSubmitIndividual()" novalidate>
 					<oeb-input
-						[label]="'Quotas.packageFormNameFieldLabel' | translate"
+						[label]="'Quotas.requestFormNameFieldLabel' | translate"
 						[control]="upgradeRequestForm.rawControlMap.name"
 						[readonly]="true"
 						[noTopMargin]="true"
@@ -188,30 +182,36 @@
 
 					<oeb-input
 						class="tw-block tw-pt-1"
-						[label]="'Quotas.packageFormEmailFieldLabel' | translate"
-						[control]="upgradeRequestForm.rawControlMap.email"
+						[label]="'Quotas.requestFormEmailFieldLabel' | translate"
+						[control]="individualRequestForm.rawControlMap.email"
 						[readonly]="true"
 					></oeb-input>
 
 					<oeb-select
 						class="tw-block tw-pt-1"
-						[label]="'Quotas.packageFormIssuerFieldLabel' | translate"
+						[label]="'Quotas.requestFormIssuerFieldLabel' | translate"
 						[options]="issuerOptions"
-						[control]="upgradeRequestForm.rawControlMap.issuer"
+						[control]="individualRequestForm.rawControlMap.issuer"
 						[disabled]="true"
 					></oeb-select>
 
 					<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
-
+						<oeb-input
+							label="Gewünschte Konditionen"
+							[control]="individualRequestForm.rawControlMap.message"
+							fieldType="textarea"
+							[autofocus]="true"
+							size="lg"
+						></oeb-input>
 					</div>
 
 					<oeb-button
 						type="submit"
-						[text]="'Quotas.packageFormSubmitLabel' | translate"
-						[disabled]="upgradeRequestForm.invalid"
+						[text]="'Quotas.requestFormSubmitLabel' | translate"
+						[disabled]="individualRequestForm.invalid"
 						width="full_width"
 					>
-						{{ 'Quotas.packageFormSubmitLabel' | translate }}
+						{{ 'Quotas.requestFormSubmitLabel' | translate }}
 					</oeb-button>
 				</form>
 			</div>

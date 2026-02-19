@@ -14,6 +14,13 @@ ul {
 
 		> * {
 			max-width: 217px !important;
+			opacity: 0.5;
+		}
+	}
+
+	oeb-input[fieldType="textarea"] {
+		textarea {
+			min-height: 280px;
 		}
 	}
 }
