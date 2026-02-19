@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { AppConfigService } from '~/common/app-config.service';
 import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authentication-service';
@@ -182,6 +182,26 @@ export class CatalogService extends BaseHttpApiService {
 				...response.body,
 				results: response.body.results.map((i) => new IssuerV3(i)),
 			};
+		} catch (e) {
+			console.warn(e);
+			return null;
+		}
+	}
+
+	async getIssuersGeoJSON(): Promise<GeoJSON.FeatureCollection | null> {
+		try {
+			const headers = new HttpHeaders({ Accept: 'application/geo+json' });
+			const response = await this.get<GeoJSON.FeatureCollection>(
+				`${this.baseUrl}/${ENDPOINT}/issuers/`,
+				undefined,
+				undefined,
+				undefined,
+				headers,
+			);
+
+			if (!response.ok) return null;
+
+			return response.body;
 		} catch (e) {
 			console.warn(e);
 			return null;
