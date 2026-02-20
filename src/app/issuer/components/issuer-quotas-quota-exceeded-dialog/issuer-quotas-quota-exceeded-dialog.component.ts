@@ -162,9 +162,9 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 				issuer_id: formState.issuer,
 				package: formState.package,
 			}
-		).then(() => {
-			this.changePage('success');
-		});
+		);
+
+		this.changePage('success');
 	}
 
 	onSubmitIndividual() {
@@ -182,8 +182,8 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 				issuer_id: formState.issuer,
 				message: formState.message,
 			}
-		).then(() => {
-			this.changePage('success');
-		});
+		);
+
+		this.changePage('success');
 	}
 }
