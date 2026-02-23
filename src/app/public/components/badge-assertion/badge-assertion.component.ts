@@ -26,6 +26,7 @@ import { SessionService } from '~/common/services/session.service';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { Issuer } from '~/issuer/models/issuer.model';
 import {
+	getAssertionCourseUrl,
 	getAssertionExpiration,
 	getAssertionIssuedDate,
 	isOB2Assertion,
@@ -267,7 +268,7 @@ export class PublicBadgeAssertionComponent {
 					evidence_items: this.normalizeEvidence(assertion, assertionVersion),
 					competencies: assertion.badge['extensions:CompetencyExtension'],
 					license: assertion.badge['extensions:LicenseExtension'] ? true : false,
-					courseUrl: assertion.badge.courseUrl,
+					courseUrl: getAssertionCourseUrl(assertion),
 					duration: assertion.badge['extensions:StudyLoadExtension'].StudyLoad,
 					learningPaths: lps,
 					version: assertionVersion,
