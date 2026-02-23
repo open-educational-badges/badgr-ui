@@ -1,12 +1,15 @@
 import {
 	Component,
 	EventEmitter,
-	Input,
-	HostBinding,
 	Output,
 	ViewChild,
 	ElementRef,
 	AfterViewInit,
+	computed,
+	effect,
+	input,
+	signal,
+	afterNextRender,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgTemplateOutlet, SlicePipe, NgClass } from '@angular/common';
@@ -24,12 +27,13 @@ type MatchOrProgressType = { match?: string; progress?: number };
 	selector: 'bg-learningpathcard',
 	host: {
 		class: 'tw-rounded-[10px] tw-h-[410px] tw-max-w-[392px] tw-border-solid tw-relative tw-p-6 tw-block tw-overflow-hidden oeb-badge-card',
+		'[class]': 'hostClasses()',
 	},
 	template: `
-		@if (disableLink) {
+		@if (disableLink()) {
 			<ng-container *ngTemplateOutlet="contentTemplate" />
 		} @else {
-			<a [routerLink]="routePath">
+			<a [routerLink]="routePath()">
 				<ng-container *ngTemplateOutlet="contentTemplate" />
 			</a>
 		}
@@ -39,7 +43,7 @@ type MatchOrProgressType = { match?: string; progress?: number };
 				<div
 					class="tw-bg-[var(--color-lightgray)] tw-w-full tw-relative tw-h-[175px] tw-items-center tw-flex tw-justify-center tw-p-2 tw-rounded-[3px]"
 				>
-					@if (!completed) {
+					@if (!completed()) {
 						<div class="tw-absolute tw-top-[10px] tw-right-[10px]">
 							<img
 								src="assets/oeb/images/learningPath/learningPathIcon.svg"
@@ -48,7 +52,7 @@ type MatchOrProgressType = { match?: string; progress?: number };
 							/>
 						</div>
 					}
-					@if (completed) {
+					@if (completed()) {
 						<div
 							class="tw-absolute tw-top-[10px] tw-right-[10px] tw-flex tw-justify-center tw-items-center tw-gap-2"
 						>
@@ -73,7 +77,7 @@ type MatchOrProgressType = { match?: string; progress?: number };
 
 					<img
 						class="tw-w-[145px] tw-h-[145px]"
-						[loaded-src]="badgeImage"
+						[loaded-src]="badgeImage()"
 						[loading-src]="badgeLoadingImageUrl"
 						[error-src]="badgeFailedImageUrl"
 						width="38"
@@ -84,8 +88,9 @@ type MatchOrProgressType = { match?: string; progress?: number };
 					<p #titleElement>
 						<span
 							class="tw-font-semibold tw-text-oebblack tw-text-[22px] tw-leading-[26px] oeb-break-words"
-							>{{ name }}</span
 						>
+							{{ name() }}
+						</span>
 					</p>
 					<p class="tw-mt-2">
 						<span class="tw-text-purple tw-uppercase">
@@ -94,70 +99,71 @@ type MatchOrProgressType = { match?: string; progress?: number };
 					</p>
 					<p class="tw-overflow-hidden">
 						<a class="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis tw-block tw-text-oebblack">
-							{{ 'General.of' | translate }} {{ issuerTitle }}
+							{{ 'General.of' | translate }} {{ issuerTitle() }}
 						</a>
 					</p>
 				</div>
 
-				<div [ngClass]="middleSectionClass">
-					@if (!isProgress) {
+				<div [ngClass]="middleSectionClass()">
+					@if (!isProgress()) {
 						<div class="tw-gap-1 tw-flex tw-flex-wrap">
-							@for (tag of tags | slice: 0 : 3; track tag; let last = $last) {
-								<div hlmP size="sm" class="oeb-tag">
-									{{ tag }}
-								</div>
+							@for (tag of tags() | slice: 0 : 3; track tag) {
+								<div hlmP size="sm" class="oeb-tag">{{ tag }}</div>
 							}
 						</div>
 					}
-					@if (isMatch) {
+
+					@if (isMatch()) {
 						<div>
 							<div
 								class="tw-px-[11.55px] tw-py-[3.85px] tw-bg-lightpurple tw-rounded-[95px] tw-inline-block"
 							>
-								<span class="tw-text-sm tw-text-purple">{{ this.isMatch }} Badges</span>
+								<span class="tw-text-sm tw-text-purple">{{ isMatch() }} Badges</span>
 							</div>
 						</div>
 					} @else {
-						@if (progress !== null) {
+						@if (progressValue() !== null) {
 							<div class="tw-w-full tw-flex tw-justify-center tw-items-center">
 								<oeb-progress
 									class="tw-w-full tw-h-7 tw-relative tw-inline-flex tw-overflow-hidden tw-rounded-3xl tw-bg-white tw-items-center"
 									[variant]="'purple'"
-									[value]="progressValue"
-									[template]="requested ? requestedTemplate : progressTemplate"
+									[value]="progressValue() ?? 0"
+									[template]="requested() ? requestedTemplate : progressTemplate"
 								></oeb-progress>
 							</div>
 						}
 					}
+
 					<ng-template #progressTemplate>
 						<div class="tw-absolute tw-w-full tw-text-left">
-							<span class="tw-ml-2 tw-text-sm tw-text-[#E0F2FE]"
-								>{{ 'General.learningPath' | translate }}
-								@if (!completed) {
-									<span>{{ progressValue }}%</span>
+							<span class="tw-ml-2 tw-text-sm tw-text-[#E0F2FE]">
+								@if (!completed() && (progressValue() ?? 0) > 0) {
+									<span>{{ progressValue() }}%</span>
+								} @else if (completed()) {
+									<span>{{ 'LearningPath.completedSuccessfully' | translate }}</span>
 								}
-								{{ 'LearningPath.finished' | translate }}</span
-							>
+							</span>
 						</div>
 					</ng-template>
+
 					<ng-template #requestedTemplate>
 						<div class="tw-absolute tw-w-full tw-text-left tw-flex tw-items-center">
 							<span class="tw-bg-purple tw-rounded-[50%] tw-h-[20px] tw-w-[20px] tw-ml-2">
 								<ng-icon hlm variant="sm" class="tw-text-white tw-box-border" name="lucideCheck" />
 							</span>
-							<span class="tw-ml-2 tw-text-sm tw-text-purple">{{
-								'LearningPath.successRequestPath' | translate
-							}}</span>
+							<span class="tw-ml-2 tw-text-sm tw-text-purple">
+								{{ 'LearningPath.successRequestPath' | translate }}
+							</span>
 						</div>
 					</ng-template>
 				</div>
 
 				<div
-					[ngClass]="studyLoadClass"
+					[ngClass]="studyLoadClass()"
 					class="tw-mt-auto tw-flex tw-flex-row tw-gap-4 tw-text-xs tw-items-center"
 				>
 					<ng-icon hlm name="lucideClock" />
-					<span>{{ studyLoad | hourPipe }} {{ 'RecBadge.hours' | translate }}</span>
+					<span>{{ studyLoad() | hourPipe }} {{ 'RecBadge.hours' | translate }}</span>
 				</div>
 			</div>
 		</ng-template>
@@ -179,89 +185,83 @@ type MatchOrProgressType = { match?: string; progress?: number };
 export class BgLearningPathCard implements AfterViewInit {
 	readonly badgeLoadingImageUrl = 'breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = 'breakdown/static/images/badge-failed.svg';
-	private _matchOrProgress: MatchOrProgressType;
-	isTitleTwoLines = false;
 
-	@ViewChild('titleElement') titleElement?: ElementRef;
-	@Input() slug: string;
-	@Input() issuerSlug: string;
-	@Input() badgeImage: string;
-	@Input() name: string;
-	@Input() description: string;
-	@Input() badgeIssueDate: string;
-	@Input() badgeClass: string;
-	@Input() issuerTitle: string;
-	@Input() tags: string[];
-	@Input() public = true;
-	@Input() studyLoad: number;
-	@Input() completed: boolean = false;
-	@Input() requested: boolean = false;
-	@Input() progress: number | null = null;
-	@Input() match: string | null = null;
+	@ViewChild('titleElement') titleElement?: ElementRef<HTMLElement>;
+	isTitleTwoLines = signal(false);
+
+	slug = input.required<string>();
+	issuerSlug = input<string>('');
+	badgeImage = input<string>('');
+	name = input<string>('');
+	description = input<string>('');
+	badgeIssueDate = input<string>('');
+	badgeClass = input<string>('');
+	issuerTitle = input<string>('');
+	tags = input<string[]>([]);
+	public = input<boolean>(true);
+	studyLoad = input<number>(0);
+	completed = input<boolean>(false);
+	requested = input<boolean>(false);
+	progress = input<number | null>(null);
+	disableLink = input<boolean>(false);
+
+	matchOrProgress = input<MatchOrProgressType | null>(null);
+
 	@Output() shareClicked = new EventEmitter<MouseEvent>();
-	@Input() disableLink: boolean = false;
 
-	@HostBinding('class') get hostClasses(): string {
-		if (this.isProgress && this.progress / this.studyLoad < 1 && !this.completed) {
-			return 'tw-bg-[var(--color-lightgreen)] tw-border-purple tw-border';
-		} else if (this.isProgress && this.progress / this.studyLoad === 1 && !this.completed && !this.requested) {
-			return 'tw-bg-[var(--color-lightgreen)] tw-border-green tw-border-4';
-		} else {
-			return 'tw-bg-white tw-border-purple tw-border';
-		}
-	}
-
-	@Input() set matchOrProgress(value: MatchOrProgressType) {
-		if (value && 'match' in value && 'progress' in value) {
+	private _validate = effect(() => {
+		const v = this.matchOrProgress();
+		if (v && 'match' in v && 'progress' in v) {
 			throw new Error('Only one of "match" or "progress" can be set.');
 		}
-		this._matchOrProgress = value;
-	}
+	});
+
+	isMatch = computed(() => this.matchOrProgress()?.match);
+	isProgress = computed(() => this.progress() !== null);
+
+	progressValue = computed<number | null>(() => {
+		if (this.completed()) return 100;
+		const load = this.studyLoad();
+		if (!load) return 0;
+		const p = this.progress() ?? 0;
+		return Math.floor((p / load) * 100);
+	});
+
+	hostClasses = computed(() => {
+		const p = this.progress() ?? 0;
+		const load = this.studyLoad();
+		const ratio = load ? p / load : 0;
+
+		if (this.isProgress() && ratio < 1 && !this.completed()) {
+			return 'tw-bg-[var(--color-lightgreen)] tw-border-purple tw-border';
+		} else if (this.isProgress() && ratio === 1 && !this.completed() && !this.requested()) {
+			return 'tw-bg-[var(--color-lightgreen)] tw-border-green tw-border-4';
+		}
+		return 'tw-bg-white tw-border-purple tw-border';
+	});
+
+	middleSectionClass = computed(() => {
+		if (!this.isProgress()) return 'tw-pb-[50px]';
+		return this.isTitleTwoLines() ? 'tw-py-3' : 'tw-pt-6 tw-pb-[26px]';
+	});
+
+	studyLoadClass = computed(() => {
+		if (this.completed() || (this.progressValue() ?? 0) === 0) return 'tw-text-darkgrey';
+		return 'tw-text-oebblack tw-font-semibold';
+	});
+
+	routePath = computed<any[]>(() => {
+		if (!this.public() && this.issuerSlug()) {
+			return ['/issuer/issuers/', this.issuerSlug(), 'learningpaths', this.slug()];
+		}
+		return ['/public/learningpaths/', this.slug()];
+	});
 
 	ngAfterViewInit() {
-		if (this.titleElement) {
-			const height = this.titleElement.nativeElement.offsetHeight;
-			this.isTitleTwoLines = height > 30;
-		}
-	}
-
-	get middleSectionClass(): string {
-		if (!this.isProgress) {
-			return 'tw-pb-[50px]';
-		}
-		return this.isTitleTwoLines ? 'tw-py-3' : 'tw-pt-6 tw-pb-[26px]';
-	}
-
-	get studyLoadClass(): string {
-		if (this.completed || this.progressValue === 0) {
-			return 'tw-text-darkgrey';
-		}
-		return 'tw-text-oebblack tw-font-semibold';
-	}
-
-	get isMatch(): string | undefined {
-		return this._matchOrProgress?.match;
-	}
-
-	get isProgress(): boolean {
-		return this.progress !== null;
-	}
-
-	get progressValue(): number {
-		if (this.completed) {
-			return 100;
-		}
-		if (!this.studyLoad || this.studyLoad === 0) {
-			return 0;
-		}
-		return Math.floor(((this.progress ?? 0) / this.studyLoad) * 100);
-	}
-
-	get routePath(): any[] {
-		if (!this.public && this.issuerSlug) {
-			return ['/issuer/issuers/', this.issuerSlug, 'learningpaths', this.slug];
-		}
-
-		return ['/public/learningpaths/', this.slug];
+		requestAnimationFrame(() => {
+			const el = this.titleElement?.nativeElement;
+			if (!el) return;
+			this.isTitleTwoLines.set(el.offsetHeight > 30);
+		});
 	}
 }
