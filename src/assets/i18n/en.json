@@ -1134,6 +1134,7 @@
 		"getYourPath": "Get your Micro Degree badge",
 		"continue": "Continue learning",
 		"finished": "Finished",
+		"completedSuccessfully": "100% - learning path completed successfully",
 		"includedBadges": "Contained badges",
 		"badgeTabs": {
 			"all": "All",
@@ -1143,7 +1144,7 @@
 		"chooseBadges": "Choose included badges",
 		"badgeSequenceStep": "Badge order",
 		"badgeSequence": "Order of badges in the learning path",
-		"combineBadgeCategories": "You can combine competency badges and participation badges.",
+		"combineBadgeCategories": "You can combine all badge types.",
 		"min2Badges": "The learning path must contain at least 2 badges.",
 		"youHave": "You have",
 		"choosenForLp": "selected for the learning path.",
@@ -1186,7 +1187,8 @@
 		"archive": "Archiving instead of deletion",
 		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
 		"canOnlyBeArchived": "It can therefore only be archived.",
-		"mdArchived": "We have archived the micro degree."
+		"mdArchived": "We have archived the micro degree.",
+		"archivedLearningPaths": "Archived learning paths"
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",
