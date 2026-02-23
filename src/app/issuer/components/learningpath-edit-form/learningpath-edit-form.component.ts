@@ -620,13 +620,9 @@ export class LearningPathEditFormComponent
 				return badge;
 			});
 
-			this.badges = [...issuerBadges, ...sharedBadgeClasses]
-				.filter(
-					(b) =>
-						b.extension['extensions:StudyLoadExtension'].StudyLoad > 0 &&
-						b.extension['extensions:CategoryExtension'].Category !== 'learningpath',
-				)
-				.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+			this.badges = [...issuerBadges, ...sharedBadgeClasses].sort(
+				(a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+			);
 
 			this.badgeResults = this.badges;
 			this.badgesFormArray = this.learningPathForm.controls.badges.value;
