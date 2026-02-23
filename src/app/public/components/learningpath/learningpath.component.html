@@ -143,12 +143,10 @@
 						<div class="tw-absolute tw-flex tw-flex-col tw-w-full tw-text-right tw-right-4">
 							<span hlmH1 class="tw-font-extrabold tw-text-purple">{{ progressValue() }} %</span>
 							<span hlmP class="tw-mt-2 tw-text-oebblack tw-flex tw-justify-end">
-								<span
-									[countUp]="minutesCompleted"
-									[options]="{ formattingFn: formatCountUpMinutes }"
-								></span>
+								<span>{{ learningPath.completed_badges?.length ?? 0 }}</span>
 								<span> / </span>
-								<span> {{ minutesTotal | hourPipe }} h</span>
+								<span>{{ learningPath.required_badges_count }}</span>
+								<span>&nbsp;Badges</span>
 							</span>
 						</div>
 					</ng-template>
