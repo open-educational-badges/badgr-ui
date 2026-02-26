@@ -36,3 +36,11 @@ export function getAssertionRecipient(assertion: PublicApiBadgeAssertion): strin
 
 	return undefined;
 }
+
+export function getAssertionCourseUrl(assertion: PublicApiBadgeAssertion): string | undefined {
+	if (isOB2Assertion(assertion)) {
+		return null;
+	} else {
+		return assertion.courseUrl;
+	}
+}

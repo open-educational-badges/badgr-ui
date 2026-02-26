@@ -28,6 +28,7 @@ export interface PublicApiBadgeAssertion_OB3 {
 	};
 	validFrom: string;
 	validUntil?: string;
+	courseUrl?: string;
 	credentialSubject: {
 		type: ['AchievementSubject'];
 		identifier: Array<{
