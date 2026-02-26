@@ -8,6 +8,7 @@ import { BadgeClassV3, IBadgeClassV3 } from '~/issuer/models/badgeclassv3.model'
 import { IIssuerV3, IssuerV3 } from '~/issuer/models/issuerv3.model';
 import { LearningPathV3 } from '~/issuer/models/learningpathv3.model';
 import { INetworkV3, NetworkV3 } from '~/issuer/models/networkv3.model';
+import { type FeatureCollection } from 'geojson';
 
 const ENDPOINT = 'v3/issuer';
 
@@ -188,10 +189,10 @@ export class CatalogService extends BaseHttpApiService {
 		}
 	}
 
-	async getIssuersGeoJSON(): Promise<GeoJSON.FeatureCollection | null> {
+	async getIssuersGeoJSON(): Promise<FeatureCollection | null> {
 		try {
 			const headers = new HttpHeaders({ Accept: 'application/geo+json' });
-			const response = await this.get<GeoJSON.FeatureCollection>(
+			const response = await this.get<FeatureCollection>(
 				`${this.baseUrl}/${ENDPOINT}/issuers/`,
 				undefined,
 				undefined,

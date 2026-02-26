@@ -43,6 +43,7 @@ import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observer';
+import { type FeatureCollection } from 'geojson';
 
 @Component({
 	selector: 'app-issuer-catalog',
@@ -80,7 +81,7 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 	@ViewChild('map')
 	private mapContainer: ElementRef<HTMLElement>;
 
-	issuerGeoJson?: GeoJSON.FeatureCollection;
+	issuerGeoJson?: FeatureCollection;
 
 	@ViewChild('loadMore') loadMore: ElementRef | undefined;
 
