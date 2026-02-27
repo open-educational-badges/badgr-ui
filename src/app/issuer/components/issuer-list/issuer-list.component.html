@@ -203,7 +203,7 @@
 	<div class="md:tw-flex">
 		<div class="tw-grid tw-grid-cols-myIssuersMobile sm:tw-grid-cols-myIssuers tw-gap-6 tw-w-full tw-relative">
 			@for (issuer of issuers; track issuer) {
-				<oeb-issuer-network-card [issuerOrNetwork]="issuer" />
+				<oeb-issuer-network-card [issuerOrNetwork]="issuer" (navigate)="handleNavigate($event, issuer)" />
 			}
 			<ng-container
 				*ngTemplateOutlet="pluginBoxTemplate; context: { mobile: false, showWhenEmpty: false }"

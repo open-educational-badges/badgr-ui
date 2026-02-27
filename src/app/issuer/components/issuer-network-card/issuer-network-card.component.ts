@@ -158,7 +158,7 @@ export class OebIssuerNetworkCard {
 	private translate = inject(TranslateService);
 
 	readonly issuerOrNetwork = input.required<IssuerTypes | NetworkTypes>();
-	readonly navigate = output<'container' | 'heading' | 'awardBadge' | 'createBadge'>();
+	readonly navigate = output<NavigationType>();
 	readonly issuerImagePlaceHolderUrl = '../../../../breakdown/static/images/placeholderavatar-issuer.svg';
 	readonly plural = {
 		badges: {
@@ -218,3 +218,5 @@ export class OebIssuerNetworkCard {
 
 type IssuerTypes = Issuer | IssuerV3;
 type NetworkTypes = Network | NetworkV3;
+
+export type NavigationType = 'container' | 'heading' | 'awardBadge' | 'createBadge';
