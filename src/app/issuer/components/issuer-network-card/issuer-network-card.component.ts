@@ -154,13 +154,12 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 						"
 						[umamiEvent]="'create-badge'"
 						[weight]="inputAsPrivateNetwork() ? 'medium' : 'bold'"
-						[routerLink]="[
-							'/issuer',
-							inputAsIssuer() ? 'issuers' : 'networks',
-							issuerOrNetwork().slug,
-							inputAsIssuer() ? ['badges', 'select'] : [],
-						]"
-						[queryParams]="inputAsPrivateNetwork() ? { tab: 'badges' } : undefined"
+						[routerLink]="
+							inputAsIssuer()
+								? ['/issuer/issuers', issuerOrNetwork().slug, 'badges', 'select']
+								: ['/issuer/networks', issuerOrNetwork().slug]
+						"
+						[queryParams]="inputAsPrivateNetwork() ? { tab: 'badges' } : null"
 						class="tw-whitespace-nowrap"
 					/>
 				</div>
