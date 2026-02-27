@@ -47,6 +47,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { Network } from '~/issuer/network.model';
 import { UserPreferenceService } from '~/common/services/user-preference.service';
+import { OebIssuerNetworkCard } from '../issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'issuer-list',
@@ -68,6 +69,7 @@ import { UserPreferenceService } from '~/common/services/user-preference.service
 		TranslatePipe,
 		OebTabsComponent,
 		NetworkListComponent,
+		OebIssuerNetworkCard,
 	],
 })
 export class IssuerListComponent

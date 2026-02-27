@@ -10,6 +10,7 @@ import { HlmBadge } from '~/components/spartan/ui-badge-helm/src';
 import { I18nPluralPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Network } from '~/issuer/network.model';
+import { OebButtonComponent } from '~/components/oeb-button.component';
 
 /**
  * A card to display public or private issuers or networks
@@ -25,9 +26,10 @@ import { Network } from '~/issuer/network.model';
 		BgImageStatusPlaceholderDirective,
 		I18nPluralPipe,
 		RouterLink,
+		OebButtonComponent,
 	],
 	template: `
-		<article [class]="containerClasses()" (click)="this.handleContainerClick()">
+		<article [class]="containerClasses()" (click)="navigate.emit('container')">
 			<div
 				class="tw-flex tw-flex-row"
 				[class.tw-items-center]="inputAsIssuer()"
@@ -51,17 +53,16 @@ import { Network } from '~/issuer/network.model';
 						hlmH2
 						class="tw-font-bold tw-break-words tw-hyphens-auto tw-cursor-pointer"
 						[class.tw-text-white]="inputAsNetwork()"
-						(click)="navigate.emit()"
+						(click)="navigate.emit('heading')"
 						[truncatedText]="issuerOrNetwork().name"
 						[maxLength]="48"
 						>{{ issuerOrNetwork().name }}</a
 					>
 					@if (!isPublic()) {
-						<p
-							class="tw-text-white tw-pb-2 tw-mt-2 tw-font-semibold md:tw-text-[20px] md:tw-leading-[24.4px] tw-text-[14px] tw-leading-[19.6px]"
-						>
-							@if (inputAsIssuer()) {
-								TODO
+						<p hlmP class="tw-italic">
+							@if (inputAsPrivateIssuer()) {
+								{{ 'Issuer.yourRole' | translate }}
+								{{ inputAsPrivateIssuer()?.currentUserStaffMember?.roleInfo?.label ?? '' | translate }}
 							} @else {
 								{{
 									'Network.yourRole'
@@ -121,7 +122,35 @@ import { Network } from '~/issuer/network.model';
 						}
 					</div>
 				}
-			} @else {}
+			} @else {
+				<div class="tw-flex tw-flex-col tw-gap-2 tw-w-full">
+					@if (inputAsPrivateIssuer()?.badgeClassCount || inputAsPrivateNetwork()?.badgeClassCount) {
+						<oeb-button
+							[text]="'Issuer.giveBadge' | translate"
+							[width]="'full_width'"
+							[size]="'mediumText'"
+							(click)="navigate.emit('awardBadge')"
+							[routerLink]="['/issuer/issuers/', issuerOrNetwork().slug]"
+							class="tw-whitespace-nowrap"
+						/>
+					}
+					<oeb-button
+						[id]="'create-new-badge-btn-1'"
+						[text]="'Issuer.createBadge' | translate"
+						[width]="'full_width'"
+						[disabled]="
+							!(inputAsPrivateIssuer()?.canCreateBadge ?? true) ||
+							!(inputAsPrivateNetwork()?.canCreateBadge ?? true)
+						"
+						[variant]="inputAsPrivateIssuer()?.badgeClassCount ? 'secondary' : 'default'"
+						[umamiEvent]="'create-badge'"
+						[size]="'mediumText'"
+						(click)="navigate.emit('createBadge')"
+						[routerLink]="['/issuer/issuers/', issuerOrNetwork().slug, 'badges', 'select']"
+						class="tw-whitespace-nowrap"
+					/>
+				</div>
+			}
 		</article>
 	`,
 })
@@ -129,7 +158,7 @@ export class OebIssuerNetworkCard {
 	private translate = inject(TranslateService);
 
 	readonly issuerOrNetwork = input.required<IssuerTypes | NetworkTypes>();
-	readonly navigate = output();
+	readonly navigate = output<'container' | 'heading' | 'awardBadge' | 'createBadge'>();
 	readonly issuerImagePlaceHolderUrl = '../../../../breakdown/static/images/placeholderavatar-issuer.svg';
 	readonly plural = {
 		badges: {
@@ -147,16 +176,24 @@ export class OebIssuerNetworkCard {
 		const iOrN = this.issuerOrNetwork();
 		return this.isIssuerType(iOrN) ? iOrN : undefined;
 	});
+	readonly inputAsPrivateIssuer = computed(() => {
+		const iOrN = this.issuerOrNetwork();
+		return this.isPrivateIssuerType(iOrN) ? iOrN : undefined;
+	});
 	readonly inputAsNetwork = computed(() => {
 		const iOrN = this.issuerOrNetwork();
 		return this.isIssuerType(iOrN) ? undefined : iOrN;
+	});
+	readonly inputAsPrivateNetwork = computed(() => {
+		const iOrN = this.issuerOrNetwork();
+		return this.isPrivateNetworkType(iOrN) ? iOrN : undefined;
 	});
 	readonly isPublic = computed(
 		() => this.issuerOrNetwork() instanceof IssuerV3 || this.issuerOrNetwork() instanceof NetworkV3,
 	);
 	readonly containerClasses = computed(() => {
 		const baseClasses =
-			'tw-max-w-[660px] tw-h-[450px] tw-border-solid tw-border tw-rounded-lg tw-p-8 tw-flex tw-flex-col tw-gap-6 tw-items-start ';
+			'tw-max-w-[660px] tw-h-[450px] tw-border-solid tw-border tw-rounded-lg tw-p-8 tw-flex tw-flex-col tw-items-start ';
 		if (this.inputAsIssuer()) return baseClasses + 'tw-border-purple tw-justify-between';
 		else
 			return (
@@ -170,8 +207,12 @@ export class OebIssuerNetworkCard {
 		return obj instanceof Issuer || obj instanceof IssuerV3;
 	}
 
-	handleContainerClick() {
-		if (this.isPublic() && this.inputAsNetwork()) this.navigate.emit();
+	isPrivateIssuerType(obj: unknown): obj is Issuer {
+		return obj instanceof Issuer;
+	}
+
+	isPrivateNetworkType(obj: unknown): obj is Network {
+		return obj instanceof Network;
 	}
 }
 
