@@ -32,7 +32,7 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 		<article [class]="containerClasses()" (click)="navigate.emit('container')">
 			<div
 				class="tw-flex tw-flex-row"
-				[class.tw-items-center]="inputAsIssuer()"
+				[class.tw-items-center]="inputAsIssuer() || !isPublic()"
 				[class.tw-gap-4]="inputAsNetwork()"
 				[class.tw-gap-2]="inputAsIssuer()"
 			>
@@ -46,7 +46,7 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 					/>
 				</div>
 				<div>
-					@if (!inputAsIssuer()) {
+					@if (!inputAsIssuer() && isPublic()) {
 						<p class="tw-uppercase tw-font-semibold tw-text-base">{{ 'General.network' | translate }}</p>
 					}
 					<a
@@ -59,7 +59,7 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 						>{{ issuerOrNetwork().name }}</a
 					>
 					@if (!isPublic()) {
-						<p hlmP class="tw-italic">
+						<p hlmP class="tw-italic" [class.tw-text-white]="inputAsNetwork()">
 							@if (inputAsPrivateIssuer()) {
 								{{ 'Issuer.yourRole' | translate }}
 								{{ inputAsPrivateIssuer()?.currentUserStaffMember?.roleInfo?.label ?? '' | translate }}
@@ -81,17 +81,18 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 
 			<p
 				hlmP
-				class="tw-break-words tw-font-normal tw-hyphens-auto"
+				class="tw-break-words tw-font-normal tw-hyphens-auto tw-flex-grow"
 				[class.tw-text-white]="inputAsNetwork()"
+				[class.tw-px-2]="inputAsIssuer()"
 				[truncatedText]="issuerOrNetwork().description"
-				[maxLength]="250"
+				[maxLength]="300"
 			>
 				{{ issuerOrNetwork().description }}
 			</p>
 
 			@if (isPublic()) {
 				@if (inputAsIssuer()) {
-					<div variant="categoryTag" hlmBadge>
+					<div variant="categoryTag" hlmBadge class="tw-mb-4">
 						{{ 'Issuer.categories.' + inputAsIssuer()?.category | translate }}
 					</div>
 
@@ -126,15 +127,17 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 				<div class="tw-flex tw-flex-col tw-gap-2 tw-w-full">
 					@if (inputAsPrivateIssuer()?.badgeClassCount || inputAsPrivateNetwork()?.badgeClassCount) {
 						<oeb-button
+							(click)="navigate.emit('awardBadge')"
 							[text]="'Issuer.giveBadge' | translate"
 							[width]="'full_width'"
-							[size]="'mediumText'"
-							(click)="navigate.emit('awardBadge')"
-							[routerLink]="['/issuer/issuers/', issuerOrNetwork().slug]"
+							[variant]="inputAsPrivateNetwork() ? 'secondary' : 'default'"
+							[routerLink]="['/issuer', inputAsIssuer() ? 'issuers' : 'networks', issuerOrNetwork().slug]"
+							[queryParams]="inputAsPrivateNetwork() ? { tab: 'badges' } : undefined"
 							class="tw-whitespace-nowrap"
 						/>
 					}
 					<oeb-button
+						(click)="navigate.emit('createBadge')"
 						[id]="'create-new-badge-btn-1'"
 						[text]="'Issuer.createBadge' | translate"
 						[width]="'full_width'"
@@ -142,11 +145,18 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 							!(inputAsPrivateIssuer()?.canCreateBadge ?? true) ||
 							!(inputAsPrivateNetwork()?.canCreateBadge ?? true)
 						"
-						[variant]="inputAsPrivateIssuer()?.badgeClassCount ? 'secondary' : 'default'"
+						[variant]="
+							inputAsPrivateIssuer()?.badgeClassCount || inputAsPrivateNetwork() ? 'secondary' : 'default'
+						"
 						[umamiEvent]="'create-badge'"
-						[size]="'mediumText'"
-						(click)="navigate.emit('createBadge')"
-						[routerLink]="['/issuer/issuers/', issuerOrNetwork().slug, 'badges', 'select']"
+						[weight]="inputAsPrivateNetwork() ? 'medium' : 'bold'"
+						[routerLink]="[
+							'/issuer',
+							inputAsIssuer() ? 'issuers' : 'networks',
+							issuerOrNetwork().slug,
+							inputAsIssuer() ? ['badges', 'select'] : [],
+						]"
+						[queryParams]="inputAsPrivateNetwork() ? { tab: 'badges' } : undefined"
 						class="tw-whitespace-nowrap"
 					/>
 				</div>
@@ -193,8 +203,8 @@ export class OebIssuerNetworkCard {
 	);
 	readonly containerClasses = computed(() => {
 		const baseClasses =
-			'tw-max-w-[660px] tw-h-[450px] tw-border-solid tw-border tw-rounded-lg tw-p-8 tw-flex tw-flex-col tw-items-start ';
-		if (this.inputAsIssuer()) return baseClasses + 'tw-border-purple tw-justify-between';
+			'tw-max-w-[660px] tw-h-[450px] tw-border-solid tw-border tw-rounded-lg tw-p-6 tw-gap-2 tw-flex tw-flex-col tw-items-start ';
+		if (this.inputAsIssuer()) return baseClasses + 'tw-border-purple';
 		else
 			return (
 				baseClasses +
