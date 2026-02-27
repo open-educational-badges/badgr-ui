@@ -3,13 +3,12 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { OebNetworkCard } from '~/common/components/oeb-networkcard.component';
 import { NavigationType, OebIssuerNetworkCard } from '../issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'network-list',
 	templateUrl: './network-list.component.html',
-	imports: [OebButtonComponent, RouterLink, FormsModule, TranslatePipe, OebNetworkCard, OebIssuerNetworkCard],
+	imports: [OebButtonComponent, RouterLink, FormsModule, TranslatePipe, OebIssuerNetworkCard],
 })
 export class NetworkListComponent {
 	readonly router = inject(Router);
