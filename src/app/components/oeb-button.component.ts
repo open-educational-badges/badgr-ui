@@ -1,4 +1,4 @@
-import { Component, computed, input, signal, OnInit, OnDestroy, output } from '@angular/core';
+import { Component, computed, input, signal, OnInit, OnDestroy } from '@angular/core';
 import { ButtonVariants, HlmButton } from './spartan/ui-button-helm/src';
 import { NgClass } from '@angular/common';
 import { MessageService } from '../common/services/message.service';
@@ -17,7 +17,6 @@ import { map, Subscription } from 'rxjs';
 		[type]="type()"
 		class="tw-relative"
 		hlmBtn
-		(click)="handleClick($event)"
 		[disabled]="computedDisabled()"
 		[weight]="weight()"
 		[width]="width()"
@@ -39,8 +38,6 @@ import { map, Subscription } from 'rxjs';
 	</button>`,
 })
 export class OebButtonComponent implements OnInit, OnDestroy {
-	// eslint-disable-next-line @angular-eslint/no-output-native
-	readonly click = output<MouseEvent>();
 	readonly variant = input<ButtonVariants['variant']>('default');
 	readonly size = input<ButtonVariants['size']>('default');
 	readonly weight = input<ButtonVariants['weight']>('bold');
@@ -115,9 +112,5 @@ export class OebButtonComponent implements OnInit, OnDestroy {
 
 		if (promises.length === 0) return null;
 		else return Promise.allSettled(promises); // allSettled -> we don't care if the promises are successful or not
-	}
-
-	handleClick(event: MouseEvent) {
-		if (!this.computedDisabled()) this.click.emit(event);
 	}
 }
