@@ -9,6 +9,7 @@ import { BgImageStatusPlaceholderDirective } from '~/common/directives/bg-image-
 import { HlmBadge } from '~/components/spartan/ui-badge-helm/src';
 import { I18nPluralPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Network } from '~/issuer/network.model';
 
 /**
  * A card to display public or private issuers or networks
@@ -26,35 +27,61 @@ import { RouterLink } from '@angular/router';
 		RouterLink,
 	],
 	template: `
-		<article
-			class="tw-max-w-[660px] tw-h-[450px] tw-border-solid tw-border tw-border-purple tw-rounded-lg tw-p-8 tw-flex tw-flex-col tw-gap-6 tw-items-start tw-justify-between"
-		>
-			<div class="tw-flex tw-flex-row tw-gap-4 tw-items-center">
-				<img
-					class="tw-w-24 tw-aspect-square tw-rounded-sm"
-					[loaded-src]="issuerOrNetwork().image"
-					[loading-src]="issuerImagePlaceHolderUrl"
-					[error-src]="issuerImagePlaceHolderUrl"
-					alt="{{ issuerOrNetwork().name }} logo"
-				/>
+		<article [class]="containerClasses()" (click)="this.handleContainerClick()">
+			<div
+				class="tw-flex tw-flex-row"
+				[class.tw-items-center]="inputAsIssuer()"
+				[class.tw-gap-4]="inputAsNetwork()"
+				[class.tw-gap-2]="inputAsIssuer()"
+			>
+				<div class="tw-w-28 tw-h-28 tw-aspect-square tw-p-2 tw-rounded-sm tw-bg-white">
+					<img
+						class="tw-rounded-sm tw-w-full tw-h-full"
+						[loaded-src]="issuerOrNetwork().image ?? issuerImagePlaceHolderUrl"
+						[loading-src]="issuerImagePlaceHolderUrl"
+						[error-src]="issuerImagePlaceHolderUrl"
+						alt="{{ issuerOrNetwork().name }} logo"
+					/>
+				</div>
 				<div>
-					@if (!isIssuer()) {
-						<p>{{ 'General.network' | translate }}</p>
+					@if (!inputAsIssuer()) {
+						<p class="tw-uppercase tw-font-semibold tw-text-base">{{ 'General.network' | translate }}</p>
 					}
 					<a
 						hlmH2
 						class="tw-font-bold tw-break-words tw-hyphens-auto tw-cursor-pointer"
+						[class.tw-text-white]="inputAsNetwork()"
 						(click)="navigate.emit()"
 						[truncatedText]="issuerOrNetwork().name"
 						[maxLength]="48"
 						>{{ issuerOrNetwork().name }}</a
 					>
+					@if (!isPublic()) {
+						<p
+							class="tw-text-white tw-pb-2 tw-mt-2 tw-font-semibold md:tw-text-[20px] md:tw-leading-[24.4px] tw-text-[14px] tw-leading-[19.6px]"
+						>
+							@if (inputAsIssuer()) {
+								TODO
+							} @else {
+								{{
+									'Network.yourRole'
+										| translate
+											: {
+													role:
+														'Network.role.' + inputAsNetwork()?.current_user_network_role
+														| translate,
+											  }
+								}}
+							}
+						</p>
+					}
 				</div>
 			</div>
 
 			<p
 				hlmP
 				class="tw-break-words tw-font-normal tw-hyphens-auto"
+				[class.tw-text-white]="inputAsNetwork()"
 				[truncatedText]="issuerOrNetwork().description"
 				[maxLength]="250"
 			>
@@ -62,37 +89,38 @@ import { RouterLink } from '@angular/router';
 			</p>
 
 			@if (isPublic()) {
-				@if (isIssuer()) {
+				@if (inputAsIssuer()) {
 					<div variant="categoryTag" hlmBadge>
-						{{ 'Issuer.categories.' + isIssuer()?.category | translate }}
+						{{ 'Issuer.categories.' + inputAsIssuer()?.category | translate }}
 					</div>
-				}
-				<div class="tw-flex tw-flex-row tw-gap-4">
-					<a
-						hlmP
-						class="tw-flex tw-flex-row tw-text-purple tw-font-semibold tw-items-center hover:tw-underline"
-						[routerLink]="['/public/issuers/', isIssuer()?.slug]"
-					>
-						<img src="assets/badges/badgeIcon.svg" alt="bade icon" class="tw-w-9" />
-						<p>{{ isIssuer()?.badgeClassCount | i18nPlural: plural['badges'] }}</p>
-					</a>
-					@if (isIssuer()?.learningPathCount ?? 0 > 0) {
+
+					<div class="tw-flex tw-flex-row tw-gap-4">
 						<a
 							hlmP
 							class="tw-flex tw-flex-row tw-text-purple tw-font-semibold tw-items-center hover:tw-underline"
-							[routerLink]="['/public/issuers/', isIssuer()?.slug]"
+							[routerLink]="['/public/issuers/', inputAsIssuer()?.slug]"
 						>
-							<img
-								src="assets/oeb/images/learningPath/learningPathIcon.svg"
-								alt="learning path icon"
-								class="tw-w-7"
-							/>
-							<p class="tw-ml-2">
-								{{ isIssuer()?.learningPathCount | i18nPlural: plural['learningPath'] }}
-							</p>
+							<img src="assets/badges/badgeIcon.svg" alt="bade icon" class="tw-w-9" />
+							<p>{{ inputAsIssuer()?.badgeClassCount | i18nPlural: plural['badges'] }}</p>
 						</a>
-					}
-				</div>
+						@if (inputAsIssuer()?.learningPathCount ?? 0 > 0) {
+							<a
+								hlmP
+								class="tw-flex tw-flex-row tw-text-purple tw-font-semibold tw-items-center hover:tw-underline"
+								[routerLink]="['/public/issuers/', inputAsIssuer()?.slug]"
+							>
+								<img
+									src="assets/oeb/images/learningPath/learningPathIcon.svg"
+									alt="learning path icon"
+									class="tw-w-7"
+								/>
+								<p class="tw-ml-2">
+									{{ inputAsIssuer()?.learningPathCount | i18nPlural: plural['learningPath'] }}
+								</p>
+							</a>
+						}
+					</div>
+				}
 			} @else {}
 		</article>
 	`,
@@ -115,16 +143,37 @@ export class OebIssuerNetworkCard {
 			other: '# ' + this.translate.instant('General.learningPaths'),
 		},
 	};
-	readonly isIssuer = computed(() => {
+	readonly inputAsIssuer = computed(() => {
 		const iOrN = this.issuerOrNetwork();
 		return this.isIssuerType(iOrN) ? iOrN : undefined;
 	});
-	readonly isPublic = computed(() => this.issuerOrNetwork() instanceof IssuerV3);
+	readonly inputAsNetwork = computed(() => {
+		const iOrN = this.issuerOrNetwork();
+		return this.isIssuerType(iOrN) ? undefined : iOrN;
+	});
+	readonly isPublic = computed(
+		() => this.issuerOrNetwork() instanceof IssuerV3 || this.issuerOrNetwork() instanceof NetworkV3,
+	);
+	readonly containerClasses = computed(() => {
+		const baseClasses =
+			'tw-max-w-[660px] tw-h-[450px] tw-border-solid tw-border tw-rounded-lg tw-p-8 tw-flex tw-flex-col tw-gap-6 tw-items-start ';
+		if (this.inputAsIssuer()) return baseClasses + 'tw-border-purple tw-justify-between';
+		else
+			return (
+				baseClasses +
+				'tw-border-gray-200 tw-bg-purple tw-text-white ' +
+				(this.isPublic() ? 'tw-cursor-pointer' : '')
+			);
+	});
 
 	isIssuerType(obj: unknown): obj is IssuerTypes {
 		return obj instanceof Issuer || obj instanceof IssuerV3;
 	}
+
+	handleContainerClick() {
+		if (this.isPublic() && this.inputAsNetwork()) this.navigate.emit();
+	}
 }
 
 type IssuerTypes = Issuer | IssuerV3;
-type NetworkTypes = NetworkV3;
+type NetworkTypes = Network | NetworkV3;
