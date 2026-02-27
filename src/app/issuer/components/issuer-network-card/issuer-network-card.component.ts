@@ -141,14 +141,7 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 						[id]="'create-new-badge-btn-1'"
 						[text]="'Issuer.createBadge' | translate"
 						[width]="'full_width'"
-						[disabled]="
-							!(inputAsPrivateIssuer()?.canCreateBadge ?? true) ||
-							!(
-								(inputAsPrivateNetwork()?.current_user_network_role &&
-									inputAsPrivateNetwork()?.current_user_network_role != 'staff') ??
-								true
-							)
-						"
+						[disabled]="!canCreateBadge()"
 						[variant]="
 							inputAsPrivateIssuer()?.badgeClassCount || inputAsPrivateNetwork() ? 'secondary' : 'default'
 						"
@@ -160,6 +153,7 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 								: ['/issuer/networks', issuerOrNetwork().slug]
 						"
 						[queryParams]="inputAsPrivateNetwork() ? { tab: 'badges' } : null"
+						[class.disabled]="!canCreateBadge()"
 						class="tw-whitespace-nowrap"
 					/>
 				</div>
@@ -204,6 +198,14 @@ export class OebIssuerNetworkCard {
 	readonly isPublic = computed(
 		() => this.issuerOrNetwork() instanceof IssuerV3 || this.issuerOrNetwork() instanceof NetworkV3,
 	);
+	readonly canCreateBadge = computed(() => {
+		if (this.isPublic()) return false;
+		if (this.inputAsPrivateIssuer()) return this.inputAsPrivateIssuer().canCreateBadge;
+		if (this.inputAsPrivateNetwork())
+			return (this.inputAsPrivateNetwork().current_user_network_role ?? '') == 'staff';
+
+		return false;
+	});
 	readonly containerClasses = computed(() => {
 		const baseClasses =
 			'tw-max-w-[660px] tw-h-[450px] tw-border-solid tw-border tw-rounded-lg tw-p-6 tw-gap-2 tw-flex tw-flex-col tw-items-start ';
