@@ -143,7 +143,11 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 						[width]="'full_width'"
 						[disabled]="
 							!(inputAsPrivateIssuer()?.canCreateBadge ?? true) ||
-							!(inputAsPrivateNetwork()?.canCreateBadge ?? true)
+							!(
+								(inputAsPrivateNetwork()?.current_user_network_role &&
+									inputAsPrivateNetwork()?.current_user_network_role != 'staff') ??
+								true
+							)
 						"
 						[variant]="
 							inputAsPrivateIssuer()?.badgeClassCount || inputAsPrivateNetwork() ? 'secondary' : 'default'
