@@ -43,6 +43,7 @@ import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observer';
+import { type FeatureCollection } from 'geojson';
 
 @Component({
 	selector: 'app-issuer-catalog',
@@ -80,7 +81,7 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 	@ViewChild('map')
 	private mapContainer: ElementRef<HTMLElement>;
 
-	issuerGeoJson;
+	issuerGeoJson?: FeatureCollection;
 
 	@ViewChild('loadMore') loadMore: ElementRef | undefined;
 
@@ -347,27 +348,8 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 		};
 	}
 
-	generateGeoJSON(issuers) {
-		this.issuerGeoJson = {
-			type: 'FeatureCollection',
-			features: issuers
-				.filter((issuer) => issuer.lat !== null && issuer.lon !== null)
-				.map((issuer) => ({
-					type: 'Feature',
-					properties: {
-						name: issuer.name,
-						slug: issuer.slug,
-						img: issuer.image,
-						description: issuer.description,
-						category: issuer.category,
-					},
-					geometry: {
-						type: 'Point',
-						coordinates: [issuer.lon, issuer.lat],
-					},
-				})),
-		};
-
+	async populateMap() {
+		if (!this.issuerGeoJson) this.issuerGeoJson = await this.catalogService.getIssuersGeoJSON();
 		if (!this.mapObject.getSource('issuers')) {
 			this.mapObject.addSource('issuers', {
 				type: 'geojson',
@@ -523,7 +505,7 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 
 	openMap(): void {
 		this.badgesDisplay = 'map';
-		setTimeout(() => this.mapObject.resize(), 50);
+		this.populateMap();
 	}
 
 	openGrid(): void {

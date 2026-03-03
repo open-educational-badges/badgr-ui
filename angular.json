@@ -112,7 +112,8 @@
 								"src/styles/google-webfonts/nunito.scss",
 								"src/styles/google-webfonts/rubik.scss",
 								"src/app/issuer/components/badgeclass-edit-form/badgeclass-edit-form.component.css",
-								"src/app/issuer/components/badgeclass-select-type/badgeclass-select-type.component.scss"
+								"src/app/issuer/components/badgeclass-select-type/badgeclass-select-type.component.scss",
+								"src/app/issuer/components/badgeclass-edit-form/oeb-badgeclass-edit-form.component.css"
 							],
 							"assets": [
 								"src/favicon.ico",

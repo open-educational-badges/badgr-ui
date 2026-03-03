@@ -6,7 +6,7 @@
 			<oeb-header-text [text1]="'Issuer.institutionsHeadline'" [text2Template]="text2Template" />
 			<ng-template #text2Template>
 				<ng-template [showLoader]="false" [bgAwaitPromises]="pageReadyPromise">
-					<span [countUp]="totalCount()">{{ totalCount() }}</span>
+					<span [countUp]="totalCount()" [options]="{ separator: '.' }">{{ totalCount() }}</span>
 					<span>
 						{{ issuersPluralWord }}
 					</span>
