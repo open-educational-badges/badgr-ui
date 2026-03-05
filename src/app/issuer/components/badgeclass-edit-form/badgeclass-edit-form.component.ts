@@ -788,7 +788,9 @@ export class BadgeClassEditFormComponent
 
 	addCriteriaIfNotExists(controlName: string) {
 		if (this.findCriteriaIndex(controlName) === -1) {
-			const newGroup = typedFormGroup().addControl('name', controlName).addControl('description', '');
+			const newGroup = typedFormGroup()
+				.addControl('name', controlName, [Validators.required, Validators.maxLength(50)])
+				.addControl('description', '', Validators.maxLength(300));
 
 			this.badgeClassForm.controls.criteria.push(newGroup);
 		}
@@ -798,10 +800,10 @@ export class BadgeClassEditFormComponent
 		const index = this.findCriteriaIndex(controlName);
 		const selectionIndex = this.findCriteriaSelectionIndex(controlName);
 		if (index !== -1) {
-			this.badgeClassForm.controls.criteria.removeAt(index);
 			this.criteriaSelectionsForm.controls.selections.controls
 				.at(selectionIndex)
 				.controls.selected.setValue(false);
+			this.badgeClassForm.controls.criteria.removeAt(index);
 		}
 	}
 
