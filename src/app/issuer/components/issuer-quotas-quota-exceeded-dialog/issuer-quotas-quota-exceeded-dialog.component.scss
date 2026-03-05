@@ -18,9 +18,7 @@ ul {
 		}
 	}
 
-	oeb-input[fieldType="textarea"] {
-		textarea {
-			min-height: 280px;
-		}
+	hlm-dialog-content {
+		max-width: none !important;
 	}
 }

@@ -30,7 +30,7 @@ export interface QuotaExceededDialogContext {
 	issuer: Issuer | Network;
 }
 
-export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'individual' | 'success';
+export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'success';
 
 export const quotaPackages = [
 	{
@@ -105,25 +105,16 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 			this.upgradeRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
 			this.upgradeRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
 			this.upgradeRequestForm.controls.issuer.setValue(this.issuer().slug);
-
-			this.individualRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
-			this.individualRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
-			this.individualRequestForm.controls.issuer.setValue(this.issuer().slug);
 		}
 	}
 
 	page: QuotaExceededDialogPageType = 'start';
 
-	quotaRequestForm = typedFormGroup()
+	upgradeRequestForm = typedFormGroup()
 		.addControl('name', '', [Validators.required, Validators.maxLength(254)])
 		.addControl('email', '', [Validators.required, Validators.maxLength(254)])
-		.addControl('issuer', '', [Validators.required]);
-
-	upgradeRequestForm = this.quotaRequestForm.clone()
+		.addControl('issuer', '', [Validators.required])
 		.addControl('package', 'pro', [Validators.required]);
-
-	individualRequestForm = this.quotaRequestForm.clone()
-		.addControl('message', '', [Validators.required]);
 
 	issuerOptions: FormFieldSelectOption[];
 
@@ -161,26 +152,6 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 				email: formState.email,
 				issuer_id: formState.issuer,
 				package: formState.package,
-			}
-		);
-
-		this.changePage('success');
-	}
-
-	onSubmitIndividual() {
-		if (!this.individualRequestForm.markTreeDirtyAndValidate()) {
-			return;
-		}
-
-		const formState = this.individualRequestForm.value;
-
-		this.quotaRequestApiService.createIndividualQuotaRequest(
-			formState.issuer,
-			{
-				name: formState.name,
-				email: formState.email,
-				issuer_id: formState.issuer,
-				message: formState.message,
 			}
 		);
 

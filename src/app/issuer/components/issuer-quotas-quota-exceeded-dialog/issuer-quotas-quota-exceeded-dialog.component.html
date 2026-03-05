@@ -63,13 +63,6 @@
 									width="full_width"
 									(click)="changePage('upgrade')"
 								/>
-								<p class="tw-text-center tw-italic">{{ 'General.or' | translate | titlecase }}</p>
-								<oeb-button
-									variant="secondary"
-									width="full_width"
-									text="Individuelles Angebot anfragen"
-									(click)="changePage('individual')"
-								/>
 							</div>
 						</div>
 					</div>
@@ -152,63 +145,6 @@
 						type="submit"
 						[text]="'Quotas.requestFormSubmitLabel' | translate"
 						[disabled]="upgradeRequestForm.invalid"
-						width="full_width"
-					>
-						{{ 'Quotas.requestFormSubmitLabel' | translate }}
-					</oeb-button>
-				</form>
-			</div>
-		}
-		@if (page === 'individual') {
-			<hlm-dialog-header>
-				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
-					{{ 'Quotas.individualFormHeadline' | translate }}
-				</h2>
-			</hlm-dialog-header>
-
-			<p
-				class="tw-text-oebblack tw-text-[18px] tw-leading-[130%] tw-mt-7 md:tw-mt-8"
-				[innerHTML]="'Quotas.individualFormSubline' | translate"
-			></p>
-
-			<div class="tw-mt-8">
-				<form class="tw-w-full" [formGroup]="individualRequestForm.rawControl" (ngSubmit)="onSubmitIndividual()" novalidate>
-					<oeb-input
-						[label]="'Quotas.requestFormNameFieldLabel' | translate"
-						[control]="upgradeRequestForm.rawControlMap.name"
-						[readonly]="true"
-						[noTopMargin]="true"
-					></oeb-input>
-
-					<oeb-input
-						class="tw-block tw-pt-1"
-						[label]="'Quotas.requestFormEmailFieldLabel' | translate"
-						[control]="individualRequestForm.rawControlMap.email"
-						[readonly]="true"
-					></oeb-input>
-
-					<oeb-select
-						class="tw-block tw-pt-1"
-						[label]="'Quotas.requestFormIssuerFieldLabel' | translate"
-						[options]="issuerOptions"
-						[control]="individualRequestForm.rawControlMap.issuer"
-						[disabled]="true"
-					></oeb-select>
-
-					<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
-						<oeb-input
-							label="Gewünschte Konditionen"
-							[control]="individualRequestForm.rawControlMap.message"
-							fieldType="textarea"
-							[autofocus]="true"
-							size="lg"
-						></oeb-input>
-					</div>
-
-					<oeb-button
-						type="submit"
-						[text]="'Quotas.requestFormSubmitLabel' | translate"
-						[disabled]="individualRequestForm.invalid"
 						width="full_width"
 					>
 						{{ 'Quotas.requestFormSubmitLabel' | translate }}
