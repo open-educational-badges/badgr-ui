@@ -19,14 +19,14 @@
 							</h2>
 							<div class="tw-flex tw-flex tw-items-center tw-gap-4 tw-mt-5">
 								<img
-									[src]="`/assets/oeb/images/quotas/logo_${issuer.quotas.level.toLowerCase()}.svg`"
+									[src]="`/assets/oeb/images/quotas/logo_${issuer.quotas.name.toLowerCase()}.svg`"
 									width="100"
 								/>
 								<div>
 									<p
 										class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2"
 									>
-										{{ issuer.quotas.level }}
+										{{ issuer.quotas.name }}
 										@if (isCustom()) {
 											<span>(Individuelle Konditionen*)</span>
 										}

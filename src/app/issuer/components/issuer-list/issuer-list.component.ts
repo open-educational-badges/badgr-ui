@@ -47,6 +47,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { Network } from '~/issuer/network.model';
 import { UserPreferenceService } from '~/common/services/user-preference.service';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { QuotaManager } from '~/issuer/services/quota-manager.service';
 
 @Component({
 	selector: 'issuer-list',
@@ -85,6 +87,8 @@ export class IssuerListComponent
 	private issuerStaffRequestApiService = inject(IssuerStaffRequestApiService);
 	private userProfileApiService = inject(UserProfileApiService);
 	private userPreferences = inject(UserPreferenceService);
+
+	private quotaManager = inject(QuotaManager);
 
 	readonly issuerPlaceholderSrc = preloadImageURL('../../../../breakdown/static/images/placeholderavatar-issuer.svg');
 	readonly noIssuersPlaceholderSrc =
@@ -153,6 +157,8 @@ export class IssuerListComponent
 
 	tabs: any[] = [];
 
+	quotasActive = false;
+
 	plural = {
 		issuer: {
 			'=0': this.translate.instant('Issuer.noInstitutions'),
@@ -184,6 +190,12 @@ export class IssuerListComponent
 		// subscribe to issuer and badge class changes
 		this.issuersLoaded = this.loadIssuers();
 		this.networksLoaded = this.loadNetworks();
+
+		this.quotaManager.loaded$.subscribe((enabled) => {
+			if (this.quotaManager.quotasEnabled && this.quotaManager.quotasList.length) {
+				this.quotasActive = true;
+			}
+		});
 	}
 
 	issuerSearchInputFocusOut() {
@@ -489,5 +501,23 @@ export class IssuerListComponent
 			return rect.height + 2;
 		}
 		return null;
+	}
+
+	createNetwork() {
+		if (this.checkQuotasDialog()) {
+			this.router.navigate(['/issuer/networks/create']);
+		}
+	}
+
+	checkQuotasDialog() {
+		if (this.quotasActive) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					quota: 'NETWORK',
+				},
+			});
+			return false;
+		}
+		return true;
 	}
 }

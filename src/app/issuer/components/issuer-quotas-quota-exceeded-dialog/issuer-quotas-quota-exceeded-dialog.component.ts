@@ -1,12 +1,4 @@
-import {
-	AfterViewInit,
-	Component,
-	computed,
-	ElementRef,
-	inject,
-	Renderer2,
-	signal
-} from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, Renderer2, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -25,9 +17,12 @@ import { HlmDialogModule } from '@spartan-ng/helm/dialog';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { QuotaRequestApiService } from '../../services/quotarequest-api.service';
 import { TitleCasePipe } from '@angular/common';
+import { QuotaManager } from '~/issuer/services/quota-manager.service';
+import { ApiQuota } from '~/issuer/models/quotas.model';
 
 export interface QuotaExceededDialogContext {
 	issuer: Issuer | Network;
+	quota: 'pro' | 'enterprise' | 'network';
 }
 
 export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'success';
@@ -44,7 +39,7 @@ export const quotaPackages = [
 	{
 		value: 'network',
 		label: 'NETWORK',
-	}
+	},
 ];
 
 @Component({
@@ -52,7 +47,7 @@ export const quotaPackages = [
 	templateUrl: 'issuer-quotas-quota-exceeded-dialog.component.html',
 	styleUrls: [
 		'issuer-quotas-quota-exceeded-dialog.component.scss',
-		'../../../common/dialogs/oeb-dialogs/success-dialog.component.scss'
+		'../../../common/dialogs/oeb-dialogs/success-dialog.component.scss',
 	],
 	imports: [
 		OebButtonComponent,
@@ -70,43 +65,23 @@ export const quotaPackages = [
 		TitleCasePipe,
 	],
 })
-
 export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
+	protected quotaManager = inject(QuotaManager);
 	protected translate = inject(TranslateService);
 	protected quotaRequestApiService = inject(QuotaRequestApiService);
 
-	issuer = signal<Issuer|Network>(undefined);
+	quotas = signal<ApiQuota[]>([]);
 
-	nextLevel = computed(() => {
-		return this.issuer()?.quotas?.nextLevel?.level;
-	});
+	issuer = signal<Issuer | Network>(undefined);
 
-	nextPrice = computed(() => {
-		return this.issuer()?.quotas?.nextLevel?.price;
-	});
-
-	nextQuotas = computed(() => {
-		return this.issuer()?.quotas?.nextLevel?.quotas;
+	quota = computed(() => {
+		const nextKey = this.context.quota || this.issuer()?.quotas?.nextLevel;
+		return this.quotas().find((q) => q.key == nextKey);
 	});
 
 	private readonly _dialogContext = injectBrnDialogContext<QuotaExceededDialogContext>();
 	private readonly dialogRef = inject<BrnDialogRef>(BrnDialogRef);
 	protected readonly context = this._dialogContext;
-
-	ngAfterViewInit(): void {
-		if (this.context.issuer) {
-			this.issuer.set(this.context.issuer);
-
-			this.issuerOptions = [{
-				label: this.issuer().name,
-				value: this.issuer().slug
-			}];
-
-			this.upgradeRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
-			this.upgradeRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
-			this.upgradeRequestForm.controls.issuer.setValue(this.issuer().slug);
-		}
-	}
 
 	page: QuotaExceededDialogPageType = 'start';
 
@@ -127,6 +102,26 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		const componentElem = inject(ElementRef);
 		const renderer = inject(Renderer2);
 		super(componentElem, renderer);
+		this.quotaManager.quotas$.subscribe((quotas) => {
+			this.quotas.set(quotas);
+		});
+	}
+
+	ngAfterViewInit(): void {
+		if (this.context.issuer) {
+			this.issuer.set(this.context.issuer);
+
+			this.issuerOptions = [
+				{
+					label: this.issuer().name,
+					value: this.issuer().slug,
+				},
+			];
+
+			this.upgradeRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
+			this.upgradeRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
+			this.upgradeRequestForm.controls.issuer.setValue(this.issuer().slug);
+		}
 	}
 
 	closeDialog() {
@@ -145,15 +140,12 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 
 		const formState = this.upgradeRequestForm.value;
 
-		this.quotaRequestApiService.createUpgradeQuotaRequest(
-			formState.issuer,
-			{
-				name: formState.name,
-				email: formState.email,
-				issuer_id: formState.issuer,
-				package: formState.package,
-			}
-		);
+		this.quotaRequestApiService.createUpgradeQuotaRequest(formState.issuer, {
+			name: formState.name,
+			email: formState.email,
+			issuer_id: formState.issuer,
+			package: formState.package,
+		});
 
 		this.changePage('success');
 	}

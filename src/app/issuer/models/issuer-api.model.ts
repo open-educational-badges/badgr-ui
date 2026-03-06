@@ -79,21 +79,9 @@ export interface ApiQuotasBooleanQuota {
 }
 
 export interface ApiQuotas {
-	level: string;
-	nextLevel: {
-		level: string;
-		price: number;
-		quotas: {
-			BADGE_CREATE: number;
-			BADGE_AWARD: number;
-			LEARNINGPATH_CREATE: number;
-			ACCOUNTS_ADMIN: number;
-			ACCOUNTS_MEMBER: number;
-			AISKILLS_REQUESTS: number;
-			PDFEDITOR: boolean;
-			NETWORK_MEMBERSHIPS: number;
-		};
-	};
+	name: string;
+	key: string;
+	nextLevel: string;
 	periodStart: string;
 	nextPayment: string;
 	paymentPeriod: 'month' | 'year';

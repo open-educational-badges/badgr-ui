@@ -26,8 +26,8 @@
 				} @else if (networks()?.length && activeTab === 'networks') {
 					<oeb-button
 						class="md:tw-whitespace-nowrap"
+						(click)="createNetwork()"
 						variant="secondary"
-						[routerLink]="['/issuer/networks/create']"
 						[disabled-when-requesting]="true"
 						[text]="'Network.create' | translate"
 					></oeb-button>

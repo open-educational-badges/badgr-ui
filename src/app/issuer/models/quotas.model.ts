@@ -11,6 +11,7 @@ export interface ApiQuotasBooleanQuota {
 
 export interface ApiQuota {
 	name: string;
+	key: string;
 	price: number;
 	default: 'ISSUER' | 'NETWORK';
 

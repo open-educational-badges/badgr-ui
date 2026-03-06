@@ -1,7 +1,7 @@
 <div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px]">
 	<div class="dialog-x-box o-container">
 		@if (page === 'start') {
-			@if (nextLevel()) {
+			@if (quota()) {
 				<hlm-dialog-header>
 					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
 						{{ 'Quotas.nextLevelHeadline' | translate }}
@@ -15,10 +15,10 @@
 								<img src="/assets/oeb/images/quotas/logo_pro.svg" width="152" />
 								<figcaption class="tw-text-center tw-pr-3 tw-w-[152px]">
 									<h3 class="tw-text-yellow tw-font-bold tw-text-[18px]/[1.2em] tw-mt-2">
-										{{ nextLevel() }}
+										{{ quota().name }}
 									</h3>
 									<p class="tw-font-semibold tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2">
-										{{ nextPrice() }}{{ 'Quotas.euroPerYear' | translate }}
+										{{ quota().price }}{{ 'Quotas.euroPerYear' | translate }}
 									</p>
 									<!-- <small class="tw-block tw-text-center tw-italic tw-text-darkgrey"
 										>12 Monate Laufzeit, Zahlung monatlich oder jährlich
@@ -29,21 +29,51 @@
 						<div>
 							<h2
 								class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold"
-								[innerHTML]="'Quotas.upgradeToPackage' | translate: { package: nextLevel() }"
+								[innerHTML]="'Quotas.upgradeToPackage' | translate: { package: quota()?.name }"
 							></h2>
-							@if (nextQuotas()) {
+							@if (quota()) {
 								<div class="tw-mb-8">
 									<h3 class="tw-underline tw-text-[18px]/[1.2em] tw-mb-2 tw-font-bold">
 										{{ 'Quotas.nextQuotasProsHeadline' | translate }}
 									</h3>
 									<ul>
-										<li>{{ 'Quotas.nextQuotasProsBadges' | translate: { value: nextQuotas().BADGE_CREATE } }}</li>
-										<li>{{ 'Quotas.nextQuotasProsLearningpaths' | translate: { value: nextQuotas().LEARNINGPATH_CREATE } }}</li>
-										<li>{{ 'Quotas.nextQuotasProsAwards' | translate: { value: nextQuotas().BADGE_AWARD } }}</li>
-										<li>{{ 'Quotas.nextQuotasProsAdmins' | translate: { value: nextQuotas().ACCOUNTS_ADMIN } }}</li>
-										<li>{{ 'Quotas.nextQuotasProsMembers' | translate: { value: nextQuotas().ACCOUNTS_MEMBER } }}</li>
-										<li>{{ 'Quotas.nextQuotasProsKI' | translate: { value: nextQuotas().AISKILLS_REQUESTS } }}</li>
-										@if (nextQuotas().PDFEDITOR) {
+										<li>
+											{{
+												'Quotas.nextQuotasProsBadges'
+													| translate: { value: quota().badge_create }
+											}}
+										</li>
+										<li>
+											{{
+												'Quotas.nextQuotasProsLearningpaths'
+													| translate: { value: quota().learningpath_create }
+											}}
+										</li>
+										<li>
+											{{
+												'Quotas.nextQuotasProsAwards'
+													| translate: { value: quota().badge_award }
+											}}
+										</li>
+										<li>
+											{{
+												'Quotas.nextQuotasProsAdmins'
+													| translate: { value: quota().accounts_admin }
+											}}
+										</li>
+										<li>
+											{{
+												'Quotas.nextQuotasProsMembers'
+													| translate: { value: quota().accounts_member }
+											}}
+										</li>
+										<li>
+											{{
+												'Quotas.nextQuotasProsKI'
+													| translate: { value: quota().aiskills_requests }
+											}}
+										</li>
+										@if (quota().pdfeditor) {
 											<li>{{ 'Quotas.nextQuotasProsPdfeditor' | translate }}</li>
 										}
 									</ul>
@@ -96,7 +126,12 @@
 			</hlm-dialog-header>
 
 			<div class="tw-mt-8">
-				<form class="tw-w-full" [formGroup]="upgradeRequestForm.rawControl" (ngSubmit)="onSubmitPackage()" novalidate>
+				<form
+					class="tw-w-full"
+					[formGroup]="upgradeRequestForm.rawControl"
+					(ngSubmit)="onSubmitPackage()"
+					novalidate
+				>
 					<oeb-input
 						[label]="'Quotas.requestFormNameFieldLabel' | translate"
 						[control]="upgradeRequestForm.rawControlMap.name"
@@ -121,7 +156,9 @@
 
 					<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
 						<label class="tw-block tw-pb-[2px] tw-pl-[3px]">
-							<span class="tw-text-oebblack tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]">
+							<span
+								class="tw-text-oebblack tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]"
+							>
 								{{ 'Quotas.packageFormOptionsLabel' | translate }}
 							</span>
 						</label>
@@ -167,13 +204,7 @@
 					class="tw-text-oebblack tw-text-[18px]/[1.3em]"
 					[innerHTML]="'Quotas.requestFormSuccess' | translate"
 				></p>
-				<oeb-button
-					class="tw-block tw-mt-8"
-					type="button"
-					text="OK"
-					size="sm"
-					(click)="closeDialog()"
-				>
+				<oeb-button class="tw-block tw-mt-8" type="button" text="OK" size="sm" (click)="closeDialog()">
 					OK
 				</oeb-button>
 			</div>
