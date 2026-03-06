@@ -387,22 +387,14 @@
 <!-- Funder logos -->
 <div class="tw-relative tw-w-full" [class.tw-hidden]="mobileNavOpen">
 	<div class="page-padding oeb logos-container md:tw-flex md:tw-justify-between">
-		<img
-			class="tw-max-w-full md:tw-max-w-[60%]"
-			alt="Telekom-Stiftung Logo"
-			[src]="
-				translate.currentLang !== 'de'
-					? 'assets/oeb/images/aboutpage/logoleiste_en.png'
-					: 'assets/oeb/images/aboutpage/logoleiste_cropped.png'
-			"
-			alt="Telekom Stiftung Logo"
-		/>
 		<div
-			class="tw-hidden md:tw-flex tw-flex-col tw-min-w-fit tw-text-right tw-gap-[7px] tw-text-sm md:tw-text-lg md:tw-leading-tight"
+			class="tw-hidden md:tw-flex tw-flex-row tw-flex-wrap tw-w-full tw-text-sm md:tw-text-lg md:tw-leading-tight [&>a:nth-child(even)]:tw-text-right [&>a:nth-child(odd):nth-child(-n+3)]:tw-font-bold"
 		>
 			@if (cmsMenus && cmsMenus.footer.de) {
 				@for (item of cmsMenus.footer[translate.currentLang]; track item) {
-					<a class="tw-text-oebblack" href="{{ item.url }}">{{ item.title }}</a>
+					<a class="tw-text-oebblack tw-basis-1/2 tw-grow-1 tw-p-1.5" href="{{ item.url }}">{{
+						item.title
+					}}</a>
 				}
 			} @else {
 				<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']">FAQ</a>
