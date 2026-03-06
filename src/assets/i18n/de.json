@@ -1240,6 +1240,17 @@
 		"requestFormSubmitLabel": "Anfrage senden",
 		"individualFormHeadline": "Individuelles Angebot anfragen",
 		"individualFormSubline": "<span class=\"tw-italic\">Bei individuellen Anfragen erhältst du zunächst ein verbindliches Angebot.</span><br><span class=\"tw-italic\">Nach deiner Zustimmung aktivieren wir OEB und senden dir die Rechnung.</span><br><span class=\"tw-font-bold tw-text-purple\">Buche gerne auch einen Call mit uns, um dein Anliegen zu besprechen:</span><br><a href=\"https://calendar.app.google/8zp569CcogYP3eYK9\" class=\"tw-italic\">Call buchen</a>",
-		"requestFormSuccess": "Danke für deine Anfrage.<br><strong>Wir melden uns bei dir.</strong>"
+		"requestFormSuccess": "Danke für deine Anfrage.<br><strong>Wir melden uns bei dir.</strong>",
+		"ReleaseInfoDialog": {
+			"headline": "Gemeinsam in die Zukunft von OEB",
+			"text1": "Wir stellen OEB auf ein nachhaltiges Fundament. Damit wir die Plattform auch nach Ende der Förderphase weiterentwickeln können, führen wir ab sofort neue Nutzungs-Pakete ein.",
+			"listHeadline": "Was das für euch bedeutet:",
+			"list1": "Eure Daten sind sicher – alle bisherigen Badges und Vergaben bleiben bestehen.",
+			"list2": "Die Grundfunktionen bleiben für euch weiterhin kostenfrei. <a class=\"tw-text-link tw-underline\" href=\"https://oeb-cms.mycelia.education/wp-content/uploads/2026/02/OEB_Feature-Liste_03-02-26.pdf\" target=\"_blank\">Feature-Übersicht</a>",
+			"list3": "Schulen und gemeinnützige Organisationen unterstützen wir über unser <a class=\"tw-text-link tw-underline\" href=\"https://oeb-cms.mycelia.education/wp-content/uploads/2026/02/IMPACT-PLUS-PDF.pdf\" target=\"_blank\">IMPACT PLUS Paket</a> mit Sonderkonditionen. Sprecht uns dazu einfach an: <a href=\"mailto:sales@openbadges.education\">sales@openbadges.education</a>",
+			"text2": "Die aktuelle Auslastung eures (Free-)Pakets findet ihr über die Detail-Seite der Institution: Paket und Nutzung",
+			"text3": "Als bereits bestehende Institution erhältst du 10 % Rabatt auf alle kostenpflichtigen Pakete.",
+			"cta": "Jetzt Pakete entdecken"
+		}
 	}
 }

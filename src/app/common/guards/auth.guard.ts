@@ -3,6 +3,10 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/ro
 import { OAuthManager } from '../services/oauth-manager.service';
 import { UserProfileApiService } from '../services/user-profile-api.service';
 import { AUTH_PROVIDER, AuthenticationService } from '../services/authentication-service';
+import { QuotaManager } from '~/issuer/services/quota-manager.service';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
+import { QuotaReleaseDialog } from '~/issuer/components/issuer-quotas-quota-release-dialog/issuer-quotas-quota-release-dialog.component';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {
@@ -10,13 +14,17 @@ export class AuthGuard {
 	private router = inject(Router);
 	private oAuthManager = inject(OAuthManager);
 	private userProfileApiService = inject(UserProfileApiService);
+	private issuerManager = inject(IssuerManager);
+	private quotaManager = inject(QuotaManager);
+
+	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
 
 	constructor() {}
 
-	canActivate(
+	async canActivate(
 		// Not using but worth knowing about
 		next: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot,
@@ -41,6 +49,32 @@ export class AuthGuard {
 				} else if (!profile.secure_password_set) {
 					this.router.navigate(['/auth/new-password']);
 					return false;
+				}
+
+				if (!profile.quota_release_informed) {
+					this.quotaManager.quotasEnabled$.subscribe((enabled) => {
+						if (enabled) {
+							const dtQuotaEnabled = new Date(enabled * 1000);
+							const dtUserJoined = new Date(profile.date_joined);
+							if (dtUserJoined < dtQuotaEnabled) {
+								this.issuerManager.myIssuers$.subscribe((issuers) => {
+									let showQuotaDialog = false;
+									issuers.forEach((i) => {
+										let dtCreated = new Date(i.createdAt);
+										if (dtCreated < dtQuotaEnabled) {
+											showQuotaDialog = true;
+										}
+									});
+
+									if (showQuotaDialog) {
+										this._hlmDialogService.open(QuotaReleaseDialog);
+									}
+								});
+							}
+						}
+					});
+					profile.quota_release_informed = true;
+					this.userProfileApiService.updateProfile(profile);
 				}
 			});
 			return true;

@@ -97,6 +97,10 @@ export class UserProfile extends ManagedEntity<ApiUserProfile, UserProfileRef> {
 		() => this.profileService.fetchSocialAccounts(),
 	);
 
+	get dateJoined() {
+		return new Date(this.apiModel.date_joined);
+	}
+
 	protected buildApiRef(): UserProfileRef {
 		return {
 			'@id': UserProfile.currentProfileId,
