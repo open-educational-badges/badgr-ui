@@ -272,7 +272,7 @@
 		"giveMyBadges": "Award my badges",
 		"askForPlugin": "Request plugin",
 		"askForPluginText": "Our <span class='tw-font-bold'>plugin</span> offers you the possibility to award badges from your own digital learning environment.",
-		"betaPhase": "Our platform is still in the beta phase. <b>Did you discover any errors? Write to us at <a class='tw-text-link tw-underline' href='mailto:support@openbadges.education'>support@openbadges.education</a></b>.",
+		"betaPhase": "<span class='tw-font-bold'>Quality and continuous development are important to us.</span><br />Something wrong? Send an email to <a class='tw-text-link tw-underline' href='mailto:support@openbadges.education'>support@openbadges.education</a>.",
 		"award": "award",
 		"badgePreview": "Badge preview",
 		"certPreview": "Badge pdf preview",

@@ -272,7 +272,7 @@
 		"giveMyBadges": "Meine Badges vergeben",
 		"askForPlugin": "Plugin anfragen",
 		"askForPluginText": "Unser <span class='tw-font-bold'>Plugin</span> bietet dir die Möglichkeit, Badges aus deiner eigenen digitalen Lehrumgebung heraus zu vergeben.",
-		"betaPhase": "Unsere Plattform befindet sich noch in der Betaphase. <b>Du hast Fehler entdeckt? Schreib uns gerne an <a class='tw-text-link tw-underline' href='mailto:support@openbadges.education'>support@openbadges.education</a></b>.",
+		"betaPhase": "<span class='tw-font-bold'>Qualität und Weiterentwicklung sind uns wichtig.</span><br />Fehler entdeckt? Schreib uns an <a class='tw-text-link tw-underline' href='mailto:support@openbadges.education'>support@openbadges.education</a>.",
 		"award": "vergeben",
 		"badgePreview": "Vorschau: Badge",
 		"certPreview": "Vorschau: Badge-PDF",
