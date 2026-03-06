@@ -16,11 +16,11 @@ f<form-message></form-message>
 		@if (networks().length > 0) {
 			<div class="tw-grid sm:tw-grid-cols-issuer tw-gap-6 tw-w-full" [@stagger]>
 				@for (network of networks(); track network) {
-					<oeb-networkcard
+					<oeb-issuer-network-card
 						@appearAnimation
-						[network]="network"
-						[routerLink]="['/public/networks', network.slug]"
-					></oeb-networkcard>
+						[issuerOrNetwork]="network"
+						(navigate)="onNavigate(network)"
+					/>
 				}
 			</div>
 		}
