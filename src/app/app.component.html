@@ -337,11 +337,23 @@
 				<img src="assets/oeb/images/issuerPage/badgy.svg" class="md:tw-w-[100px] tw-w-[64px]" alt="Beta logo" />
 				<p [innerHTML]="'Issuer.betaPhase' | translate"></p>
 			</div>
-			<div class="tw-flex md:tw-hidden tw-flex-col tw-gap-[7px] tw-text-sm md:tw-text-base tw-text-oebblack">
-				<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']">FAQ</a>
-				<a class="tw-text-oebblack" [href]="theme.imprintLink">{{ 'Start.imprint' | translate }}</a>
-				<a class="tw-text-oebblack" [href]="theme.privacyPolicyLink">{{ 'Start.privacyPolicy' | translate }}</a>
-				<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
+			<div class="tw-flex md:tw-hidden tw-flex-col tw-text-sm md:tw-text-base tw-text-oebblack">
+				@if (cmsMenus && cmsMenus.footer[translate.currentLang]) {
+					@for (item of cmsMenus.footer[translate.currentLang]; track item) {
+						<a class="tw-text-oebblack tw-basis-1/2 tw-grow-1 tw-p-1.5" href="{{ item.url }}">{{
+							item.title
+						}}</a>
+					}
+				} @else {
+					<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']"
+						>FAQ</a
+					>
+					<a class="tw-text-oebblack" [href]="theme.imprintLink">{{ 'Start.imprint' | translate }}</a>
+					<a class="tw-text-oebblack" [href]="theme.privacyPolicyLink">{{
+						'Start.privacyPolicy' | translate
+					}}</a>
+					<a class="tw-text-oebblack" [href]="theme.termsOfServiceLink">{{ 'General.tos' | translate }}</a>
+				}
 			</div>
 		</div>
 
@@ -384,13 +396,12 @@
 	<script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
 </footer>
 
-<!-- Funder logos -->
 <div class="tw-relative tw-w-full" [class.tw-hidden]="mobileNavOpen">
 	<div class="page-padding oeb logos-container md:tw-flex md:tw-justify-between">
 		<div
 			class="tw-hidden md:tw-flex tw-flex-row tw-flex-wrap tw-w-full tw-text-sm md:tw-text-lg md:tw-leading-tight [&>a:nth-child(even)]:tw-text-right [&>a:nth-child(odd):nth-child(-n+3)]:tw-font-bold"
 		>
-			@if (cmsMenus && cmsMenus.footer.de) {
+			@if (cmsMenus && cmsMenus.footer[translate.currentLang]) {
 				@for (item of cmsMenus.footer[translate.currentLang]; track item) {
 					<a class="tw-text-oebblack tw-basis-1/2 tw-grow-1 tw-p-1.5" href="{{ item.url }}">{{
 						item.title

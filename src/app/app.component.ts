@@ -250,6 +250,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 		}
 
 		cmsManager.menus$.subscribe((menu) => {
+			console.log(menu);
 			this.cmsMenus = menu;
 		});
 	}
