@@ -94,6 +94,7 @@ export interface ApiQuotas {
 		AISKILLS_REQUESTS: ApiQuotasNumberQuota;
 		PDFEDITOR: ApiQuotasBooleanQuota;
 		NETWORK_MEMBERSHIPS: ApiQuotasNumberQuota;
+		NETWORK_CREATE: ApiQuotasNumberQuota;
 	};
 }
 

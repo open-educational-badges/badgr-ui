@@ -19,13 +19,15 @@ import { QuotaRequestApiService } from '../../services/quotarequest-api.service'
 import { TitleCasePipe } from '@angular/common';
 import { QuotaManager } from '~/issuer/services/quota-manager.service';
 import { ApiQuota } from '~/issuer/models/quotas.model';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 
 export interface QuotaExceededDialogContext {
 	issuer: Issuer | Network;
 	quota: 'pro' | 'enterprise' | 'network';
+	page: QuotaExceededDialogPageType;
 }
 
-export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'success';
+export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'network' | 'success';
 
 export const quotaPackages = [
 	{
@@ -67,6 +69,7 @@ export const quotaPackages = [
 })
 export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 	protected quotaManager = inject(QuotaManager);
+	protected issuerManager = inject(IssuerManager);
 	protected translate = inject(TranslateService);
 	protected quotaRequestApiService = inject(QuotaRequestApiService);
 
@@ -89,7 +92,7 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		.addControl('name', '', [Validators.required, Validators.maxLength(254)])
 		.addControl('email', '', [Validators.required, Validators.maxLength(254)])
 		.addControl('issuer', '', [Validators.required])
-		.addControl('package', 'pro', [Validators.required]);
+		.addControl('package', '', [Validators.required]);
 
 	issuerOptions: FormFieldSelectOption[];
 
@@ -111,6 +114,8 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		if (this.context.issuer) {
 			this.issuer.set(this.context.issuer);
 
+			this.upgradeRequestForm.rawControlMap.package.setValue(this.issuer().quotas.nextLevel.toLowerCase());
+
 			this.issuerOptions = [
 				{
 					label: this.issuer().name,
@@ -121,6 +126,19 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 			this.upgradeRequestForm.controls.name.setValue(this.issuer().currentUserStaffMember.nameLabel);
 			this.upgradeRequestForm.controls.email.setValue(this.issuer().currentUserStaffMember.email);
 			this.upgradeRequestForm.controls.issuer.setValue(this.issuer().slug);
+		}
+		if (this.context.page) {
+			this.page = this.context.page;
+			this.upgradeRequestForm.rawControlMap.package.setValue('network');
+			this.issuerManager.myIssuers$.subscribe((issuers) => {
+				this.issuerOptions = issuers
+					.filter((issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor)
+					.sort((a, b) => a.name.localeCompare(b.name))
+					.map((issuer) => ({
+						label: issuer.name,
+						value: issuer.slug,
+					}));
+			});
 		}
 	}
 

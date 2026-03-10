@@ -121,7 +121,7 @@
 		@if (page === 'upgrade') {
 			<hlm-dialog-header>
 				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
-					{{ 'Quotas.packageFormHeadline' | translate }}
+					{{ 'Quotas.requestUpgrade' | translate }}
 				</h2>
 			</hlm-dialog-header>
 
@@ -165,15 +165,17 @@
 
 						<div class="tw-mt-6">
 							@for (package of packageOptions; track package; let last = $last) {
-								<bg-formfield-radio
-									class="tw-mt-4"
-									[control]="upgradeRequestForm.rawControlMap.package"
-									name="package"
-									label="{{ package.label | translate }}"
-									[value]="package.value"
-									[last]="last"
-									errorMessage="{{ 'Quotas.packageFormOptionsError' | translate }}"
-								></bg-formfield-radio>
+								@if (package.value !== 'network') {
+									<bg-formfield-radio
+										class="tw-mt-4"
+										[control]="upgradeRequestForm.rawControlMap.package"
+										name="package"
+										label="{{ package.label | translate }}"
+										[value]="package.value"
+										[last]="last"
+										errorMessage="{{ 'Quotas.packageFormOptionsError' | translate }}"
+									></bg-formfield-radio>
+								}
 							}
 						</div>
 					</div>
@@ -187,6 +189,83 @@
 						{{ 'Quotas.requestFormSubmitLabel' | translate }}
 					</oeb-button>
 				</form>
+			</div>
+		}
+
+		@if (page === 'network') {
+			<hlm-dialog-header>
+				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+					{{ 'Quotas.requestNetwork' | translate }}
+				</h2>
+			</hlm-dialog-header>
+
+			<div class="tw-mt-8">
+				@if (issuer()) {
+					<form
+						class="tw-w-full"
+						[formGroup]="upgradeRequestForm.rawControl"
+						(ngSubmit)="onSubmitPackage()"
+						novalidate
+					>
+						<oeb-input
+							[label]="'Quotas.requestFormNameFieldLabel' | translate"
+							[control]="upgradeRequestForm.rawControlMap.name"
+							[readonly]="true"
+							[noTopMargin]="true"
+						></oeb-input>
+
+						<oeb-input
+							class="tw-block tw-pt-1"
+							[label]="'Quotas.requestFormEmailFieldLabel' | translate"
+							[control]="upgradeRequestForm.rawControlMap.email"
+							[readonly]="true"
+						></oeb-input>
+
+						<oeb-select
+							class="tw-block tw-pt-1 tw-text-oebblack notdisabled"
+							[label]="'Quotas.requestFormIssuerFieldLabel' | translate"
+							[options]="issuerOptions"
+							[control]="upgradeRequestForm.rawControlMap.issuer"
+						></oeb-select>
+
+						<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
+							<label class="tw-block tw-pb-[2px] tw-pl-[3px]">
+								<span
+									class="tw-text-oebblack tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]"
+								>
+									{{ 'Quotas.packageFormOptionsLabel' | translate }}
+								</span>
+							</label>
+
+							<div class="tw-mt-6">
+								@for (package of packageOptions; track package; let last = $last) {
+									@if (package.value === 'network') {
+										<bg-formfield-radio
+											class="tw-mt-4"
+											[control]="upgradeRequestForm.rawControlMap.package"
+											name="package"
+											label="{{ package.label | translate }}"
+											[value]="package.value"
+											[last]="last"
+											errorMessage="{{ 'Quotas.packageFormOptionsError' | translate }}"
+										></bg-formfield-radio>
+									}
+								}
+							</div>
+						</div>
+
+						<oeb-button
+							type="submit"
+							[text]="'Quotas.requestFormSubmitLabel' | translate"
+							[disabled]="upgradeRequestForm.invalid"
+							width="full_width"
+						>
+							{{ 'Quotas.requestFormSubmitLabel' | translate }}
+						</oeb-button>
+					</form>
+				} @else {
+					<p>{{ 'Quotas.upgradeOnlyOwner' | translate }}</p>
+				}
 			</div>
 		}
 

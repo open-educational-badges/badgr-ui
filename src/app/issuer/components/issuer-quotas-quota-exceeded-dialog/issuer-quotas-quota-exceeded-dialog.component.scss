@@ -14,6 +14,8 @@ ul {
 
 		> * {
 			max-width: 217px !important;
+		}
+		&:not(.notdisabled) > * {
 			opacity: 0.5;
 		}
 	}

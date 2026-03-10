@@ -24,6 +24,7 @@ export interface ApiQuota {
 	aiskills_requests: ApiQuotasNumberQuota;
 	pdfeditor: ApiQuotasBooleanQuota;
 	network_memberships: ApiQuotasNumberQuota;
+	network_create: ApiQuotasBooleanQuota;
 }
 
 export interface QuotaApiResponse {

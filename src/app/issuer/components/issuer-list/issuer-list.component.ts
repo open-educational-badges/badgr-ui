@@ -9,6 +9,7 @@ import {
 	viewChild,
 	AfterContentInit,
 	AfterViewInit,
+	computed,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SessionService } from '../../../common/services/session.service';
@@ -97,6 +98,11 @@ export class IssuerListComponent
 	Array = Array;
 
 	issuers: Issuer[] = null;
+	ownedIssuers = computed(() =>
+		this.issuers.filter(
+			(issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor,
+		),
+	);
 	networks = signal<Network[]>([]);
 	badges: BadgeClass[] = null;
 
@@ -510,7 +516,8 @@ export class IssuerListComponent
 	}
 
 	checkQuotasDialog() {
-		if (this.quotasActive) {
+		const canCreate = this.issuers.some((i) => !!i.quotas?.quotas.NETWORK_CREATE.quota);
+		if (this.quotasActive && !canCreate) {
 			this._hlmDialogService.open(QuotaExceededDialog, {
 				context: {
 					quota: 'NETWORK',

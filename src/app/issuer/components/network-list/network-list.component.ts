@@ -1,10 +1,14 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { HlmP } from '@spartan-ng/helm/typography';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { OebNetworkCard } from '~/common/components/oeb-networkcard.component';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { QuotaManager } from '~/issuer/services/quota-manager.service';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
 
 @Component({
 	selector: 'network-list',
@@ -12,5 +16,55 @@ import { OebNetworkCard } from '~/common/components/oeb-networkcard.component';
 	imports: [HlmP, OebButtonComponent, RouterLink, FormsModule, TranslatePipe, OebNetworkCard],
 })
 export class NetworkListComponent {
+	protected issuerManager = inject(IssuerManager);
+	protected quotaManager = inject(QuotaManager);
+	private readonly _hlmDialogService = inject(HlmDialogService);
 	networks = input.required<any[]>();
+
+	canList = signal(false);
+	canCreate = signal(false);
+	issuerOwnerOrEditor = signal(false);
+
+	constructor() {
+		this.issuerManager.myIssuers$.subscribe((issuers) => {
+			if (issuers.length > 0) {
+				this.canList.set(true);
+				this.issuerOwnerOrEditor.set(
+					issuers.filter(
+						(issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor,
+					).length > 0,
+				);
+			}
+		});
+		this.quotaManager.loaded$.subscribe((enabled) => {
+			if (this.quotaManager.quotasEnabled && this.quotaManager.quotasList.length) {
+				this.issuerManager.myIssuers$.subscribe((issuers) => {
+					issuers.forEach((i) => {
+						if (i.quotas) {
+							if (i.quotas.quotas.NETWORK_CREATE.quota) {
+								this.canCreate.set(true);
+							}
+						}
+					});
+				});
+			} else {
+				this.canCreate.set(true);
+			}
+		});
+	}
+	async showUpgradeDialog() {
+		this.issuerManager.myIssuers$.subscribe((issuers) => {
+			let ownedIssuers = issuers.filter(
+				(issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor,
+			);
+			const issuer = ownedIssuers[0] || null;
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					quota: 'NETWORK',
+					issuer: issuer,
+					page: 'network',
+				},
+			});
+		});
+	}
 }
