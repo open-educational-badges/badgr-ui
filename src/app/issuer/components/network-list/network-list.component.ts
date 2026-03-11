@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { HlmP } from '@spartan-ng/helm/typography';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
@@ -18,38 +18,52 @@ import { HlmDialogService } from '@spartan-ng/helm/dialog';
 export class NetworkListComponent {
 	protected issuerManager = inject(IssuerManager);
 	protected quotaManager = inject(QuotaManager);
+	protected translate = inject(TranslateService);
 	private readonly _hlmDialogService = inject(HlmDialogService);
 	networks = input.required<any[]>();
+
+	loading = signal(true);
 
 	canList = signal(false);
 	canCreate = signal(false);
 	issuerOwnerOrEditor = signal(false);
 
 	constructor() {
-		this.issuerManager.myIssuers$.subscribe((issuers) => {
-			if (issuers.length > 0) {
-				this.canList.set(true);
-				this.issuerOwnerOrEditor.set(
-					issuers.filter(
-						(issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor,
-					).length > 0,
-				);
-			}
-		});
-		this.quotaManager.loaded$.subscribe((enabled) => {
-			if (this.quotaManager.quotasEnabled && this.quotaManager.quotasList.length) {
+		Promise.all([
+			new Promise<void>((r) => {
 				this.issuerManager.myIssuers$.subscribe((issuers) => {
-					issuers.forEach((i) => {
-						if (i.quotas) {
-							if (i.quotas.quotas.NETWORK_CREATE.quota) {
-								this.canCreate.set(true);
-							}
-						}
-					});
+					r();
+					if (issuers.length > 0) {
+						this.canList.set(true);
+						this.issuerOwnerOrEditor.set(
+							issuers.filter(
+								(issuer) =>
+									issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor,
+							).length > 0,
+						);
+					}
 				});
-			} else {
-				this.canCreate.set(true);
-			}
+			}),
+			new Promise<void>((r) => {
+				this.quotaManager.loaded$.subscribe((enabled) => {
+					if (this.quotaManager.quotasEnabled && this.quotaManager.quotasList.length) {
+						this.issuerManager.myIssuers$.subscribe((issuers) => {
+							r();
+							issuers.forEach((i) => {
+								if (i.quotas) {
+									if (i.quotas.quotas.NETWORK_CREATE.quota) {
+										this.canCreate.set(true);
+									}
+								}
+							});
+						});
+					} else {
+						this.canCreate.set(true);
+					}
+				});
+			}),
+		]).then(() => {
+			this.loading.set(false);
 		});
 	}
 	async showUpgradeDialog() {

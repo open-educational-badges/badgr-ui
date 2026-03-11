@@ -20,6 +20,13 @@
 
 		<p class="tw-mb-6">
 			{{ 'Quotas.ReleaseInfoDialog.text2' | translate }}
+			@if (issuer()) {
+				<a class="tw-text-link tw-underline" [href]="`/issuer/issuers/${issuer().slug}/quotas`">{{
+					'Quotas.QuotasMenuItem' | translate
+				}}</a>
+			} @else {
+				{{ 'Quotas.QuotasMenuItem' | translate }}
+			}
 		</p>
 
 		<p class="tw-mb-6">

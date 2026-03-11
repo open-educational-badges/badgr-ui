@@ -98,11 +98,16 @@ export class IssuerListComponent
 	Array = Array;
 
 	issuers: Issuer[] = null;
-	ownedIssuers = computed(() =>
-		this.issuers.filter(
-			(issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor,
-		),
-	);
+
+	canCreateNetwork = computed(() => {
+		return (
+			this.issuers
+				.filter((issuer) => !issuer.quotas || !!issuer.quotas?.quotas['NETWORK_CREATE'].quota)
+				.filter((issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor)
+				.length > 0
+		);
+	});
+
 	networks = signal<Network[]>([]);
 	badges: BadgeClass[] = null;
 

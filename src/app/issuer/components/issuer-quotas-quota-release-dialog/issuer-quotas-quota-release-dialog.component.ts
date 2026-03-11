@@ -17,6 +17,7 @@ import { HlmDialogModule } from '@spartan-ng/helm/dialog';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { QuotaRequestApiService } from '../../services/quotarequest-api.service';
 import { TitleCasePipe } from '@angular/common';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 
 @Component({
 	selector: 'quota-release-dialog',
@@ -49,18 +50,31 @@ export class QuotaReleaseDialog extends BaseDialog {
 	protected translate = inject(TranslateService);
 	protected router = inject(Router);
 	protected quotaRequestApiService = inject(QuotaRequestApiService);
+	protected issuerManager = inject(IssuerManager);
 
 	private readonly dialogRef = inject<BrnDialogRef>(BrnDialogRef);
+
+	issuer = signal<Issuer | null>(null);
+
+	constructor() {
+		super();
+		this.issuerManager.myIssuers$.subscribe((issuers) => {
+			if (issuers.length > 0) {
+				this.issuer.set(issuers[0]);
+			}
+		});
+	}
 
 	closeDialog() {
 		this.dialogRef.close();
 	}
 	showPackages() {
-		this.closeDialog();
+		// this.closeDialog();
 		const paths = {
 			de: '/page/produkte',
 			en: '/page/pricing',
 		};
-		this.router.navigate([paths[this.translate.currentLang]]);
+		// this.router.navigate([paths[this.translate.currentLang]]);
+		window.open(paths[this.translate.currentLang]);
 	}
 }

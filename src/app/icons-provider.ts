@@ -59,6 +59,7 @@ import {
 	lucideCalendarDays,
 	lucideMedal,
 	lucidePuzzle,
+	lucideCircleChevronRight,
 } from '@ng-icons/lucide';
 
 export const IconsProvider = provideIcons({
@@ -121,4 +122,5 @@ export const IconsProvider = provideIcons({
 	lucideLock,
 	lucideMedal,
 	lucidePuzzle,
+	lucideCircleChevronRight,
 });

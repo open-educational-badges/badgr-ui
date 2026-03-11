@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import { HlmH1 } from '@spartan-ng/helm/typography';
 import { BgBreadcrumbsComponent, LinkEntry } from '~/common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { TimeComponent } from '~/common/components/time.component';
@@ -14,16 +15,19 @@ import { ApiQuotasBooleanQuota, ApiQuotasNumberQuota } from '~/issuer/models/iss
 import { Issuer } from '~/issuer/models/issuer.model';
 import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
 	selector: 'issuer-quotas',
 	templateUrl: 'issuer-quotas.component.html',
-	imports: [BgAwaitPromises, HlmH1, TranslatePipe, OebButtonComponent, BgBreadcrumbsComponent, TimeComponent],
+	imports: [BgAwaitPromises, HlmH1, TranslatePipe, OebButtonComponent, BgBreadcrumbsComponent, TimeComponent, NgIcon],
 })
 export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 	protected issuerManager = inject(IssuerManager);
 	protected messageService = inject(MessageService);
 	protected translate = inject(TranslateService);
+	private readonly _hlmDialogService = inject(HlmDialogService);
 	issuer: Issuer | Network;
 	issuerSlug: string;
 
@@ -43,6 +47,15 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
 			(issuer) => {
 				this.issuer = issuer;
+
+				this.crumbs = [
+					{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
+					{ title: this.issuer.name, routerLink: ['/issuer/issuers/' + this.issuer.slug] },
+					{
+						title: this.translate.instant('Quotas.QuotasMenuItem'),
+						routerLink: ['/issuer/issuers/' + this.issuer.slug + '/quotas'],
+					},
+				];
 			},
 			(error) => {
 				this.messageService.reportLoadingError(`Issuer '${this.issuerSlug}' does not exist.`, error);
@@ -58,5 +71,15 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 	// returns true if any quota has a custom value
 	isCustom() {
 		return Object.keys(this.issuer.quotas.quotas).some((key, index) => this.issuer.quotas.quotas[key].custom);
+	}
+
+	upgrade() {
+		this._hlmDialogService.open(QuotaExceededDialog, {
+			context: {
+				issuer: this.issuer,
+				variant: 'new_design',
+				page: 'upgrade',
+			},
+		});
 	}
 }

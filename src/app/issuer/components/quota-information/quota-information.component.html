@@ -1,6 +1,6 @@
 @for (quota of quotaKeys; track $index) {
 	@if (quotaValues[$index]['max'] > 0) {
-		<p [class]="quotaWarning(quotaValues[$index]) ? 'tw-text-red' : ''">
+		<p [class]="quotaWarning(quotaValues[$index]) ? 'tw-text-red' : ''" (click)="preventP($event)">
 			<span>
 				{{ quotaValues[$index]['used'] }} {{ 'General.of' | translate }} {{ quotaValues[$index]['max'] }}
 				{{ 'Quotas.Info_' + quota | translate }}</span
@@ -12,6 +12,7 @@
 					>.
 					<a
 						[routerLink]="['/issuer/issuers/' + issuer.slug + '/quotas']"
+						(click)="preventA($event)"
 						target="_blank"
 						class="tw-text-link tw-underline"
 						>Info</a

@@ -1,15 +1,43 @@
-<div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px]">
+<div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px] tw-gap-8 tw-text-[18px]/[1.3em]">
 	<div class="dialog-x-box o-container">
 		@if (page === 'start') {
-			@if (quota()) {
+			@if (network()) {
 				<hlm-dialog-header>
-					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
-						{{ 'Quotas.nextLevelHeadline' | translate }}
+					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-mb-6">
+						Netzwerk nutzen oder Upgraden
 					</h2>
 				</hlm-dialog-header>
+				<div class="tw-flex tw-flex-row tw-items-center tw-gap-8">
+					<img src="/assets/oeb/images/network/network_circle.svg" width="152" />
+					<div>
+						<p>
+							Das Limit deiner Institution ist aufgebraucht.<br />Nutze die Leistung über dein Netzwerk.
+						</p>
+						<p class="tw-mt-4">
+							<a
+								class="tw-text-link tw-underline tw-font-bold tw-flex tw-flex-row tw-items-center"
+								(click)="closeDialog()"
+								[routerLink]="[`/issuer/networks/${network().slug}`]"
+							>
+								<ng-icon size="24px" hlm name="lucideCircleChevronRight" class="tw-mr-1"></ng-icon>
+								Zum Netzwerk
+							</a>
+						</p>
+					</div>
+				</div>
+				<hr class="tw-border-dashed tw-my-8" />
+			}
+			@if (quota()) {
+				@if (!network()) {
+					<hlm-dialog-header>
+						<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+							{{ 'Quotas.nextLevelHeadline' | translate }}
+						</h2>
+					</hlm-dialog-header>
+				}
 
 				<div class="category u-margin-top2x warning">
-					<div class="tw-flex tw-gap-8 tw-p-8">
+					<div class="tw-flex tw-gap-8">
 						<div>
 							<figure>
 								<img src="/assets/oeb/images/quotas/logo_pro.svg" width="152" />
@@ -27,10 +55,17 @@
 							</figure>
 						</div>
 						<div>
-							<h2
-								class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold"
-								[innerHTML]="'Quotas.upgradeToPackage' | translate: { package: quota()?.name }"
-							></h2>
+							@if (!network()) {
+								<h2
+									class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold"
+									[innerHTML]="'Quotas.upgradeToPackage' | translate: { package: quota()?.name }"
+								></h2>
+							} @else {
+								<h2
+									class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold"
+									[innerHTML]="'Quotas.networkOrUpgrade' | translate: { package: quota()?.name }"
+								></h2>
+							}
 							@if (quota()) {
 								<div class="tw-mb-8">
 									<h3 class="tw-underline tw-text-[18px]/[1.2em] tw-mb-2 tw-font-bold">
@@ -99,12 +134,12 @@
 				</div>
 			} @else {
 				<hlm-dialog-header>
-					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-text-center">
 						{{ 'Quotas.exceedDialogUpperLimitHeadline' | translate }}
 					</h2>
 				</hlm-dialog-header>
 
-				<div class="category u-margin-top2x warning tw-text-center tw-p-8">
+				<div class="category warning tw-text-center">
 					<div class="tw-p-8">
 						<p class="tw-font-bold">
 							{{ 'Quotas.exceedDialogUpperLimitSubline' | translate }}
@@ -165,7 +200,7 @@
 
 						<div class="tw-mt-6">
 							@for (package of packageOptions; track package; let last = $last) {
-								@if (package.value !== 'network') {
+								@if (package.value !== 'NETWORK') {
 									<bg-formfield-radio
 										class="tw-mt-4"
 										[control]="upgradeRequestForm.rawControlMap.package"
@@ -239,7 +274,7 @@
 
 							<div class="tw-mt-6">
 								@for (package of packageOptions; track package; let last = $last) {
-									@if (package.value === 'network') {
+									@if (package.value === 'NETWORK') {
 										<bg-formfield-radio
 											class="tw-mt-4"
 											[control]="upgradeRequestForm.rawControlMap.package"

@@ -74,6 +74,14 @@ export class QuotaInformationComponent {
 		}
 	}
 
+	preventP(e: Event) {
+		e.stopPropagation();
+		e.preventDefault();
+	}
+	preventA(e: Event) {
+		e.stopPropagation();
+	}
+
 	quotaWarning(quota: ApiQuotasNumberQuota | ApiQuotasBooleanQuota) {
 		if ('used' in quota) {
 			return quota['used'] / quota['max'] >= 0.8;

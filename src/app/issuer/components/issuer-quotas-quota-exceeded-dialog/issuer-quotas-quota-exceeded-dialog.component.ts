@@ -31,15 +31,19 @@ export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'network' | 'suc
 
 export const quotaPackages = [
 	{
-		value: 'pro',
+		value: 'IMPACT_PLUS',
+		label: 'IMPACT PLUS',
+	},
+	{
+		value: 'PRO',
 		label: 'PRO',
 	},
 	{
-		value: 'enterprise',
+		value: 'ENTERPRISE',
 		label: 'ENTERPRISE',
 	},
 	{
-		value: 'network',
+		value: 'NETWORK',
 		label: 'NETWORK',
 	},
 ];
@@ -82,6 +86,13 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		return this.quotas().find((q) => q.key == nextKey);
 	});
 
+	network = computed(() => {
+		if (this.issuer() && !this.issuer().is_network) {
+			return (this.issuer() as Issuer).networks[0] || null;
+		}
+		return null;
+	});
+
 	private readonly _dialogContext = injectBrnDialogContext<QuotaExceededDialogContext>();
 	private readonly dialogRef = inject<BrnDialogRef>(BrnDialogRef);
 	protected readonly context = this._dialogContext;
@@ -114,7 +125,8 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		if (this.context.issuer) {
 			this.issuer.set(this.context.issuer);
 
-			this.upgradeRequestForm.rawControlMap.package.setValue(this.issuer().quotas.nextLevel.toLowerCase());
+			this.upgradeRequestForm.rawControlMap.package.setValue(this.issuer().quotas.nextLevel);
+			// this.upgradeRequestForm.rawControlMap.package.setValue('pro');
 
 			this.issuerOptions = [
 				{
@@ -129,7 +141,9 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		}
 		if (this.context.page) {
 			this.page = this.context.page;
-			this.upgradeRequestForm.rawControlMap.package.setValue('network');
+			if (this.context.page === 'network') {
+				this.upgradeRequestForm.rawControlMap.package.setValue('network');
+			}
 			this.issuerManager.myIssuers$.subscribe((issuers) => {
 				this.issuerOptions = issuers
 					.filter((issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor)

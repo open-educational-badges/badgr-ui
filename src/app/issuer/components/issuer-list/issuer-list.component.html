@@ -23,7 +23,7 @@
 						[disabled-when-requesting]="true"
 						[text]="'Issuer.createInstitution' | translate"
 					></oeb-button>
-				} @else if (networks()?.length && activeTab === 'networks' && ownedIssuers().length) {
+				} @else if (networks()?.length && activeTab === 'networks' && canCreateNetwork()) {
 					<oeb-button
 						class="md:tw-whitespace-nowrap"
 						(click)="createNetwork()"
