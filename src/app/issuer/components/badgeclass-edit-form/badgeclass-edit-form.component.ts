@@ -50,7 +50,7 @@ import { BadgeClassDetailsComponent } from '../badgeclass-create-steps/badgeclas
 import { Issuer } from '../../models/issuer.model';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
-import { NgClass, NgStyle, DecimalPipe } from '@angular/common';
+import { NgClass, NgStyle, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { BadgeLegendComponent } from '../../../common/components/badge-legend/badge-legend.component';
 import { StepComponent } from '../../../components/stepper/step.component';
 import { CdkStep } from '@angular/cdk/stepper';
@@ -67,6 +67,7 @@ import { Network } from '~/issuer/network.model';
 import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-integer-or-null.validator';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { CatalogService } from '~/catalog/catalog.service';
+import { LanguageService } from '~/common/services/language.service';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -100,6 +101,7 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		DecimalPipe,
 		TranslatePipe,
 		TranslateModule,
+		UpperCasePipe,
 	],
 })
 export class BadgeClassEditFormComponent
@@ -114,6 +116,7 @@ export class BadgeClassEditFormComponent
 	private translate = inject(TranslateService);
 	private navService = inject(NavigationService);
 	protected catalogService = inject(CatalogService);
+	private languageService = inject(LanguageService);
 
 	baseUrl: string;
 	badgeCategory: string;
@@ -318,6 +321,7 @@ export class BadgeClassEditFormComponent
 		.addControl('badge_study_load', 0, [(control) => PositiveIntegerOrNullValidator.valid(control, this.translate)])
 		.addControl('badge_hours', 1, (control) => PositiveIntegerOrNullValidator.valid(control, this.translate))
 		.addControl('badge_minutes', 0, (control) => PositiveIntegerOrNullValidator.valid(control, this.translate))
+		.addControl('badge_language', this.languageService.getSelectedLngValue())
 		.addControl('badge_category', '', Validators.required)
 		.addControl('badge_level', 'a1', Validators.required)
 		.addControl('badge_based_on', {
@@ -549,6 +553,7 @@ export class BadgeClassEditFormComponent
 			badge_minutes: badgeClass.extension['extensions:StudyLoadExtension']
 				? badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad % 60
 				: null,
+			badge_language: this.languageService.getSelectedLngValue(),
 			badge_study_load: badgeClass.extension['extensions:StudyLoadExtension']
 				? badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad
 				: null,

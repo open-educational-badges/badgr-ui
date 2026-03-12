@@ -570,7 +570,9 @@
 		"cantRemoveFromNetwork": "Der Badge kann NICHT wieder aus dem Netzwerk entfernt werden.",
 		"shareBadgeOnNetwork": "Badge für Netzwerk freigeben",
 		"alreadyShared": "Der Badge wurde bereits für ein Netzwerk freigegeben.",
-		"unknownRecipient": "Empfänger:in unbekannt"
+		"unknownRecipient": "Empfänger:in unbekannt",
+		"badgeLanguage": "Sprache des Badges",
+		"badgeLanguageHint": "(und der Badge-Mail inkl. zugehörigem PDF-Zertifikat)"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Kategorie wählen",

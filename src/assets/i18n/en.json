@@ -571,7 +571,9 @@
 		"cantRemoveFromNetwork": "The badge CANNOT be removed from the network.",
 		"shareBadgeOnNetwork": "Share badge on network",
 		"alreadyShared": "The badge was already shared on a network.",
-		"unknownRecipient": "Recipient unknown"
+		"unknownRecipient": "Recipient unknown",
+		"badgeLanguage": "Language of this badge",
+		"badgeLanguageHint": "(and of the badge email incl. corresponding PDF certificate)"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
