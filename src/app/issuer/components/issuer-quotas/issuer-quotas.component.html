@@ -163,28 +163,32 @@
 			</section>
 			<section class="tw-mb-10">
 					<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">
-						Enthaltene Funktionen
+						 {{ 'Quotas.page.includedFeatures' | translate }}
 					</h3>
 					<ul class="tw-text-[18px]/[1.2em] tw-flex tw-flex-col tw-gap-2">
 						<li class="tw-flex tw-items-center tw-gap-2">
 							<ng-icon size="24px" hlm [name]="issuer.quotas.quotas['PDFEDITOR'] ? 'lucideCheck' : 'lucideX'" />
-							Individuelles PDF-Branding
+							{{ 'Quotas.page.featurePdfEditor' | translate }}
 						</li>
 						<li class="tw-flex tw-items-center tw-gap-2">
 							<ng-icon size="24px" hlm [name]="issuer.quotas.key !== 'FREE' ? 'lucideCheck' : 'lucideX'" />
-							E-Mail-Support
+							{{ 'Quotas.page.featureSupportEmail' | translate }}
+						</li>
+						<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon size="24px" hlm [name]="issuer.quotas.key !== 'FREE' && issuer.quotas.key !== 'PRO' ? 'lucideCheck' : 'lucideX'" />
+							{{ 'Quotas.page.featureSupportPhone' | translate }}
 						</li>
 						<li class="tw-flex tw-items-center tw-gap-2">
 							<ng-icon size="24px" hlm [name]="issuer.quotas.key === 'ENTERPRISE' ? 'lucideCheck' : 'lucideX'" />
-							Institutions-Dashboard
+							{{ 'Quotas.page.featureDashboardInstitution' | translate }}
 						</li>
 						<li class="tw-flex tw-items-center tw-gap-2">
 							<ng-icon size="24px" hlm [name]="issuer.quotas.quotas['NETWORK_CREATE'] ? 'lucideCheck' : 'lucideX'" />
-							Netzwerke erstellen
+							{{ 'Quotas.page.featureCreateNetwork' | translate }}
 						</li>
 						<li class="tw-flex tw-items-center tw-gap-2">
 							<ng-icon size="24px" hlm [name]="issuer.quotas.key === 'NETWORK' ? 'lucideCheck' : 'lucideX'" />
-							Netzwerk-Dashboard
+							{{ 'Quotas.page.featureDashboardNetwork' | translate }}
 						</li>
 					</ul>
 			</section>

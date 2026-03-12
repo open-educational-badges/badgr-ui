@@ -1,18 +1,16 @@
 <div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px] tw-gap-8 tw-text-[18px]/[1.3em]">
-	<div class="dialog-x-box o-container">
+	<div class="dialog-x-box o-container tw-text-oebblack">
 		@if (page === 'start') {
 			@if (network()) {
 				<hlm-dialog-header>
 					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-mb-6">
-						Netzwerk nutzen oder Upgraden
+						{{ 'Quotas.exceedDialogUseNetwork' | translate }}
 					</h2>
 				</hlm-dialog-header>
 				<div class="tw-flex tw-flex-row tw-items-center tw-gap-8">
 					<img src="/assets/oeb/images/network/network_circle.svg" width="152" />
 					<div>
-						<p>
-							Das Limit deiner Institution ist aufgebraucht.<br />Nutze die Leistung über dein Netzwerk.
-						</p>
+						<p [innerHTML]="'Quotas.exceedDialogNetworkText' | translate"></p>
 						<p class="tw-mt-4">
 							<a
 								class="tw-text-link tw-underline tw-font-bold tw-flex tw-flex-row tw-items-center"
@@ -20,7 +18,7 @@
 								[routerLink]="[`/issuer/networks/${network().slug}`]"
 							>
 								<ng-icon size="24px" hlm name="lucideCircleChevronRight" class="tw-mr-1"></ng-icon>
-								Zum Netzwerk
+								{{ 'Quotas.exceedDialogVisitNetwork' | translate }}
 							</a>
 						</p>
 					</div>
@@ -46,11 +44,13 @@
 										{{ quota().name }}
 									</h3>
 									<p class="tw-font-semibold tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2">
-										{{ quota().price }}{{ 'Quotas.euroPerYear' | translate }}
+										{{
+											quota().price
+												| number
+													: '1.0-0'
+													: (this.translate.currentLang === 'de' ? 'de-DE' : 'en-US')
+										}}{{ 'Quotas.euroPerYear' | translate }}
 									</p>
-									<!-- <small class="tw-block tw-text-center tw-italic tw-text-darkgrey"
-										>12 Monate Laufzeit, Zahlung monatlich oder jährlich
-									</small> -->
 								</figcaption>
 							</figure>
 						</div>
@@ -75,41 +75,44 @@
 										<li>
 											{{
 												'Quotas.nextQuotasProsBadges'
-													| translate: { value: quota().badge_create }
+													| translate: { value: formatNumber(quota().badge_create) }
 											}}
 										</li>
 										<li>
 											{{
 												'Quotas.nextQuotasProsLearningpaths'
-													| translate: { value: quota().learningpath_create }
+													| translate: { value: formatNumber(quota().learningpath_create) }
 											}}
 										</li>
 										<li>
 											{{
 												'Quotas.nextQuotasProsAwards'
-													| translate: { value: quota().badge_award }
+													| translate: { value: formatNumber(quota().badge_award) }
 											}}
 										</li>
 										<li>
 											{{
 												'Quotas.nextQuotasProsAdmins'
-													| translate: { value: quota().accounts_admin }
+													| translate: { value: formatNumber(quota().accounts_admin) }
 											}}
 										</li>
 										<li>
 											{{
 												'Quotas.nextQuotasProsMembers'
-													| translate: { value: quota().accounts_member }
+													| translate: { value: formatNumber(quota().accounts_member) }
 											}}
 										</li>
 										<li>
 											{{
 												'Quotas.nextQuotasProsKI'
-													| translate: { value: quota().aiskills_requests }
+													| translate: { value: formatNumber(quota().aiskills_requests) }
 											}}
 										</li>
 										@if (quota().pdfeditor) {
 											<li>{{ 'Quotas.nextQuotasProsPdfeditor' | translate }}</li>
+										}
+										@if (quota().dashboard) {
+											<li>{{ 'Quotas.nextQuotasProsDashboard' | translate }}</li>
 										}
 									</ul>
 								</div>
@@ -133,22 +136,34 @@
 					</div>
 				</div>
 			} @else {
-				<hlm-dialog-header>
-					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-text-center">
-						{{ 'Quotas.exceedDialogUpperLimitHeadline' | translate }}
+				@if (!network()) {
+					<hlm-dialog-header>
+						<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-text-center tw-mb-8">
+							{{ 'Quotas.exceedDialogUpperLimitHeadline' | translate }}
+						</h2>
+					</hlm-dialog-header>
+				} @else {
+					<h2
+						class="tw-text-oebblack tw-uppercase tw-font-semibold tw-text-center tw-text-[18px]/[1.2em] tw-mb-4"
+					>
+						{{ 'General.or' | translate }}:
 					</h2>
-				</hlm-dialog-header>
+				}
 
 				<div class="category warning tw-text-center">
-					<div class="tw-p-8">
-						<p class="tw-font-bold">
-							{{ 'Quotas.exceedDialogUpperLimitSubline' | translate }}
+					<div class="tw-pb-8">
+						@if (!network()) {
+							<p class="tw-font-bold">
+								{{ 'Quotas.exceedDialogUpperLimitSubline' | translate }}
+							</p>
+						}
+						<p class="tw-italic tw-text-purple tw-max-w-[480px] tw-m-auto">
+							{{ 'Quotas.exceedDialogUpperLimitCta' | translate }}
 						</p>
-						<p class="tw-italic tw-text-purple">{{ 'Quotas.exceedDialogUpperLimitCta' | translate }}</p>
 					</div>
 					<div class="tw-flex tw-justify-center tw-gap-2">
 						<oeb-button size="sm" text="Abbrechen" variant="secondary" (click)="closeDialog()" />
-						<oeb-button size="sm" text="E-Mail an OEB schreiben" (click)="closeDialog()" />
+						<oeb-button size="sm" [text]="'Quotas.emailOEB' | translate" (click)="emailOEB()" />
 					</div>
 				</div>
 			}

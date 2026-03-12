@@ -16,15 +16,16 @@ export interface ApiQuota {
 	default: 'ISSUER' | 'NETWORK';
 
 	upgrade: string;
-	badge_create: ApiQuotasNumberQuota;
-	badge_award: ApiQuotasNumberQuota;
-	learningpath_create: ApiQuotasNumberQuota;
-	accounts_admin: ApiQuotasNumberQuota;
-	accounts_member: ApiQuotasNumberQuota;
-	aiskills_requests: ApiQuotasNumberQuota;
-	pdfeditor: ApiQuotasBooleanQuota;
-	network_memberships: ApiQuotasNumberQuota;
-	network_create: ApiQuotasBooleanQuota;
+	badge_create: number;
+	badge_award: number;
+	learningpath_create: number;
+	accounts_admin: number;
+	accounts_member: number;
+	aiskills_requests: number;
+	pdfeditor: boolean;
+	dashboard: boolean;
+	network_memberships: number;
+	network_create: boolean;
 }
 
 export interface QuotaApiResponse {

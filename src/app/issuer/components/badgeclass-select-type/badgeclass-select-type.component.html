@@ -24,7 +24,7 @@
 						<a
 							(click)="checkQuotasDialog('BADGE_CREATE')"
 							[routerLink]="
-								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0 || !issuer?.quotas
+								issuer?.quotas?.quotas['BADGE_CREATE'].quota !== 0 || !issuer?.quotas
 									? ['/issuer/issuers', issuerSlug, 'badges', 'create', 'participation']
 									: null
 							"
@@ -46,7 +46,7 @@
 						<a
 							(click)="checkQuotasDialog('BADGE_CREATE')"
 							[routerLink]="
-								issuer?.quotas?.quotas['BADGE_CREATE'].quota > 0 || !issuer?.quotas
+								issuer?.quotas?.quotas['BADGE_CREATE'].quota !== 0 || !issuer?.quotas
 									? ['/issuer/issuers', issuerSlug, 'badges', 'create', 'competency']
 									: null
 							"
@@ -68,7 +68,7 @@
 							<a
 								(click)="checkQuotasDialog('LEARNINGPATH_CREATE')"
 								[routerLink]="
-									issuer?.quotas?.quotas['LEARNINGPATH_CREATE'].quota > 0 || !issuer?.quotas
+									issuer?.quotas?.quotas['LEARNINGPATH_CREATE'].quota !== 0 || !issuer?.quotas
 										? ['/issuer/issuers', issuerSlug, 'learningpaths', 'create']
 										: null
 								"

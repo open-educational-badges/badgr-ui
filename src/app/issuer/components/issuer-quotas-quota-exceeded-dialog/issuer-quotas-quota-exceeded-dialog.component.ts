@@ -16,7 +16,7 @@ import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmDialogModule } from '@spartan-ng/helm/dialog';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { QuotaRequestApiService } from '../../services/quotarequest-api.service';
-import { TitleCasePipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, TitleCasePipe } from '@angular/common';
 import { QuotaManager } from '~/issuer/services/quota-manager.service';
 import { ApiQuota } from '~/issuer/models/quotas.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
@@ -69,6 +69,7 @@ export const quotaPackages = [
 		HlmH2,
 		HlmP,
 		TitleCasePipe,
+		DecimalPipe,
 	],
 })
 export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
@@ -109,7 +110,7 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 
 	packageOptions: FormFieldSelectOption[] = quotaPackages.map((qp) => ({
 		value: qp.value,
-		label: this.translate.instant('Quotas.packageFormOptions' + qp.label),
+		label: this.translate.instant('Quotas.packageFormOptions' + qp.value),
 	}));
 
 	constructor() {
@@ -161,6 +162,10 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		this.changePage('start');
 	}
 
+	emailOEB() {
+		window.open('mailto:sales@openbadges.education');
+	}
+
 	changePage(page: QuotaExceededDialogPageType) {
 		this.page = page;
 	}
@@ -180,5 +185,9 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		});
 
 		this.changePage('success');
+	}
+	formatNumber(value: number) {
+		const nf = Intl.NumberFormat(this.translate.currentLang == 'de' ? 'de-DE' : 'en-US');
+		return nf.format(value);
 	}
 }
