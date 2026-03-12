@@ -67,7 +67,7 @@ import { Network } from '~/issuer/network.model';
 import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-integer-or-null.validator';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { CatalogService } from '~/catalog/catalog.service';
-import { LanguageService } from '~/common/services/language.service';
+import { LanguageService, lngs } from '~/common/services/language.service';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -124,7 +124,6 @@ export class BadgeClassEditFormComponent
 	aiCompetenciesLoading = false;
 	selectedKeywordCompetencies: ApiSkill[] = [];
 	keywordCompetenciesResult: ApiSkill[] = [];
-	keywordCompetenciesLanguage = 'de';
 	keywordCompetenciesShowResults = false;
 	keywordCompetenciesLoading = false;
 	keywordCompetenciesLoaded = false;
@@ -321,7 +320,10 @@ export class BadgeClassEditFormComponent
 		.addControl('badge_study_load', 0, [(control) => PositiveIntegerOrNullValidator.valid(control, this.translate)])
 		.addControl('badge_hours', 1, (control) => PositiveIntegerOrNullValidator.valid(control, this.translate))
 		.addControl('badge_minutes', 0, (control) => PositiveIntegerOrNullValidator.valid(control, this.translate))
-		.addControl('badge_language', this.languageService.getSelectedLngValue())
+		.addControl<'badge_language', (typeof lngs)[number]>(
+			'badge_language',
+			this.languageService.getSelectedLngValue(),
+		)
 		.addControl('badge_category', '', Validators.required)
 		.addControl('badge_level', 'a1', Validators.required)
 		.addControl('badge_based_on', {
@@ -425,7 +427,6 @@ export class BadgeClassEditFormComponent
 
 	@ViewChild('keywordCompetenciesInput') keywordCompetenciesInput: ElementRef<HTMLInputElement>;
 	@ViewChild('keywordCompetenciesInputModel') keywordCompetenciesInputModel: NgModel;
-	@ViewChild('keywordCompetenciesLanguageSelectModel') keywordCompetenciesLanguageSelectModel: NgModel;
 
 	existingBadgeClass: BadgeClass | null = null;
 
@@ -501,11 +502,7 @@ export class BadgeClassEditFormComponent
 
 	constructor() {
 		super();
-		const translate = this.translate;
-
 		this.baseUrl = this.configService.apiConfig.baseUrl;
-
-		this.keywordCompetenciesLanguage = translate.currentLang;
 	}
 
 	initFormFromExisting(badgeClass: BadgeClass) {
@@ -741,11 +738,7 @@ export class BadgeClassEditFormComponent
 	}
 
 	ngAfterViewChecked() {
-		if (
-			this.keywordCompetenciesInputModel &&
-			this.keywordCompetenciesLanguageSelectModel &&
-			!this.keywordCompetenciesViewChildrenInitialized
-		) {
+		if (this.keywordCompetenciesInputModel && !this.keywordCompetenciesViewChildrenInitialized) {
 			this.initializeViewChildSubscriptions();
 			this.keywordCompetenciesViewChildrenInitialized = true;
 		}
@@ -759,13 +752,6 @@ export class BadgeClassEditFormComponent
 			.subscribe(() => {
 				this.keywordCompetenciesKeywordsChange();
 			});
-
-		this.keywordCompetenciesLanguageSelectModel.valueChanges.subscribe((val: string) => {
-			// valueChanges is triggered before the value has been set, so we set it manually
-			this.keywordCompetenciesLanguage = val;
-			this.keywordCompetenciesInput.nativeElement.focus();
-			this.keywordCompetenciesKeywordsChange();
-		});
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
@@ -1040,7 +1026,7 @@ export class BadgeClassEditFormComponent
 				this.keywordCompetenciesResult = [];
 				this.keywordCompetenciesResult = await this.aiSkillsService.getAiKeywordSkills(
 					this.keywordCompetenciesKeywords,
-					this.keywordCompetenciesLanguage,
+					this.badgeClassForm.rawControlMap.badge_language.value,
 				);
 			} catch (error) {
 				this.messageService.reportAndThrowError(`Failed to obtain ai skills: ${error.message}`, error);
@@ -1374,6 +1360,7 @@ export class BadgeClassEditFormComponent
 			if (this.existingBadgeClass) {
 				this.existingBadgeClass.name = formState.badge_name;
 				this.existingBadgeClass.description = formState.badge_description;
+				this.existingBadgeClass.language = formState.badge_language;
 				this.existingBadgeClass.image = !imageFrame ? formState.badge_image : null;
 				this.existingBadgeClass.imageFrame = imageFrame;
 				this.existingBadgeClass.alignments = this.alignmentsEnabled ? formState.alignments : [];
@@ -1430,6 +1417,7 @@ export class BadgeClassEditFormComponent
 				let badgeClassData = {
 					name: formState.badge_name,
 					description: formState.badge_description,
+					language: formState.badge_language,
 					// if not custom, generate image on the server
 					image: !imageFrame ? formState.badge_image : null,
 					imageFrame: imageFrame,

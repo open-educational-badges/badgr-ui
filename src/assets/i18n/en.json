@@ -667,8 +667,7 @@
 			"headline": "ESCO Competencies",
 			"description": "To ensure our badges are standardized and comparable in terms of content, the AI assistant uses <a class='tw-text-[var(--color-link)] tw-underline' href='https://esco.ec.europa.eu/en/about-esco' target='_blank'>the European Classification of Skills, Competences and Occupations (ESCO)</a>. You can search for suitable skills yourself here and add them:",
 			"search": "Search ESCO database",
-			"inputPlaceholder": "Enter keyword",
-			"resultsIn": "Results in"
+			"inputPlaceholder": "Enter keyword"
 		},
 		"competencyOwn": "Own competency",
 		"competencyOwnDescription": "If the ESCO search does not provide a suitable skill, you can manually add a self-defined skill here:",

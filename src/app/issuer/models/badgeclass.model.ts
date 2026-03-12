@@ -38,6 +38,14 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		this.apiModel.description = description;
 	}
 
+	get language(): string {
+		return this.apiModel.language ?? 'en';
+	}
+
+	set language(language: string) {
+		this.apiModel.language = language;
+	}
+
 	get image(): string {
 		return this.apiModel.image;
 	}

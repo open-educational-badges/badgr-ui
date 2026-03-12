@@ -643,26 +643,6 @@
 														</div>
 													}
 												</div>
-												<div class="forminput">
-													<div class="forminput-x-inputs tw-flex tw-gap-2 tw-items-center">
-														<span>{{
-															'CreateBadge.escoSearch.resultsIn' | translate
-														}}</span>
-														<select
-															#keywordCompetenciesLanguageSelectModel="ngModel"
-															class="tw-p-2"
-															[(ngModel)]="keywordCompetenciesLanguage"
-															[ngModelOptions]="{ standalone: true }"
-														>
-															<option value="de">
-																{{ 'General.language.de' | translate }}
-															</option>
-															<option value="en">
-																{{ 'General.language.en' | translate }}
-															</option>
-														</select>
-													</div>
-												</div>
 											</div>
 											@if (selectedKeywordCompetencies.length !== 0) {
 												<div class="tw-mt-6 md:tw-mt-8 tw-w-full">
