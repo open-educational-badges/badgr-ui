@@ -334,7 +334,11 @@
 	>
 		<div class="tw-flex tw-flex-col tw-gap-2 tw-text-[18px] tw-leading-[23.4px] tw-text-oebblack">
 			<div class="tw-flex tw-gap-4 tw-items-center tw-mt-[10px]">
-				<img src="assets/oeb/images/issuerPage/badgy.svg" class="md:tw-w-[100px] tw-w-[64px]" alt="Beta logo" />
+				<img
+					src="assets/oeb/images/issuerPage/badgy.svg"
+					class="md:tw-w-[100px] tw-w-[64px]"
+					alt="An image of badgy, a fictional hexagonal-shaped character resembling a badge"
+				/>
 				<p [innerHTML]="'Issuer.betaPhase' | translate"></p>
 			</div>
 			<div class="tw-flex md:tw-hidden tw-flex-col tw-text-sm md:tw-text-base tw-text-oebblack">
@@ -399,13 +403,17 @@
 <div class="tw-relative tw-w-full" [class.tw-hidden]="mobileNavOpen">
 	<div class="page-padding oeb logos-container md:tw-flex md:tw-justify-between">
 		<div
-			class="tw-hidden md:tw-flex tw-flex-row tw-flex-wrap tw-w-full tw-text-sm md:tw-text-lg md:tw-leading-tight [&>a:nth-child(even)]:tw-text-right [&>a:nth-child(odd):nth-child(-n+3)]:tw-font-bold"
+			class="tw-hidden md:tw-flex tw-flex-row tw-flex-wrap tw-w-full tw-text-sm md:tw-text-lg md:tw-leading-tight"
 		>
 			@if (cmsMenus && cmsMenus.footer[translate.currentLang]) {
 				@for (item of cmsMenus.footer[translate.currentLang]; track item) {
-					<a class="tw-text-oebblack tw-basis-1/2 tw-grow-1 tw-p-1.5" href="{{ item.url }}">{{
-						item.title
-					}}</a>
+					<a
+						class="tw-text-oebblack tw-basis-1/2 tw-grow-1 tw-p-1.5"
+						href="{{ item.url }}"
+						[class.tw-font-bold]="$index < 3 && $index % 2 === 0"
+						[class.tw-text-right]="$index % 2 !== 0"
+						>{{ item.title }}</a
+					>
 				}
 			} @else {
 				<a class="tw-font-semibold md:tw-font-medium tw-text-oebblack" [routerLink]="['/public/faq']">FAQ</a>
