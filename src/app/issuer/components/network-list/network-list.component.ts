@@ -49,13 +49,16 @@ export class NetworkListComponent {
 					if (this.quotaManager.quotasEnabled && this.quotaManager.quotasList.length) {
 						this.issuerManager.myIssuers$.subscribe((issuers) => {
 							r();
-							issuers.forEach((i) => {
-								if (i.quotas) {
+							const quotaIssuers = issuers.filter((i) => !!i.quotas);
+							if (quotaIssuers.length === 0) {
+								this.canCreate.set(true);
+							} else {
+								quotaIssuers.forEach((i) => {
 									if (i.quotas.quotas.NETWORK_CREATE.quota) {
 										this.canCreate.set(true);
 									}
-								}
-							});
+								});
+							}
 						});
 					} else {
 						this.canCreate.set(true);

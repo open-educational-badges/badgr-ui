@@ -11,6 +11,7 @@ import {
 	OnInit,
 	input,
 	signal,
+	computed,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -42,11 +43,24 @@ import { OptionalDetailsComponent } from '../optional-details/optional-details.c
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { UrlValidator } from '~/common/validators/url.validator';
 import { BadgeClass } from '~/issuer/models/badgeclass.model';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
+import { Issuer } from '~/issuer/models/issuer.model';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { Network } from 'inspector/promises';
 
 @Component({
 	selector: 'badgeclass-issue-bulk-award-confirmation',
 	templateUrl: './badgeclass-issue-bulk-award-confirmation.component.html',
-	imports: [HlmH1, HlmP, OebButtonComponent, TranslatePipe, NgClass, FormsModule, OptionalDetailsComponent],
+	imports: [
+		HlmH1,
+		HlmP,
+		OebButtonComponent,
+		TranslatePipe,
+		NgClass,
+		FormsModule,
+		OptionalDetailsComponent,
+		QuotaInformationComponent,
+	],
 })
 export class BadgeclassIssueBulkAwardConformation
 	extends BaseAuthenticatedRoutableComponent
@@ -62,6 +76,7 @@ export class BadgeclassIssueBulkAwardConformation
 	protected title = inject(Title);
 	protected taskService = inject(TaskPollingManagerService);
 	protected translate = inject(TranslateService);
+	protected issuerManager = inject(IssuerManager);
 
 	readonly transformedImportData = input<TransformedImportData>(undefined);
 	readonly badgeSlug = input<string>(undefined);
@@ -97,7 +112,14 @@ export class BadgeclassIssueBulkAwardConformation
 
 	buttonDisabledClass = true;
 	buttonDisabledAttribute = true;
-	issuer: string;
+	issuer = signal<Issuer>(null);
+
+	quotasCanIssue = computed(() => {
+		return (
+			!this.issuer()?.quotas ||
+			this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota >= this.transformedImportData().validRowsTransformed.size
+		);
+	});
 
 	issueBadgeFinished: Promise<unknown>;
 
@@ -128,6 +150,10 @@ export class BadgeclassIssueBulkAwardConformation
 		}
 		this.optionalDetailsForm.controls.courseUrl.setValue(this.badgeClass().courseUrl ?? null);
 		this.badgeInstanceCourseUrl.set(this.optionalDetailsForm.controls.courseUrl.value);
+
+		this.issuerManager.myIssuers$.subscribe((issuers) => {
+			this.issuer.set(issuers.find((i) => i.slug === this.issuerSlug()));
+		});
 	}
 
 	ngOnDestroy() {

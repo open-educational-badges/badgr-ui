@@ -1023,8 +1023,9 @@ export class BadgeClassEditFormComponent
 						});
 					}
 				});
-				// this.issuer.addQuota('AISKILLS_REQUESTS');
-				this.issuer.update();
+				if (this.issuer.quotas) {
+					this.issuer.update();
+				}
 				this.aiCompetenciesLoading = false;
 			})
 			.catch((error) => {
@@ -1350,6 +1351,14 @@ export class BadgeClassEditFormComponent
 				return;
 			}
 
+			if (this.issuer.quotas) {
+				// recheck quotas and show dialog if something changed while starting the creation process
+				await this.issuer.update();
+				if (!this.checkQuotasDialog('BADGE_CREATE')) {
+					return false;
+				}
+			}
+
 			const formState = this.badgeClassForm.value;
 
 			const studyLoadExtensionContextUrl = `${this.baseUrl}/static/extensions/StudyLoadExtension/context.json`;
@@ -1490,6 +1499,13 @@ export class BadgeClassEditFormComponent
 					};
 				}
 				this.savePromise = this.badgeClassManager.createBadgeClass(this.issuer.slug, badgeClassData);
+			}
+
+			if (this.issuer.quotas) {
+				this.savePromise.then(() => {
+					// update issuer if quotas active to update used quotas information
+					this.issuer.update();
+				});
 			}
 
 			this.save.emit(this.savePromise);

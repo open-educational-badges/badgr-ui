@@ -47,6 +47,7 @@ import { OebSeparatorComponent } from '~/components/oeb-separator.component';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 @Component({
 	selector: 'badgeclass-issue',
@@ -264,9 +265,16 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		this.issueForm.controls.evidence_items.addFromTemplate();
 	}
 
-	onSubmit() {
+	async onSubmit() {
 		if (!this.issueForm.markTreeDirtyAndValidate()) {
 			return;
+		}
+
+		if (this.issuer.quotas) {
+			await this.issuer.update();
+			if (!this.checkQuotasDialog('BADGE_CREATE')) {
+				return;
+			}
 		}
 
 		const formState = this.issueForm.value;
@@ -331,6 +339,9 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 						queryParams: { tab: 'recipients' },
 					});
 					this.messageService.setMessage('Badge awarded to ' + formState.recipient_identifier, 'success');
+					if (this.issuer.quotas) {
+						this.issuer.update();
+					}
 				},
 				(error) => {
 					this.messageService.setMessage(
@@ -377,5 +388,18 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				variant: 'success',
 			},
 		});
+	}
+
+	checkQuotasDialog(quota: string) {
+		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer,
+					variant: 'new_design',
+				},
+			});
+			return false;
+		}
+		return true;
 	}
 }

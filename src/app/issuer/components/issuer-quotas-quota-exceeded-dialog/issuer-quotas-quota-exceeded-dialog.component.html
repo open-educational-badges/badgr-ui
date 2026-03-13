@@ -1,6 +1,6 @@
 <div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px] tw-gap-8 tw-text-[18px]/[1.3em]">
 	<div class="dialog-x-box o-container tw-text-oebblack">
-		@if (page === 'start') {
+		@if (page() === 'start') {
 			@if (network()) {
 				<hlm-dialog-header>
 					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-mb-6">
@@ -168,7 +168,7 @@
 				</div>
 			}
 		}
-		@if (page === 'upgrade') {
+		@if (page() === 'upgrade') {
 			<hlm-dialog-header>
 				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
 					{{ 'Quotas.requestUpgrade' | translate }}
@@ -235,6 +235,7 @@
 						[text]="'Quotas.requestFormSubmitLabel' | translate"
 						[disabled]="upgradeRequestForm.invalid"
 						width="full_width"
+						[disabled]="loading()"
 					>
 						{{ 'Quotas.requestFormSubmitLabel' | translate }}
 					</oeb-button>
@@ -242,7 +243,7 @@
 			</div>
 		}
 
-		@if (page === 'network') {
+		@if (page() === 'network') {
 			<hlm-dialog-header>
 				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
 					{{ 'Quotas.requestNetwork' | translate }}
@@ -319,7 +320,7 @@
 			</div>
 		}
 
-		@if (page === 'success') {
+		@if (page() === 'success') {
 			<div variant="success" class="tw-text-center tw-text-purple tw-mt-[-59px] tw-mx-10">
 				<div class="tw-flex tw-justify-center">
 					<div class="oeb-icon-circle tw-my-6">

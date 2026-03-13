@@ -13,13 +13,14 @@ import { OebSelectComponent } from '../../../components/select.component';
 import { FormFieldRadio } from '../../../common/components/formfield-radio';
 import { FormFieldSelectOption } from '../../../common/components/formfield-select';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
-import { HlmDialogModule } from '@spartan-ng/helm/dialog';
+import { HlmDialogModule, HlmDialogService } from '@spartan-ng/helm/dialog';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { QuotaRequestApiService } from '../../services/quotarequest-api.service';
 import { CurrencyPipe, DecimalPipe, TitleCasePipe } from '@angular/common';
 import { QuotaManager } from '~/issuer/services/quota-manager.service';
 import { ApiQuota } from '~/issuer/models/quotas.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { ErrorDialogComponent } from '~/common/dialogs/oeb-dialogs/error-dialog.component';
 
 export interface QuotaExceededDialogContext {
 	issuer: Issuer | Network;
@@ -30,10 +31,6 @@ export interface QuotaExceededDialogContext {
 export type QuotaExceededDialogPageType = 'start' | 'upgrade' | 'network' | 'success';
 
 export const quotaPackages = [
-	{
-		value: 'IMPACT_PLUS',
-		label: 'IMPACT PLUS',
-	},
 	{
 		value: 'PRO',
 		label: 'PRO',
@@ -97,8 +94,10 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 	private readonly _dialogContext = injectBrnDialogContext<QuotaExceededDialogContext>();
 	private readonly dialogRef = inject<BrnDialogRef>(BrnDialogRef);
 	protected readonly context = this._dialogContext;
+	private readonly _hlmDialogService = inject(HlmDialogService);
 
-	page: QuotaExceededDialogPageType = 'start';
+	page = signal<QuotaExceededDialogPageType>('start');
+	loading = signal(false);
 
 	upgradeRequestForm = typedFormGroup()
 		.addControl('name', '', [Validators.required, Validators.maxLength(254)])
@@ -141,7 +140,7 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 			this.upgradeRequestForm.controls.issuer.setValue(this.issuer().slug);
 		}
 		if (this.context.page) {
-			this.page = this.context.page;
+			this.page.set(this.context.page);
 			if (this.context.page === 'network') {
 				this.upgradeRequestForm.rawControlMap.package.setValue('network');
 			}
@@ -159,7 +158,9 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 
 	closeDialog() {
 		this.dialogRef.close();
-		this.changePage('start');
+		setTimeout(() => {
+			this.changePage('start');
+		}, 500);
 	}
 
 	emailOEB() {
@@ -167,24 +168,34 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 	}
 
 	changePage(page: QuotaExceededDialogPageType) {
-		this.page = page;
+		this.page.set(page);
 	}
 
-	onSubmitPackage() {
+	async onSubmitPackage() {
 		if (!this.upgradeRequestForm.markTreeDirtyAndValidate()) {
 			return;
 		}
 
+		this.loading.set(true);
+
 		const formState = this.upgradeRequestForm.value;
 
-		this.quotaRequestApiService.createUpgradeQuotaRequest(formState.issuer, {
-			name: formState.name,
-			email: formState.email,
-			issuer_id: formState.issuer,
-			package: formState.package,
-		});
-
-		this.changePage('success');
+		try {
+			await this.quotaRequestApiService.createUpgradeQuotaRequest(formState.issuer, {
+				name: formState.name,
+				email: formState.email,
+				issuer_id: formState.issuer,
+				quota: formState.package,
+			});
+			this.changePage('success');
+		} catch (e) {
+			this._hlmDialogService.open(ErrorDialogComponent, {
+				context: {
+					error: e,
+				},
+			});
+		}
+		this.loading.set(false);
 	}
 	formatNumber(value: number) {
 		const nf = Intl.NumberFormat(this.translate.currentLang == 'de' ? 'de-DE' : 'en-US');
