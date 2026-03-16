@@ -1,4 +1,4 @@
-import { Component, HostBinding, inject, input } from '@angular/core';
+import { Component, computed, HostBinding, inject, input } from '@angular/core';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -40,6 +40,8 @@ export class QuotaInformationComponent {
 	quotas = input.required<QuotaName | QuotaName[]>();
 	quotaKeys: string[];
 	quotaValues: (ApiQuotasNumberQuota | ApiQuotasBooleanQuota)[];
+
+	isWebcomponentContext = !!(window as any).OEBWebComponentSettings;
 
 	// hide if unlimited quotas
 	@HostBinding('class.hidden') get hidden() {

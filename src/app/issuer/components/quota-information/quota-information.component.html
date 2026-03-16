@@ -11,16 +11,18 @@
 			@if ($index < quotaKeys.length - 1) {
 				<span> / </span>
 			} @else {
-				<span
-					>.
-					<a
-						[routerLink]="['/issuer/issuers/' + issuer.slug + '/quotas']"
-						(click)="preventA($event)"
-						target="_blank"
-						class="tw-text-link tw-underline"
-						>Info</a
-					></span
-				>
+				@if (!isWebcomponentContext) {
+					<span
+						>.
+						<a
+							[routerLink]="['/issuer/issuers/' + issuer.slug + '/quotas']"
+							(click)="preventA($event)"
+							target="_blank"
+							class="tw-text-link tw-underline"
+							>Info</a
+						></span
+					>
+				}
 			}
 		</p>
 	}

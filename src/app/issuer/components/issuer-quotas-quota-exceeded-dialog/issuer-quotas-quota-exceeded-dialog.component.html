@@ -8,19 +8,21 @@
 					</h2>
 				</hlm-dialog-header>
 				<div class="tw-flex tw-flex-row tw-items-center tw-gap-8">
-					<img src="/assets/oeb/images/network/network_circle.svg" width="152" />
+					<img src="assets/oeb/images/network/network_circle.svg" width="152" />
 					<div>
 						<p [innerHTML]="'Quotas.exceedDialogNetworkText' | translate"></p>
-						<p class="tw-mt-4">
-							<a
-								class="tw-text-link tw-underline tw-font-bold tw-flex tw-flex-row tw-items-center"
-								(click)="closeDialog()"
-								[routerLink]="[`/issuer/networks/${network().slug}`]"
-							>
-								<ng-icon size="24px" hlm name="lucideCircleChevronRight" class="tw-mr-1"></ng-icon>
-								{{ 'Quotas.exceedDialogVisitNetwork' | translate }}
-							</a>
-						</p>
+						@if (!isWebcomponentContext) {
+							<p class="tw-mt-4">
+								<a
+									class="tw-text-link tw-underline tw-font-bold tw-flex tw-flex-row tw-items-center"
+									(click)="closeDialog()"
+									[routerLink]="[`/issuer/networks/${network().slug}`]"
+								>
+									<ng-icon size="24px" hlm name="lucideCircleChevronRight" class="tw-mr-1"></ng-icon>
+									{{ 'Quotas.exceedDialogVisitNetwork' | translate }}
+								</a>
+							</p>
+						}
 					</div>
 				</div>
 				<hr class="tw-border-dashed tw-my-8" />
@@ -38,7 +40,7 @@
 					<div class="tw-flex tw-gap-8">
 						<div>
 							<figure>
-								<img src="/assets/oeb/images/quotas/logo_pro.svg" width="152" />
+								<img src="assets/oeb/images/quotas/logo_pro.svg" width="152" />
 								<figcaption class="tw-text-center tw-pr-3 tw-w-[152px]">
 									<h3 class="tw-text-yellow tw-font-bold tw-text-[18px]/[1.2em] tw-mt-2">
 										{{ quota().name }}
@@ -117,21 +119,25 @@
 									</ul>
 								</div>
 							}
-							<p class="tw-mb-8">
-								<a
-									class="tw-text-right tw-text-link tw-underline tw-mt-6"
-									target="_blank"
-									[href]="this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'"
-									>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
-								>
-							</p>
-							<div class="tw-flex tw-flex-col tw-gap-4">
-								<oeb-button
-									text="Upgrade anfragen"
-									width="full_width"
-									(click)="changePage('upgrade')"
-								/>
-							</div>
+							@if (!isWebcomponentContext) {
+								<p class="tw-mb-8">
+									<a
+										class="tw-text-right tw-text-link tw-underline tw-mt-6"
+										target="_blank"
+										[href]="
+											this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'
+										"
+										>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
+									>
+								</p>
+								<div class="tw-flex tw-flex-col tw-gap-4">
+									<oeb-button
+										text="Upgrade anfragen"
+										width="full_width"
+										(click)="changePage('upgrade')"
+									/>
+								</div>
+							}
 						</div>
 					</div>
 				</div>

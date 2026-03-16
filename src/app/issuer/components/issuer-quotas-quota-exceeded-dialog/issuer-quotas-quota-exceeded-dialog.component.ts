@@ -112,6 +112,8 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 		label: this.translate.instant('Quotas.packageFormOptions' + qp.value),
 	}));
 
+	isWebcomponentContext = !!(window as any).OEBWebComponentSettings;
+
 	constructor() {
 		const componentElem = inject(ElementRef);
 		const renderer = inject(Renderer2);
