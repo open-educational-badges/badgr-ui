@@ -158,6 +158,7 @@ export class BgLearningPathCard {
 	@Input() badgeClass: string;
 	@Input() issuerTitle: string;
 	@Input() tags: string[];
+	@Input() area: string[]; //to show area chips on the card
 	@Input() public = true;
 	@Input() studyLoad: number;
 	@Input() completed: boolean = false;

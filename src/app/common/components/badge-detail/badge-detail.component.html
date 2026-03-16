@@ -425,6 +425,21 @@
 											</dd>
 										</div>
 									}
+									@if (config.area && config.area.length > 0) {
+										<div class="tw-flex tw-items-start tw-flex-col tw-mt-4">
+											<dt class="tw-text-darkgray md:tw-py-2 md:tw-mr-2 tw-mb-1">Bereich</dt>
+											<dd class="tw-text-darkgray">
+												@for (area of config.area; track area) {
+													<div class="tag tw-border-darkgray tw-mx-2 tw-ml-0 tw-max-w-24">
+														{{ area }}
+													</div>
+												}
+											</dd>
+										</div>
+										<hr
+											class="tw-my-4 tw-w-full tw-border-solid tw-border-top-[1px] tw-border-[--color-midgrey]"
+										/>
+									}
 								</dl>
 							</div>
 						</div>

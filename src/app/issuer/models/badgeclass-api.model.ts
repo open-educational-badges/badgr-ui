@@ -35,6 +35,7 @@ export interface ApiBadgeClassForCreation {
 	extensions?: object;
 
 	tags?: string[];
+	area?: string[]; //added 11.01 - andres
 	alignment?: ApiBadgeClassAlignment[];
 	expiration?: number; // in days
 	copy_permissions?: BadgeClassCopyPermissions[];
