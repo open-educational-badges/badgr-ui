@@ -117,20 +117,22 @@
 						<span> ({{ 'Quotas.page.label_BADGE_AWARD_include_MD' | translate }})</span>
 					</span>
 				</p>
-				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
-					<strong>{{ 'Quotas.page.label_ACCOUNTS_ADMIN' | translate }}</strong
-					><span>
-						<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_ADMIN']) ? 'tw-text-red' : ''">
-							<span>{{ issuer.quotas.quotas['ACCOUNTS_ADMIN'].used }}</span>
-							@if (issuer.quotas.quotas['ACCOUNTS_ADMIN'].max >= 0) {
-								<span>/{{ issuer.quotas.quotas['ACCOUNTS_ADMIN'].max }}</span>
+				@if(!issuer.is_network) {
+					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
+						<strong>{{ 'Quotas.page.label_ACCOUNTS_ADMIN' | translate }}</strong
+						><span>
+							<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_ADMIN']) ? 'tw-text-red' : ''">
+								<span>{{ issuer.quotas.quotas['ACCOUNTS_ADMIN'].used }}</span>
+								@if (issuer.quotas.quotas['ACCOUNTS_ADMIN'].max >= 0) {
+									<span>/{{ issuer.quotas.quotas['ACCOUNTS_ADMIN'].max }}</span>
+								}
+							</span>
+							@if (issuer.quotas.quotas['ACCOUNTS_ADMIN'].custom) {
+								<span>*</span>
 							}
 						</span>
-						@if (issuer.quotas.quotas['ACCOUNTS_ADMIN'].custom) {
-							<span>*</span>
-						}
-					</span>
-				</p>
+					</p>
+				}
 				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
 					<strong>{{ 'Quotas.page.label_ACCOUNTS_MEMBER' | translate }}</strong
 					><span>

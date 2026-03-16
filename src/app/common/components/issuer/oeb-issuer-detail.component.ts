@@ -59,6 +59,7 @@ import { environment } from 'src/environments/environment';
 import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
 import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -124,7 +125,7 @@ export class OebIssuerDetailComponent implements OnInit {
 
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
-	isFullIssuer(issuer: Issuer | PublicApiIssuer): issuer is Issuer {
+	isFullIssuer(issuer: Issuer | PublicApiIssuer | Network): issuer is Issuer {
 		return 'currentUserStaffMember' in issuer;
 	}
 
@@ -511,8 +512,8 @@ export class OebIssuerDetailComponent implements OnInit {
 		}
 	}
 
-	routeToBadgeAward(badge: BadgeClass, issuer) {
-		if (!this.checkQuotasDialog()) {
+	async routeToBadgeAward(badge: BadgeClass, issuer) {
+		if (!(await this.checkQuotasDialog(badge))) {
 			return false;
 		}
 		this.qrCodeApiService.getQrCodesForIssuerByBadgeClass(this.issuer.slug, badge.slug).then((qrCodes) => {
@@ -642,12 +643,18 @@ export class OebIssuerDetailComponent implements OnInit {
 		}, 0);
 	}
 
-	checkQuotasDialog() {
-		if (this.isFullIssuer(this.issuer) && this.issuer.quotas) {
-			if (this.issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
+	async checkQuotasDialog(badge: BadgeClass) {
+		let issuer: Issuer | Network = this.issuer as Issuer;
+		if (badge.isNetworkBadge) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.issuerSlug);
+		} else if (badge.sharedOnNetwork) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.sharedOnNetwork.slug);
+		}
+		if (this.isFullIssuer(issuer) && issuer.quotas) {
+			if (issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
 				this._hlmDialogService.open(QuotaExceededDialog, {
 					context: {
-						issuer: this.issuer,
+						issuer: issuer,
 						variant: 'new_design',
 					},
 				});

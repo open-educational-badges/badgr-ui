@@ -124,7 +124,9 @@
 		"notNow": "Not Now",
 		"notFound": "Not found",
 		"start": "Start",
-		"end": "End"
+		"end": "End",
+		"person": "person",
+		"persons": "persons"
 	},
 	"NavItems": {
 		"register": "Register",
@@ -1217,6 +1219,7 @@
 		"Info_ACCOUNTS_MEMBER": "Staff Accounts used",
 		"Info_AISKILLS_REQUESTS": "Queries/month used",
 		"Info_NETWORK_MEMBERSHIPS": "Network members added",
+		"InfoBulk": "The number of recipients exceeds your usage limit. Remove {{count}} {{ person }} from the list to award badges.",
 		"FeatureListPlanComparison": "Feature list: OEB plans compared",
 		"nextLevelHeadline": "Discover the next level with OEB!",
 		"euroPerYear": "€ / year",

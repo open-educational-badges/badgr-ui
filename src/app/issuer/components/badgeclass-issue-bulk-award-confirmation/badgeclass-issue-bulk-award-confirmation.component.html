@@ -9,9 +9,17 @@
 		><br />
 		@if (!quotasCanIssue()) {
 			<span class="tw-text-red">
-				Die Anzahl Empfänger überschreibt das Limit deines Pakets, entferne
-				{{ transformedImportData().validRowsTransformed.size - issuer()?.quotas?.quotas['BADGE_AWARD'].quota }}
-				Empfänger um Badges vergeben zu können.
+				{{
+					'Quotas.InfoBulk'
+						| translate
+							: {
+									count: quotasRecipientsOver(),
+									person:
+										quotasRecipientsOver() === 1
+											? translate.instant('General.person')
+											: translate.instant('General.persons'),
+							  }
+				}}
 			</span>
 		} @else {
 			<span>{{ 'Issuer.clickOnAwardBadges' | translate }}</span>

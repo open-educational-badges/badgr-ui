@@ -124,7 +124,9 @@
 		"notNow": "Jetzt nicht",
 		"notFound": "Nicht gefunden",
 		"start": "Start",
-		"end": "Ende"
+		"end": "Ende",
+		"person": "Person",
+		"persons": "Personen"
 	},
 	"NavItems": {
 		"register": "Registrieren",
@@ -1216,6 +1218,7 @@
 		"Info_ACCOUNTS_MEMBER": "Mitarbeitenden-Accounts vergeben",
 		"Info_AISKILLS_REQUESTS": "Anfragen/Monat genutzt",
 		"Info_NETWORK_MEMBERSHIPS": "Netzwerk-Mitgliedern hinzugefügt",
+		"InfoBulk": "Die Anzahl der Empfänger:innen überschreitet das Limit deines Nutzungspakets. Entferne {{ count }} {{ person }} aus der Liste, um Badges zu vergeben.",
 		"FeatureListPlanComparison": "Feature-Liste: OEB-Pakete im Vergleich",
 		"nextLevelHeadline": "Entdecke die nächste Stufe mit OEB!",
 		"euroPerYear": "€ / Jahr",

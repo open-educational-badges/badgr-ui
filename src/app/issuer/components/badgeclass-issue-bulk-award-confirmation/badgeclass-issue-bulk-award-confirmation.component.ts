@@ -113,11 +113,17 @@ export class BadgeclassIssueBulkAwardConformation
 	buttonDisabledClass = true;
 	buttonDisabledAttribute = true;
 	issuer = signal<Issuer>(null);
+	importDataRowCount = signal(0);
+
+	quotasRecipientsOver = computed(() => {
+		return !this.issuer()?.quotas
+			? 0
+			: this.importDataRowCount() - this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota;
+	});
 
 	quotasCanIssue = computed(() => {
 		return (
-			!this.issuer()?.quotas ||
-			this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota >= this.transformedImportData().validRowsTransformed.size
+			!this.issuer()?.quotas || this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota >= this.importDataRowCount()
 		);
 	});
 
@@ -143,6 +149,7 @@ export class BadgeclassIssueBulkAwardConformation
 	}
 
 	ngOnInit(): void {
+		this.importDataRowCount.set(this.transformedImportData().validRowsTransformed.size);
 		this.enableActionButton();
 		this.subscriptions.push(...setupActivityOnlineSync(this.optionalDetailsForm));
 		if (this.optionalDetailsForm.controls.evidence_items.length === 0) {
@@ -333,8 +340,9 @@ export class BadgeclassIssueBulkAwardConformation
 		this.updateStateEmitter.emit(state);
 	}
 
-	removeValidRowsTransformed(row) {
+	removeValidRowsTransformed(row: BulkIssueData) {
 		this.transformedImportData().validRowsTransformed.delete(row);
+		this.importDataRowCount.set(this.transformedImportData().validRowsTransformed.size);
 		if (!this.transformedImportData().validRowsTransformed.size) {
 			this.disableActionButton();
 		}
