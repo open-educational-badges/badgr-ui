@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import { HlmH1 } from '@spartan-ng/helm/typography';
@@ -22,7 +22,16 @@ import { QuotaManager } from '~/issuer/services/quota-manager.service';
 @Component({
 	selector: 'issuer-quotas',
 	templateUrl: 'issuer-quotas.component.html',
-	imports: [BgAwaitPromises, HlmH1, TranslatePipe, OebButtonComponent, BgBreadcrumbsComponent, TimeComponent, NgIcon],
+	imports: [
+		BgAwaitPromises,
+		HlmH1,
+		TranslatePipe,
+		OebButtonComponent,
+		BgBreadcrumbsComponent,
+		TimeComponent,
+		NgIcon,
+		RouterLink,
+	],
 })
 export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 	protected issuerManager = inject(IssuerManager);

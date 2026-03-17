@@ -1,6 +1,6 @@
 import { Component, computed, HostBinding, inject, input } from '@angular/core';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { ApiQuotas, ApiQuotasBooleanQuota, ApiQuotasNumberQuota } from '~/issuer/models/issuer-api.model';
 import { Issuer } from '~/issuer/models/issuer.model';
@@ -32,6 +32,7 @@ type QuotaName =
 export class QuotaInformationComponent {
 	protected issuerManager = inject(IssuerManager);
 	protected route = inject(ActivatedRoute);
+	protected translate = inject(TranslateService);
 	issuerSlug: string;
 	issuer: Issuer | Network;
 
@@ -88,5 +89,10 @@ export class QuotaInformationComponent {
 		if ('used' in quota) {
 			return quota['used'] / quota['max'] >= 0.8;
 		}
+	}
+
+	formatNumber(value: number) {
+		const nf = Intl.NumberFormat(this.translate.currentLang == 'de' ? 'de-DE' : 'en-US');
+		return nf.format(value);
 	}
 }

@@ -84,7 +84,6 @@ export interface ApiQuotas {
 	nextLevel: string;
 	periodStart: string;
 	nextPayment: string;
-	paymentPeriod: 'month' | 'year';
 	quotas: {
 		BADGE_CREATE: ApiQuotasNumberQuota;
 		BADGE_AWARD: ApiQuotasNumberQuota;

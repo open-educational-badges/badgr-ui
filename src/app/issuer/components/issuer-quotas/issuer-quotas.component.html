@@ -54,11 +54,10 @@
 						<p class="tw-text-purple tw-text-[18px]/[1.2em]">
 							@if (issuer.quotas.key === 'FREE') {
 								{{ 'Quotas.page.active' | translate }} ·
-								{{ 'Quotas.page.nextFreeRenewal' | translate }}
+								{{ 'Quotas.page.nextFreeRenewal' | translate }}:
 								<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
 							} @else {
-								{{ 'Quotas.page.active' | translate }} ·
-								{{ 'Quotas.page.nextFreeRenewal' | translate }}
+								{{ 'Quotas.page.active' | translate }} · {{ 'Quotas.page.nextRenewal' | translate }}:
 								<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
 							}
 						</p>
@@ -73,6 +72,14 @@
 						<div>
 							<p class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2">
 								{{ 'General.network' | translate }}
+							</p>
+							<p>
+								<a
+									class="tw-text-link tw-underline"
+									[routerLink]="['/issuer/issuers']"
+									[queryParams]="{ tab: 'networks' }"
+									>&gt; {{ 'Quotas.page.toNetwork' | translate }}</a
+								>
 							</p>
 						</div>
 					</div>
@@ -178,14 +185,6 @@
 				</h3>
 				<ul class="tw-text-[18px]/[1.2em] tw-flex tw-flex-col tw-gap-2">
 					<li class="tw-flex tw-items-center tw-gap-2">
-						<ng-icon
-							size="24px"
-							hlm
-							[name]="issuer.quotas.quotas['PDFEDITOR'] ? 'lucideCheck' : 'lucideX'"
-						/>
-						{{ 'Quotas.page.featurePdfEditor' | translate }}
-					</li>
-					<li class="tw-flex tw-items-center tw-gap-2">
 						<ng-icon size="24px" hlm [name]="issuer.quotas.key !== 'FREE' ? 'lucideCheck' : 'lucideX'" />
 						{{ 'Quotas.page.featureSupportEmail' | translate }}
 					</li>
@@ -198,6 +197,14 @@
 							"
 						/>
 						{{ 'Quotas.page.featureSupportPhone' | translate }}
+					</li>
+					<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon
+							size="24px"
+							hlm
+							[name]="issuer.quotas.quotas['PDFEDITOR'] ? 'lucideCheck' : 'lucideX'"
+						/>
+						{{ 'Quotas.page.featurePdfEditor' | translate }}
 					</li>
 					<li class="tw-flex tw-items-center tw-gap-2">
 						<ng-icon

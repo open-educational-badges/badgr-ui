@@ -2,9 +2,9 @@
 	@if (quotaValues[$index]['max'] !== 0) {
 		<p [class]="quotaWarning(quotaValues[$index]) ? 'tw-text-red' : ''" (click)="preventP($event)">
 			<span>
-				{{ quotaValues[$index]['used'] }}
+				{{ formatNumber(quotaValues[$index]['used']) }}
 				@if (quotaValues[$index]['max'] !== -1) {
-					{{ 'General.of' | translate }} {{ quotaValues[$index]['max'] }}
+					{{ 'General.of' | translate }} {{ formatNumber(quotaValues[$index]['max']) }}
 				}
 				{{ 'Quotas.Info_' + quota | translate }}</span
 			>
