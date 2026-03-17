@@ -15,7 +15,7 @@
 		<ul class="tw-text-purple tw-mb-6">
 			<li [innerHTML]="'Quotas.ReleaseInfoDialog.list1' | translate"></li>
 			<li [innerHTML]="'Quotas.ReleaseInfoDialog.list2' | translate"></li>
-			<li [innerHTML]="'Quotas.ReleaseInfoDialog.list3' | translate"></li>
+			<li [innerHTML]="'Quotas.ReleaseInfoDialog.list3' | translate: { email: email() }"></li>
 		</ul>
 
 		<p class="tw-mb-6">

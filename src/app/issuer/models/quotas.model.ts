@@ -30,5 +30,6 @@ export interface ApiQuota {
 
 export interface QuotaApiResponse {
 	enabled_date: number | null;
+	email: string | null;
 	quotas: ApiQuota[];
 }

@@ -166,7 +166,9 @@ export class QuotaExceededDialog extends BaseDialog implements AfterViewInit {
 	}
 
 	emailOEB() {
-		window.open('mailto:sales@openbadges.education');
+		this.quotaManager.loaded$.subscribe((response) => {
+			window.open(`mailto:${response.email}`);
+		});
 	}
 
 	changePage(page: QuotaExceededDialogPageType) {

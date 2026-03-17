@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
@@ -17,6 +17,7 @@ import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { NgIcon } from '@ng-icons/core';
+import { QuotaManager } from '~/issuer/services/quota-manager.service';
 
 @Component({
 	selector: 'issuer-quotas',
@@ -25,6 +26,7 @@ import { NgIcon } from '@ng-icons/core';
 })
 export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 	protected issuerManager = inject(IssuerManager);
+	protected quotaManager = inject(QuotaManager);
 	protected messageService = inject(MessageService);
 	protected translate = inject(TranslateService);
 	private readonly _hlmDialogService = inject(HlmDialogService);
@@ -34,6 +36,8 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 	issuerLoaded: Promise<unknown>;
 
 	crumbs: LinkEntry[];
+
+	email = signal('');
 
 	constructor() {
 		const loginService = inject(SessionService);
@@ -66,6 +70,9 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 				this.messageService.reportLoadingError(`Issuer '${this.issuerSlug}' does not exist.`, error);
 			},
 		);
+		this.quotaManager.loaded$.subscribe((response) => {
+			this.email.set(response.email);
+		});
 	}
 
 	quotaWarning(quota: ApiQuotasNumberQuota | ApiQuotasBooleanQuota) {

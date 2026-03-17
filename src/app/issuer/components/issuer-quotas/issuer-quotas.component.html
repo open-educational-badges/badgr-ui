@@ -9,41 +9,9 @@
 				<div class="tw-flex tw-justify-between tw-gap-6 tw-items-center">
 					<div class="tw-flex oeb-section-sm md:tw-max-w-[70%]">
 						<hgroup class="tw-flex tw-flex-col tw-justify-center oeb-break-words">
-							<h1 hlmH1 class="tw-text-purple tw-font-semibold md:tw-text-[35px] xl:tw-text-[46px]">
+							<h1 hlmH1 class="tw-text-purple md:tw-text-[35px] xl:tw-text-[46px] tw-font-black">
 								{{ 'Quotas.QuotasMenuItem' | translate }}
 							</h1>
-							<h2
-								class="tw-uppercase tw-text-oebblack tw-font-[900] tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mt-10"
-							>
-								{{ 'Quotas.page.activeQuota' | translate }} {{ issuer.name }}:
-							</h2>
-							<div class="tw-flex tw-flex tw-items-center tw-gap-4 tw-mt-5">
-								<img
-									[src]="`/assets/oeb/images/quotas/logo_${issuer.quotas.key.toLowerCase()}.svg`"
-									width="100"
-								/>
-								<div>
-									<p
-										class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2"
-									>
-										{{ issuer.quotas.name }}
-										@if (isCustom()) {
-											<span>(Individuelle Konditionen*)</span>
-										}
-									</p>
-									<p class="tw-text-purple tw-text-[18px]/[1.2em]">
-										@if (issuer.quotas.key === 'FREE') {
-											{{ 'Quotas.page.active' | translate }} ·
-											{{ 'Quotas.page.nextFreeRenewal' | translate }}
-											<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
-										} @else {
-											{{ 'Quotas.page.active' | translate }} ·
-											{{ 'Quotas.page.nextFreeRenewal' | translate }}
-											<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
-										}
-									</p>
-								</div>
-							</div>
 						</hgroup>
 					</div>
 
@@ -70,6 +38,47 @@
 					</aside>
 				</div>
 			</header>
+			<h2 class="tw-uppercase tw-text-oebblack tw-font-[900] tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mt-5">
+				{{ 'Quotas.page.activeQuota' | translate }} {{ issuer.name }}:
+			</h2>
+			<div class="tw-mt-5 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-2 md:tw-gap-8 tw-mb-8">
+				<div class="tw-flex tw-flex tw-items-center tw-gap-4">
+					<img [src]="`/assets/oeb/images/quotas/logo_${issuer.quotas.key.toLowerCase()}.svg`" width="100" />
+					<div>
+						<p class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2">
+							{{ issuer.quotas.name }}
+							@if (isCustom()) {
+								<span>(Individuelle Konditionen*)</span>
+							}
+						</p>
+						<p class="tw-text-purple tw-text-[18px]/[1.2em]">
+							@if (issuer.quotas.key === 'FREE') {
+								{{ 'Quotas.page.active' | translate }} ·
+								{{ 'Quotas.page.nextFreeRenewal' | translate }}
+								<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
+							} @else {
+								{{ 'Quotas.page.active' | translate }} ·
+								{{ 'Quotas.page.nextFreeRenewal' | translate }}
+								<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
+							}
+						</p>
+					</div>
+				</div>
+				@if (issuer.quotas.key !== 'NETWORK' && issuer.quotas.quotas['NETWORK_CREATE']) {
+					<div class="tw-ml-5 md:tw-ml-0">
+						<ng-icon size="54px" hlm name="lucidePlus" class="tw-text-oebblack" />
+					</div>
+					<div class="tw-flex tw-flex tw-items-center tw-gap-4">
+						<img [src]="`/assets/oeb/images/quotas/logo_network.svg`" width="100" />
+						<div>
+							<p class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2">
+								{{ 'General.network' | translate }}
+							</p>
+						</div>
+					</div>
+				}
+			</div>
+
 			<section class="tw-mb-10">
 				<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">
 					{{ 'Quotas.page.usage' | translate }}
@@ -117,7 +126,7 @@
 						<span> ({{ 'Quotas.page.label_BADGE_AWARD_include_MD' | translate }})</span>
 					</span>
 				</p>
-				@if(!issuer.is_network) {
+				@if (!issuer.is_network) {
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
 						<strong>{{ 'Quotas.page.label_ACCOUNTS_ADMIN' | translate }}</strong
 						><span>
@@ -164,41 +173,57 @@
 				</p>
 			</section>
 			<section class="tw-mb-10">
-					<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">
-						 {{ 'Quotas.page.includedFeatures' | translate }}
-					</h3>
-					<ul class="tw-text-[18px]/[1.2em] tw-flex tw-flex-col tw-gap-2">
-						<li class="tw-flex tw-items-center tw-gap-2">
-							<ng-icon size="24px" hlm [name]="issuer.quotas.quotas['PDFEDITOR'] ? 'lucideCheck' : 'lucideX'" />
-							{{ 'Quotas.page.featurePdfEditor' | translate }}
-						</li>
-						<li class="tw-flex tw-items-center tw-gap-2">
-							<ng-icon size="24px" hlm [name]="issuer.quotas.key !== 'FREE' ? 'lucideCheck' : 'lucideX'" />
-							{{ 'Quotas.page.featureSupportEmail' | translate }}
-						</li>
-						<li class="tw-flex tw-items-center tw-gap-2">
-						<ng-icon size="24px" hlm [name]="issuer.quotas.key !== 'FREE' && issuer.quotas.key !== 'PRO' ? 'lucideCheck' : 'lucideX'" />
-							{{ 'Quotas.page.featureSupportPhone' | translate }}
-						</li>
-						<li class="tw-flex tw-items-center tw-gap-2">
-							<ng-icon size="24px" hlm [name]="issuer.quotas.key === 'ENTERPRISE' ? 'lucideCheck' : 'lucideX'" />
-							{{ 'Quotas.page.featureDashboardInstitution' | translate }}
-						</li>
-						<li class="tw-flex tw-items-center tw-gap-2">
-							<ng-icon size="24px" hlm [name]="issuer.quotas.quotas['NETWORK_CREATE'] ? 'lucideCheck' : 'lucideX'" />
-							{{ 'Quotas.page.featureCreateNetwork' | translate }}
-						</li>
-						<li class="tw-flex tw-items-center tw-gap-2">
-							<ng-icon size="24px" hlm [name]="issuer.quotas.key === 'NETWORK' ? 'lucideCheck' : 'lucideX'" />
-							{{ 'Quotas.page.featureDashboardNetwork' | translate }}
-						</li>
-					</ul>
+				<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">
+					{{ 'Quotas.page.includedFeatures' | translate }}
+				</h3>
+				<ul class="tw-text-[18px]/[1.2em] tw-flex tw-flex-col tw-gap-2">
+					<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon
+							size="24px"
+							hlm
+							[name]="issuer.quotas.quotas['PDFEDITOR'] ? 'lucideCheck' : 'lucideX'"
+						/>
+						{{ 'Quotas.page.featurePdfEditor' | translate }}
+					</li>
+					<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon size="24px" hlm [name]="issuer.quotas.key !== 'FREE' ? 'lucideCheck' : 'lucideX'" />
+						{{ 'Quotas.page.featureSupportEmail' | translate }}
+					</li>
+					<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon
+							size="24px"
+							hlm
+							[name]="
+								issuer.quotas.key !== 'FREE' && issuer.quotas.key !== 'PRO' ? 'lucideCheck' : 'lucideX'
+							"
+						/>
+						{{ 'Quotas.page.featureSupportPhone' | translate }}
+					</li>
+					<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon
+							size="24px"
+							hlm
+							[name]="issuer.quotas.key === 'ENTERPRISE' ? 'lucideCheck' : 'lucideX'"
+						/>
+						{{ 'Quotas.page.featureDashboardInstitution' | translate }}
+					</li>
+					<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon
+							size="24px"
+							hlm
+							[name]="issuer.quotas.quotas['NETWORK_CREATE'] ? 'lucideCheck' : 'lucideX'"
+						/>
+						{{ 'Quotas.page.featureCreateNetwork' | translate }}
+					</li>
+					<li class="tw-flex tw-items-center tw-gap-2">
+						<ng-icon size="24px" hlm [name]="issuer.quotas.key === 'NETWORK' ? 'lucideCheck' : 'lucideX'" />
+						{{ 'Quotas.page.featureDashboardNetwork' | translate }}
+					</li>
+				</ul>
 			</section>
 			@if (issuer.quotas.key !== 'FREE' && issuer.quotas.key !== 'NETWORK') {
 				<section class="tw-mb-10">
-					<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">
-						Vertrag
-					</h3>
+					<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">Vertrag</h3>
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
 						<strong>Vertragsart</strong>
 						<span> Jahres-Abo (12 Monate Laufzeit)</span>
@@ -214,7 +239,13 @@
 						</span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-max-w-[750px] tw-mb-2">
-						Der Vertrag verlängert sich automatisch um ein weiteres Jahr, wenn er nicht spätestens einen Monat vor Ende der Laufzeit gekündigt wird (über <a class="tw-text-link tw-underline" href="mailto:sales@openbadges.education">sales@openbadges.education</a>).
+						Der Vertrag verlängert sich automatisch um ein weiteres Jahr, wenn er nicht spätestens einen
+						Monat vor Ende der Laufzeit gekündigt wird
+						@if (email()) {
+							(über <a class="tw-text-link tw-underline" [href]="`mailto:${email()}`">{{ email() }}</a
+							>)
+						}
+						.
 					</p>
 				</section>
 			}

@@ -1209,7 +1209,7 @@
 		"noIconsFoundFor": "No icons found for"
 	},
 	"Quotas": {
-		"QuotasMenuItem": "Packages and usage",
+		"QuotasMenuItem": "Package and usage",
 		"ButtonUpgrade": "Upgrade now",
 		"ButtonIndividual": "Request individual plan",
 		"Info_BADGE_CREATE": "Participation and competency Badges created",
@@ -1286,7 +1286,7 @@
 			"listHeadline": "What this means for you",
 			"list1": "Your data is safe – all existing badges and awards remain unchanged.",
 			"list2": "Core features stay free for you. <a class=\"tw-text-link tw-underline\" href=\"https://oeb-cms.mycelia.education/wp-content/uploads/2026/02/E_OEB_Feature-List_03-02-26.pdf\" target=\"_blank\">Feature-Overview</a>",
-			"list3": "Special support: We offer schools and non-profits exclusive rates through our <a class=\"tw-text-link tw-underline\" href=\"https://oeb-cms.mycelia.education/wp-content/uploads/2026/02/IMPACT-PLUS-PDF_eng.pdf\" target=\"_blank\">IMPACT PLUS plan</a>. Just get in touch: <a href=\"mailto:sales@openbadges.education\">sales@openbadges.education</a>",
+			"list3": "Special support: We offer schools and non-profits exclusive rates through our <a class=\"tw-text-link tw-underline\" href=\"https://oeb-cms.mycelia.education/wp-content/uploads/2026/02/IMPACT-PLUS-PDF_eng.pdf\" target=\"_blank\">IMPACT PLUS plan</a>. Just get in touch: <a href=\"{{ email }}\">{{ email }}</a>",
 			"text2": "Check your current (Free) plan’s usage on your institution’s details page:",
 			"text3": "Your Bonus: As an existing institution, you’ll receive a 10% discount on all paid plans.",
 			"cta": "Explore plans"
