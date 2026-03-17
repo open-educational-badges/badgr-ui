@@ -1,21 +1,21 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { HlmP } from '@spartan-ng/helm/typography';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { OebNetworkCard } from '~/common/components/oeb-networkcard.component';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { QuotaManager } from '~/issuer/services/quota-manager.service';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
+import { NavigationType, OebIssuerNetworkCard } from '../issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'network-list',
 	templateUrl: './network-list.component.html',
-	imports: [HlmP, OebButtonComponent, RouterLink, FormsModule, TranslatePipe, OebNetworkCard],
+	imports: [OebButtonComponent, RouterLink, FormsModule, TranslatePipe, OebIssuerNetworkCard],
 })
 export class NetworkListComponent {
+	readonly router = inject(Router);
 	protected issuerManager = inject(IssuerManager);
 	protected quotaManager = inject(QuotaManager);
 	protected translate = inject(TranslateService);
@@ -83,5 +83,11 @@ export class NetworkListComponent {
 				},
 			});
 		});
+	}
+
+	handleNavigate(event: NavigationType, network: any) {
+		if (event === 'heading') {
+			this.router.navigate(['/issuer/networks', network.slug]);
+		}
 	}
 }

@@ -50,6 +50,7 @@ import { Network } from '~/issuer/network.model';
 import { UserPreferenceService } from '~/common/services/user-preference.service';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { QuotaManager } from '~/issuer/services/quota-manager.service';
+import { NavigationType, OebIssuerNetworkCard } from '../issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'issuer-list',
@@ -71,6 +72,7 @@ import { QuotaManager } from '~/issuer/services/quota-manager.service';
 		TranslatePipe,
 		OebTabsComponent,
 		NetworkListComponent,
+		OebIssuerNetworkCard,
 	],
 })
 export class IssuerListComponent
@@ -445,6 +447,17 @@ export class IssuerListComponent
 
 	linkedInIdHeaderTemplate = viewChild.required<TemplateRef<any>>('linkedInIdDialogHeader');
 	linkedInIdBodyTemplate = viewChild.required<TemplateRef<any>>('linkedInIdDialogBody');
+
+	public async handleNavigate(event: NavigationType, issuer: Issuer) {
+		switch (event) {
+			case 'heading':
+				this.router.navigate(['/issuer/issuers/', issuer.slug]);
+				return;
+			case 'createBadge':
+				await this.openLinkedInHintDialog(issuer);
+				return;
+		}
+	}
 
 	public async openLinkedInHintDialog(issuer: Issuer) {
 		if (!issuer.currentUserStaffMember.isOwner) return;

@@ -9,28 +9,16 @@ import { UserProfileManager } from '../../../common/services/user-profile-manage
 import { FormsModule } from '@angular/forms';
 import { appearAnimation } from '../../../common/animations/animations';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
-import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { CountUpModule } from 'ngx-countup';
-import { OebNetworkCard } from '~/common/components/oeb-networkcard.component';
-import { RouterLink } from '@angular/router';
 import { CatalogService } from '~/catalog/catalog.service';
 import { toObservable } from '@angular/core/rxjs-interop';
-import {
-	combineLatest,
-	concatMap,
-	debounceTime,
-	distinctUntilChanged,
-	filter,
-	firstValueFrom,
-	skip,
-	Subscription,
-	tap,
-} from 'rxjs';
+import { combineLatest, concatMap, debounceTime, distinctUntilChanged, filter, Subscription, tap } from 'rxjs';
 import { OebHeaderText } from '~/components/oeb-header-text.component';
 import { NetworkV3 } from '~/issuer/models/networkv3.model';
 import { LoadingDotsComponent } from '~/common/components/loading-dots.component';
 import { OebButtonComponent } from '~/components/oeb-button.component';
 import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observer';
+import { OebIssuerNetworkCard } from '~/issuer/components/issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'app-network-catalog',
@@ -40,12 +28,11 @@ import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observ
 		FormMessageComponent,
 		CountUpModule,
 		FormsModule,
-		OebNetworkCard,
-		RouterLink,
 		OebHeaderText,
 		LoadingDotsComponent,
 		OebButtonComponent,
 		TranslatePipe,
+		OebIssuerNetworkCard,
 	],
 })
 export class NetworkCatalogComponent extends BaseRoutableComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -73,9 +60,6 @@ export class NetworkCatalogComponent extends BaseRoutableComponent implements On
 	hasNext = signal<boolean>(true);
 	public loggedIn = false;
 	totalNetworkCount = signal<number>(0);
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
 
 	constructor() {
 		const router = inject(Router);
@@ -177,5 +161,9 @@ export class NetworkCatalogComponent extends BaseRoutableComponent implements On
 
 	onLoadMoreClicked() {
 		if (this.hasNext()) this.currentPage.update((p) => p + 1);
+	}
+
+	onNavigate(network: NetworkV3) {
+		this.router.navigate(['/public/networks', network.slug]);
 	}
 }
