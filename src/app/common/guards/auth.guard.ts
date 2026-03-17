@@ -51,7 +51,7 @@ export class AuthGuard {
 					return false;
 				}
 
-				if (true || !profile.quota_release_informed) {
+				if (!profile.quota_release_informed) {
 					this.quotaManager.quotasEnabled$.subscribe((enabled) => {
 						if (enabled) {
 							const dtQuotaEnabled = new Date(enabled * 1000);
