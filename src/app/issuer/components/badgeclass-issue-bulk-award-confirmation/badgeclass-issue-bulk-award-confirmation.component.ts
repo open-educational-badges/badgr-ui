@@ -43,24 +43,14 @@ import { OptionalDetailsComponent } from '../optional-details/optional-details.c
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { UrlValidator } from '~/common/validators/url.validator';
 import { BadgeClass } from '~/issuer/models/badgeclass.model';
-import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { Issuer } from '~/issuer/models/issuer.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
-import { Network } from 'inspector/promises';
+import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'badgeclass-issue-bulk-award-confirmation',
 	templateUrl: './badgeclass-issue-bulk-award-confirmation.component.html',
-	imports: [
-		HlmH1,
-		HlmP,
-		OebButtonComponent,
-		TranslatePipe,
-		NgClass,
-		FormsModule,
-		OptionalDetailsComponent,
-		QuotaInformationComponent,
-	],
+	imports: [HlmH1, HlmP, OebButtonComponent, TranslatePipe, NgClass, FormsModule, OptionalDetailsComponent],
 })
 export class BadgeclassIssueBulkAwardConformation
 	extends BaseAuthenticatedRoutableComponent
@@ -113,18 +103,32 @@ export class BadgeclassIssueBulkAwardConformation
 	buttonDisabledClass = true;
 	buttonDisabledAttribute = true;
 	issuer = signal<Issuer>(null);
+	network = signal<Network>(null);
 	importDataRowCount = signal(0);
 
 	quotasRecipientsOver = computed(() => {
-		return !this.issuer()?.quotas
-			? 0
-			: this.importDataRowCount() - this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota;
+		if (!this.issuer()?.quotas) {
+			return 0;
+		}
+		console.log(1);
+		if (this.network()) {
+			console.log(2);
+			console.log(this.network()?.quotas?.quotas['BADGE_AWARD'].quota);
+			return this.importDataRowCount() - (this.network()?.quotas?.quotas['BADGE_AWARD'].quota || 0);
+		} else {
+			return this.importDataRowCount() - this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota || 0;
+		}
 	});
 
 	quotasCanIssue = computed(() => {
-		return (
-			!this.issuer()?.quotas || this.issuer()?.quotas?.quotas['BADGE_AWARD'].quota >= this.importDataRowCount()
-		);
+		if (!this.issuer()?.quotas) return true;
+		if (this.network()) {
+			return (
+				!this.network().quotas || this.network().quotas.quotas['BADGE_AWARD'].quota >= this.importDataRowCount()
+			);
+		} else {
+			return this.issuer().quotas.quotas['BADGE_AWARD'].quota >= this.importDataRowCount();
+		}
 	});
 
 	issueBadgeFinished: Promise<unknown>;
@@ -148,7 +152,7 @@ export class BadgeclassIssueBulkAwardConformation
 		this.route = route;
 	}
 
-	ngOnInit(): void {
+	async ngOnInit(): Promise<void> {
 		this.importDataRowCount.set(this.transformedImportData().validRowsTransformed.size);
 		this.enableActionButton();
 		this.subscriptions.push(...setupActivityOnlineSync(this.optionalDetailsForm));
@@ -161,6 +165,14 @@ export class BadgeclassIssueBulkAwardConformation
 		this.issuerManager.myIssuers$.subscribe((issuers) => {
 			this.issuer.set(issuers.find((i) => i.slug === this.issuerSlug()));
 		});
+
+		if (this.badgeClass().isNetworkBadge) {
+			this.network.set((await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass().issuerSlug)) as Network);
+		} else if (this.badgeClass().sharedOnNetwork) {
+			this.network.set(
+				(await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass().sharedOnNetwork.slug)) as Network,
+			);
+		}
 	}
 
 	ngOnDestroy() {

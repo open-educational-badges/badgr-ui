@@ -40,9 +40,18 @@
 					<div class="tw-flex tw-gap-8">
 						<div>
 							<figure>
-								<img src="assets/oeb/images/quotas/logo_pro.svg" width="152" />
+								<img
+									[src]="`assets/oeb/images/quotas/logo_${quota().key.toLowerCase()}.svg`"
+									width="152"
+								/>
 								<figcaption class="tw-text-center tw-pr-3 tw-w-[152px]">
-									<h3 class="tw-text-yellow tw-font-bold tw-text-[18px]/[1.2em] tw-mt-2">
+									<h3
+										class="tw-font-bold tw-text-[18px]/[1.2em] tw-mt-2"
+										[class]="{
+											'tw-text-yellow': quota().key === 'PRO',
+											'tw-text-green': quota().key === 'ENTERPRISE',
+										}"
+									>
 										{{ quota().name }}
 									</h3>
 									<p class="tw-font-semibold tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2">
@@ -74,47 +83,53 @@
 										{{ 'Quotas.nextQuotasProsHeadline' | translate }}
 									</h3>
 									<ul>
-										<li>
-											{{
-												'Quotas.nextQuotasProsBadges'
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsBadges' +
+													(quota().badge_create <= 0 ? 'Unlimited' : '')
 													| translate: { value: formatNumber(quota().badge_create) }
-											}}
-										</li>
-										<li>
-											{{
-												'Quotas.nextQuotasProsLearningpaths'
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsLearningpaths' +
+													(quota().learningpath_create <= 0 ? 'Unlimited' : '')
 													| translate: { value: formatNumber(quota().learningpath_create) }
-											}}
-										</li>
-										<li>
-											{{
-												'Quotas.nextQuotasProsAwards'
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsAwards' +
+													(quota().badge_award <= 0 ? 'Unlimited' : '')
 													| translate: { value: formatNumber(quota().badge_award) }
-											}}
-										</li>
-										<li>
-											{{
-												'Quotas.nextQuotasProsAdmins'
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsAdmins' +
+													(quota().accounts_admin <= 0 ? 'Unlimited' : '')
 													| translate: { value: formatNumber(quota().accounts_admin) }
-											}}
-										</li>
-										<li>
-											{{
-												'Quotas.nextQuotasProsMembers'
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsMembers' +
+													(quota().accounts_member <= 0 ? 'Unlimited' : '')
 													| translate: { value: formatNumber(quota().accounts_member) }
-											}}
-										</li>
-										<li>
-											{{
-												'Quotas.nextQuotasProsKI'
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsKI' +
+													(quota().aiskills_requests <= 0 ? 'Unlimited' : '')
 													| translate: { value: formatNumber(quota().aiskills_requests) }
-											}}
-										</li>
+											"
+										></li>
 										@if (quota().pdfeditor) {
-											<li>{{ 'Quotas.nextQuotasProsPdfeditor' | translate }}</li>
+											<li [innerHTML]="'Quotas.nextQuotasProsPdfeditor' | translate"></li>
 										}
 										@if (quota().dashboard) {
-											<li>{{ 'Quotas.nextQuotasProsDashboard' | translate }}</li>
+											<li [innerHTML]="'Quotas.nextQuotasProsDashboard' | translate"></li>
 										}
 									</ul>
 								</div>
@@ -130,12 +145,17 @@
 										>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
 									>
 								</p>
-								<div class="tw-flex tw-flex-col tw-gap-4">
+								<div class="tw-max-w-[390px]">
 									<oeb-button
 										text="Upgrade anfragen"
 										width="full_width"
 										(click)="changePage('upgrade')"
 									/>
+									@if (quota().badge_create <= 0) {
+										<div class="tw-mt-8 tw-text-[14px]/[1.2em] tw-text-grey">
+											* {{ 'Quotas.nextQuotasProsBadgesUnlimitedFairUse' | translate }}
+										</div>
+									}
 								</div>
 							}
 						</div>

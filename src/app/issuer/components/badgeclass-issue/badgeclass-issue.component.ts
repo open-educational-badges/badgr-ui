@@ -48,6 +48,7 @@ import { OptionalDetailsComponent } from '../optional-details/optional-details.c
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'badgeclass-issue',
@@ -271,8 +272,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		}
 
 		if (this.issuer.quotas) {
-			await this.issuer.update();
-			if (!this.checkQuotasDialog('BADGE_CREATE')) {
+			if (!(await this.checkQuotasDialog('BADGE_AWARD'))) {
 				return;
 			}
 		}
@@ -390,11 +390,19 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		});
 	}
 
-	checkQuotasDialog(quota: string) {
-		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
+	async checkQuotasDialog(quota: string) {
+		let issuer: Issuer | Network = this.issuer as Issuer;
+		if (this.badgeClass.isNetworkBadge) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass.issuerSlug);
+		} else if (this.badgeClass.sharedOnNetwork) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.badgeClass.sharedOnNetwork.slug);
+		}
+
+		await issuer.update();
+		if (issuer.quotas?.quotas[quota]?.quota === 0) {
 			this._hlmDialogService.open(QuotaExceededDialog, {
 				context: {
-					issuer: this.issuer,
+					issuer: issuer,
 					variant: 'new_design',
 				},
 			});

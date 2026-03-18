@@ -839,7 +839,7 @@ export class LearningPathEditFormComponent
 		if (this.issuer.quotas) {
 			// recheck quotas and show dialog if something changed while starting the creation process
 			await this.issuer.update();
-			if (!this.checkQuotasDialog('BADGE_CREATE')) {
+			if (!this.checkQuotasDialog('LEARNINGPATH_CREATE')) {
 				return false;
 			}
 		}

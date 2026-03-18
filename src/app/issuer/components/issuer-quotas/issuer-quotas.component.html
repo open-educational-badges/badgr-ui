@@ -52,18 +52,11 @@
 							}
 						</p>
 						<p class="tw-text-purple tw-text-[18px]/[1.2em]">
-							@if (issuer.quotas.key === 'FREE') {
-								{{ 'Quotas.page.active' | translate }} ·
-								{{ 'Quotas.page.nextFreeRenewal' | translate }}:
-								<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
-							} @else {
-								{{ 'Quotas.page.active' | translate }} · {{ 'Quotas.page.nextRenewal' | translate }}:
-								<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
-							}
+							{{ 'Quotas.page.active' | translate }}
 						</p>
 					</div>
 				</div>
-				@if (issuer.quotas.key !== 'NETWORK' && issuer.quotas.quotas['NETWORK_CREATE']) {
+				@if (issuer.quotas.key !== 'NETWORK' && issuer.quotas.quotas['NETWORK_CREATE'].quota) {
 					<div class="tw-ml-5 md:tw-ml-0">
 						<ng-icon size="54px" hlm name="lucidePlus" class="tw-text-oebblack" />
 					</div>
@@ -228,9 +221,28 @@
 					</li>
 				</ul>
 			</section>
-			@if (issuer.quotas.key !== 'FREE' && issuer.quotas.key !== 'NETWORK') {
-				<section class="tw-mb-10">
-					<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">Vertrag</h3>
+			<section class="tw-mb-10">
+				<h3 class="tw-text-[22px]/[1.2em] tw-font-semibold tw-text-oebblack tw-mb-6">
+					{{ 'Quotas.page.contract' | translate }}
+				</h3>
+				@if (issuer.quotas.key === 'FREE') {
+					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
+						<strong>{{ 'Quotas.page.renewalFree' | translate }}</strong>
+						<span><time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time></span>
+					</p>
+					<p class="tw-text-[18px]/[1.2em] tw-text-purple">
+						{{ 'Quotas.page.renewalFree2' | translate: { quota: issuer.quotas.name } }}
+					</p>
+				} @else if (issuer.quotas.key === 'NETWORK') {
+					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
+						<strong>{{ 'Quotas.page.renewalNetwork' | translate }}</strong>
+						<span><time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time></span>
+					</p>
+					<p class="tw-text-[18px]/[1.2em] tw-text-purple">
+						Das Kontingent des {{ issuer.quotas.name }}-Pakets gilt für jeweils 12 Monate und erneuert sich
+						dann automatisch.
+					</p>
+				} @else {
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
 						<strong>Vertragsart</strong>
 						<span> Jahres-Abo (12 Monate Laufzeit)</span>
@@ -240,22 +252,31 @@
 						<span><time [date]="issuer.quotas.periodStart" format="dd.MM.y"></time></span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
-						<strong>Nächste Abrechnung</strong>
+						<strong>Nächste automatische Verlängerung</strong>
 						<span>
 							<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
 						</span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-max-w-[750px] tw-mb-2">
-						Der Vertrag verlängert sich automatisch um ein weiteres Jahr, wenn er nicht spätestens einen
-						Monat vor Ende der Laufzeit gekündigt wird
+						<span>
+							Der Vertrag verlängert sich automatisch um ein weiteres Jahr, wenn er nicht spätestens einen
+							Monat vor Ende der Laufzeit gekündigt wird</span
+						>
 						@if (email()) {
-							(über <a class="tw-text-link tw-underline" [href]="`mailto:${email()}`">{{ email() }}</a
-							>)
+							<span>
+								(über <a class="tw-text-link tw-underline" [href]="`mailto:${email()}`">{{ email() }}</a
+								>)</span
+							>
 						}
-						.
+						<span>.</span>
+						<br />
+						<span>
+							Das Kontingent des gebuchten Pakets gilt für jeweils 12 Monate und erneuert sich mit
+							Vertragsverlängerung.
+						</span>
 					</p>
-				</section>
-			}
+				}
+			</section>
 		</ng-template>
 	</div>
 </div>
