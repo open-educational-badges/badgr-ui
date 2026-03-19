@@ -152,12 +152,10 @@ export const defaultConfig: BadgrConfig = {
 		welcomeMessage: `### Welcome!`,
 		alternateLandingUrl: null,
 		showPoweredByBadgr: false,
-		showPoweredByOSL: false,
 		showApiDocsLink: true,
 		termsOfServiceLink: null,
 		termsHelpLink: null,
 		privacyPolicyLink: null,
-		providedBy: null,
 		logoImg: {
 			small: '../../assets/@concentricsky/badgr-style/dist/images/os-logo-small.svg',
 			desktop: '../../assets/@concentricsky/badgr-style/dist/images/os-logo-large.svg',

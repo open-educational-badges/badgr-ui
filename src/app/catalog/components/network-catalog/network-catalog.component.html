@@ -1,10 +1,10 @@
-<form-message></form-message>
+f<form-message></form-message>
 <div class="oeb page-padding">
 	<div class="oeb-section-sm">
 		<header class="oeb-headline-container tw-relative tw-flex tw-flex-col">
 			<oeb-header-text [text1]="'Network.networksHeadline'" [text2Template]="text2Template" />
 			<ng-template #text2Template>
-				<span [countUp]="totalNetworkCount()">{{ totalNetworkCount() }}</span>
+				<span [countUp]="totalNetworkCount()" [options]="{ separator: '.' }">{{ totalNetworkCount() }}</span>
 				<span>
 					{{ networksPluralWord }}
 				</span>
@@ -16,11 +16,11 @@
 		@if (networks().length > 0) {
 			<div class="tw-grid sm:tw-grid-cols-issuer tw-gap-6 tw-w-full" [@stagger]>
 				@for (network of networks(); track network) {
-					<oeb-networkcard
+					<oeb-issuer-network-card
 						@appearAnimation
-						[network]="network"
-						[routerLink]="['/public/networks', network.slug]"
-					></oeb-networkcard>
+						[issuerOrNetwork]="network"
+						(navigate)="onNavigate(network)"
+					/>
 				}
 			</div>
 		}

@@ -235,7 +235,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			{
 				key: 'overview',
 				title: 'General.overview',
-				component: this.overviewTemplate,
+				component: this.overviewTemplate(),
 			},
 			{
 				key: 'socialspace',

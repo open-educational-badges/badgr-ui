@@ -124,10 +124,10 @@ export class ShareBadgeDialogComponent implements AfterViewInit {
 	async shareOnLinkedIn() {
 		if (!this.issuer) return;
 
-		const shareParams = new URLSearchParams({
+		const shareParams = {
 			startTask: 'CERTIFICATION_NAME', // this is the name LinkedIn has given the task
-			name: this.context.badge.badgeClass.name,
-			organizationName: this.context.badge.badgeClass.issuer.name,
+			name: encodeURIComponent(this.context.badge.badgeClass.name),
+			organizationName: encodeURIComponent(this.context.badge.badgeClass.issuer.name),
 			issueYear: `${this.context.badge.issueDate.getFullYear()}`,
 			issueMonth: ('0' + (this.context.badge.issueDate.getMonth() + 1)).slice(-2),
 			expirationYear: this.context.badge.expiresDate
@@ -136,16 +136,20 @@ export class ShareBadgeDialogComponent implements AfterViewInit {
 			expirationMonth: this.context.badge.expiresDate
 				? ('0' + (this.context.badge.expiresDate.getMonth() + 1)).slice(-2)
 				: undefined,
-			certUrl: this.shareUrl,
+			certUrl: encodeURIComponent(this.shareUrl),
 			certId: this.context.badge.slug,
 			organizationId: this.issuer.linkedinId?.length > 0 ? this.issuer.linkedinId : undefined,
-		});
+		};
 
 		// clean out undefined values (which are converted to string)
-		for (const [key, value] of shareParams) if (value === 'undefined') shareParams.delete(key);
+		for (const [key, value] of Object.entries(shareParams)) {
+			if (value === 'undefined' || value === undefined) {
+				delete shareParams[key];
+			}
+		}
 
-		const linkedInUrl = new URL(`https://www.linkedin.com/profile/add?${shareParams}`);
-		console.log(linkedInUrl);
+		const p = new URLSearchParams(shareParams);
+		const linkedInUrl = new URL(`https://www.linkedin.com/profile/add?${p}`);
 		window.open(linkedInUrl, '_blank');
 	}
 }

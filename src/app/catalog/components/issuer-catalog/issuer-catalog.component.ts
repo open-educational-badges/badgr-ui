@@ -17,8 +17,6 @@ import {
 } from 'rxjs';
 
 import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
-import { SessionService } from '../../../common/services/session.service';
-import { MessageService } from '../../../common/services/message.service';
 import { AppConfigService } from '../../../common/app-config.service';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
 
@@ -36,13 +34,14 @@ import { OebGlobalSortSelectComponent } from '~/components/oeb-global-sort-selec
 import { OebSelectComponent } from '~/components/select.component';
 import { LoadingDotsComponent } from '~/common/components/loading-dots.component';
 import { OebButtonComponent } from '~/components/oeb-button.component';
-import { IssuerCardComponent } from '~/components/issuer-card/issuer-card.component';
 import { NgClass } from '@angular/common';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observer';
+import { type FeatureCollection } from 'geojson';
+import { OebIssuerNetworkCard } from '~/issuer/components/issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'app-issuer-catalog',
@@ -61,10 +60,10 @@ import { createInfiniteScrollObserver } from '~/catalog/util/intersection-observ
 		FormsModule,
 		LoadingDotsComponent,
 		OebButtonComponent,
-		IssuerCardComponent,
 		BgAwaitPromises,
 		HlmInput,
 		HlmIcon,
+		OebIssuerNetworkCard,
 	],
 })
 export class IssuerCatalogComponent extends BaseRoutableComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -80,7 +79,7 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 	@ViewChild('map')
 	private mapContainer: ElementRef<HTMLElement>;
 
-	issuerGeoJson;
+	issuerGeoJson?: FeatureCollection;
 
 	@ViewChild('loadMore') loadMore: ElementRef | undefined;
 
@@ -347,27 +346,8 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 		};
 	}
 
-	generateGeoJSON(issuers) {
-		this.issuerGeoJson = {
-			type: 'FeatureCollection',
-			features: issuers
-				.filter((issuer) => issuer.lat !== null && issuer.lon !== null)
-				.map((issuer) => ({
-					type: 'Feature',
-					properties: {
-						name: issuer.name,
-						slug: issuer.slug,
-						img: issuer.image,
-						description: issuer.description,
-						category: issuer.category,
-					},
-					geometry: {
-						type: 'Point',
-						coordinates: [issuer.lon, issuer.lat],
-					},
-				})),
-		};
-
+	async populateMap() {
+		if (!this.issuerGeoJson) this.issuerGeoJson = await this.catalogService.getIssuersGeoJSON();
 		if (!this.mapObject.getSource('issuers')) {
 			this.mapObject.addSource('issuers', {
 				type: 'geojson',
@@ -523,7 +503,7 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 
 	openMap(): void {
 		this.badgesDisplay = 'map';
-		setTimeout(() => this.mapObject.resize(), 50);
+		this.populateMap();
 	}
 
 	openGrid(): void {

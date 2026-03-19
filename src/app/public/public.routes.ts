@@ -38,13 +38,6 @@ export const routes: Routes = [
 		} as BadgrRouteData,
 	},
 	{
-		path: 'impressum',
-		loadComponent: () => import('./components/impressum/impressum.component').then((m) => m.ImpressumComponent),
-		data: {
-			publiclyAccessible: true,
-		} as BadgrRouteData,
-	},
-	{
 		path: 'terms',
 		loadComponent: () =>
 			import('./components/terms-of-service/terms-of-service.component').then((m) => m.TermsComponent),

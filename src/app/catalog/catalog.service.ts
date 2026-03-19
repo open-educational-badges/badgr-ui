@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { AppConfigService } from '~/common/app-config.service';
 import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authentication-service';
@@ -8,6 +8,7 @@ import { BadgeClassV3, IBadgeClassV3 } from '~/issuer/models/badgeclassv3.model'
 import { IIssuerV3, IssuerV3 } from '~/issuer/models/issuerv3.model';
 import { LearningPathV3 } from '~/issuer/models/learningpathv3.model';
 import { INetworkV3, NetworkV3 } from '~/issuer/models/networkv3.model';
+import { type FeatureCollection } from 'geojson';
 
 const ENDPOINT = 'v3/issuer';
 
@@ -182,6 +183,26 @@ export class CatalogService extends BaseHttpApiService {
 				...response.body,
 				results: response.body.results.map((i) => new IssuerV3(i)),
 			};
+		} catch (e) {
+			console.warn(e);
+			return null;
+		}
+	}
+
+	async getIssuersGeoJSON(): Promise<FeatureCollection | null> {
+		try {
+			const headers = new HttpHeaders({ Accept: 'application/geo+json' });
+			const response = await this.get<FeatureCollection>(
+				`${this.baseUrl}/${ENDPOINT}/issuers/`,
+				undefined,
+				undefined,
+				undefined,
+				headers,
+			);
+
+			if (!response.ok) return null;
+
+			return response.body;
 		} catch (e) {
 			console.warn(e);
 			return null;

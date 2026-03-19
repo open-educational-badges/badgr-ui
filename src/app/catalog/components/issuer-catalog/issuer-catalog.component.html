@@ -6,7 +6,7 @@
 			<oeb-header-text [text1]="'Issuer.institutionsHeadline'" [text2Template]="text2Template" />
 			<ng-template #text2Template>
 				<ng-template [showLoader]="false" [bgAwaitPromises]="pageReadyPromise">
-					<span [countUp]="totalCount()">{{ totalCount() }}</span>
+					<span [countUp]="totalCount()" [options]="{ separator: '.' }">{{ totalCount() }}</span>
 					<span>
 						{{ issuersPluralWord }}
 					</span>
@@ -74,12 +74,11 @@
 			@if (badgesDisplay === 'grid') {
 				<div class="tw-grid sm:tw-grid-cols-issuer tw-gap-6 tw-w-full" [@stagger]>
 					@for (issuer of issuers(); track issuer.slug) {
-						<oeb-issuer-card
+						<oeb-issuer-network-card
 							@appearAnimation
-							[plural]="plural"
-							[issuer]="issuer"
+							[issuerOrNetwork]="issuer"
 							(navigate)="navigateToIssuer(issuer)"
-						></oeb-issuer-card>
+						/>
 					}
 				</div>
 

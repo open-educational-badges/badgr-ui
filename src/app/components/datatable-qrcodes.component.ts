@@ -159,13 +159,16 @@ export type RequestedBadge = {
 			{{ context.header.id | translate }}
 		</ng-template>
 		<ng-template #nameAndMailCell let-context>
-			@if (context.row.original.firstName || context.row.original.lastName) {
-				<strong> {{ context.row.original.firstName }} {{ context.row.original.lastName }} </strong>
-			} @else {
-				<strong>&mdash;</strong>
-			}
-			<br />
-			{{ context.row.original.email }}
+			<div class="tw-max-w-[26ch] tw-whitespace-normal tw-break-words tw-leading-tight">
+				@if (context.row.original.firstName || context.row.original.lastName) {
+					<strong> {{ context.row.original.firstName }} {{ context.row.original.lastName }} </strong>
+				} @else {
+					<strong>&mdash;</strong>
+				}
+			</div>
+			<div class="tw-text-sm tw-text-gray-600">
+				{{ context.row.original.email }}
+			</div>
 		</ng-template>
 		<ng-template #headerCheckbox let-context>
 			<oeb-checkbox

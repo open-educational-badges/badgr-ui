@@ -20,22 +20,9 @@ export interface BadgrTheme {
 	showPoweredByBadgr: boolean;
 
 	/**
-	 * Shows the "Powered by OSL" link
-	 */
-	showPoweredByOSL: boolean;
-
-	/**
 	 *
 	 */
 	hideMarketingOptIn?: boolean;
-
-	/**
-	 * Shows "Provided by ____ link
-	 */
-	providedBy?: {
-		name: string;
-		url: string;
-	};
 
 	/**
 	 * Shows the "API Documentation" link
@@ -47,6 +34,7 @@ export interface BadgrTheme {
 	 */
 	termsOfServiceLink?: string;
 	privacyPolicyLink?: string;
+	imprintLink?: string;
 
 	/**
 	 * Must agree to this when creating an Issuer

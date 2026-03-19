@@ -30,6 +30,7 @@
 
 	@if (!networkForm()) {
 		<oeb-input
+			class="oeb-input-hide-arrows"
 			label="{{ 'Issuer.linkedInId' | translate }}"
 			[sublabelRightTemplate]="linkedInIdSublabelRight"
 			[fieldType]="'number'"

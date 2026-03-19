@@ -186,6 +186,12 @@ import { HlmNumberedPagination } from '@spartan-ng/helm/pagination';
 					{{ context.header.id | translate }}
 				</ng-template>
 
+				<ng-template #nameCellTemplate let-context>
+					<p class="tw-max-w-[26ch] tw-whitespace-normal tw-break-words tw-leading-tight">
+						{{ context.getValue() }}
+					</p>
+				</ng-template>
+
 				<ng-template #badgeActionsCellTemplate let-context>
 					<div class="tw-flex tw-flex-col tw-gap-1 md:tw-gap-2 tw-leading-relaxed">
 						<oeb-button
@@ -229,6 +235,7 @@ export class IssuerDetailDatatableComponent {
 	searchChange = output<string>();
 
 	translateHeaderIDCellTemplate = viewChild.required<TemplateRef<any>>('translateHeaderIDCellTemplate');
+	nameCellTemplate = viewChild.required<TemplateRef<any>>('nameCellTemplate');
 	badgeActionsTemplate = viewChild.required<TemplateRef<any>>('badgeActionsCellTemplate');
 
 	rowSelectionCount = computed(() => Object.keys(this.rowSelection()).length);
@@ -282,7 +289,7 @@ export class IssuerDetailDatatableComponent {
 				const ext = row.extensions?.['extensions:recipientProfile'];
 				return ext?.name ?? '';
 			},
-			cell: (ctx) => ctx.getValue(),
+			cell: () => this.nameCellTemplate(),
 			sortDescFirst: false,
 		},
 		{
