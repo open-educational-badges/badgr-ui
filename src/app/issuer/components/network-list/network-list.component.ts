@@ -1,16 +1,23 @@
-import { Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, input } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { HlmP } from '@spartan-ng/helm/typography';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { OebNetworkCard } from '~/common/components/oeb-networkcard.component';
+import { NavigationType, OebIssuerNetworkCard } from '../issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'network-list',
 	templateUrl: './network-list.component.html',
-	imports: [HlmP, OebButtonComponent, RouterLink, FormsModule, TranslatePipe, OebNetworkCard],
+	imports: [OebButtonComponent, RouterLink, FormsModule, TranslatePipe, OebIssuerNetworkCard],
 })
 export class NetworkListComponent {
+	readonly router = inject(Router);
+
 	networks = input.required<any[]>();
+
+	handleNavigate(event: NavigationType, network: any) {
+		if (event === 'heading') {
+			this.router.navigate(['/issuer/networks', network.slug]);
+		}
+	}
 }

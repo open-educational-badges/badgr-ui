@@ -47,6 +47,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { Network } from '~/issuer/network.model';
 import { UserPreferenceService } from '~/common/services/user-preference.service';
+import { NavigationType, OebIssuerNetworkCard } from '../issuer-network-card/issuer-network-card.component';
 
 @Component({
 	selector: 'issuer-list',
@@ -68,6 +69,7 @@ import { UserPreferenceService } from '~/common/services/user-preference.service
 		TranslatePipe,
 		OebTabsComponent,
 		NetworkListComponent,
+		OebIssuerNetworkCard,
 	],
 })
 export class IssuerListComponent
@@ -422,6 +424,17 @@ export class IssuerListComponent
 
 	linkedInIdHeaderTemplate = viewChild.required<TemplateRef<any>>('linkedInIdDialogHeader');
 	linkedInIdBodyTemplate = viewChild.required<TemplateRef<any>>('linkedInIdDialogBody');
+
+	public async handleNavigate(event: NavigationType, issuer: Issuer) {
+		switch (event) {
+			case 'heading':
+				this.router.navigate(['/issuer/issuers/', issuer.slug]);
+				return;
+			case 'createBadge':
+				await this.openLinkedInHintDialog(issuer);
+				return;
+		}
+	}
 
 	public async openLinkedInHintDialog(issuer: Issuer) {
 		if (!issuer.currentUserStaffMember.isOwner) return;
