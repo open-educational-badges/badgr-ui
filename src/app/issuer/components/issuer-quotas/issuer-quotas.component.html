@@ -42,7 +42,7 @@
 				{{ 'Quotas.page.activeQuota' | translate }} {{ issuer.name }}:
 			</h2>
 			<div class="tw-mt-5 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-2 md:tw-gap-8 tw-mb-8">
-				<div class="tw-flex tw-flex tw-items-center tw-gap-4">
+				<div class="tw-flex tw-items-center tw-gap-4">
 					<img [src]="`/assets/oeb/images/quotas/logo_${issuer.quotas.key.toLowerCase()}.svg`" width="100" />
 					<div>
 						<p class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2">
@@ -60,7 +60,7 @@
 					<div class="tw-ml-5 md:tw-ml-0">
 						<ng-icon size="54px" hlm name="lucidePlus" class="tw-text-oebblack" />
 					</div>
-					<div class="tw-flex tw-flex tw-items-center tw-gap-4">
+					<div class="tw-flex tw-items-center tw-gap-4">
 						<img [src]="`/assets/oeb/images/quotas/logo_network.svg`" width="100" />
 						<div>
 							<p class="tw-text-oebblack tw-font-bold tw-text-[30px]/[1.2em] tw-font-[rubik] tw-mb-2">
@@ -111,7 +111,7 @@
 						}
 					</span>
 				</p>
-				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
+				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-flex tw-gap-2 tw-mb-6">
 					<strong>{{ 'Quotas.page.label_BADGE_AWARD' | translate }}</strong
 					><span>
 						<span [class]="quotaWarning(issuer.quotas.quotas['BADGE_AWARD']) ? 'tw-text-red' : ''">

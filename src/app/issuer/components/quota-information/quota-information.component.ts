@@ -20,13 +20,6 @@ type QuotaName =
 @Component({
 	selector: 'quota-information',
 	templateUrl: './quota-information.component.html',
-	styles: [
-		`
-			:host.hidden {
-				display: none;
-			}
-		`,
-	],
 	imports: [RouterLink, TranslatePipe],
 })
 export class QuotaInformationComponent {
@@ -43,11 +36,6 @@ export class QuotaInformationComponent {
 	quotaValues: (ApiQuotasNumberQuota | ApiQuotasBooleanQuota)[];
 
 	isWebcomponentContext = !!(window as any).OEBWebComponentSettings;
-
-	// hide if unlimited quotas
-	@HostBinding('class.hidden') get hidden() {
-		return false; // this.quotaValues?.every((v) => typeof v.quota !== 'number' || v.quota < 0) || !this.quotaValues;
-	}
 
 	constructor() {
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'] || this.route.snapshot.params['networkSlug'];

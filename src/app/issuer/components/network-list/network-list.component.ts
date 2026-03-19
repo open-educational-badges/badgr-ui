@@ -61,6 +61,7 @@ export class NetworkListComponent {
 							}
 						});
 					} else {
+						r();
 						this.canCreate.set(true);
 					}
 				});
