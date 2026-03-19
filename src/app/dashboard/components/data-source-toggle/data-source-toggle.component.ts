@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -110,11 +110,11 @@ import { DashboardDataSourceService, DataSourceType } from '../../services/dashb
 	],
 })
 export class DataSourceToggleComponent implements OnInit, OnDestroy {
+	private dataSourceService = inject(DashboardDataSourceService);
+
 	private subscription: Subscription | null = null;
 
 	isApiData = false;
-
-	constructor(private dataSourceService: DashboardDataSourceService) {}
 
 	ngOnInit(): void {
 		this.subscription = this.dataSourceService.dataSource$.subscribe((source) => {

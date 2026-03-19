@@ -170,14 +170,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	}
 
 	private initializeMenuItems(): void {
-		this.networkActionsMenuItems = [
-			{
-				title: 'General.exportData',
-				icon: 'lucideFolderInput',
-				action: () => this.exportData(),
-			},
-		];
-
 		if (this.role === 'owner' || this.role === 'creator') {
 			this.networkActionsMenuItems.push({
 				title: 'Network.addInstitutions',
@@ -425,10 +417,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	get role() {
 		return this.network()?.current_user_network_role;
-	}
-
-	exportData(): void {
-		console.log('Export data clicked');
 	}
 
 	navigateToEditNetwork(): void {

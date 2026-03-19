@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -84,6 +84,8 @@ export interface GenderCompetencyData {
 	styleUrls: ['./gender-competency-analysis.component.scss'],
 })
 export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
+	private networkDashboardApi = inject(NetworkDashboardApiService);
+
 	private destroy$ = new Subject<void>();
 
 	/** Gender type to display */
@@ -112,8 +114,6 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 
 	/** Additional badges beyond top 3 (for list display below podium) */
 	additionalBadges: TopBadgeData[] = [];
-
-	constructor(private networkDashboardApi: NetworkDashboardApiService) {}
 
 	ngOnInit(): void {
 		this.loadGenderData();

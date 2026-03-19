@@ -1,15 +1,4 @@
-import {
-	Component,
-	Input,
-	Output,
-	EventEmitter,
-	ViewChild,
-	ElementRef,
-	AfterViewInit,
-	OnChanges,
-	SimpleChanges,
-	OnDestroy,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -35,6 +24,8 @@ export interface MonthOption {
 	styleUrls: ['./badges-yearly-line-chart.component.scss'],
 })
 export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+	private translate = inject(TranslateService);
+
 	@ViewChild('lineChartSvg') lineChartSvg!: ElementRef<SVGSVGElement>;
 	@ViewChild('chartTooltip') chartTooltip!: ElementRef<HTMLDivElement>;
 	@ViewChild('tooltipDate') tooltipDate!: ElementRef<HTMLDivElement>;
@@ -114,7 +105,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 		'december',
 	];
 
-	constructor(private translate: TranslateService) {
+	constructor() {
 		this.initializeMonths();
 	}
 

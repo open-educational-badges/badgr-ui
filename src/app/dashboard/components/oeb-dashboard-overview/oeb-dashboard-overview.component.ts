@@ -1,17 +1,4 @@
-import {
-	Component,
-	OnInit,
-	Input,
-	Output,
-	EventEmitter,
-	OnDestroy,
-	signal,
-	OnChanges,
-	SimpleChanges,
-	ViewChild,
-	ElementRef,
-	AfterViewInit,
-} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, signal, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -98,6 +85,14 @@ export interface CompetencyData {
 	styleUrls: ['./oeb-dashboard-overview.component.scss'],
 })
 export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChanges {
+	private router = inject(Router);
+	private dataSourceService = inject(DashboardDataSourceService);
+	private overviewApiService = inject(DashboardOverviewApiService);
+	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private translate = inject(TranslateService);
+	private configService = inject(AppConfigService);
+	private issuerManager = inject(IssuerManager);
+
 	private destroy$ = new Subject<void>();
 
 	// Network slug - if provided, load network-specific data
@@ -203,16 +198,6 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	/** User's issuers for checking membership */
 	private userIssuerSlugs: Set<string> = new Set();
-
-	constructor(
-		private router: Router,
-		private dataSourceService: DashboardDataSourceService,
-		private overviewApiService: DashboardOverviewApiService,
-		private networkDashboardApi: NetworkDashboardApiService,
-		private translate: TranslateService,
-		private configService: AppConfigService,
-		private issuerManager: IssuerManager,
-	) {}
 
 	ngOnInit(): void {
 		// Initialize badge types and months with translations

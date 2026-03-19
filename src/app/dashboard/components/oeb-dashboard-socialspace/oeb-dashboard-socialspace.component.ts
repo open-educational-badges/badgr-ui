@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -66,6 +66,12 @@ export type SocialspaceViewState = 'overview' | 'city-detail' | 'city-learner-de
 	styleUrls: ['./oeb-dashboard-socialspace.component.scss'],
 })
 export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
+	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private configService = inject(AppConfigService);
+	private router = inject(Router);
+	private translate = inject(TranslateService);
+	private issuerManager = inject(IssuerManager);
+
 	private destroy$ = new Subject<void>();
 
 	/** Network slug for API calls */
@@ -98,14 +104,6 @@ export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
 
 	/** User's issuers for checking membership */
 	private userIssuerSlugs: Set<string> = new Set();
-
-	constructor(
-		private networkDashboardApi: NetworkDashboardApiService,
-		private configService: AppConfigService,
-		private router: Router,
-		private translate: TranslateService,
-		private issuerManager: IssuerManager,
-	) {}
 
 	ngOnInit(): void {
 		// Load user's issuers to check membership for institution clicks

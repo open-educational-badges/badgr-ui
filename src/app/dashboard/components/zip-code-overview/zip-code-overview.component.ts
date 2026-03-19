@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -12,13 +12,13 @@ import { ZipCodeStatisticsData } from '../../models/dashboard-models';
 	styleUrls: ['./zip-code-overview.component.scss'],
 })
 export class ZipCodeOverviewComponent implements OnInit {
+	private router = inject(Router);
+
 	zipCodeStatistics: ZipCodeStatisticsData[] = [];
 	loading = false;
 	error: string | null = null;
 	totalLearners = 0;
 	metadata: any = null;
-
-	constructor(private router: Router) {}
 
 	ngOnInit(): void {
 		this.loading = false;

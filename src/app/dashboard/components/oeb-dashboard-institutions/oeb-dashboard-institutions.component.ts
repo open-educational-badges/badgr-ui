@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -24,14 +24,14 @@ export interface Institution {
 	styleUrls: ['./oeb-dashboard-institutions.component.scss'],
 })
 export class OebDashboardInstitutionsComponent implements OnInit {
+	private router = inject(Router);
+
 	institutions: Institution[] = [];
 	newInstitutions: Institution[] = [];
 	loading = false;
 
 	totalInstitutions = 0;
 	newInstitutionsCount = 0;
-
-	constructor(private router: Router) {}
 
 	ngOnInit(): void {
 		this.loading = false;

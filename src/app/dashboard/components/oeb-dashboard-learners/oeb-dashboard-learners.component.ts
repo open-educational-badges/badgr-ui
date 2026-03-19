@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -69,6 +69,10 @@ export type LernendeViewState = 'overview' | 'gender-detail' | 'residence-detail
 	styleUrls: ['./oeb-dashboard-learners.component.scss'],
 })
 export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
+	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private router = inject(Router);
+	private translate = inject(TranslateService);
+
 	private destroy$ = new Subject<void>();
 
 	/** Network slug for API calls */
@@ -135,12 +139,6 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 		gender?: string;
 		residence?: LearnerResidenceData;
 	}>();
-
-	constructor(
-		private networkDashboardApi: NetworkDashboardApiService,
-		private router: Router,
-		private translate: TranslateService,
-	) {}
 
 	ngOnInit(): void {
 		this.loadLearnerData();

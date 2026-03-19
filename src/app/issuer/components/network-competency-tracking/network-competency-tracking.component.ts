@@ -195,7 +195,11 @@ export class NetworkCompetencyTrackingComponent
 		noAnswer: { color: '#F3F4F6', borderColor: '#9CA3AF' },
 	};
 
-	constructor(route: ActivatedRoute, router: Router, sessionService: SessionService) {
+	constructor() {
+		const route = inject(ActivatedRoute);
+		const router = inject(Router);
+		const sessionService = inject(SessionService);
+
 		super(router, route, sessionService);
 
 		// Get network slug and optional competencyId from route

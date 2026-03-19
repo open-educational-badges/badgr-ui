@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -37,15 +37,25 @@ import {
  */
 @Injectable({ providedIn: 'root' })
 export class DashboardOverviewApiService extends BaseHttpApiService {
+	protected loginService: SessionService;
+	protected http: HttpClient;
+	protected configService: AppConfigService;
+	protected messageService: MessageService;
+
 	private readonly BASE_PATH = '/v1/dashboard/overview';
 
-	constructor(
-		protected loginService: SessionService,
-		protected http: HttpClient,
-		protected configService: AppConfigService,
-		protected messageService: MessageService,
-	) {
+	constructor() {
+		const loginService = inject(SessionService);
+		const http = inject(HttpClient);
+		const configService = inject(AppConfigService);
+		const messageService = inject(MessageService);
+
 		super(loginService, http, configService, messageService);
+	
+		this.loginService = loginService;
+		this.http = http;
+		this.configService = configService;
+		this.messageService = messageService;
 	}
 
 	// ==========================================

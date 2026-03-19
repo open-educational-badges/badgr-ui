@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -25,6 +25,8 @@ import { ZipCodeStatisticsData } from '../../models/dashboard-models';
 	styleUrls: ['./oeb-dashboard-zip-code-kpi.component.scss'],
 })
 export class OebDashboardZipCodeKpiComponent implements OnInit {
+	private router = inject(Router);
+
 	/** ZIP code statistics data */
 	@Input() zipCodeData: ZipCodeStatisticsData[] = [];
 	/** @deprecated Use zipCodeData instead */
@@ -41,8 +43,6 @@ export class OebDashboardZipCodeKpiComponent implements OnInit {
 	@Input() set totalPlzAreas(value: number) {
 		this.totalZipCodeAreas = value;
 	}
-
-	constructor(private router: Router) {}
 
 	ngOnInit(): void {
 		// Component initialization

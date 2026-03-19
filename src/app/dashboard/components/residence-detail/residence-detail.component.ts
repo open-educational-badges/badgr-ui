@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -66,6 +66,9 @@ export interface ResidenceDetailData {
 	styleUrls: ['./residence-detail.component.scss'],
 })
 export class ResidenceDetailComponent implements OnInit, OnDestroy {
+	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private translate = inject(TranslateService);
+
 	private destroy$ = new Subject<void>();
 
 	/** City name to display */
@@ -88,11 +91,6 @@ export class ResidenceDetailComponent implements OnInit, OnDestroy {
 
 	/** Skill visualisation data - ESCO-compatible skills for the force-directed graph */
 	skillVisualisationData: ApiRootSkill[] = [];
-
-	constructor(
-		private networkDashboardApi: NetworkDashboardApiService,
-		private translate: TranslateService,
-	) {}
 
 	ngOnInit(): void {
 		console.log(
