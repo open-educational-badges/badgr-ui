@@ -130,7 +130,7 @@ import { NgIcon } from '@ng-icons/core';
 					variant="secondary"
 					size="xs"
 					width="full_width"
-					(click)="deleteLearningPath.emit(context.row.original.slug)"
+					(click)="deleteLearningPath.emit(context.row.original)"
 					[text]="'General.delete' | translate"
 					[disabled]="!issuer().canDeleteBadge"
 					[class]="issuer().canDeleteBadge ? '' : 'disabled'"
@@ -143,7 +143,7 @@ export class LearningPathDatatableComponent {
 
 	learningPaths = input.required<ApiLearningPath[]>();
 	issuer = input<Issuer | null>(null);
-	deleteLearningPath = output<string>();
+	deleteLearningPath = output<ApiLearningPath>();
 	navigateToDetail = output<string>();
 	translateHeaderIDCellTemplate = viewChild.required<TemplateRef<any>>('translateHeaderIDCellTemplate');
 	badgeCellTemplate = viewChild.required<TemplateRef<any>>('badgeCellTemplate');

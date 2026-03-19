@@ -92,6 +92,10 @@ export class LearningPath extends ManagedEntity<ApiLearningPath, LearningPathRef
 		return this.apiModel.archived_at;
 	}
 
+	get has_awarded_micro_degree(): boolean {
+		return this.apiModel.has_awarded_micro_degree;
+	}
+
 	constructor(
 		commonManager: CommonEntityManager,
 		initialEntity: ApiLearningPath = null,

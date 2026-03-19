@@ -259,22 +259,22 @@
 						*ngIf="!public"
 						[learningPaths]="apiLearningPaths"
 						[issuer]="isFullIssuer(issuer) ? issuer : null"
-						(onDelete)="deleteLearningPath($event, issuer)"
-						(onNavigateToDetail)="redirectToLearningPathDetail($event, issuer)"
+						(deleteLearningPath)="deleteLearningPath($event, issuer)"
+						(navigateToDetail)="redirectToLearningPathDetail($event, issuer)"
 					></learningpaths-datatable>
 
-					<!-- <div *ngIf="!public && archivedLearningPaths.length" class="tw-mt-10">
+					<div *ngIf="!public && archivedLearningPaths.length > 0" class="tw-mt-10">
 						<h3 class="tw-text-lg tw-font-semibold tw-mb-4">
-							{{ 'Issuer.archivedLearningPaths' | translate }}
+							{{ 'LearningPath.archivedLearningPaths' | translate }}
 						</h3>
 
-						<learningpaths-datatable
+						<learningpaths-archived-datatable
 							[learningPaths]="archivedLearningPaths"
 							[issuer]="isFullIssuer(issuer) ? issuer : null"
-							(onNavigateToDetail)="redirectToLearningPathDetail($event, issuer)"
+							(navigateToDetail)="redirectToLearningPathDetail($event, issuer)"
 						>
-						</learningpaths-datatable>
-					</div> -->
+						</learningpaths-archived-datatable>
+					</div>
 
 					<ng-container *ngIf="public">
 						<div class="tw-grid tw-grid-cols-learningpaths tw-gap-6">

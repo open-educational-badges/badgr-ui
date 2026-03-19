@@ -20,6 +20,7 @@ import { Network } from '~/issuer/network.model';
 import { DialogComponent } from '~/components/dialog.component';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
+import { DangerDialogComponent } from '~/common/dialogs/oeb-dialogs/danger-dialog.component';
 
 @Component({
 	selector: 'oeb-learning-path',
@@ -96,13 +97,32 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 	}
 
 	public deleteLearningPath() {
-		const dialogRef = this._hlmDialogService.open(DialogComponent, {
+		if (this.learningPath.has_awarded_micro_degree) {
+			this.openArchiveDialog();
+			return;
+		}
+
+		this.openDeleteDialog();
+	}
+
+	private openArchiveDialog() {
+		this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				variant: 'danger',
 				content: this.archiveLpTemplate(),
 			},
 		});
-		this.dialogRef = dialogRef;
+	}
+
+	private openDeleteDialog() {
+		this.dialogRef = this._hlmDialogService.open(DangerDialogComponent, {
+			context: {
+				delete: () => this.deleteLearningPathApi(this.learningPath.slug, this.issuer),
+				variant: 'danger',
+				text: this.translate.instant('LearningPath.deleteWarning'),
+				title: this.translate.instant('General.delete'),
+			},
+		});
 	}
 
 	public archiveLearningPath() {
