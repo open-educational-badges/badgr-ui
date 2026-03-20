@@ -1220,6 +1220,7 @@
 		"Info_AISKILLS_REQUESTS": "Queries/month used",
 		"Info_NETWORK_MEMBERSHIPS": "Network members added",
 		"InfoBulk": "The number of recipients exceeds your usage limit. Remove {{count}} {{ person }} from the list to award badges.",
+		"InfoNetworkInvites": "The number of invitations exceeds your usage limit. Remove {{count}} {{ institution }} from the list to invite institutions.",
 		"FeatureListPlanComparison": "Feature list: OEB plans compared",
 		"nextLevelHeadline": "Discover the next level with OEB!",
 		"euroPerYear": "€ / year",

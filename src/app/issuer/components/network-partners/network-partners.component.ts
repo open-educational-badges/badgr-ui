@@ -118,6 +118,10 @@ export class NetworkPartnersComponent {
 				this.pendingInvites.update((current) =>
 					current.filter((invitation) => invitation.entity_id !== invite.entity_id),
 				);
+				// update network to refresh quotas
+				if (this.network().quotas) {
+					this.network().update();
+				}
 			}
 		} catch (error) {
 			console.error('Failed to revoke invitation:', error);
