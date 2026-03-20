@@ -321,7 +321,7 @@ export class NetworkBadgesComponent implements OnInit {
 				this._hlmDialogService.open(QuotaExceededDialog, {
 					context: {
 						issuer: this.network(),
-						variant: 'new_design',
+						variant: 'quotas',
 					},
 				});
 				return false;

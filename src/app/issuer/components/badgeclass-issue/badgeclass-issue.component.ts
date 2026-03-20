@@ -403,7 +403,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 			this._hlmDialogService.open(QuotaExceededDialog, {
 				context: {
 					issuer: issuer,
-					variant: 'new_design',
+					variant: 'quotas',
 				},
 			});
 			return false;

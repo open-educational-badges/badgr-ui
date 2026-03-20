@@ -386,7 +386,7 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 			this._hlmDialogService.open(QuotaExceededDialog, {
 				context: {
 					issuer: this.issuer(),
-					variant: 'new_design',
+					variant: 'quotas',
 				},
 			});
 			return false;
@@ -418,7 +418,7 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 			this._hlmDialogService.open(QuotaExceededDialog, {
 				context: {
 					issuer: this.issuer(),
-					variant: 'new_design',
+					variant: 'quotas',
 				},
 			});
 			return false;

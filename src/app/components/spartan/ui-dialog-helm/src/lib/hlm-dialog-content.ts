@@ -19,7 +19,7 @@ export const dialogVariants = cva(
 				info: 'tw-border-link tw-border-4',
 				danger: '!tw-rounded-[20px] tw-border-[6px] !tw-border-red',
 				failure: 'tw-border-purple tw-border-2 tw-rounded-[10px]',
-				new_design: 'tw-border-purple tw-border-[5px] !tw-rounded-[10px] tw-max-w-[742px]',
+				quotas: 'tw-border-purple tw-border-[5px] !tw-rounded-[10px] tw-max-w-[742px]',
 			},
 		},
 		defaultVariants: {

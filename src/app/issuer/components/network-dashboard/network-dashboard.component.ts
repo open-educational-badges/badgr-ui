@@ -279,7 +279,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this._hlmDialogService.open(QuotaExceededDialog, {
 				context: {
 					issuer: this.network(),
-					variant: 'new_design',
+					variant: 'quotas',
 				},
 			});
 			return false;

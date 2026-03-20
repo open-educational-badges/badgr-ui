@@ -655,7 +655,7 @@ export class OebIssuerDetailComponent implements OnInit {
 				this._hlmDialogService.open(QuotaExceededDialog, {
 					context: {
 						issuer: issuer,
-						variant: 'new_design',
+						variant: 'quotas',
 					},
 				});
 				return false;

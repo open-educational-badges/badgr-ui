@@ -532,7 +532,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 			this._hlmDialogService.open(QuotaExceededDialog, {
 				context: {
 					issuer: this.issuer(),
-					variant: 'new_design',
+					variant: 'quotas',
 				},
 			});
 			return false;

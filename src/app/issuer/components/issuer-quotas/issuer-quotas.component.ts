@@ -98,7 +98,7 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 		this._hlmDialogService.open(QuotaExceededDialog, {
 			context: {
 				issuer: this.issuer,
-				variant: 'new_design',
+				variant: 'quotas',
 				page: 'upgrade',
 			},
 		});
