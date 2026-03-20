@@ -51,6 +51,7 @@ import {
 	SocialspaceViewState,
 } from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
 import { SvgIconComponent } from '~/common/components/svg-icon.component';
+import { NetworkDashboardApiService } from '~/dashboard/services/network-dashboard-api.service';
 @Component({
 	selector: 'network-dashboard',
 	templateUrl: './network-dashboard.component.html',
@@ -75,7 +76,7 @@ import { SvgIconComponent } from '~/common/components/svg-icon.component';
 		SvgIconComponent,
 	],
 })
-export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit, AfterContentInit {
+export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
 	private networkManager = inject(NetworkManager);
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
@@ -83,6 +84,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private publicApiService = inject(PublicApiService);
 	private messageService = inject(MessageService);
 	private networkApiService = inject(NetworkApiService);
+	private networkDashboardApi = inject(NetworkDashboardApiService);
 
 	networkLoaded: Promise<unknown>;
 	networkSlug: string;
@@ -110,6 +112,8 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	learnerSubView: { state: string; gender?: string; residence?: { city: string } } | null = null;
 
 	socialspaceSubView: { state: SocialspaceViewState; city?: string } | null = null;
+
+	networkDashboardAvailable = signal(false);
 
 	readonly overviewTemplate = viewChild<ElementRef>('overviewTemplate');
 	readonly partnerTemplate = viewChild<ElementRef>('partnerTemplate');
@@ -163,9 +167,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			];
 			this.crumbs = [...this.baseCrumbs];
 			this.initializeMenuItems();
-			if (this.templatesReady) {
-				this.initializeTabs();
-			}
+		});
+
+		const networkDashboardLoaded = this.networkDashboardApi.getKpis(this.networkSlug).subscribe((kpis) => {
+			this.networkDashboardAvailable.set(true);
+		});
+
+		Promise.all([this.networkLoaded, networkDashboardLoaded]).then(() => {
+			this.initializeTabs();
 		});
 	}
 
@@ -194,18 +203,16 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	private templatesReady = false;
 
-	ngAfterContentInit() {
-		this.templatesReady = true;
-		if (this.network()) {
-			this.initializeTabs();
-		}
-	}
-
 	private initializeTabs(): void {
 		const userRole = this.network()?.current_user_network_role;
 		const hasDashboardAccess = userRole === 'owner' || userRole === 'creator' || userRole === 'editor';
 
 		const baseTabs: Tab[] = [
+			{
+				key: 'overview',
+				title: 'General.overview',
+				component: this.overviewTemplate(),
+			},
 			{
 				key: 'partners',
 				title: 'Network.partnerIssuers',
@@ -225,11 +232,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 		const dashboardTabs: Tab[] = [
 			{
-				key: 'overview',
-				title: 'General.overview',
-				component: this.overviewTemplate(),
-			},
-			{
 				key: 'socialspace',
 				title: 'Network.Dashboard.socialspace.tabTitle',
 				component: this.socialspaceTemplate,
@@ -241,7 +243,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			},
 		];
 
-		if (hasDashboardAccess) {
+		if (this.networkDashboardAvailable() && hasDashboardAccess) {
 			this.tabs = [dashboardTabs[0], ...baseTabs, dashboardTabs[1], dashboardTabs[2]];
 		} else {
 			this.tabs = baseTabs;
