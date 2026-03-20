@@ -126,7 +126,8 @@
 		"start": "Start",
 		"end": "End",
 		"person": "person",
-		"persons": "persons"
+		"persons": "persons",
+		"via": "via"
 	},
 	"NavItems": {
 		"register": "Register",
@@ -1296,7 +1297,7 @@
 			"renewalNetwork": "Automatic quota renewal",
 			"renewalNetwork2": "The {{ quota }} package is valid for 12 months at a time and then renews automatically.",
 			"renewal": "Next automatic renewal",
-			"renewal2": "The contract will automatically renew for another year unless it is cancelled at least one month before the end of the term (via {{ email }}).",
+			"renewal2": "The contract will automatically renew for another year unless it is cancelled at least one month before the end of the term",
 			"renewal3": "The quota of the booked package is valid for 12 months and is renewed with contract extension."
 		},
 		"ReleaseInfoDialog": {

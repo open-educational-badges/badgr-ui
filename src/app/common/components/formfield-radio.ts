@@ -31,7 +31,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 
 			@if (sublabel) {
 				<p class="u-margin-left3p5x u-text-small u-margin-bottom2x">
-					<span [class]="{ 'tw-text-[#dedede]': disabled }">{{ sublabel }}</span>
+					<span [class]="{ 'tw-text-[var(--color-gray-100)]': disabled }">{{ sublabel }}</span>
 				</p>
 			}
 		</div>

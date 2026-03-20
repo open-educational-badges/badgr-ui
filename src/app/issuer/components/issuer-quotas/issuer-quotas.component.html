@@ -239,41 +239,35 @@
 						<span><time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time></span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-purple">
-						Das Kontingent des {{ issuer.quotas.name }}-Pakets gilt für jeweils 12 Monate und erneuert sich
-						dann automatisch.
+						{{ 'Quotas.page.renewalNetwork2' | translate }}
 					</p>
 				} @else {
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
-						<strong>Vertragsart</strong>
-						<span> Jahres-Abo (12 Monate Laufzeit)</span>
+						<strong>{{ 'Quotas.page.contractType' | translate }}</strong>
+						<span>{{ 'Quotas.page.contractTypeYear' | translate }}</span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
-						<strong>Abgeschlossen am</strong>
+						<strong>{{ 'Quotas.page.contractStart' | translate }}</strong>
 						<span><time [date]="issuer.quotas.periodStart" format="dd.MM.y"></time></span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
-						<strong>Nächste automatische Verlängerung</strong>
+						<strong>{{ 'Quotas.page.renewal' | translate }}</strong>
 						<span>
 							<time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time>
 						</span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-max-w-[750px] tw-mb-2">
-						<span>
-							Der Vertrag verlängert sich automatisch um ein weiteres Jahr, wenn er nicht spätestens einen
-							Monat vor Ende der Laufzeit gekündigt wird</span
-						>
+						<span>{{ 'Quotas.page.renewal2' | translate }}</span>
 						@if (email()) {
 							<span>
-								(über <a class="tw-text-link tw-underline" [href]="`mailto:${email()}`">{{ email() }}</a
+								({{ 'General.via' | translate }}
+								<a class="tw-text-link tw-underline" [href]="`mailto:${email()}`">{{ email() }}</a
 								>)</span
 							>
 						}
 						<span>.</span>
 						<br />
-						<span>
-							Das Kontingent des gebuchten Pakets gilt für jeweils 12 Monate und erneuert sich mit
-							Vertragsverlängerung.
-						</span>
+						<span>{{ 'Quotas.page.renewal3' | translate }}</span>
 					</p>
 				}
 			</section>

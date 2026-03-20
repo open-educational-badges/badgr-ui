@@ -126,7 +126,8 @@
 		"start": "Start",
 		"end": "Ende",
 		"person": "Person",
-		"persons": "Personen"
+		"persons": "Personen",
+		"via": "über"
 	},
 	"NavItems": {
 		"register": "Registrieren",
@@ -1295,7 +1296,7 @@
 			"renewalNetwork": "Automatische Erneuerung des Kontingents",
 			"renewalNetwork2": "Das Kontingent des {{ quota }}-Pakets gilt für jeweils 12 Monate und erneuert sich dann automatisch.",
 			"renewal": "Nächste automatische Verlängerung",
-			"renewal2": "Der Vertrag verlängert sich automatisch um ein weiteres Jahr, wenn er nicht spätestens einen Monat vor Ende der Laufzeit gekündigt wird (über {{ email }}).",
+			"renewal2": "Der Vertrag verlängert sich automatisch um ein weiteres Jahr, wenn er nicht spätestens einen Monat vor Ende der Laufzeit gekündigt wird",
 			"renewal3": "Das Kontingent des gebuchten Pakets gilt für jeweils 12 Monate und erneuert sich mit Vertragsverlängerung."
 		},
 		"ReleaseInfoDialog": {
