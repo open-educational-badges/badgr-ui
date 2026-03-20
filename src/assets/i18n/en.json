@@ -1261,7 +1261,7 @@
 		"packageFormOptionsENTERPRISE": "I want to upgrade to the ENTERPRISE package",
 		"packageFormOptionsNETWORK": "I want to upgrade this institution to the NETWORK package",
 		"packageFormOptionsError": "Please select a package",
-		"quotaRequestFormSubmitLabel": "Send request",
+		"requestFormSubmitLabel": "Send request",
 		"individualFormHeadline": "Request individual proposition",
 		"individualFormSubline": "<span class=\"tw-italic\">For individual requests, you will first receive a binding offer.</span><br><span class=\"tw-italic\">After your approval, we will activate OEB and send you the invoice.</span><br><span class=\"tw-font-bold tw-text-purple\">Feel free to book a call with us to discuss your concerns:</span><br><a href=\"https://calendar.app.google/8zp569CcogYP3eYK9\" class=\"tw-italic\">Book a call</a>",
 		"requestFormSuccess": "Thank you for your inquiry.<br><strong>We'll get back to you.</strong>",
