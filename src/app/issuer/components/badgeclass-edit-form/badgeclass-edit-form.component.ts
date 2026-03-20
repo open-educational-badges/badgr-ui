@@ -540,7 +540,7 @@ export class BadgeClassEditFormComponent
 		this.badgeClassForm.setValue({
 			badge_name: badgeClass.name,
 			badge_image: badgeClass.imageFrame ? badgeClass.image : null,
-			badge_customImage: !badgeClass.imageFrame ? badgeClass.image : null,
+			badge_customImage: null,
 			useIssuerImageInBadge: this.badgeClassForm.value.useIssuerImageInBadge,
 			badge_description: badgeClass.description,
 			badge_hours: badgeClass.extension['extensions:StudyLoadExtension']
@@ -601,11 +601,16 @@ export class BadgeClassEditFormComponent
 			? badgeClass.extension['extensions:OrgImageExtension'].OrgImage
 			: undefined;
 
-		setTimeout(() => {
+		setTimeout(async () => {
 			if (badgeClass.imageFrame) {
 				// regenerating the upload image for the issuer image in case it changed via copying
 				// or if it was not part of the badge image yet
 				this.generateUploadImage(this.currentImage, this.badgeClassForm.value, true, true);
+			} else if (badgeClass.image) {
+				const dataUrl = await this.urlToDataUrl(badgeClass.image);
+				this.currentImage = dataUrl;
+
+				this.customImageField.useDataUrl(dataUrl, 'BADGE', false, true);
 			}
 		}, 1);
 
@@ -744,6 +749,25 @@ export class BadgeClassEditFormComponent
 			this.initializeViewChildSubscriptions();
 			this.keywordCompetenciesViewChildrenInitialized = true;
 		}
+	}
+
+	private urlToDataUrl(url: string): Promise<string> {
+		return fetch(url, { credentials: 'include' })
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Failed to fetch image: ${url}`);
+				}
+				return response.blob();
+			})
+			.then(
+				(blob) =>
+					new Promise<string>((resolve, reject) => {
+						const reader = new FileReader();
+						reader.onload = () => resolve(reader.result as string);
+						reader.onerror = reject;
+						reader.readAsDataURL(blob);
+					}),
+			);
 	}
 
 	private initializeViewChildSubscriptions() {
