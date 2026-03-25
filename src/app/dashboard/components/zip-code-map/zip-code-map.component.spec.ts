@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
-import { PlzMapComponent, PlzRegion, PlzDetailMetrics } from './plz-map.component';
 import { By } from '@angular/platform-browser';
+import { ZipCodeDetailMetrics, ZipCodeMapComponent, ZipCodeRegion } from './zip-code-map.component';
 
 /**
  * Component Tests for PLZ Map
@@ -14,11 +14,11 @@ import { By } from '@angular/platform-browser';
  * - Grid layout logic
  * - Edge cases and error handling
  */
-describe('PlzMapComponent', () => {
-	let component: PlzMapComponent;
-	let fixture: ComponentFixture<PlzMapComponent>;
+describe('ZipCodeMapComponent', () => {
+	let component: ZipCodeMapComponent;
+	let fixture: ComponentFixture<ZipCodeMapComponent>;
 
-	const mockPlzData: PlzRegion[] = [
+	const mockPlzData: ZipCodeRegion[] = [
 		{ code: '80331-80339', name: 'Altstadt/Lehel', count: 245, percentage: 100 },
 		{ code: '80469-80539', name: 'Isarvorstadt/Haidhausen', count: 198, percentage: 81 },
 		{ code: '80634-80639', name: 'Neuhausen/Nymphenburg', count: 167, percentage: 68 },
@@ -28,10 +28,10 @@ describe('PlzMapComponent', () => {
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			imports: [CommonModule, PlzMapComponent],
+			imports: [CommonModule, ZipCodeMapComponent],
 		}).compileComponents();
 
-		fixture = TestBed.createComponent(PlzMapComponent);
+		fixture = TestBed.createComponent(ZipCodeMapComponent);
 		component = fixture.componentInstance;
 	});
 
@@ -43,23 +43,23 @@ describe('PlzMapComponent', () => {
 		it('should initialize with default Munich PLZ regions when no input provided', () => {
 			fixture.detectChanges();
 
-			expect(component.plzRegions).toBeDefined();
-			expect(component.plzRegions.length).toBe(10);
-			expect(component.plzRegions[0].name).toBeTruthy();
+			expect(component.zipCodeRegions).toBeDefined();
+			expect(component.zipCodeRegions.length).toBe(10);
+			expect(component.zipCodeRegions[0].name).toBeTruthy();
 		});
 
 		it('should use input plzData when provided', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			expect(component.plzRegions.length).toBe(mockPlzData.length);
+			expect(component.zipCodeRegions.length).toBe(mockPlzData.length);
 		});
 
 		it('should sort regions by count in descending order on init', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			const counts = component.plzRegions.map((r) => r.count);
+			const counts = component.zipCodeRegions.map((r) => r.count);
 			const sortedCounts = [...counts].sort((a, b) => b - a);
 			expect(counts).toEqual(sortedCounts);
 		});
@@ -68,10 +68,10 @@ describe('PlzMapComponent', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			const maxCount = component.plzRegions[0].count;
-			expect(component.plzRegions[0].percentage).toBe(100);
+			const maxCount = component.zipCodeRegions[0].count;
+			expect(component.zipCodeRegions[0].percentage).toBe(100);
 
-			component.plzRegions.forEach((region) => {
+			component.zipCodeRegions.forEach((region) => {
 				const expectedPercentage = (region.count / maxCount) * 100;
 				expect(region.percentage).toBeCloseTo(expectedPercentage, 1);
 			});
@@ -141,7 +141,7 @@ describe('PlzMapComponent', () => {
 		it('should handle click on first region', () => {
 			spyOn(component.plzClicked, 'emit');
 
-			const firstRegion = component.plzRegions[0];
+			const firstRegion = component.zipCodeRegions[0];
 			component.onPlzClick(firstRegion.code);
 
 			expect(component.plzClicked.emit).toHaveBeenCalledWith(firstRegion.code);
@@ -150,7 +150,7 @@ describe('PlzMapComponent', () => {
 		it('should handle click on last region', () => {
 			spyOn(component.plzClicked, 'emit');
 
-			const lastRegion = component.plzRegions[component.plzRegions.length - 1];
+			const lastRegion = component.zipCodeRegions[component.zipCodeRegions.length - 1];
 			component.onPlzClick(lastRegion.code);
 
 			expect(component.plzClicked.emit).toHaveBeenCalledWith(lastRegion.code);
@@ -263,7 +263,7 @@ describe('PlzMapComponent', () => {
 		});
 
 		it('should find label for all regions', () => {
-			component.plzRegions.forEach((region) => {
+			component.zipCodeRegions.forEach((region) => {
 				const label = component.getRegionLabel(region.code);
 				expect(label).toBe(region.name);
 			});
@@ -276,31 +276,31 @@ describe('PlzMapComponent', () => {
 			fixture.detectChanges();
 
 			// Should fall back to default Munich regions
-			expect(component.plzRegions.length).toBe(10);
+			expect(component.zipCodeRegions.length).toBe(10);
 		});
 
 		it('should handle single region', () => {
 			component.plzData = [mockPlzData[0]];
 			fixture.detectChanges();
 
-			expect(component.plzRegions.length).toBe(1);
-			expect(component.plzRegions[0].percentage).toBe(100);
+			expect(component.zipCodeRegions.length).toBe(1);
+			expect(component.zipCodeRegions[0].percentage).toBe(100);
 		});
 
 		it('should handle regions with zero count', () => {
-			const dataWithZero: PlzRegion[] = [
+			const dataWithZero: ZipCodeRegion[] = [
 				{ code: '80331', name: 'Test', count: 100, percentage: 100 },
 				{ code: '80332', name: 'Zero', count: 0, percentage: 0 },
 			];
 			component.plzData = dataWithZero;
 			fixture.detectChanges();
 
-			expect(component.plzRegions[1].count).toBe(0);
-			expect(component.plzRegions[1].percentage).toBe(0);
+			expect(component.zipCodeRegions[1].count).toBe(0);
+			expect(component.zipCodeRegions[1].percentage).toBe(0);
 		});
 
 		it('should handle equal counts across regions', () => {
-			const equalData: PlzRegion[] = [
+			const equalData: ZipCodeRegion[] = [
 				{ code: '80331', name: 'Region 1', count: 100, percentage: 100 },
 				{ code: '80332', name: 'Region 2', count: 100, percentage: 100 },
 				{ code: '80333', name: 'Region 3', count: 100, percentage: 100 },
@@ -308,18 +308,18 @@ describe('PlzMapComponent', () => {
 			component.plzData = equalData;
 			fixture.detectChanges();
 
-			component.plzRegions.forEach((region) => {
+			component.zipCodeRegions.forEach((region) => {
 				expect(region.percentage).toBe(100);
 			});
 		});
 
 		it('should not break when maxCount is zero', () => {
-			const zeroData: PlzRegion[] = [{ code: '80331', name: 'Zero Region', count: 0, percentage: 0 }];
+			const zeroData: ZipCodeRegion[] = [{ code: '80331', name: 'Zero Region', count: 0, percentage: 0 }];
 			component.plzData = zeroData;
 			fixture.detectChanges();
 
 			// Should use fallback value of 1 for maxCount
-			expect(component.plzRegions[0].percentage).toBe(0);
+			expect(component.zipCodeRegions[0].percentage).toBe(0);
 		});
 	});
 
@@ -337,7 +337,7 @@ describe('PlzMapComponent', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			component.plzRegions.forEach((region) => {
+			component.zipCodeRegions.forEach((region) => {
 				expect(region.code).toBeDefined();
 				expect(region.name).toBeDefined();
 				expect(region.count).toBeDefined();
@@ -349,10 +349,10 @@ describe('PlzMapComponent', () => {
 			component.plzData = mockPlzData;
 			fixture.detectChanges();
 
-			const maxCount = Math.max(...component.plzRegions.map((r) => r.count));
+			const maxCount = Math.max(...component.zipCodeRegions.map((r) => r.count));
 			expect(maxCount).toBeGreaterThan(0);
 
-			component.plzRegions.forEach((region) => {
+			component.zipCodeRegions.forEach((region) => {
 				const expectedPercentage = (region.count / maxCount) * 100;
 				expect(region.percentage).toBeCloseTo(expectedPercentage, 1);
 			});
@@ -414,8 +414,8 @@ describe('PlzMapComponent', () => {
 	});
 
 	describe('TypeScript Interface Compliance', () => {
-		it('PlzRegion interface should have all required properties', () => {
-			const validRegion: PlzRegion = {
+		it('ZipCodeRegion interface should have all required properties', () => {
+			const validRegion: ZipCodeRegion = {
 				code: '80331',
 				name: 'Test Region',
 				count: 100,
@@ -429,7 +429,7 @@ describe('PlzMapComponent', () => {
 		});
 
 		it('PlzDetailMetrics interface should support all detail fields', () => {
-			const validMetrics: PlzDetailMetrics = {
+			const validMetrics: ZipCodeDetailMetrics = {
 				code: '80331',
 				regionName: 'Test',
 				totalBadges: 100,
