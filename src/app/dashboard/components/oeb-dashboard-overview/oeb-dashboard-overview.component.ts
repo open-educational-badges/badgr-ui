@@ -1,4 +1,18 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, signal, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
+import {
+	Component,
+	OnInit,
+	Input,
+	Output,
+	EventEmitter,
+	OnDestroy,
+	signal,
+	OnChanges,
+	SimpleChanges,
+	ViewChild,
+	ElementRef,
+	AfterViewInit,
+	inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';

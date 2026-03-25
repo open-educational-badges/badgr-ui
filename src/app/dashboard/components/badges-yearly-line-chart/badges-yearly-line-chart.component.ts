@@ -1,4 +1,16 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges, OnDestroy, inject } from '@angular/core';
+import {
+	Component,
+	Input,
+	Output,
+	EventEmitter,
+	ViewChild,
+	ElementRef,
+	AfterViewInit,
+	OnChanges,
+	SimpleChanges,
+	OnDestroy,
+	inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
