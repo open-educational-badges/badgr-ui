@@ -83,7 +83,7 @@
 								barValueSuffix="%"
 								[showAfterBarText]="true"
 								afterBarTranslationKey="Dashboard.Learners.learners"
-								[clickable]="true"
+								[clickable]="!disableClick"
 								(itemClick)="onResidenceBarClick($event)"
 								variant="neutral"
 							>
@@ -119,7 +119,7 @@
 								barValueSuffix="%"
 								[showAfterBarText]="true"
 								afterBarTranslationKey="Dashboard.Learners.learners"
-								[clickable]="true"
+								[clickable]="!disableClick"
 								(itemClick)="onGenderBarClick($event)"
 								variant="neutral"
 							>

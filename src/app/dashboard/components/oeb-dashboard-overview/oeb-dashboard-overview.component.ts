@@ -111,6 +111,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 	// Network slug - if provided, load network-specific data
 	@Input() networkSlug?: string;
+	@Input() isNetwork?: boolean = true;
 
 	// The 5 main KPIs that should be displayed
 	@Input() kpis: KPIData[] = [];
@@ -1216,7 +1217,11 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 */
 	navigateToCompetencyTracking(): void {
 		if (this.networkSlug) {
-			this.router.navigate(['/issuer/networks', this.networkSlug, 'competency-tracking']);
+			this.router.navigate([
+				`/issuer/${this.isNetwork ? 'networks' : 'issuers'}`,
+				this.networkSlug,
+				'competency-tracking',
+			]);
 		}
 	}
 

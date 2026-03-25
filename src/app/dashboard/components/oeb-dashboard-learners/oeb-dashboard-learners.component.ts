@@ -77,6 +77,7 @@ export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
 
 	/** Network slug for API calls */
 	@Input() networkSlug: string = '';
+	@Input() disableClick: boolean = false;
 
 	/** Total number of learners */
 	totalLearners = 0;

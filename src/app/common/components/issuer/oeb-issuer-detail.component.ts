@@ -60,6 +60,8 @@ import { QuotaInformationComponent } from '~/issuer/components/quota-information
 import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { Network } from '~/issuer/network.model';
+import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
+import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -88,6 +90,8 @@ import { Network } from '~/issuer/network.model';
 		NgTemplateOutlet,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
+		OebDashboardOverviewComponent,
+		OebDashboardLearnersComponent,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit {
@@ -165,11 +169,12 @@ export class OebIssuerDetailComponent implements OnInit {
 	sharedBadgeSlugs = new Set<string>();
 
 	tabs: Tab[] = undefined;
-	activeTab = 'badges';
+	activeTab = 'dashboard';
 
 	badgeTemplateTabs: any = undefined;
 	activeTabBadgeTemplate = 'issuer-badges';
 
+	readonly dashboardTemplate = viewChild<TemplateRef<any>>('dashboardTemplate');
 	readonly badgesTemplate = viewChild<TemplateRef<any>>('badgesTemplate');
 	readonly learningPathTemplate = viewChild<TemplateRef<any>>('learningPathTemplate');
 	readonly issuerBadgesTemplate = viewChild<TemplateRef<any>>('issuerBadgesTemplate');
@@ -485,6 +490,11 @@ export class OebIssuerDetailComponent implements OnInit {
 		}
 
 		this.tabs = [
+			{
+				key: 'dashboard',
+				title: 'NavItems.dashboard',
+				component: this.dashboardTemplate(),
+			},
 			{
 				key: 'badges',
 				title: 'Badges',
