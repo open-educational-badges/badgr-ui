@@ -107,7 +107,7 @@ export class SessionService implements AuthenticationService {
 			});
 	}
 
-	private refreshTokenTimeout?: NodeJS.Timeout;
+	private refreshTokenTimeout?: ReturnType<typeof setTimeout>;
 
 	startRefreshTokenTimer(expiresIn: number) {
 		const timeout = (expiresIn - 60) * 1000;
