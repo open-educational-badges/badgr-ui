@@ -1,0 +1,369 @@
+<div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px] tw-gap-8 tw-text-[18px]/[1.3em]">
+	<div class="dialog-x-box o-container tw-text-oebblack">
+		@if (page() === 'start') {
+			@if (network()) {
+				<hlm-dialog-header>
+					<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-mb-6">
+						{{ 'Quotas.exceedDialogUseNetwork' | translate }}
+					</h2>
+				</hlm-dialog-header>
+				<div class="tw-flex tw-flex-row tw-items-center tw-gap-8">
+					<img src="assets/oeb/images/network/network_circle.svg" width="152" />
+					<div>
+						<p [innerHTML]="'Quotas.exceedDialogNetworkText' | translate"></p>
+						@if (!isWebcomponentContext) {
+							<p class="tw-mt-4">
+								<a
+									class="tw-text-link tw-underline tw-font-bold tw-flex tw-flex-row tw-items-center"
+									(click)="closeDialog()"
+									[routerLink]="[`/issuer/networks/${network().slug}`]"
+								>
+									<ng-icon size="24px" hlm name="lucideCircleChevronRight" class="tw-mr-1"></ng-icon>
+									{{ 'Quotas.exceedDialogVisitNetwork' | translate }}
+								</a>
+							</p>
+						}
+					</div>
+				</div>
+				<hr class="tw-border-dashed tw-my-8" />
+			}
+			@if (quota()) {
+				@if (!network()) {
+					<hlm-dialog-header>
+						<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+							{{ 'Quotas.nextLevelHeadline' | translate }}
+						</h2>
+					</hlm-dialog-header>
+				}
+
+				<div class="category u-margin-top2x warning">
+					<div class="tw-flex tw-gap-8">
+						<div>
+							<figure>
+								<img
+									[src]="`assets/oeb/images/quotas/logo_${quota().key.toLowerCase()}.svg`"
+									width="152"
+								/>
+								<figcaption class="tw-text-center tw-pr-3 tw-w-[152px]">
+									<h3
+										class="tw-font-bold tw-text-[18px]/[1.2em] tw-mt-2"
+										[class]="{
+											'tw-text-yellow': quota().key === 'PRO',
+											'tw-text-green': quota().key === 'ENTERPRISE',
+										}"
+									>
+										{{ quota().name }}
+									</h3>
+									<p class="tw-font-semibold tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2">
+										{{
+											quota().price
+												| number
+													: '1.0-0'
+													: (this.translate.currentLang === 'de' ? 'de-DE' : 'en-US')
+										}}{{ 'Quotas.euroPerYear' | translate }}
+									</p>
+								</figcaption>
+							</figure>
+						</div>
+						<div>
+							@if (!network()) {
+								<h2
+									class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold"
+									[innerHTML]="'Quotas.upgradeToPackage' | translate: { package: quota()?.name }"
+								></h2>
+							} @else {
+								<h2
+									class="tw-mb-8 tw-text-[22px]/[1.2em] tw-font-semibold"
+									[innerHTML]="'Quotas.networkOrUpgrade' | translate: { package: quota()?.name }"
+								></h2>
+							}
+							@if (quota()) {
+								<div class="tw-mb-8">
+									<h3 class="tw-underline tw-text-[18px]/[1.2em] tw-mb-2 tw-font-bold">
+										{{ 'Quotas.nextQuotasProsHeadline' | translate }}
+									</h3>
+									<ul>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsBadges' +
+													(quota().badge_create <= 0 ? 'Unlimited' : '')
+													| translate: { value: formatNumber(quota().badge_create) }
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsLearningpaths' +
+													(quota().learningpath_create <= 0 ? 'Unlimited' : '')
+													| translate: { value: formatNumber(quota().learningpath_create) }
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsAwards' +
+													(quota().badge_award <= 0 ? 'Unlimited' : '')
+													| translate: { value: formatNumber(quota().badge_award) }
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsAdmins' +
+													(quota().accounts_admin <= 0 ? 'Unlimited' : '')
+													| translate: { value: formatNumber(quota().accounts_admin) }
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsMembers' +
+													(quota().accounts_member <= 0 ? 'Unlimited' : '')
+													| translate: { value: formatNumber(quota().accounts_member) }
+											"
+										></li>
+										<li
+											[innerHTML]="
+												'Quotas.nextQuotasProsKI' +
+													(quota().aiskills_requests <= 0 ? 'Unlimited' : '')
+													| translate: { value: formatNumber(quota().aiskills_requests) }
+											"
+										></li>
+										@if (quota().pdfeditor) {
+											<li [innerHTML]="'Quotas.nextQuotasProsPdfeditor' | translate"></li>
+										}
+										@if (quota().dashboard) {
+											<li [innerHTML]="'Quotas.nextQuotasProsDashboard' | translate"></li>
+										}
+									</ul>
+								</div>
+							}
+							@if (!isWebcomponentContext) {
+								<p class="tw-mb-8">
+									<a
+										class="tw-text-right tw-text-link tw-underline tw-mt-6"
+										target="_blank"
+										[href]="
+											this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'
+										"
+										>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
+									>
+								</p>
+								<div class="tw-max-w-[390px]">
+									<oeb-button
+										text="Upgrade anfragen"
+										width="full_width"
+										(click)="changePage('upgrade')"
+									/>
+									@if (quota().badge_create <= 0) {
+										<div class="tw-mt-8 tw-text-[14px]/[1.2em] tw-text-grey">
+											* {{ 'Quotas.nextQuotasProsBadgesUnlimitedFairUse' | translate }}
+										</div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			} @else {
+				@if (!network()) {
+					<hlm-dialog-header>
+						<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-text-center tw-mb-8">
+							{{ 'Quotas.exceedDialogUpperLimitHeadline' | translate }}
+						</h2>
+					</hlm-dialog-header>
+				} @else {
+					<h2
+						class="tw-text-oebblack tw-uppercase tw-font-semibold tw-text-center tw-text-[18px]/[1.2em] tw-mb-4"
+					>
+						{{ 'General.or' | translate }}:
+					</h2>
+				}
+
+				<div class="category warning tw-text-center">
+					<div class="tw-pb-8">
+						@if (!network()) {
+							<p class="tw-font-bold">
+								{{ 'Quotas.exceedDialogUpperLimitSubline' | translate }}
+							</p>
+						}
+						<p class="tw-italic tw-text-purple tw-max-w-[480px] tw-m-auto">
+							{{ 'Quotas.exceedDialogUpperLimitCta' | translate }}
+						</p>
+					</div>
+					<div class="tw-flex tw-justify-center tw-gap-2">
+						<oeb-button size="sm" text="Abbrechen" variant="secondary" (click)="closeDialog()" />
+						<oeb-button size="sm" [text]="'Quotas.emailOEB' | translate" (click)="emailOEB()" />
+					</div>
+				</div>
+			}
+		}
+		@if (page() === 'upgrade') {
+			<hlm-dialog-header>
+				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+					{{ 'Quotas.requestUpgrade' | translate }}
+				</h2>
+			</hlm-dialog-header>
+
+			<div class="tw-mt-8">
+				<form
+					class="tw-w-full"
+					[formGroup]="upgradeRequestForm.rawControl"
+					(ngSubmit)="onSubmitPackage()"
+					novalidate
+				>
+					<oeb-input
+						[label]="'Quotas.requestFormNameFieldLabel' | translate"
+						[control]="upgradeRequestForm.rawControlMap.name"
+						[readonly]="true"
+						[noTopMargin]="true"
+					></oeb-input>
+
+					<oeb-input
+						class="tw-block tw-pt-1"
+						[label]="'Quotas.requestFormEmailFieldLabel' | translate"
+						[control]="upgradeRequestForm.rawControlMap.email"
+						[readonly]="true"
+					></oeb-input>
+
+					<oeb-select
+						class="tw-block tw-pt-1"
+						[label]="'Quotas.requestFormIssuerFieldLabel' | translate"
+						[options]="issuerOptions"
+						[control]="upgradeRequestForm.rawControlMap.issuer"
+						[disabled]="true"
+					></oeb-select>
+
+					<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
+						<label class="tw-block tw-pb-[2px] tw-pl-[3px]">
+							<span
+								class="tw-text-oebblack tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]"
+							>
+								{{ 'Quotas.packageFormOptionsLabel' | translate }}
+							</span>
+						</label>
+
+						<div class="tw-mt-6">
+							@for (package of packageOptions; track package; let last = $last) {
+								@if (package.value !== 'NETWORK') {
+									<bg-formfield-radio
+										class="tw-mt-4"
+										[control]="upgradeRequestForm.rawControlMap.package"
+										name="package"
+										label="{{ package.label | translate }}"
+										[value]="package.value"
+										[last]="last"
+										errorMessage="{{ 'Quotas.packageFormOptionsError' | translate }}"
+									></bg-formfield-radio>
+								}
+							}
+						</div>
+					</div>
+
+					<oeb-button
+						type="submit"
+						[text]="'Quotas.requestFormSubmitLabel' | translate"
+						[disabled]="upgradeRequestForm.invalid"
+						width="full_width"
+						[disabled]="loading()"
+					>
+						{{ 'Quotas.requestFormSubmitLabel' | translate }}
+					</oeb-button>
+				</form>
+			</div>
+		}
+
+		@if (page() === 'network') {
+			<hlm-dialog-header>
+				<h2 hlmH2 class="oeb !tw-text-oebblack tw-uppercase tw-font-black">
+					{{ 'Quotas.requestNetwork' | translate }}
+				</h2>
+			</hlm-dialog-header>
+
+			<div class="tw-mt-8">
+				@if (issuer()) {
+					<form
+						class="tw-w-full"
+						[formGroup]="upgradeRequestForm.rawControl"
+						(ngSubmit)="onSubmitPackage()"
+						novalidate
+					>
+						<oeb-input
+							[label]="'Quotas.requestFormNameFieldLabel' | translate"
+							[control]="upgradeRequestForm.rawControlMap.name"
+							[readonly]="true"
+							[noTopMargin]="true"
+						></oeb-input>
+
+						<oeb-input
+							class="tw-block tw-pt-1"
+							[label]="'Quotas.requestFormEmailFieldLabel' | translate"
+							[control]="upgradeRequestForm.rawControlMap.email"
+							[readonly]="true"
+						></oeb-input>
+
+						<oeb-select
+							class="tw-block tw-pt-1 tw-text-oebblack notdisabled"
+							[label]="'Quotas.requestFormIssuerFieldLabel' | translate"
+							[options]="issuerOptions"
+							[control]="upgradeRequestForm.rawControlMap.issuer"
+						></oeb-select>
+
+						<div class="tw-mt-7 md:tw-mt-8 tw-mb-7 md:tw-mb-8">
+							<label class="tw-block tw-pb-[2px] tw-pl-[3px]">
+								<span
+									class="tw-text-oebblack tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]"
+								>
+									{{ 'Quotas.packageFormOptionsLabel' | translate }}
+								</span>
+							</label>
+
+							<div class="tw-mt-6">
+								@for (package of packageOptions; track package; let last = $last) {
+									@if (package.value === 'NETWORK') {
+										<bg-formfield-radio
+											class="tw-mt-4"
+											[control]="upgradeRequestForm.rawControlMap.package"
+											name="package"
+											label="{{ package.label | translate }}"
+											[value]="package.value"
+											[last]="last"
+											errorMessage="{{ 'Quotas.packageFormOptionsError' | translate }}"
+										></bg-formfield-radio>
+									}
+								}
+							</div>
+						</div>
+
+						<oeb-button
+							type="submit"
+							[text]="'Quotas.requestFormSubmitLabel' | translate"
+							[disabled]="upgradeRequestForm.invalid"
+							width="full_width"
+						>
+							{{ 'Quotas.requestFormSubmitLabel' | translate }}
+						</oeb-button>
+					</form>
+				} @else {
+					<p>{{ 'Quotas.upgradeOnlyOwner' | translate }}</p>
+				}
+			</div>
+		}
+
+		@if (page() === 'success') {
+			<div variant="success" class="tw-text-center tw-text-purple tw-mt-[-59px] tw-mx-10">
+				<div class="tw-flex tw-justify-center">
+					<div class="oeb-icon-circle tw-my-6">
+						<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+							<circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+							<path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+						</svg>
+					</div>
+				</div>
+				<p
+					class="tw-text-oebblack tw-text-[18px]/[1.3em]"
+					[innerHTML]="'Quotas.requestFormSuccess' | translate"
+				></p>
+				<oeb-button class="tw-block tw-mt-8" type="button" text="OK" size="sm" (click)="closeDialog()">
+					OK
+				</oeb-button>
+			</div>
+		}
+	</div>
+</div>

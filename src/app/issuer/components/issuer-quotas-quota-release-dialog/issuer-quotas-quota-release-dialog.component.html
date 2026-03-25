@@ -1,0 +1,41 @@
+<div class="oeb tw-px-10 tw-pb-10 tw-pt-[75px]">
+	<div class="dialog-x-box o-container tw-text-oebblack">
+		<hlm-dialog-header class="tw-mb-6">
+			<div class="tw-flex tw-flex-row tw-gap-6 tw-items-center">
+				<img src="/assets/oeb/images/badgy.svg" style="width: 120px; height: 100px" />
+				<h2 hlmH2 class="tw-font-bold">{{ 'Quotas.ReleaseInfoDialog.headline' | translate }}</h2>
+			</div>
+		</hlm-dialog-header>
+
+		<p class="tw-mb-6">
+			{{ 'Quotas.ReleaseInfoDialog.text1' | translate }}
+		</p>
+
+		<p class="tw-font-bold tw-text-purple">{{ 'Quotas.ReleaseInfoDialog.listHeadline' | translate }}</p>
+		<ul class="tw-text-purple tw-mb-6">
+			<li [innerHTML]="'Quotas.ReleaseInfoDialog.list1' | translate"></li>
+			<li [innerHTML]="'Quotas.ReleaseInfoDialog.list2' | translate"></li>
+			<li [innerHTML]="'Quotas.ReleaseInfoDialog.list3' | translate: { email: email() }"></li>
+		</ul>
+
+		<p class="tw-mb-6">
+			{{ 'Quotas.ReleaseInfoDialog.text2' | translate }}
+			@if (issuer()) {
+				<a class="tw-text-link tw-underline" [href]="`/issuer/issuers/${issuer().slug}/quotas`">{{
+					'Quotas.QuotasMenuItem' | translate
+				}}</a>
+			} @else {
+				{{ 'Quotas.QuotasMenuItem' | translate }}
+			}
+		</p>
+
+		<p class="tw-mb-6">
+			<strong>{{ 'Quotas.ReleaseInfoDialog.text3' | translate }}</strong>
+		</p>
+
+		<div class="tw-flex tw-flex-row tw-gap-4">
+			<oeb-button size="sm" [text]="'General.close' | translate" variant="secondary" (click)="closeDialog()" />
+			<oeb-button size="sm" [text]="'Quotas.ReleaseInfoDialog.cta' | translate" (click)="showPackages()" />
+		</div>
+	</div>
+</div>

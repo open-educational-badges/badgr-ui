@@ -91,17 +91,31 @@ export class IssuerManager {
 				issuers.find((i) => i.slug === issuerSlug) || this.throwError(`Issuer Slug '${issuerSlug}' not found`),
 		);
 	}
+	networkBySlug(networkSlug: IssuerSlug): Promise<Network> {
+		return firstValueFrom(
+			this.networksList.loaded$.pipe(
+				catchError((err: any) => of()),
+				map((l) => l.entities),
+			),
+		).then(
+			(issuers) =>
+				issuers.find((i) => i.slug === networkSlug) ||
+				this.throwError(`Network Slug '${networkSlug}' not found`),
+		);
+	}
 
 	issuerOrNetworkBySlug(issuerSlug: IssuerSlug): Promise<Issuer | Network> {
 		try {
-			const loadIssuer = this.issuerApiService.getIssuer(issuerSlug);
-			const loadNetwork = this.networkApiService.getNetwork(issuerSlug);
+			const loadIssuer = this.issuerBySlug(issuerSlug);
+			const loadNetwork = this.networkBySlug(issuerSlug);
 			return Promise.allSettled([loadIssuer, loadNetwork]).then(([i, n]) => {
-				if (i.status === 'fulfilled' && !i.value.is_network)
-					return new Issuer(this.commonEntityManager, i.value);
+				if (i.status === 'fulfilled' && !i.value.is_network) return i.value;
 				else if (i.status === 'fulfilled' && i.value.is_network) {
-					if (n.status === 'fulfilled') return new Network(this.commonEntityManager, n.value);
-					else throw new Error('Could not properly load network information');
+					if (n.status === 'fulfilled') {
+						return n.value;
+					} else {
+						throw new Error('Could not properly load network information');
+					}
 				}
 			});
 		} catch (e) {

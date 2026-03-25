@@ -22,6 +22,7 @@ import { NetworkInviteConfirmationComponent } from './components/network-invite-
 import { NetworkEditComponent } from './components/network-edit/network-edit.component';
 import { NetworkBadgeAnalysisComponent } from './components/network-badge-analysis/network-badge-analysis.component';
 import { NetworkCompetencyTrackingComponent } from './components/network-competency-tracking/network-competency-tracking.component';
+import { IssuerQuotasComponent } from './components/issuer-quotas/issuer-quotas.component';
 
 export const routes = [
 	/* Issuer */
@@ -128,6 +129,14 @@ export const routes = [
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/bulk-import',
 		component: BadgeClassIssueBulkAwardComponent,
+	},
+	{
+		path: 'issuers/:issuerSlug/quotas',
+		component: IssuerQuotasComponent,
+	},
+	{
+		path: 'networks/:issuerSlug/quotas',
+		component: IssuerQuotasComponent,
 	},
 	{
 		path: '**',

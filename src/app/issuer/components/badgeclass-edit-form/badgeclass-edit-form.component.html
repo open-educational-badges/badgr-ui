@@ -312,7 +312,7 @@
 											>{{ 'CreateBadge.aiAssistant' | translate }}
 											<img
 												class="tw-absolute tw--top-10 tw--right-16 tw-w-16 tw-h-16"
-												src="assets/oeb/images/badge/icon-ai-skills.svg"
+												src="assets/oeb/images/badge/icon-ai-skills-green.svg"
 											/>
 										</span>
 										<p class="tw-my-2 tw-mb-0 tw-italic tw-text-[var(--color-purple)]">
@@ -359,7 +359,13 @@
 													</span>
 												}
 											</div>
-											<div class="tw-mt-4 tw-flex tw-gap-4">
+											@if (issuer.quotas) {
+												<quota-information
+													quotas="AISKILLS_REQUESTS"
+													class="tw-inline-block tw-bg-white tw-text-[18px]/[1.3em] tw-italic tw-mt-6 tw-py-1 tw-px-2 tw-rounded-[4px]"
+												/>
+											}
+											<div class="tw-mt-6 tw-flex tw-gap-4">
 												<oeb-button
 													[id]="'suggest-competencies-btn'"
 													class="tw-whitespace-nowrap"

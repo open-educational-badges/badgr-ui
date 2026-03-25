@@ -69,6 +69,8 @@ import {
 	lucideFolderInput,
 	lucideSquarePen,
 	lucideHousePlus,
+	lucidePuzzle,
+	lucideCircleChevronRight,
 } from '@ng-icons/lucide';
 
 export const IconsProvider = provideIcons({
@@ -141,4 +143,6 @@ export const IconsProvider = provideIcons({
 	lucideFolderInput,
 	lucideSquarePen,
 	lucideHousePlus,
+	lucidePuzzle,
+	lucideCircleChevronRight,
 });
