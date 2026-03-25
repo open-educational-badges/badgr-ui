@@ -272,12 +272,6 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		}));
 	}
 
-	ngAfterViewInit(): void {
-		// Chart will be rendered when data loading completes and content is visible
-		// The @else block containing the chart SVG is only in DOM when !isLoading()
-		// So we trigger chart rendering after loading completes
-	}
-
 	/**
 	 * Schedules chart rendering after DOM is updated
 	 * NOTE: Disabled - chart rendering is now handled by BadgesYearlyLineChartComponent

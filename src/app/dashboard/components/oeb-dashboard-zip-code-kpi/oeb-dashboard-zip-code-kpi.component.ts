@@ -24,7 +24,7 @@ import { ZipCodeStatisticsData } from '../../models/dashboard-models';
 	templateUrl: './oeb-dashboard-zip-code-kpi.component.html',
 	styleUrls: ['./oeb-dashboard-zip-code-kpi.component.scss'],
 })
-export class OebDashboardZipCodeKpiComponent implements OnInit {
+export class OebDashboardZipCodeKpiComponent {
 	private router = inject(Router);
 
 	/** ZIP code statistics data */
@@ -42,10 +42,6 @@ export class OebDashboardZipCodeKpiComponent implements OnInit {
 	/** @deprecated Use totalZipCodeAreas instead */
 	@Input() set totalPlzAreas(value: number) {
 		this.totalZipCodeAreas = value;
-	}
-
-	ngOnInit(): void {
-		// Component initialization
 	}
 
 	/**

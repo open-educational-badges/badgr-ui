@@ -200,7 +200,7 @@ export class BadgesYearlyLineChartComponent implements AfterViewInit, OnChanges,
 	/**
 	 * Debounce helper to prevent excessive re-renders on rapid resize events
 	 */
-	private debounce(func: Function, wait: number): () => void {
+	private debounce(func: () => void, wait: number): () => void {
 		let timeout: any;
 		return () => {
 			clearTimeout(timeout);

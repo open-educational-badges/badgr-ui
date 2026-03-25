@@ -184,10 +184,7 @@ export interface MonthlyBadgeData {
 	templateUrl: './network-badge-analysis.component.html',
 	styleUrls: ['./network-badge-analysis.component.scss'],
 })
-export class NetworkBadgeAnalysisComponent
-	extends BaseAuthenticatedRoutableComponent
-	implements OnInit, AfterViewInit, OnDestroy
-{
+export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComponent implements OnInit, OnDestroy {
 	private networkManager = inject(NetworkManager);
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
@@ -631,8 +628,6 @@ export class NetworkBadgeAnalysisComponent
 			};
 		});
 	}
-
-	ngAfterViewInit(): void {}
 
 	ngOnDestroy(): void {
 		this.destroy$.next();
