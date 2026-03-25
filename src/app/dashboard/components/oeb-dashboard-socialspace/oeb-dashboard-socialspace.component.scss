@@ -54,7 +54,7 @@
 .kpi-card {
 	width: 100%;
 	height: 100%;
-	background-color: #F5F5F5;
+	background-color: #f5f5f5;
 	border-radius: 10px;
 	padding: 20px;
 	cursor: default;
@@ -107,7 +107,7 @@
 		font-weight: 900;
 		font-size: 32pt;
 		line-height: 1;
-		color: #492E98;
+		color: #492e98;
 	}
 
 	&__description {
@@ -126,16 +126,16 @@
 		font-family: 'Rubik', sans-serif;
 		font-weight: 500;
 		font-size: 10pt;
-		color: #492E98;
+		color: #492e98;
 		align-self: flex-end;
 		margin-top: 8px;
 
 		&.positive {
-			color: #492E98;
+			color: #492e98;
 		}
 
 		&.negative {
-			color: #EF4444;
+			color: #ef4444;
 		}
 	}
 
@@ -171,10 +171,10 @@
 		}
 
 		&:hover {
-			border-color: #492E98;
+			border-color: #492e98;
 
 			.kpi-card__arrow {
-				background-color: #492E98;
+				background-color: #492e98;
 
 				svg {
 					stroke: white;
@@ -185,7 +185,7 @@
 
 		&:focus {
 			outline: none;
-			border-color: #492E98;
+			border-color: #492e98;
 		}
 
 		&:active {

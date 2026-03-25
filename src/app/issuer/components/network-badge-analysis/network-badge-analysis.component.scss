@@ -10,7 +10,9 @@
 	perspective: 1000px;
 
 	.podium-item {
-		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
 
 		&:hover {
 			transform: translateY(-4px) scale(1.02);
@@ -21,12 +23,7 @@
 
 // Podium shimmer effect for 1st place
 .podium-shimmer {
-	background: linear-gradient(
-		90deg,
-		transparent 0%,
-		rgba(255, 255, 255, 0.2) 50%,
-		transparent 100%
-	);
+	background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
 	background-size: 200% 100%;
 	animation: shimmer 2s infinite;
 }
@@ -42,7 +39,9 @@
 
 // Badge type statistics card styles
 .badge-type-card {
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
 
 	&:hover {
 		transform: translateY(-2px);
