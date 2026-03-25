@@ -74,7 +74,6 @@ import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issu
 		RouterLink,
 		NgClass,
 		SvgIconComponent,
-		OebDropdownComponent,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
 		OebDashboardOverviewComponent,
@@ -252,12 +251,9 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		];
 
 		if (this.networkDashboardAvailable() && hasDashboardAccess) {
-			this.tabs = [dashboardTabs[0], ...baseTabs, dashboardTabs[1], dashboardTabs[2]];
+			this.tabs = [...baseTabs, ...dashboardTabs];
 		} else {
 			this.tabs = baseTabs;
-			if (this.activeTab === 'overview' || this.activeTab === 'socialspace' || this.activeTab === 'learners') {
-				this.activeTab = 'partners';
-			}
 		}
 	}
 
