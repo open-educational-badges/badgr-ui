@@ -15,11 +15,18 @@ import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Network } from '~/issuer/network.model';
 import { Router } from '@angular/router';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 
 @Component({
 	selector: 'network-partners',
 	templateUrl: './network-partners.component.html',
-	imports: [TranslatePipe, OebButtonComponent, NetworkPartnersDatatableComponent, NetworkInvitesDatatableComponent],
+	imports: [
+		TranslatePipe,
+		OebButtonComponent,
+		NetworkPartnersDatatableComponent,
+		NetworkInvitesDatatableComponent,
+		QuotaInformationComponent,
+	],
 })
 export class NetworkPartnersComponent {
 	private networkApiService = inject(NetworkApiService);
@@ -111,6 +118,10 @@ export class NetworkPartnersComponent {
 				this.pendingInvites.update((current) =>
 					current.filter((invitation) => invitation.entity_id !== invite.entity_id),
 				);
+				// update network to refresh quotas
+				if (this.network().quotas) {
+					this.network().update();
+				}
 			}
 		} catch (error) {
 			console.error('Failed to revoke invitation:', error);

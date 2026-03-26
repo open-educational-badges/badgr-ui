@@ -106,13 +106,11 @@ export class LearningPathV3 implements ILearningPathV3 {
 	}
 
 	get isCompleted(): boolean {
-		return this.progress !== null && this.progress >= this.required_badges_count;
+		return this.progress !== null && this.progress >= 100;
 	}
 
 	get progressPercentage(): number | null {
-		if (this.progress === null) return null;
-		const totalBadges = this.badges.length;
-		return totalBadges > 0 ? Math.round((this.progress / totalBadges) * 100) : 0;
+		return this.progress ?? null;
 	}
 
 	get badgeSlugs(): string[] {

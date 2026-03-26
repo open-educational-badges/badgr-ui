@@ -7,6 +7,7 @@ import {
 	IssuerStaffRoleSlug,
 	IssuerUrl,
 	ApiNetwork,
+	ApiQuotas,
 } from './issuer-api.model';
 import { ManagedEntity } from '../../common/model/managed-entity';
 import { ApiEntityRef } from '../../common/model/entity-ref';
@@ -120,6 +121,19 @@ export class Issuer extends ManagedEntity<ApiIssuer, IssuerRef> {
 
 	get is_network(): boolean {
 		return this.apiModel.is_network;
+	}
+
+	get quotas(): ApiQuotas {
+		return this.apiModel.quotas;
+	}
+
+	public addQuota(quota: string) {
+		if (this.apiModel.quotas?.quotas[quota]) {
+			this.apiModel.quotas.quotas[quota].used += 1;
+			this.apiModel.quotas.quotas[quota].quota -= 1;
+
+			this.applyApiModel(this.apiModel);
+		}
 	}
 
 	get badgeClassCount(): number {

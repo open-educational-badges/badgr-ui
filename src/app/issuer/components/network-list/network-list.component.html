@@ -1,26 +1,82 @@
 <ng-container>
-	@if (networks().length === 0) {
-		<p class="tw-pb-4 tw-mt-10 tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%]">
-			<span class="tw-font-bold tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
-			<span class="tw-mt-1" [innerHTML]="'Network.networksUseBadgesTogether' | translate"></span>
-			<span class="tw-pb-4" [innerHTML]="'Network.networkLogoOnBadge' | translate"></span>
-			<span class="tw-italic tw-text-purple" [innerHTML]="'Network.youCanAddInstitutions' | translate"></span>
-		</p>
-		<oeb-button
-			[routerLink]="['/issuer/networks/create']"
-			[disabled-when-requesting]="true"
-			[text]="'Network.create' | translate"
-		></oeb-button>
-	} @else {
-		<span class="tw-mt-8 tw-flex tw-text-oebblack tw-text-lg">{{
-			'Issuer.yourIssuersAreInNetworks' | translate
-		}}</span>
-		<div class="md:tw-flex tw-mt-4">
-			<div class="tw-grid tw-grid-cols-myIssuersMobile sm:tw-grid-cols-myIssuers tw-gap-6 tw-w-full tw-relative">
-				@for (network of networks(); track network) {
-					<oeb-issuer-network-card [issuerOrNetwork]="network" (navigate)="handleNavigate($event, network)" />
+	@if (!loading()) {
+		@if (networks().length === 0) {
+			@if (!canList()) {
+				<p
+					class="tw-pb-4 tw-mt-10 tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]"
+				>
+					{{ 'Network.noIssuer' | translate }}
+				</p>
+			} @else {
+				<p
+					class="tw-pb-4 tw-mt-10 tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]"
+				>
+					<span class="tw-font-bold tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
+					<span class="tw-mt-1 tw-mb-2" [innerHTML]="'Network.networkDashboard' | translate"></span>
+					<span class="tw-pb-4" [innerHTML]="'Network.networkLogoOnBadge' | translate"></span>
+					@if (!canCreate()) {
+						<span class="tw-italic tw-text-purple" [innerHTML]="'Network.upgradeToUse' | translate"></span>
+					} @else {
+						<span
+							class="tw-italic tw-text-purple"
+							[innerHTML]="'Network.youCanAddInstitutions' | translate"
+						></span>
+					}
+				</p>
+				@if (!canCreate()) {
+					@if (issuerOwnerOrEditor()) {
+						<oeb-button
+							(click)="showUpgradeDialog()"
+							[disabled-when-requesting]="true"
+							[text]="'Quotas.requestUpgrade' | translate"
+						></oeb-button>
+					}
+				} @else {
+					<oeb-button
+						[routerLink]="['/issuer/networks/create']"
+						[disabled-when-requesting]="true"
+						[text]="'Network.create' | translate"
+					></oeb-button>
 				}
+			}
+		} @else {
+			<span class="tw-mt-8 tw-flex tw-text-oebblack tw-text-lg">{{
+				'Issuer.yourIssuersAreInNetworks' | translate
+			}}</span>
+			<div class="md:tw-flex tw-mt-4">
+				<div
+					class="tw-grid tw-grid-cols-myIssuersMobile sm:tw-grid-cols-myIssuers tw-gap-6 tw-w-full tw-relative"
+				>
+					@for (network of networks(); track network) {
+						<oeb-issuer-network-card
+							[issuerOrNetwork]="network"
+							(navigate)="handleNavigate($event, network)"
+						/>
+					}
+				</div>
 			</div>
-		</div>
+
+			@if (!canCreate()) {
+				<div class="tw-mt-16 tw-text-[18px]/[1.3em] tw-max-w-[535px]">
+					<p class="tw-mb-6 tw-text-purple tw-font-bold">
+						Upgrade auf unser NETZWERK-Paket, um selbst ein Netzwerk zu erstellen.
+					</p>
+					<oeb-button
+						variant="secondary"
+						(click)="showUpgradeDialog()"
+						[disabled-when-requesting]="true"
+						[text]="'Quotas.requestUpgrade' | translate"
+					></oeb-button>
+					<p class="tw-mt-6">
+						<a
+							class="tw-text-right tw-text-link tw-underline tw-mt-6"
+							[href]="this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'"
+							tgarget="_blank"
+							>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
+						>
+					</p>
+				</div>
+			}
+		}
 	}
 </ng-container>

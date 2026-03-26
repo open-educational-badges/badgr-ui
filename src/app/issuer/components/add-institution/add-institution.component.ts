@@ -1,5 +1,17 @@
-import { AfterViewInit, Component, inject, input, Input, output, TemplateRef, ViewChild } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+	AfterViewInit,
+	ChangeDetectorRef,
+	Component,
+	computed,
+	inject,
+	input,
+	Input,
+	output,
+	signal,
+	TemplateRef,
+	ViewChild,
+} from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { DialogComponent } from '../../../components/dialog.component';
@@ -26,6 +38,8 @@ export class AddInstitutionComponent implements AfterViewInit {
 	private publicApiService = inject(PublicApiService);
 	private messageService = inject(MessageService);
 	private networkApiService = inject(NetworkApiService);
+	public translate = inject(TranslateService);
+	private cdRef = inject(ChangeDetectorRef);
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -48,14 +62,26 @@ export class AddInstitutionComponent implements AfterViewInit {
 	dialogRef: BrnDialogRef<any> = null;
 
 	issuerSearchQuery = '';
-	selectedIssuers: Issuer[] = [];
+	selectedIssuers = signal<Issuer[]>([]);
 
 	issuersShowResults = false;
 	issuersLoading = false;
 	issuerSearchLoaded = false;
-	issuerSearchResults = [];
+	issuerSearchResults = signal<Issuer[]>([]);
 
 	rightsAndRolesExpanded = false;
+
+	filteredSearchResults = computed(() => {
+		const selected = this.selectedIssuers();
+		return this.issuerSearchResults().filter((i) => !selected.some((i2) => i.slug === i2.slug));
+	});
+
+	quotasInvitesExceeded = computed(() => {
+		if (!this.network()?.quotas) {
+			return 0;
+		}
+		return this.selectedIssuers().length - (this.network().quotas.quotas['NETWORK_MEMBERSHIPS'].quota || 0);
+	});
 
 	ngAfterViewInit() {
 		this.issuerSearchInputModel.valueChanges
@@ -77,9 +103,10 @@ export class AddInstitutionComponent implements AfterViewInit {
 		if (this.issuerSearchQuery.length >= 3) {
 			this.issuersLoading = true;
 			try {
-				this.issuerSearchResults = [];
-				this.issuerSearchResults = (await this.publicApiService.searchIssuers(this.issuerSearchQuery)).filter(
-					(i) => !this.hasUnrevokedInvite(i.slug),
+				this.issuerSearchResults.set(
+					(await this.publicApiService.searchIssuers(this.issuerSearchQuery)).filter(
+						(i) => !this.hasUnrevokedInvite(i.slug),
+					),
 				);
 			} catch (error) {
 				this.messageService.reportAndThrowError(`Failed to issuers: ${error.message}`, error);
@@ -106,13 +133,18 @@ export class AddInstitutionComponent implements AfterViewInit {
 		return null;
 	}
 
-	selectIssuerFromDropdown(issuer) {
-		this.selectedIssuers.push(issuer);
+	selectIssuerFromDropdown(issuer: Issuer) {
+		this.selectedIssuers.update((v) => {
+			return [...v, issuer];
+		});
+		// FIXME: prevents angular ExpressionChangedAfterItHasBeenCheckedError - not quite sure what happens here
+		this.cdRef.detectChanges();
 	}
 
-	removeSelectedissuer(issuer) {
-		const index = this.selectedIssuers.indexOf(issuer);
-		this.selectedIssuers.splice(index, 1);
+	removeSelectedissuer(issuer: Issuer) {
+		this.selectedIssuers.update((v) => {
+			return v.filter((i) => i.slug !== issuer.slug);
+		});
 	}
 
 	collapseRoles() {
@@ -141,6 +173,10 @@ export class AddInstitutionComponent implements AfterViewInit {
 			})
 			.finally(() => {
 				this.inviting = false;
+				// update to refresh quotas
+				if (this.network().quotas) {
+					this.network().update();
+				}
 			});
 	}
 

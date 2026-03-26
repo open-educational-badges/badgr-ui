@@ -355,7 +355,7 @@ export class BadgeCatalogComponent extends BaseRoutableComponent implements OnIn
 	}
 }
 
-interface ITag {
+export interface ITag {
 	label: string;
 	value: string;
 }

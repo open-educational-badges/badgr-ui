@@ -1,0 +1,29 @@
+@for (quota of quotaKeys; track $index) {
+	@if (quotaValues[$index]['max'] !== 0) {
+		<p [class]="quotaWarning(quotaValues[$index]) ? 'tw-text-red' : ''" (click)="preventP($event)">
+			<span>
+				{{ formatNumber(quotaValues[$index]['used']) }}
+				@if (quotaValues[$index]['max'] !== -1) {
+					{{ 'General.of' | translate }} {{ formatNumber(quotaValues[$index]['max']) }}
+				}
+				{{ 'Quotas.Info_' + quota | translate }}</span
+			>
+			@if ($index < quotaKeys.length - 1) {
+				<span> / </span>
+			} @else {
+				@if (!isWebcomponentContext) {
+					<span
+						>.
+						<a
+							[routerLink]="['/issuer/issuers/' + issuer.slug + '/quotas']"
+							(click)="preventA($event)"
+							target="_blank"
+							class="tw-text-link tw-underline"
+							>Info</a
+						></span
+					>
+				}
+			}
+		</p>
+	}
+}

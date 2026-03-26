@@ -24,9 +24,6 @@ export class PublicApiService extends BaseHttpApiService {
 	protected configService: AppConfigService;
 	protected messageService: MessageService;
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const loginService = inject(AUTH_PROVIDER);
 		const http = inject(HttpClient);
@@ -188,5 +185,26 @@ export class PublicApiService extends BaseHttpApiService {
 
 	searchIssuers(searchterm: string) {
 		return this.get<Issuer[]>(`/public/issuers/search/${searchterm}`).then((response) => response.body);
+	}
+
+	getPublicAssertionPdf(assertionId: string): Promise<Blob> {
+		const url = assertionId.startsWith('http') ? assertionId : `/assertions/${assertionId}/pdf`;
+
+		return this.http
+			.get(url, {
+				responseType: 'blob',
+			})
+			.toPromise();
+	}
+
+	downloadPublicAssertionPdf(assertionId: string, badgeName: string, issueDate: Date): Promise<void> {
+		return this.getPublicAssertionPdf(assertionId).then((blob) => {
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = `${issueDate.toISOString().split('T')[0]}-${badgeName}.pdf`;
+			link.click();
+			setTimeout(() => URL.revokeObjectURL(url), 100);
+		});
 	}
 }

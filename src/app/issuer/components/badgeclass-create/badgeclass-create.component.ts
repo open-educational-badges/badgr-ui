@@ -1,8 +1,6 @@
 import { Component, HostListener, OnInit, ViewChild, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
-import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Issuer } from '../../models/issuer.model';
 import { IssuerManager } from '../../services/issuer-manager.service';
@@ -65,9 +63,8 @@ export class BadgeClassCreateComponent extends BaseAuthenticatedRoutableComponen
 	}
 
 	async ngOnInit() {
-		const state = this.router.currentNavigation()?.extras.state;
-		if (state?.issuer) {
-			this.issuer = state.issuer;
+		if (this.navigationState?.issuer) {
+			this.issuer = this.navigationState.issuer;
 			this.issuerLoaded = Promise.resolve(this.issuer);
 		} else {
 			this.issuerLoaded = this.issuerManager
