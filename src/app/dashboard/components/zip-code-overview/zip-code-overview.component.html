@@ -148,8 +148,11 @@
 
 						<!-- Trend -->
 						<div class="tw-col-span-1 tw-flex tw-items-center tw-justify-center">
-							<span class="tw-text-2xl tw-font-bold" [style.color]="getTrendColor(stat.trend)">
-								{{ getTrendIcon(stat.trend) }}
+							<span
+								class="tw-text-2xl tw-font-bold"
+								[style.color]="utilService.getTrendColor(stat.trend)"
+							>
+								{{ utilService.getTrendIcon(stat.trend) }}
 							</span>
 						</div>
 					</div>

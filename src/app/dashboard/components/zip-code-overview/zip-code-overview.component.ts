@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ZipCodeStatisticsData } from '../../models/dashboard-models';
+import { DashboardUtilService } from '~/dashboard/services/util.service';
 
 @Component({
 	selector: 'app-zip-code-overview',
@@ -13,6 +14,7 @@ import { ZipCodeStatisticsData } from '../../models/dashboard-models';
 })
 export class ZipCodeOverviewComponent implements OnInit {
 	private router = inject(Router);
+	public utilService = inject(DashboardUtilService);
 
 	zipCodeStatistics: ZipCodeStatisticsData[] = [];
 	loading = false;
@@ -30,32 +32,6 @@ export class ZipCodeOverviewComponent implements OnInit {
 
 	backToDashboard(): void {
 		this.router.navigate(['/dashboard']);
-	}
-
-	getTrendIcon(trend: string): string {
-		switch (trend) {
-			case 'up':
-				return '↗';
-			case 'down':
-				return '↘';
-			case 'stable':
-				return '→';
-			default:
-				return '→';
-		}
-	}
-
-	getTrendColor(trend: string): string {
-		switch (trend) {
-			case 'up':
-				return 'var(--color-green)';
-			case 'down':
-				return 'var(--color-red)';
-			case 'stable':
-				return 'var(--color-darkgray)';
-			default:
-				return 'var(--color-darkgray)';
-		}
 	}
 
 	getBarWidth(learnerCount: number): number {

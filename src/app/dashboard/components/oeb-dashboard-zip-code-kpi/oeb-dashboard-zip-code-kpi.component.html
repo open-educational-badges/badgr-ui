@@ -51,8 +51,8 @@
 					</div>
 					<div class="tw-flex tw-items-center tw-gap-2">
 						<span class="tw-font-semibold">{{ area.learnerCount }}</span>
-						<span class="tw-text-xs" [style.color]="getTrendColor(area.trend)">
-							{{ getTrendIcon(area.trend) }}
+						<span class="tw-text-xs" [style.color]="utilService.getTrendColor(area.trend)">
+							{{ utilService.getTrendIcon(area.trend) }}
 						</span>
 					</div>
 				</div>
