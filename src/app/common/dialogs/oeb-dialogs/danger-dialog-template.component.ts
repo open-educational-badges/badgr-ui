@@ -1,5 +1,5 @@
 import { NgIcon } from '@ng-icons/core';
-import { Component, HostBinding, inject, Input } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { OebDialogComponent } from '../../../components/oeb-dialog.component';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
@@ -52,9 +52,6 @@ export class DangerDialogComponentTemplate {
 	protected readonly variant = this._dialogContext.variant;
 	protected readonly qrCodeRequested = this._dialogContext.qrCodeRequested;
 	private readonly _dialogRef = inject<BrnDialogRef>(BrnDialogRef);
-
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
 
 	constructor() {}
 

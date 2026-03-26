@@ -652,13 +652,9 @@ export class LearningPathEditFormComponent
 				return badge;
 			});
 
-			this.badges = [...issuerBadges, ...sharedBadgeClasses]
-				.filter(
-					(b) =>
-						b.extension['extensions:StudyLoadExtension'].StudyLoad > 0 &&
-						b.extension['extensions:CategoryExtension'].Category !== 'learningpath',
-				)
-				.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+			this.badges = [...issuerBadges, ...sharedBadgeClasses].sort(
+				(a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+			);
 
 			this.badgeResults = this.badges;
 			this.badgesFormArray = this.learningPathForm.controls.badges.value;
@@ -963,6 +959,7 @@ export class LearningPathEditFormComponent
 						name: this.learningPathForm.controls.name.value,
 						description: this.learningPathForm.controls.description.value,
 						tags: Array.from(this.lpTags),
+						language: this.translate.currentLang,
 						criteria_text: criteriaText,
 						criteria_url: '',
 						extensions: {

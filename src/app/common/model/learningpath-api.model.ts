@@ -39,6 +39,9 @@ export interface ApiLearningPath extends Omit<ApiLearningPathForCreation, 'badge
 	requested?: boolean;
 	issuerOwnerAcceptedTos?: boolean;
 	activated: boolean;
+	archived: boolean;
+	archived_at?: Date | null;
+	has_awarded_micro_degree?: boolean;
 }
 
 export interface ApiLearningPathParticipant {

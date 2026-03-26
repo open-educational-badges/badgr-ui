@@ -35,12 +35,13 @@ interface DialogContext {
 						class="!tw-h-28 !tw-w-28 tw-text-purple"
 					></ng-icon>
 				</div>
-			} @else if (isTemplate(context.headerTemplate)) {
-				<ng-container
-					*ngTemplateOutlet="context.headerTemplate; context: context.templateContext || {}"
-				></ng-container>
-			} @else if (context.title) {
-				<p class="tw-text-center" [innerHTML]="context.title"></p>
+				@if (isTemplate(context.headerTemplate)) {
+					<ng-container
+						*ngTemplateOutlet="context.headerTemplate; context: context.templateContext || {}"
+					></ng-container>
+				} @else if (context.title) {
+					<p class="tw-text-center" [innerHTML]="context.title"></p>
+				}
 			}
 
 			@if (context.variant == 'success') {
@@ -56,7 +57,7 @@ interface DialogContext {
 				</div>
 			}
 
-			@if (context.variant === 'failure') {
+			<!-- @if (context.variant === 'failure') {
 				<div class="tw-px-4">
 					<p class="tw-text-lg tw-text-oebblack tw-text-center tw-font-bold tw-mt-2 tw-leading-[130%]">
 						{{ context.message }}
@@ -69,6 +70,19 @@ interface DialogContext {
 				></ng-container>
 			} @else if (context.content) {
 				<p class="tw-text-center" [innerHTML]="context.content"></p>
+			} -->
+
+			@if (context.variant === 'danger') {
+				<div class="tw-flex tw-justify-center tw-my-6">
+					<ng-icon hlm name="lucideBadgeAlert" class="!tw-h-20 !tw-w-20 tw-text-red"></ng-icon>
+				</div>
+				@if (isTemplate(context.content)) {
+					<ng-container
+						*ngTemplateOutlet="context.content; context: context.templateContext || {}"
+					></ng-container>
+				} @else if (context.title) {
+					<p class="tw-text-center" [innerHTML]="context.title"></p>
+				}
 			}
 		</oeb-dialog>
 	`,

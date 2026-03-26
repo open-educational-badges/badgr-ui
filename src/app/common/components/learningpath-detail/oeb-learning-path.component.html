@@ -14,6 +14,15 @@
 						class="tw-flex tw-flex-row tw-justify-between tw-w-full tw-flex-wrap md:tw-flex-nowrap tw-gap-4"
 					>
 						<div class="tw-flex tw-flex-col tw-justify-center">
+							@if (learningPath.archived) {
+								<span class="tw-text-2xl tw-text-red">{{
+									'LearningPath.archivedSince'
+										| translate
+											: {
+													date: lpArchivedDate,
+											  }
+								}}</span>
+							}
 							<h2 hlmH2 class="!tw-text-oebblack tw-font-extrabold tw-uppercase">
 								{{ learningPath.name }}
 							</h2>
@@ -48,18 +57,22 @@
 							<p class="tw-text-lg" hlmP>{{ learningPath.description }}</p>
 						</div>
 						<div class="tw-flex tw-flex-col tw-gap-2">
-							<oeb-button
-								[text]="'General.delete' | translate"
-								variant="secondary"
-								width="full_width"
-								(click)="deleteLearningPath(learningPath.slug, issuer)"
-								[disabled-when-requesting]="true"
-								[disabled]="!issuer.canCreateBadge"
-								[class]="
-									issuer.canCreateBadge ? 'tw-whitespace-nowrap tw-hidden md:tw-block' : 'disabled'
-								"
-							>
-							</oeb-button>
+							@if (!learningPath.archived) {
+								<oeb-button
+									[text]="'General.delete' | translate"
+									variant="secondary"
+									width="full_width"
+									(click)="deleteLearningPath()"
+									[disabled-when-requesting]="true"
+									[disabled]="!issuer.canCreateBadge"
+									[class]="
+										issuer.canCreateBadge
+											? 'tw-whitespace-nowrap tw-hidden md:tw-block'
+											: 'disabled'
+									"
+								>
+								</oeb-button>
+							}
 							@if (!learningPath.activated) {
 								<div>
 									<oeb-button
@@ -229,3 +242,19 @@
 		</div>
 	</div>
 </div>
+
+<ng-template #archiveLpTemplate>
+	<div class="tw-items-center tw-w-full tw-justify-center tw-flex tw-flex-col tw-text-lg">
+		<span class="tw-text-oebblack tw-pb-4 tw-font-bold">{{ 'LearningPath.archive' | translate }}</span>
+		<p class="tw-text-oebblack tw-pb-4 tw-text-center">
+			{{ 'LearningPath.alreadyAwarded' | translate }}
+		</p>
+		<span class="tw-italic tw-text-purple tw-pb-4">
+			{{ 'LearningPath.canOnlyBeArchived' | translate }}
+		</span>
+		<div class="tw-flex tw-gap-4 tw-justify-center">
+			<oeb-button size="sm" variant="secondary" [text]="'General.cancel' | translate"> </oeb-button>
+			<oeb-button size="sm" (click)="archiveLearningPath()" [text]="'General.archive' | translate"> </oeb-button>
+		</div>
+	</div>
+</ng-template>
