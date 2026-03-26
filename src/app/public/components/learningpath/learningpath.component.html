@@ -8,14 +8,26 @@
 				<div class="tw-grow">
 					<div class="oeb-headline-container tw-max-w-[370px] md:tw-max-w-[770px]">
 						<h1 class="tw-text-oebblack tw-font-extrabold tw-break-words" hlmH1>{{ learningPath.name }}</h1>
-						<p size="sm" hlmP class="tw-text-oebblack tw-mt-2">
-							{{ 'LearningPath.lpFrom' | translate }}
-							<a
-								class="tw-underline !tw-text-link hover:!tw-text-buttonhover tw-cursor-pointer"
-								[routerLink]="['/public/issuers/', issuer.slug]"
-								>{{ issuer.name }}</a
-							>
-						</p>
+						@if (learningPath.archived) {
+							<p size="sm" class="tw-mt-2 tw-text-lg tw-text-darkgray">
+								{{
+									'LearningPath.archivedBy'
+										| translate
+											: {
+													issuer: issuer.name,
+											  }
+								}}
+							</p>
+						} @else {
+							<p size="sm" hlmP class="tw-text-oebblack tw-mt-2">
+								{{ 'LearningPath.lpFrom' | translate }}
+								<a
+									class="tw-underline !tw-text-link hover:!tw-text-buttonhover tw-cursor-pointer"
+									[routerLink]="['/public/issuers/', issuer.slug]"
+									>{{ issuer.name }}</a
+								>
+							</p>
+						}
 						<div class="tw-flex tw-flex-row tw-gap-2 tw-text-[#6B7280] tw-mt-1 tw-items-end">
 							<ng-icon hlm name="lucideClock" />
 							<span>{{ minutesTotal | hourPipe }} {{ 'LearningPath.hours' | translate }}</span>

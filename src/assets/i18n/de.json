@@ -1194,7 +1194,8 @@
 		"canOnlyBeArchived": "Er kann daher nur archiviert werden.",
 		"mdArchived": "Wir haben den Micro Degree archiviert.",
 		"archivedLearningPaths": "Archivierte Lernpfade",
-		"archivedSince": "Seit {{ date }} archiviert"
+		"archivedSince": "Seit {{ date }} archiviert",
+		"archivedBy": "Dieser Lernpfad wurde von {{ issuer }} archiviert."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",
