@@ -225,13 +225,16 @@ export class BgLearningPathCard implements AfterViewInit {
 	});
 
 	hostClasses = computed(() => {
-		const p = this.progress() ?? 0;
+		const p = this.progress();
 
-		if (this.isProgress() && p < 100 && !this.completed()) {
+		if (p === null || p === 0) {
+			return 'tw-bg-white tw-border-purple tw-border';
+		} else if (p < 100 && !this.completed()) {
 			return 'tw-bg-[var(--color-lightgreen)] tw-border-purple tw-border';
-		} else if (this.isProgress() && p === 100 && !this.completed() && !this.requested()) {
+		} else if (p === 100 && !this.completed() && !this.requested()) {
 			return 'tw-bg-[var(--color-lightgreen)] tw-border-green tw-border-4';
 		}
+
 		return 'tw-bg-white tw-border-purple tw-border';
 	});
 
