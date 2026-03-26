@@ -423,6 +423,18 @@ export class OebIssuerDetailComponent implements OnInit {
 		return bTime - aTime;
 	}
 
+	private refreshLearningPathTables(): void {
+		if (this.public) {
+			this.apiLearningPaths = [];
+			this.archivedLearningPaths = [];
+			return;
+		}
+
+		const apiLearningPaths = this.learningPaths as ApiLearningPath[];
+		this.apiLearningPaths = apiLearningPaths.filter((lp) => !lp.archived);
+		this.archivedLearningPaths = apiLearningPaths.filter((lp) => lp.archived);
+	}
+
 	async ngOnInit() {
 		if (this.isFullIssuer(this.issuer)) {
 			if (this.issuer.canUpdateDeleteIssuer) {
@@ -615,6 +627,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			.deleteLearningPath(issuer.slug, learningPathSlug)
 			.then(() => {
 				this.learningPaths = this.learningPaths.filter((value) => value.slug !== learningPathSlug);
+				this.refreshLearningPathTables();
 			})
 			.catch((err) => {
 				if (err?.error?.code === 'learningpath_has_awards') {
@@ -632,11 +645,13 @@ export class OebIssuerDetailComponent implements OnInit {
 		this.learningPathApiService.archiveLearningPath(issuer.slug, learningPathSlug).then((updatedLp) => {
 			this.learningPaths = this.learningPaths.map((lp) => (lp.slug === learningPathSlug ? updatedLp : lp));
 		});
+		this.refreshLearningPathTables();
 	}
 
 	async getPublicLearningPaths(issuerSlug: string) {
 		const lps = await this.publicApiService.getIssuerLearningPaths(issuerSlug);
 		this.learningPaths = lps.filter((l) => l.activated);
+		this.refreshLearningPathTables();
 	}
 
 	getLearningPathsForIssuerApi(issuerSlug: string) {
@@ -650,6 +665,7 @@ export class OebIssuerDetailComponent implements OnInit {
 				this.learningPaths = sortedLearningPaths;
 				this.apiLearningPaths = this.public ? [] : sortedLearningPaths.filter((lp) => !lp.archived);
 				this.archivedLearningPaths = this.public ? [] : sortedLearningPaths.filter((lp) => lp.archived);
+				this.refreshLearningPathTables();
 			});
 	}
 
