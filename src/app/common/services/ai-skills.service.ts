@@ -5,6 +5,7 @@ import { AiSkillsResult, ApiSkill } from '../model/ai-skills.model';
 import { BaseHttpApiService } from './base-http-api.service';
 import { MessageService } from './message.service';
 import { AUTH_PROVIDER, AuthenticationService } from './authentication-service';
+import { IssuerSlug } from '~/issuer/models/issuer-api.model';
 
 @Injectable({ providedIn: 'root' })
 export class AiSkillsService extends BaseHttpApiService {
@@ -30,8 +31,8 @@ export class AiSkillsService extends BaseHttpApiService {
 		this.messageService = messageService;
 	}
 
-	getAiSkillsResult(textToAnalyze: string): Promise<AiSkillsResult> {
-		return this.post<AiSkillsResult>(`/aiskills/`, {
+	getAiSkillsResult(textToAnalyze: string, issuerSlug: IssuerSlug | null = null): Promise<AiSkillsResult> {
+		return this.post<AiSkillsResult>(issuerSlug ? `/v1/issuer/issuers/${issuerSlug}/aiskills` : `/aiskills/`, {
 			text: textToAnalyze,
 		}).then(
 			(r) => r.body as AiSkillsResult,
@@ -43,6 +44,14 @@ export class AiSkillsService extends BaseHttpApiService {
 
 	getAiSkills(textToAnalyze: string): Promise<ApiSkill[]> {
 		return this.getAiSkillsResult(textToAnalyze).then(
+			(result: AiSkillsResult) => result.skills,
+			(error) => {
+				throw error;
+			},
+		);
+	}
+	getAiSkillsForIssuer(textToAnalyze: string, issuerSlug: IssuerSlug): Promise<ApiSkill[]> {
+		return this.getAiSkillsResult(textToAnalyze, issuerSlug).then(
 			(result: AiSkillsResult) => result.skills,
 			(error) => {
 				throw error;

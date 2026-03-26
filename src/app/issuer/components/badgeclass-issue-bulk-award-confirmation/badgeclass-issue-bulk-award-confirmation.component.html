@@ -7,7 +7,23 @@
 			>{{ transformedImportData().validRowsTransformed.size }} {{ 'Issuer.rowsWereImported' | translate }}
 			{{ transformedImportData().duplicateRecords.length }} {{ 'Issuer.rowsAreDuplicates' | translate }}</span
 		><br />
-		<span>{{ 'Issuer.clickOnAwardBadges' | translate }}</span>
+		@if (!quotasCanIssue()) {
+			<span class="tw-text-red">
+				{{
+					'Quotas.InfoBulk'
+						| translate
+							: {
+									count: quotasRecipientsOver(),
+									person:
+										quotasRecipientsOver() === 1
+											? translate.instant('General.person')
+											: translate.instant('General.persons'),
+							  }
+				}}
+			</span>
+		} @else {
+			<span>{{ 'Issuer.clickOnAwardBadges' | translate }}</span>
+		}
 	</p>
 
 	<div class="oeb-standard-padding-bottom">
@@ -128,8 +144,8 @@
 
 		<oeb-button
 			[class.button-is-disabled]="buttonDisabledClass"
-			[disabled]="buttonDisabledAttribute || hasInvalidEmails"
-			(click)="!hasInvalidEmails && dataConfirmed()"
+			[disabled]="buttonDisabledAttribute || hasInvalidEmails || !quotasCanIssue()"
+			(click)="!hasInvalidEmails && quotasCanIssue() && dataConfirmed()"
 			text="{{ 'Issuer.giveBadges' | translate }}"
 		>
 		</oeb-button>

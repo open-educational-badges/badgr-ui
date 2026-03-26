@@ -55,6 +55,7 @@
 								<brn-accordion-content hlm class="tw-text-white">
 									<qrcodes-datatable
 										[qrCode]="award"
+										[issuer]="issuer"
 										[issuerSlug]="issuer.slug"
 										[badgeSlug]="badgeClass.slug"
 										(requestCountChanged)="onRequestCountChanged(award, $event)"

@@ -10,15 +10,16 @@ import { HlmDialogClose } from './hlm-dialog-close';
 import { cva, VariantProps } from 'class-variance-authority';
 
 export const dialogVariants = cva(
-	'tw-border-border tw-grid tw-w-full tw-max-w-lg tw-relative tw-gap-4 tw-border tw-shadow-lg tw-duration-200 data-[state=open]:tw-animate-in data-[state=closed]:tw-animate-out data-[state=closed]:tw-fade-out-0 data-[state=open]:tw-fade-in-0 data-[state=closed]:tw-zoom-out-95 data-[state=open]:tw-zoom-in-95 data-[state=closed]:tw-slide-out-to-top-[2%]  data-[state=open]:tw-slide-in-from-top-[2%] sm:tw-rounded-lg md:tw-w-full',
+	'tw-border-border tw-grid tw-w-full tw-max-w-lg tw-relative tw-gap-4 tw-border tw-shadow-lg tw-duration-200 data-[state=open]:tw-animate-in data-[state=closed]:tw-animate-out data-[state=closed]:tw-fade-out-0 data-[state=open]:tw-fade-in-0 data-[state=closed]:tw-zoom-out-95 data-[state=open]:tw-zoom-in-95 data-[state=closed]:tw-slide-out-to-top-[2%]  data-[state=open]:tw-slide-in-from-top-[2%] sm:tw-rounded-lg md:tw-w-full tw-bg-white tw-border-solid',
 	{
 		variants: {
 			variant: {
-				default: 'tw-bg-white tw-border-purple tw-border-2 tw-border-solid tw-rounded-[10px]',
-				success: 'tw-border-green tw-border-2 tw-bg-white tw-border-solid tw-rounded-[10px]',
-				info: 'tw-bg-white tw-border-solid tw-border-link tw-border-4',
-				danger: 'tw-bg-white tw-border-solid !tw-rounded-[20px] tw-border-[6px] !tw-border-red',
-				failure: 'tw-bg-white tw-border-solid tw-border-purple tw-border-2 tw-rounded-[10px]',
+				default: 'tw-border-purple tw-border-2 tw-rounded-[10px]',
+				success: 'tw-border-green tw-border-2 tw-rounded-[10px]',
+				info: 'tw-border-link tw-border-4',
+				danger: '!tw-rounded-[20px] tw-border-[6px] !tw-border-red',
+				failure: 'tw-border-purple tw-border-2 tw-rounded-[10px]',
+				quotas: 'tw-border-purple tw-border-[5px] !tw-rounded-[10px] tw-max-w-[742px]',
 			},
 		},
 		defaultVariants: {

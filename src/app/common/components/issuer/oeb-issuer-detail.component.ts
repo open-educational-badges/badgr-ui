@@ -1,4 +1,14 @@
-import { Component, Input, OnInit, Output, EventEmitter, inject, TemplateRef, viewChild } from '@angular/core';
+import {
+	Component,
+	Input,
+	OnInit,
+	Output,
+	EventEmitter,
+	inject,
+	TemplateRef,
+	viewChild,
+	ViewChild,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -46,7 +56,10 @@ interface NetworkBadgeGroup {
 import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { environment } from 'src/environments/environment';
+import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
 import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
+import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'oeb-issuer-detail',
@@ -73,6 +86,8 @@ import { LinkEntry } from '../bg-breadcrumbs/bg-breadcrumbs.component';
 		TranslatePipe,
 		TranslateModule,
 		NgTemplateOutlet,
+		QuotaInformationComponent,
+		QuotaExceededDialog,
 	],
 })
 export class OebIssuerDetailComponent implements OnInit {
@@ -110,7 +125,7 @@ export class OebIssuerDetailComponent implements OnInit {
 
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
-	isFullIssuer(issuer: Issuer | PublicApiIssuer): issuer is Issuer {
+	isFullIssuer(issuer: Issuer | PublicApiIssuer | Network): issuer is Issuer {
 		return 'currentUserStaffMember' in issuer;
 	}
 
@@ -123,7 +138,8 @@ export class OebIssuerDetailComponent implements OnInit {
 		},
 	];
 
-	menuItems: MenuItem[] = [
+	menuItemsMember: MenuItem[] = [];
+	menuItemsOwner: MenuItem[] = [
 		{
 			title: 'General.edit',
 			routerLink: ['./edit'],
@@ -141,6 +157,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			icon: 'lucideUsers',
 		},
 	];
+	menuItems: MenuItem[] = [];
 
 	networkGroups: Map<string, { network: any; badges: BadgeResult[]; sharedAt: string }> = new Map();
 	networkGroupsArray: { network: any; badges: BadgeResult[]; sharedAt: string }[] = [];
@@ -409,6 +426,22 @@ export class OebIssuerDetailComponent implements OnInit {
 	}
 
 	async ngOnInit() {
+		if (this.isFullIssuer(this.issuer)) {
+			if (this.issuer.canUpdateDeleteIssuer) {
+				this.menuItems = this.menuItemsOwner;
+			} else {
+				this.menuItems = this.menuItemsMember;
+			}
+			if (this.issuer.quotas) {
+				const menuItemQuotas = {
+					title: 'Quotas.QuotasMenuItem',
+					routerLink: ['./quotas'],
+					icon: 'lucidePuzzle',
+				};
+				this.menuItems.unshift(menuItemQuotas);
+			}
+		}
+
 		// initialize counts as 0 and update after data has loaded
 		if (this.sessionService.isLoggedIn) {
 			if (this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
@@ -479,7 +512,10 @@ export class OebIssuerDetailComponent implements OnInit {
 		}
 	}
 
-	routeToBadgeAward(badge: BadgeClass, issuer) {
+	async routeToBadgeAward(badge: BadgeClass, issuer) {
+		if (!(await this.checkQuotasDialog(badge))) {
+			return false;
+		}
 		this.qrCodeApiService.getQrCodesForIssuerByBadgeClass(this.issuer.slug, badge.slug).then((qrCodes) => {
 			if (badge.recipientCount === 0 && qrCodes.length === 0) {
 				const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
@@ -605,6 +641,27 @@ export class OebIssuerDetailComponent implements OnInit {
 			const studyLoad = b?.badge?.['extensions:StudyLoadExtension']?.StudyLoad ?? 0;
 			return acc + studyLoad;
 		}, 0);
+	}
+
+	async checkQuotasDialog(badge: BadgeClass) {
+		let issuer: Issuer | Network = this.issuer as Issuer;
+		if (badge.isNetworkBadge) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.issuerSlug);
+		} else if (badge.sharedOnNetwork) {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.sharedOnNetwork.slug);
+		}
+		if (this.isFullIssuer(issuer) && issuer.quotas) {
+			if (issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
+				this._hlmDialogService.open(QuotaExceededDialog, {
+					context: {
+						issuer: issuer,
+						variant: 'quotas',
+					},
+				});
+				return false;
+			}
+		}
+		return true;
 	}
 }
 

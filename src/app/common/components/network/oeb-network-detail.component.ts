@@ -25,6 +25,7 @@ import { Router } from '@angular/router';
 import { SessionService } from '~/common/services/session.service';
 import { NgClass } from '@angular/common';
 import { NgTemplateOutlet } from '@angular/common';
+import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
 
 @Component({
 	selector: 'oeb-network-detail',
@@ -42,6 +43,7 @@ import { NgTemplateOutlet } from '@angular/common';
 		BgBadgecard,
 		NgClass,
 		NgTemplateOutlet,
+		QuotaInformationComponent,
 	],
 })
 export class OebNetworkDetailComponent {

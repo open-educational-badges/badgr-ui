@@ -17,7 +17,7 @@
 			class="tw-absolute tw-top-[3px] tw-right-1 tw-w-6 tw-h-6 tw-pointer-events-none tw-text-purple"
 			name="lucideSearch"
 		/>
-		@if (issuersShowResults && (issuersLoading || issuerSearchResults.length || issuerSearchLoaded)) {
+		@if (issuersShowResults && (issuersLoading || filteredSearchResults().length || issuerSearchLoaded)) {
 			<div
 				class="tw-absolute tw-mt-1 tw-z-10 tw-bg-white tw-rounded-md tw-shadow-sm tw-border tw-border-solid tw-border-gray-700 tw-w-full tw-overflow-auto"
 				[ngStyle]="{
@@ -29,7 +29,7 @@
 					@if (issuersLoading) {
 						<li class="tw-p-2 tw-cursor-default">Loading...</li>
 					}
-					@for (issuer of issuerSearchResults; track issuer) {
+					@for (issuer of filteredSearchResults(); track issuer) {
 						<li
 							class="tw-p-2 hover:tw-bg-[var(--color-lightpurple)] tw-cursor-pointer tw-flex tw-items-center tw-gap-2"
 							(click)="selectIssuerFromDropdown(issuer)"
@@ -38,15 +38,15 @@
 							<span>{{ issuer.name }}</span>
 						</li>
 					}
-					@if (issuerSearchResults.length === 0) {
+					@if (filteredSearchResults().length === 0) {
 						<li class="tw-p-2 tw-text-gray-500 tw-cursor-default">Keine Ergebnisse</li>
 					}
 				</ul>
 			</div>
 		}
-		@if (selectedIssuers.length > 0) {
+		@if (selectedIssuers().length > 0) {
 			<ul>
-				@for (issuer of selectedIssuers; track issuer) {
+				@for (issuer of selectedIssuers(); track issuer) {
 					<li
 						class="tw-flex tw-justify-between tw-border-purple tw-border tw-border-solid tw-rounded-[10px] tw-p-5 tw-mb-3"
 					>
@@ -62,7 +62,7 @@
 			</ul>
 		}
 		<section class="tw-my-8">
-			@if (selectedIssuers.length) {
+			@if (selectedIssuers().length) {
 				<p
 					class="tw-italic tw-text-purple tw-text-lg tw-leading-[130%] tw-mb-6"
 					(click)="collapseRoles()"
@@ -85,9 +85,24 @@
 				</dl>
 			}
 		</section>
+		@if (quotasInvitesExceeded() > 0) {
+			<p class="tw-text-red tw-mb-4">
+				{{
+					'Quotas.InfoNetworkInvites'
+						| translate
+							: {
+									count: quotasInvitesExceeded(),
+									institution:
+										quotasInvitesExceeded() === 1
+											? translate.instant('General.institution')
+											: translate.instant('General.institutions'),
+							  }
+				}}
+			</p>
+		}
 		<oeb-button
-			[disabled]="!selectedIssuers.length || inviting"
-			(click)="inviteInstitutions(selectedIssuers)"
+			[disabled]="!selectedIssuers().length || quotasInvitesExceeded() > 0 || inviting"
+			(click)="inviteInstitutions(selectedIssuers())"
 			[text]="'Network.inviteInstitutions' | translate"
 			size="md"
 		>
