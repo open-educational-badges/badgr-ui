@@ -21,6 +21,7 @@ import { DialogComponent } from '~/components/dialog.component';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { DangerDialogComponent } from '~/common/dialogs/oeb-dialogs/danger-dialog.component';
+import { formatDate } from '@angular/common';
 
 @Component({
 	selector: 'oeb-learning-path',
@@ -157,6 +158,10 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 
 	get lpSlug() {
 		return this.route.snapshot.params['learningPathSlug'];
+	}
+
+	get lpArchivedDate() {
+		return formatDate(this.learningPath.archived_at, 'dd.MM.yyyy', 'de-DE');
 	}
 
 	get confirmDialog() {
