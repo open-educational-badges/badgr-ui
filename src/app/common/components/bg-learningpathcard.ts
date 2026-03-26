@@ -220,21 +220,16 @@ export class BgLearningPathCard implements AfterViewInit {
 	isProgress = computed(() => this.progress() !== null);
 
 	progressValue = computed<number | null>(() => {
-		if (this.completed()) return 100;
-		const load = this.studyLoad();
-		if (!load) return 0;
-		const p = this.progress() ?? 0;
-		return Math.floor((p / load) * 100);
+		if (this.progress() === null) return null;
+		return this.completed() ? 100 : this.progress();
 	});
 
 	hostClasses = computed(() => {
 		const p = this.progress() ?? 0;
-		const load = this.studyLoad();
-		const ratio = load ? p / load : 0;
 
-		if (this.isProgress() && ratio < 1 && !this.completed()) {
+		if (this.isProgress() && p < 100 && !this.completed()) {
 			return 'tw-bg-[var(--color-lightgreen)] tw-border-purple tw-border';
-		} else if (this.isProgress() && ratio === 1 && !this.completed() && !this.requested()) {
+		} else if (this.isProgress() && p === 100 && !this.completed() && !this.requested()) {
 			return 'tw-bg-[var(--color-lightgreen)] tw-border-green tw-border-4';
 		}
 		return 'tw-bg-white tw-border-purple tw-border';
