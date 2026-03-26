@@ -11,10 +11,7 @@ import { lucideClockFading } from '@ng-icons/lucide';
 import { KPIData, BadgeAwardData } from '../../models/dashboard-models';
 import { DashboardStatsBarComponent } from '../dashboard-stats-bar/dashboard-stats-bar.component';
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
-import { DataSourceToggleComponent } from '../data-source-toggle/data-source-toggle.component';
 import { KpiCardGridComponent } from '../kpi-card-grid/kpi-card-grid.component';
-import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
-import { DashboardOverviewApiService } from '../../services/dashboard-overview-api.service';
 import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
 import { KpiCardData } from '../../models/kpi-card.model';
 import {
@@ -67,7 +64,6 @@ export interface CompetencyData {
 		TranslatePipe,
 		DashboardStatsBarComponent,
 		DashboardTopBadgesComponent,
-		DataSourceToggleComponent,
 		KpiCardGridComponent,
 		RecentActivityTableComponent,
 		NgIcon,
@@ -83,8 +79,6 @@ export interface CompetencyData {
 })
 export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChanges {
 	private router = inject(Router);
-	private dataSourceService = inject(DashboardDataSourceService);
-	private overviewApiService = inject(DashboardOverviewApiService);
 	private networkDashboardApi = inject(NetworkDashboardApiService);
 	private translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
@@ -210,13 +204,6 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 		// Load initial data
 		this.loadDashboardData();
-
-		// Reload data when data source changes (only for non-network mode)
-		if (!this.networkSlug) {
-			this.dataSourceService.dataSource$.pipe(takeUntil(this.destroy$)).subscribe((source) => {
-				this.loadDashboardData();
-			});
-		}
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {

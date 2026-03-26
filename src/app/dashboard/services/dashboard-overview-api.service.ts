@@ -27,7 +27,6 @@ import {
  * **IMPORTANT:** This service does NOT provide mock fallbacks.
  * - All endpoints require Bearer JWT authentication
  * - Errors are propagated to the caller for proper error handling
- * - Use DashboardDataSourceService to switch between API and mock data sources
  *
  * Endpoints:
  * - GET /v1/dashboard/overview/kpis - KPI data

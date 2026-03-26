@@ -174,8 +174,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this.initializeMenuItems();
 		});
 
-		const networkDashboardLoaded = this.networkDashboardApi.getKpis(this.networkSlug).subscribe((kpis) => {
-			this.networkDashboardAvailable.set(true);
+		const networkDashboardLoaded = new Promise<void>((r) => {
+			this.networkDashboardApi.getKpis(this.networkSlug).subscribe({
+				next: (kpis) => {
+					this.networkDashboardAvailable.set(true);
+					r();
+				},
+				error: r,
+			});
 		});
 
 		Promise.all([this.networkLoaded, networkDashboardLoaded]).then(() => {
@@ -247,6 +253,8 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				component: this.learnersTemplate,
 			},
 		];
+
+		console.log([this.networkDashboardAvailable(), hasDashboardAccess]);
 
 		if (this.networkDashboardAvailable() && hasDashboardAccess) {
 			this.tabs = [...baseTabs, ...dashboardTabs];
