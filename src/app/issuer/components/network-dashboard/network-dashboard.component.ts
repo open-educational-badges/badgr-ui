@@ -142,8 +142,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	@ViewChild('socialspaceComponentRef') socialspaceComponentRef: OebDashboardSocialspaceComponent;
 
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const loginService = inject(SessionService);
 		const router = inject(Router);
