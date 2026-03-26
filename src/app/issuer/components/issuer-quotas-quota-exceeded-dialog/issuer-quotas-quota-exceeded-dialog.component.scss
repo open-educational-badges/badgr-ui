@@ -1,0 +1,26 @@
+ul {
+	list-style-position: inside;
+	li {
+		list-style-type: initial;
+		margin-left: 8px;
+	}
+}
+
+::ng-deep {
+	oeb-select {
+		label {
+			display: block;
+		}
+
+		> * {
+			max-width: 217px !important;
+		}
+		&:not(.notdisabled) > * {
+			opacity: 0.5;
+		}
+	}
+
+	hlm-dialog-content {
+		max-width: none !important;
+	}
+}

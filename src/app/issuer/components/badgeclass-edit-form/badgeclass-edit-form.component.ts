@@ -67,6 +67,9 @@ import { Network } from '~/issuer/network.model';
 import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-integer-or-null.validator';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { CatalogService } from '~/catalog/catalog.service';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -100,6 +103,8 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		DecimalPipe,
 		TranslatePipe,
 		TranslateModule,
+		QuotaInformationComponent,
+		QuotaExceededDialog,
 	],
 })
 export class BadgeClassEditFormComponent
@@ -114,6 +119,7 @@ export class BadgeClassEditFormComponent
 	private translate = inject(TranslateService);
 	private navService = inject(NavigationService);
 	protected catalogService = inject(CatalogService);
+	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	baseUrl: string;
 	badgeCategory: string;
@@ -985,12 +991,15 @@ export class BadgeClassEditFormComponent
 	 * (@see badgeClassForm.controls.aiCompetencies) (and removes the old ones).
 	 */
 	suggestCompetencies() {
+		if (!this.checkQuotasDialog('AISKILLS_REQUESTS')) {
+			return false;
+		}
 		if (this.aiCompetenciesDescription.length < 70) {
 			return;
 		}
 		this.aiCompetenciesLoading = true;
 		this.aiSkillsService
-			.getAiSkills(this.aiCompetenciesDescription)
+			.getAiSkillsForIssuer(this.aiCompetenciesDescription, this.issuer.slug)
 			.then((skills) => {
 				let aiCompetencies = this.badgeClassForm.controls.aiCompetencies;
 				const selectedAiCompetencies = aiCompetencies.value
@@ -1016,6 +1025,9 @@ export class BadgeClassEditFormComponent
 						});
 					}
 				});
+				if (this.issuer.quotas) {
+					this.issuer.update();
+				}
 				this.aiCompetenciesLoading = false;
 			})
 			.catch((error) => {
@@ -1341,6 +1353,14 @@ export class BadgeClassEditFormComponent
 				return;
 			}
 
+			if (this.issuer.quotas) {
+				// recheck quotas and show dialog if something changed while starting the creation process
+				await this.issuer.update();
+				if (!this.checkQuotasDialog('BADGE_CREATE')) {
+					return false;
+				}
+			}
+
 			const formState = this.badgeClassForm.value;
 
 			const studyLoadExtensionContextUrl = `${this.baseUrl}/static/extensions/StudyLoadExtension/context.json`;
@@ -1481,6 +1501,13 @@ export class BadgeClassEditFormComponent
 					};
 				}
 				this.savePromise = this.badgeClassManager.createBadgeClass(this.issuer.slug, badgeClassData);
+			}
+
+			if (this.issuer.quotas) {
+				this.savePromise.then(() => {
+					// update issuer if quotas active to update used quotas information
+					this.issuer.update();
+				});
 			}
 
 			this.save.emit(this.savePromise);
@@ -1754,5 +1781,18 @@ export class BadgeClassEditFormComponent
 			return rect.height + 2;
 		}
 		return null;
+	}
+
+	checkQuotasDialog(quota: string) {
+		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer,
+					variant: 'quotas',
+				},
+			});
+			return false;
+		}
+		return true;
 	}
 }

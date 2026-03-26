@@ -26,6 +26,7 @@ import { NetworkSharedBadgesDatatableComponent } from '~/components/datatable-ne
 import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model';
 import { ActivatedRoute } from '@angular/router';
 import { LinkEntry } from '~/common/components/bg-breadcrumbs/bg-breadcrumbs.component';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 export interface SharedBadgeWithRequests extends ApiBadgeClassNetworkShare {
 	requestCount: number;
@@ -236,6 +237,9 @@ export class NetworkBadgesComponent implements OnInit {
 	}
 
 	routeToBadgeAward(badge: BadgeClass) {
+		if (!this.checkQuotasDialog()) {
+			return false;
+		}
 		if (!this.userIssuers().length) {
 			this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
@@ -309,5 +313,20 @@ export class NetworkBadgesComponent implements OnInit {
 
 	closeDialogContinue() {
 		this.dialogRef.close('continue');
+	}
+
+	checkQuotasDialog() {
+		if (this.network().quotas) {
+			if (this.network().quotas?.quotas['BADGE_AWARD']?.quota === 0) {
+				this._hlmDialogService.open(QuotaExceededDialog, {
+					context: {
+						issuer: this.network(),
+						variant: 'quotas',
+					},
+				});
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -9,6 +9,7 @@ import {
 	viewChild,
 	AfterContentInit,
 	AfterViewInit,
+	computed,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SessionService } from '../../../common/services/session.service';
@@ -47,6 +48,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { Network } from '~/issuer/network.model';
 import { UserPreferenceService } from '~/common/services/user-preference.service';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { QuotaManager } from '~/issuer/services/quota-manager.service';
 import { NavigationType, OebIssuerNetworkCard } from '../issuer-network-card/issuer-network-card.component';
 
 @Component({
@@ -88,6 +91,8 @@ export class IssuerListComponent
 	private userProfileApiService = inject(UserProfileApiService);
 	private userPreferences = inject(UserPreferenceService);
 
+	private quotaManager = inject(QuotaManager);
+
 	readonly issuerPlaceholderSrc = preloadImageURL('../../../../breakdown/static/images/placeholderavatar-issuer.svg');
 	readonly noIssuersPlaceholderSrc =
 		'../../../../assets/@concentricsky/badgr-style/dist/images/image-empty-issuer.svg';
@@ -95,6 +100,16 @@ export class IssuerListComponent
 	Array = Array;
 
 	issuers: Issuer[] = null;
+
+	canCreateNetwork = computed(() => {
+		return (
+			this.issuers
+				.filter((issuer) => !issuer.quotas || !!issuer.quotas?.quotas['NETWORK_CREATE'].quota)
+				.filter((issuer) => issuer.currentUserStaffMember.isOwner || issuer.currentUserStaffMember.isEditor)
+				.length > 0
+		);
+	});
+
 	networks = signal<Network[]>([]);
 	badges: BadgeClass[] = null;
 
@@ -155,6 +170,8 @@ export class IssuerListComponent
 
 	tabs: any[] = [];
 
+	quotasActive = false;
+
 	plural = {
 		issuer: {
 			'=0': this.translate.instant('Issuer.noInstitutions'),
@@ -186,6 +203,12 @@ export class IssuerListComponent
 		// subscribe to issuer and badge class changes
 		this.issuersLoaded = this.loadIssuers();
 		this.networksLoaded = this.loadNetworks();
+
+		this.quotaManager.loaded$.subscribe((enabled) => {
+			if (this.quotaManager.quotasEnabled && this.quotaManager.quotasList.length) {
+				this.quotasActive = true;
+			}
+		});
 	}
 
 	issuerSearchInputFocusOut() {
@@ -502,5 +525,24 @@ export class IssuerListComponent
 			return rect.height + 2;
 		}
 		return null;
+	}
+
+	createNetwork() {
+		if (this.checkQuotasDialog()) {
+			this.router.navigate(['/issuer/networks/create']);
+		}
+	}
+
+	checkQuotasDialog() {
+		const canCreate = this.issuers.some((i) => !!i.quotas?.quotas.NETWORK_CREATE.quota);
+		if (this.quotasActive && !canCreate) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					quota: 'NETWORK',
+				},
+			});
+			return false;
+		}
+		return true;
 	}
 }

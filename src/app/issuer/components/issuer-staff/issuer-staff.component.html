@@ -26,6 +26,10 @@
 				(click)="openDialog(this.translate.instant('Issuer.addMember'))"
 			></oeb-button>
 		</div>
+		<quota-information
+			[quotas]="['ACCOUNTS_ADMIN', 'ACCOUNTS_MEMBER']"
+			class="tw-block tw-mt-8 tw-text-[18px]/[1.3em]"
+		/>
 		<section class="tw-mt-8">
 			<h2 hlmH2 class="!tw-text-oebblack tw-mb-2">{{ 'Issuer.openStaffRequests' | translate }}</h2>
 			@if (staffRequests().length === 0) {
@@ -135,9 +139,9 @@
 			error="{{ 'Issuer.addMember_newEmail' | translate }}"
 		>
 		</oeb-input>
-		<span class="tw-mt-6 tw-text-oebblack tw-text-lg tw-font-bold">{{
-			'Issuer.addMember_chooseRole' | translate
-		}}</span>
+		<div class="tw-mt-6 tw-mb-2 tw-text-oebblack tw-text-lg tw-font-bold">
+			{{ 'Issuer.addMember_chooseRole' | translate }}
+		</div>
 		@for (role of issuerStaffRoleOptions; track role; let last = $last) {
 			<bg-formfield-radio
 				[control]="staffCreateForm.rawControlMap.staffRole"
@@ -146,6 +150,7 @@
 				[value]="role.value"
 				[sublabel]="role.description | translate"
 				[last]="last"
+				[disabled]="checkRoleDisabled(role.value)"
 				errorMessage="{{ 'Issuer.addMember_selectRole' | translate }}"
 			></bg-formfield-radio>
 		}
@@ -196,6 +201,7 @@
 					[value]="role.value"
 					sublabel="{{ role.description | translate }}"
 					[last]="last"
+					[disabled]="checkRoleDisabled(role.value)"
 					errorMessage="{{ 'Issuer.addMember_selectRole' | translate }}"
 				></bg-formfield-radio>
 			}
@@ -249,11 +255,11 @@
 					#memberSelect
 					class="!tw-border-purple !tw-border-solid !tw-text-oebblack tw-rounded-[10px] tw-text-lg"
 					[ngModel]="context.getValue()"
-					[disabled]="context.getValue() === 'owner'"
+					[disabled]="isStaffMemberLoggedInUser(userProfile(), context.row.original)"
 					(change)="changeMemberRole(context.row.original, $any(memberSelect.value))"
 				>
 					@for (role of issuerStaffRoleOptions; track role) {
-						<option [value]="role.value">
+						<option [value]="role.value" [disabled]="checkRoleDisabled(role.value, context.getValue())">
 							{{ role.label | translate }}
 						</option>
 					}
@@ -264,7 +270,10 @@
 </ng-template>
 
 <ng-template #badgeActionsCellTemplate let-context>
-	@if (!isStaffMemberLoggedInUser(userProfile(), context.row.original)) {
+	@if (
+		!isStaffMemberLoggedInUser(userProfile(), context.row.original) &&
+		(!context.row.original.isOwner || isCurrentUserIssuerOwner())
+	) {
 		<oeb-button
 			variant="secondary"
 			(click)="removeMember(context.row.original)"
