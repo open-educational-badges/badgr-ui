@@ -927,6 +927,7 @@ export class LearningPathEditFormComponent
 						name: this.learningPathForm.controls.name.value,
 						description: this.learningPathForm.controls.description.value,
 						tags: Array.from(this.lpTags),
+						language: this.translate.currentLang,
 						criteria_text: criteriaText,
 						criteria_url: '',
 						extensions: {
