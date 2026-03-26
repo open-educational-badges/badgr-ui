@@ -37,7 +37,7 @@ import { HlmP } from '@spartan-ng/helm/typography';
 		}
 
 		@if (description) {
-			<div class="">{{ description }}</div>
+			<div class="tw-italic">{{ description }}</div>
 		}
 
 		<brn-select

@@ -28,6 +28,7 @@ import { QueryParametersService } from './common/services/query-parameters.servi
 import { Title } from '@angular/platform-browser';
 import { Issuer } from './issuer/models/issuer.model';
 import { IssuerManager } from './issuer/services/issuer-manager.service';
+import { QuotaManager } from './issuer/services/quota-manager.service';
 import { ExportPdfDialog } from './common/dialogs/export-pdf-dialog/export-pdf-dialog.component';
 import { LanguageService } from './common/services/language.service';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -94,6 +95,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 	private initialLoadingIndicatorService = inject(InitialLoadingIndicatorService);
 	private titleService = inject(Title);
 	protected issuerManager = inject(IssuerManager);
+	protected quotaManager = inject(QuotaManager);
 	private languageService = inject(LanguageService);
 	protected translate = inject(TranslateService);
 	private document = inject<Document>(DOCUMENT);

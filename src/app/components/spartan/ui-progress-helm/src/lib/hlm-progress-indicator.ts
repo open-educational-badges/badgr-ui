@@ -1,7 +1,25 @@
 import { Directive, computed, input } from '@angular/core';
 import { hlm } from '@spartan-ng/brain/core';
 import { injectBrnProgress } from '@spartan-ng/brain/progress';
+import { cva, VariantProps } from 'class-variance-authority';
 import type { ClassValue } from 'clsx';
+
+export const indicatorVariants = cva(
+	'tw-inline-flex tw-transform-gpu tw-h-full tw-w-full tw-flex-1 tw-transition-all',
+	{
+		variants: {
+			variant: {
+				default: 'tw-bg-green',
+				purple: 'tw-bg-purple',
+			},
+		},
+		defaultVariants: {
+			variant: 'default',
+		},
+	},
+);
+
+export type IndicatorVariants = VariantProps<typeof indicatorVariants>;
 
 @Directive({
 	selector: '[hlmProgressIndicator],brn-progress-indicator[hlm]',
@@ -14,10 +32,13 @@ import type { ClassValue } from 'clsx';
 export class HlmProgressIndicator {
 	private readonly _progress = injectBrnProgress();
 	public readonly userClass = input<ClassValue>('', { alias: 'class' });
+	public readonly variant = input<IndicatorVariants['variant']>('default');
 
 	protected readonly _computedClass = computed(() =>
 		hlm(
-			'tw-inline-flex tw-transform-gpu tw-h-full tw-w-full tw-flex-1 tw-bg-green tw-transition-all',
+			indicatorVariants({
+				variant: this.variant(),
+			}),
 			this.userClass(),
 		),
 	);

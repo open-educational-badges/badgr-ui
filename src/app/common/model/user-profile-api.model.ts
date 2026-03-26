@@ -13,6 +13,8 @@ export interface ApiUserProfile {
 	marketing_opt_in: boolean;
 	zip_code: string;
 	secure_password_set: boolean;
+	date_joined: string;
+	quota_release_informed: boolean;
 }
 export type UserProfileRef = ApiEntityRef;
 

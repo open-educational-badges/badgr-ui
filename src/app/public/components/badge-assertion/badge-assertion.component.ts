@@ -49,6 +49,7 @@ export class PublicBadgeAssertionComponent {
 	private pdfService = inject(PdfService);
 	private sessionService = inject(SessionService);
 	private issuerManager = inject(IssuerManager);
+	private publicApiService = inject(PublicApiService);
 	protected route = inject(ActivatedRoute);
 
 	constructor() {
@@ -190,8 +191,7 @@ export class PublicBadgeAssertionComponent {
 		return new LoadedRouteParam(this.injector.get(ActivatedRoute), 'assertionId', async (paramValue) => {
 			try {
 				this.assertionId = paramValue;
-				const service: PublicApiService = this.injector.get(PublicApiService);
-				const assertion = await service.getBadgeAssertion(paramValue);
+				const assertion = await this.publicApiService.getBadgeAssertion(paramValue);
 				if (isOB2Assertion(assertion) && assertion.revoked) {
 					if (assertion.revocationReason) {
 						this.messageService.reportFatalError('Assertion has been revoked:', assertion.revocationReason);
@@ -205,7 +205,7 @@ export class PublicBadgeAssertionComponent {
 					const issuer = await this.issuerManager.issuerBySlug(assertion.badge.issuer.slug);
 					this.awardingIssuers = [issuer];
 				}
-				const lps = await service.getLearningPathsForBadgeClass(assertion.badge.slug);
+				const lps = await this.publicApiService.getLearningPathsForBadgeClass(assertion.badge.slug);
 
 				const assertionVersion =
 					Array.isArray(assertion['@context']) &&
@@ -363,18 +363,10 @@ export class PublicBadgeAssertionComponent {
 	}
 
 	downloadCertificate() {
-		this.pdfService
-			.getPdf(this.assertionSlug, 'badges')
-			.then((url) => {
-				this.pdfSrc = url;
-				this.pdfService.downloadPdf(
-					this.pdfSrc,
-					this.assertion.badge.name,
-					new Date(getAssertionIssuedDate(this.assertion)),
-				);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		this.publicApiService.downloadPublicAssertionPdf(
+			this.assertionId,
+			this.assertion.badge.name,
+			new Date(getAssertionIssuedDate(this.assertion)),
+		);
 	}
 }

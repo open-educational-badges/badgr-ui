@@ -11,18 +11,32 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { HlmH1, HlmP, HlmH2 } from '@spartan-ng/helm/typography';
 import { Network } from '~/issuer/network.model';
 import { BgAwaitPromises } from '~/common/directives/bg-await-promises';
+import { QuotaInformationComponent } from '../quota-information/quota-information.component';
+import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { HlmDialogService } from '@spartan-ng/helm/dialog';
 
 @Component({
 	selector: 'badgeclass-select-type',
 	templateUrl: 'badgeclass-select-type.component.html',
 	styleUrls: ['./badgeclass-select-type.component.scss'],
-	imports: [BgBreadcrumbsComponent, HlmH1, HlmP, HlmH2, RouterLink, TranslatePipe, BgAwaitPromises],
+	imports: [
+		BgBreadcrumbsComponent,
+		HlmH1,
+		HlmP,
+		HlmH2,
+		RouterLink,
+		TranslatePipe,
+		BgAwaitPromises,
+		QuotaInformationComponent,
+		QuotaExceededDialog,
+	],
 })
 export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComponent {
 	protected title = inject(Title);
 	protected issuerManager = inject(IssuerManager);
 	private configService = inject(AppConfigService);
 	private translate = inject(TranslateService);
+	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	issuerSlug: string;
 	issuer: Issuer | Network;
@@ -52,5 +66,16 @@ export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComp
 			!this.issuer.is_network ||
 			(this.issuer instanceof Network && this.issuer.partnerBadgesCount + this.issuer.badgeClassCount >= 2)
 		);
+	}
+
+	checkQuotasDialog(quota: string) {
+		if (this.issuer.quotas?.quotas[quota]?.quota === 0) {
+			this._hlmDialogService.open(QuotaExceededDialog, {
+				context: {
+					issuer: this.issuer,
+					variant: 'quotas',
+				},
+			});
+		}
 	}
 }

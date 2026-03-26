@@ -100,6 +100,7 @@
 							[publicUrl]="badge.url"
 							[issuerSlug]="badge.issuerSlug"
 							[competencies]="badge.extensions['extensions:CompetencyExtension']"
+							[category]="badge.extensions['extensions:CategoryExtension'].Category"
 							[tags]="badge.tags"
 						></bg-badgecard>
 					}

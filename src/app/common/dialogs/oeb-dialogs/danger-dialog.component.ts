@@ -66,9 +66,6 @@ export class DangerDialogComponent {
 	protected readonly singleButtonAction = this._dialogContext.singleButtonAction;
 	private readonly _dialogRef = inject<BrnDialogRef>(BrnDialogRef);
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
-
 	constructor() {}
 
 	cancelText = this.translate.instant('General.cancel');
