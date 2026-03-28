@@ -43,6 +43,7 @@
 		"remove": "Entfernen",
 		"add": "Hinzufügen",
 		"added": "Hinzugefügt",
+		"area": "Bereich",
 		"save": "Speichern",
 		"saveChanges": "Änderungen sichern",
 		"aboutBadges": "Badges",
@@ -646,9 +647,15 @@
 		"valuePositive": "Bitte gib eine positive Zahl ein",
 		"optionalBadgeDetails": "Optionale Badge-Details",
 		"addTags": "Tags hinzufügen",
+		"addTagsAndAreas": "Tags & Bereiche hinzufügen",
+		"tagsAndAreas": "Tags & Bereiche",
+		"addAreas": "Bereiche hinzufügen",
 		"newTag": "Einen Tag eingeben...",
 		"tagDoesNotExist": "Dieser Tag existiert noch nicht",
 		"tagInfo": "Tags verschlagworten {{items}} und helfen Lernenden auf OEB bei der Suche von {{items2}} zu bestimmten Themen.",
+		"newArea": "Einen Bereich eingeben...",
+		"areaDoesNotExist": "Dieser Bereich existiert noch nicht",
+		"areaInfo": "Bereiche kategorisieren {{items}} nach Fachgebiet und helfen Lernenden, {{items2}} in ihrem Interessengebiet zu finden.",
 		"removeAlignment": "Verknpüfung entfernen",
 		"removeAlignmentInfo": "Bist du sicher, dass du die Verknpüfung(en) entfernen möchtest? ",
 		"irreversibleAction": "Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -899,6 +906,9 @@
 		"cancel": "Abbrechen",
 		"save": "Speichern",
 		"saving": "Speichere"
+	},
+	"BadgeDetail": {
+		"areas": "Bereiche"
 	},
 	"RecBadgeDetail": {
 		"shareBadge": "Badge teilen",
