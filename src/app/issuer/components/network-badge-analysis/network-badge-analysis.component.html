@@ -11,10 +11,10 @@
 		<ng-template [bgAwaitPromises]="[networkLoaded]">
 			<section class="tw-flex tw-gap-4 tw-items-center tw-pb-8">
 				<div class="tw-bg-white tw-aspect-square tw-flex tw-flex-shrink-0 tw-items-center tw-justify-center">
-					<img width="70px" [src]="network().image" alt="Network Logo" />
+					<img width="70px" [src]="issuerOrNetwork().image" alt="Network Logo" />
 				</div>
 				<div class="tw-flex tw-flex-col">
-					<span class="tw-font-bold tw-text-3xl tw-text-oebblack">{{ network().name }}</span>
+					<span class="tw-font-bold tw-text-3xl tw-text-oebblack">{{ issuerOrNetwork().name }}</span>
 					<span class="tw-text-oebblack tw-text-lg tw-font-semibold tw-mt-2">
 						{{
 							'Network.yourRole'

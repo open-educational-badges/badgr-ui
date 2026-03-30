@@ -215,6 +215,13 @@
 		[tabs]="tabs"
 	></oeb-tabs>
 
+	<ng-template #dashboardTemplate>
+		<app-oeb-dashboard-overview [isNetwork]="false" [networkSlug]="issuer.slug"></app-oeb-dashboard-overview>
+
+		<div class="tw-mt-8">
+			<app-oeb-dashboard-learners [networkSlug]="issuer.slug" [disableClick]="true"></app-oeb-dashboard-learners>
+		</div>
+	</ng-template>
 	<ng-template #badgesTemplate>
 		@if (env.networksEnabled && !public) {
 			<div class="tw-mt-12">

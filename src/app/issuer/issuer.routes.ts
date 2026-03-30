@@ -131,6 +131,18 @@ export const routes = [
 		component: BadgeClassIssueBulkAwardComponent,
 	},
 	{
+		path: 'issuers/:networkSlug/badge-analysis',
+		component: NetworkBadgeAnalysisComponent,
+	},
+	{
+		path: 'issuers/:networkSlug/competency-tracking',
+		component: DashboardCompetencyTrackingComponent,
+	},
+	{
+		path: 'issuers/:networkSlug/competency-tracking/:competencyId',
+		component: DashboardCompetencyTrackingComponent,
+	},
+	{
 		path: 'issuers/:issuerSlug/quotas',
 		component: IssuerQuotasComponent,
 	},

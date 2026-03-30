@@ -82,6 +82,8 @@ import {
 	getCompetencyAreaDisplayConfig,
 	BadgeTypeStatsExtended,
 } from '../../../dashboard/models/dashboard-api.model';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { Issuer } from '~/issuer/models/issuer.model';
 
 // Re-export Top3Badge from dashboard component for consistency
 export { Top3Badge } from '../../../dashboard/components/dashboard-stats-bar/dashboard-top-badges.component';
@@ -184,7 +186,7 @@ export interface MonthlyBadgeData {
 	styleUrls: ['./network-badge-analysis.component.scss'],
 })
 export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComponent implements OnInit, OnDestroy {
-	private networkManager = inject(NetworkManager);
+	private issuerManager = inject(IssuerManager);
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
@@ -211,7 +213,7 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 		MapPin: 'M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z',
 	};
 	networkLoaded: Promise<unknown>;
-	network = signal<Network | null>(null);
+	issuerOrNetwork = signal<Network | Issuer | null>(null);
 	crumbs: LinkEntry[];
 
 	private destroy$ = new Subject<void>();
@@ -352,21 +354,48 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 
 		this.networkSlug = this.route.snapshot.params['networkSlug'];
 
-		this.networkLoaded = this.networkManager.networkBySlug(this.networkSlug).then((network) => {
-			this.network.set(network);
+		// Initialize breadcrumbs
+		this.crumbs = [
+			{ title: '' },
+			{
+				title: 'Loading...',
+				routerLink: ['/issuer/networks', this.networkSlug],
+			},
+			{ title: 'Badge-Analyse', routerLink: [] },
+		];
+
+		this.networkLoaded = this.issuerManager.issuerOrNetworkBySlug(this.networkSlug).then((issuerOrNetwork) => {
+			this.issuerOrNetwork.set(issuerOrNetwork);
 			this.title.setTitle(
-				`Badge-Analyse - ${this.network().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
+				`Badge-Analyse - ${this.issuerOrNetwork().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
 			);
-			this.crumbs = [
-				{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
-				{
+
+			if (issuerOrNetwork.is_network) {
+				this.crumbs[0] = {
 					title: this.translate.instant('General.networks'),
-					routerLink: ['/issuer'],
-					queryParams: { tab: 'networks' },
-				},
-				{ title: this.network().name, routerLink: ['/issuer/networks/' + this.network().slug] },
-				{ title: 'Badge-Analyse', routerLink: [] },
-			];
+					routerLink: ['/issuer/networks'],
+				};
+			} else {
+				this.crumbs[0] = {
+					title: this.translate.instant('NavItems.myInstitutions'),
+					routerLink: ['/issuer/issuers'],
+				};
+			}
+			this.crumbs[1] = {
+				title: issuerOrNetwork.name,
+				routerLink: [`/issuer/${issuerOrNetwork.is_network ? 'networks' : 'issuers'}`, this.networkSlug],
+			};
+
+			// this.crumbs = [
+			// 	{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
+			// 	{
+			// 		title: this.translate.instant('General.networks'),
+			// 		routerLink: ['/issuer'],
+			// 		queryParams: { tab: 'networks' },
+			// 	},
+			// 	{ title: this.issuerOrNetwork().name, routerLink: ['/issuer/networks/' + this.issuerOrNetwork().slug] },
+			// 	{ title: 'Badge-Analyse', routerLink: [] },
+			// ];
 		});
 	}
 
@@ -382,7 +411,7 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 	}
 
 	private hasDashboardAccess(): boolean {
-		const userRole = this.network()?.current_user_network_role;
+		const userRole = this.role;
 		return userRole === 'owner' || userRole === 'creator' || userRole === 'editor';
 	}
 
@@ -634,7 +663,11 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 	}
 
 	navigateBack(): void {
-		this.router.navigate(['/issuer/networks', this.networkSlug]);
+		if (this.issuerOrNetwork().is_network) {
+			this.router.navigate(['/issuer/networks', this.networkSlug]);
+		} else {
+			this.router.navigate(['/issuer/issuers', this.networkSlug]);
+		}
 	}
 
 	/**
@@ -649,10 +682,10 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 	}
 
 	get role() {
-		if (this.network()?.currentUserStaffMember) {
-			return this.network().currentUserStaffMember.roleSlug;
+		if (this.issuerOrNetwork()?.currentUserStaffMember) {
+			return this.issuerOrNetwork().currentUserStaffMember.roleSlug;
 		} else {
-			return this.network()?.current_user_network_role;
+			return (this.issuerOrNetwork() as Network)?.current_user_network_role;
 		}
 	}
 

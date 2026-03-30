@@ -49,6 +49,8 @@ import {
 	DashboardKPIData,
 } from '../../../dashboard/models/dashboard-api.model';
 import { CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
+import { IssuerManager } from '~/issuer/services/issuer-manager.service';
+import { Issuer } from '~/issuer/models/issuer.model';
 
 // Interface for gender competency hours
 interface GenderCompetencyHours {
@@ -139,6 +141,7 @@ export class DashboardCompetencyTrackingComponent
 	implements OnInit, OnDestroy
 {
 	private networkManager = inject(NetworkManager);
+	private issuerManager = inject(IssuerManager);
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
@@ -147,7 +150,7 @@ export class DashboardCompetencyTrackingComponent
 	networkSlug: string = '';
 	initialCompetencyId: string | null = null;
 	networkLoaded: Promise<unknown>;
-	network = signal<Network | null>(null);
+	issuerOrNetwork = signal<Network | Issuer | null>(null);
 	crumbs: LinkEntry[];
 
 	private destroy$ = new Subject<void>();
@@ -215,7 +218,7 @@ export class DashboardCompetencyTrackingComponent
 
 		// Initialize breadcrumbs
 		this.crumbs = [
-			{ title: this.translate.instant('General.networks'), routerLink: ['/issuer/networks'] },
+			{ title: '' },
 			{
 				title: 'Loading...',
 				routerLink: ['/issuer/networks', this.networkSlug],
@@ -227,16 +230,28 @@ export class DashboardCompetencyTrackingComponent
 		];
 
 		// Load network data using networkBySlug (not loadNetwork)
-		this.networkLoaded = this.networkManager.networkBySlug(this.networkSlug).then(
-			(network) => {
-				this.network.set(network);
+		this.networkLoaded = this.issuerManager.issuerOrNetworkBySlug(this.networkSlug).then(
+			(issuerOrNetwork) => {
+				this.issuerOrNetwork.set(issuerOrNetwork);
 				// Update breadcrumb with network name
+				if (issuerOrNetwork.is_network) {
+					this.crumbs[0] = {
+						title: this.translate.instant('General.networks'),
+						routerLink: ['/issuer/networks'],
+					};
+				} else {
+					this.crumbs[0] = {
+						title: this.translate.instant('NavItems.myInstitutions'),
+						routerLink: ['/issuer/issuers'],
+					};
+				}
 				this.crumbs[1] = {
-					title: network.name,
-					routerLink: ['/issuer/networks', this.networkSlug],
+					title: issuerOrNetwork.name,
+					routerLink: [`/issuer/${issuerOrNetwork.is_network ? 'networks' : 'issuers'}`, this.networkSlug],
 				};
+
 				this.title.setTitle(
-					this.translate.instant('Dashboard.pageTitle.competencyTracking', { network: network.name }),
+					this.translate.instant('Dashboard.pageTitle.competencyTracking', { network: issuerOrNetwork.name }),
 				);
 			},
 			(error) => {
@@ -256,7 +271,7 @@ export class DashboardCompetencyTrackingComponent
 	}
 
 	private hasDashboardAccess(): boolean {
-		const userRole = this.network()?.current_user_network_role;
+		const userRole = this.role;
 		return userRole === 'owner' || userRole === 'creator' || userRole === 'editor';
 	}
 
@@ -472,10 +487,10 @@ export class DashboardCompetencyTrackingComponent
 	 * Get user's role in the network
 	 */
 	get role() {
-		if (this.network()?.currentUserStaffMember) {
-			return this.network().currentUserStaffMember.roleSlug;
+		if (this.issuerOrNetwork()?.currentUserStaffMember) {
+			return this.issuerOrNetwork().currentUserStaffMember.roleSlug;
 		} else {
-			return this.network()?.current_user_network_role;
+			return (this.issuerOrNetwork() as Network)?.current_user_network_role;
 		}
 	}
 
@@ -483,7 +498,11 @@ export class DashboardCompetencyTrackingComponent
 	 * Navigate back to network dashboard
 	 */
 	goBack(): void {
-		this.router.navigate(['/issuer/networks', this.networkSlug]);
+		if (this.issuerOrNetwork().is_network) {
+			this.router.navigate(['/issuer/networks', this.networkSlug]);
+		} else {
+			this.router.navigate(['/issuer/issuers', this.networkSlug]);
+		}
 	}
 
 	/**
@@ -523,7 +542,7 @@ export class DashboardCompetencyTrackingComponent
 	 * Fetches real data from the API
 	 */
 	openCompetencyDetail(competency: NetworkStrengthenedCompetencyData): void {
-		const networkSlug = this.network()?.slug || this.networkSlug;
+		const networkSlug = this.issuerOrNetwork()?.slug || this.networkSlug;
 		if (!networkSlug) {
 			console.error('[DashboardCompetencyTracking] No network slug available');
 			return;
@@ -657,7 +676,7 @@ export class DashboardCompetencyTrackingComponent
 	 * Fetches aggregated statistics for the clicked area from the backend
 	 */
 	onCompetencyAreaClick(areaData: CompetencyAreaClickData): void {
-		const networkSlug = this.network()?.slug || this.networkSlug;
+		const networkSlug = this.issuerOrNetwork()?.slug || this.networkSlug;
 		if (!networkSlug) {
 			console.error('[DashboardCompetencyTracking] No network slug available');
 			return;
