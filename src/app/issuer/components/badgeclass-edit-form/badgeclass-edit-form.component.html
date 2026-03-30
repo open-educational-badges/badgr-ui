@@ -943,12 +943,12 @@
 						<div>
 							@if (badgeCategory !== 'competency' || existingBadgeClass) {
 								<h2 hlmH2 class="tw-font-bold">
-									{{ selectedStep + 1 + '.' }} {{ 'CreateBadge.addTags' | translate }}
+									{{ 'CreateBadge.addTags' | translate }}
 								</h2>
 							}
 							@if (badgeCategory === 'competency' && !existingBadgeClass) {
 								<h2 hlmH2 class="tw-font-bold">
-									{{ selectedStep + 1 + '.' }} {{ 'CreateBadge.addTags' | translate }}
+									{{ 'CreateBadge.addTags' | translate }}
 								</h2>
 							}
 						</div>
@@ -959,7 +959,9 @@
 						></p>
 						<div class="formsection-x-body tw-mt-4">
 							<div class="tw-flex tw-gap-4 tw-items-center tw-mb-2">
-								<span class="tw-font-semibold tw-text-lg tw-text-oebblack tw-uppercase"> Tag</span>
+								<span class="tw-font-semibold tw-text-lg tw-text-oebblack tw-uppercase">{{
+									'Badge.tag' | translate
+								}}</span>
 
 								<div class="ng-autocomplete">
 									<ng-autocomplete
@@ -1011,6 +1013,66 @@
 									}
 								</div>
 							}
+							<!-- Area field inside Tags step -->
+							<div class="tw-mt-6">
+								<h2 hlmH2 class="tw-font-bold tw-mb-2">{{ 'CreateBadge.addAreas' | translate }}</h2>
+								<div class="tw-flex tw-gap-4 tw-items-center tw-mb-2">
+									<span class="tw-font-semibold tw-text-lg tw-text-oebblack tw-uppercase">{{
+										'Badge.area' | translate
+									}}</span>
+
+									<div class="ng-autocomplete">
+										<ng-autocomplete
+											name="addarea"
+											id="addarea"
+											#newAreaInput
+											[data]="existingAreas"
+											maxlength="50"
+											[isLoading]="existingAreasLoading"
+											searchKeyword="name"
+											[placeholder]="newArea"
+											[minQueryLength]="3"
+											(keypress)="handleAreaInputKeyPress($event)"
+											[itemTemplate]="areaItemTemplate"
+											[notFoundTemplate]="areaNotFoundTemplate"
+										>
+										</ng-autocomplete>
+
+										<ng-template #areaItemTemplate let-item>
+											<a [innerHTML]="item.name"></a>
+										</ng-template>
+
+										<ng-template #areaNotFoundTemplate let-notFound>
+											<div>{{ 'CreateBadge.areaDoesNotExist' | translate }}</div>
+										</ng-template>
+									</div>
+
+									<oeb-button
+										[id]="'add-area-btn'"
+										size="sm"
+										type="button"
+										(click)="addArea()"
+										text="{{ 'General.add' | translate }}"
+									>
+									</oeb-button>
+								</div>
+								@if (areas.size > 0) {
+									<div class="tw-flex tw-flex-wrap tw-gap-4 tw-w-[70%] tw-ml-[3.2rem]">
+										@for (area of areas; track area) {
+											<div class="tw-flex tw-items-center tw-rounded-full tw-py-1 tw-mb-2">
+												<oeb-button
+													variant="secondary"
+													size="xxs"
+													(click)="removeArea(area)"
+													icon="lucideCircleX"
+													text="{{ area }}"
+												>
+												</oeb-button>
+											</div>
+										}
+									</div>
+								}
+							</div>
 						</div>
 					</div>
 				</cdk-step>
