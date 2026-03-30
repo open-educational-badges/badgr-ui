@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as d3 from 'd3';
-import { BadgeAwardData } from '../../models/dashboard-models';
+import { BadgeAwardData } from '../../models/dashboard-api.model';
 
 export interface BadgeTypeOption {
 	value: string;

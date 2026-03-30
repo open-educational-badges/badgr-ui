@@ -6,13 +6,13 @@ import { lucideClockFading } from '@ng-icons/lucide';
 import { Subject, forkJoin } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
+import { DashboardApiService } from '../../services/dashboard-api.service';
 import {
 	getCompetencyAreaDisplayConfig,
 	ResidenceStrengthenedCompetency,
-	NetworkCompetencyAreaData,
+	DashboardCompetencyAreaData,
 	ESCORootSkill,
-} from '../../models/network-dashboard-api.model';
+} from '../../models/dashboard-api.model';
 import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-bar-chart/horizontal-bar-chart.component';
 import {
 	RecipientSkillVisualisationComponent,
@@ -66,7 +66,7 @@ export interface ResidenceDetailData {
 	styleUrls: ['./residence-detail.component.scss'],
 })
 export class ResidenceDetailComponent implements OnInit, OnDestroy {
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 	private translate = inject(TranslateService);
 
 	private destroy$ = new Subject<void>();

@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ZipCodeStatisticsData } from '../../models/dashboard-models';
+import { ZipCodeStatisticsData } from '../../models/dashboard-api.model';
 import { DashboardUtilService } from '~/dashboard/services/util.service';
 
 @Component({

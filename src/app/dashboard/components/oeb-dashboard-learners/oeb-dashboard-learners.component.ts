@@ -4,18 +4,18 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ChartData } from '../../models/dashboard-models';
+import { ChartData } from '../../models/dashboard-api.model';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GenderCompetencyAnalysisComponent } from '../gender-competency-analysis/gender-competency-analysis.component';
 import { ResidenceDetailComponent } from '../residence-detail/residence-detail.component';
 import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-bar-chart/horizontal-bar-chart.component';
-import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
+import { DashboardApiService } from '../../services/dashboard-api.service';
 import {
 	LearnerResidenceStatistic,
 	LearnerGenderStatistic,
 	LearnerKPIData,
 	mapGenderTypeToLabel,
-} from '../../models/network-dashboard-api.model';
+} from '../../models/dashboard-api.model';
 import { CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { InfoIcon } from '../../../common/components/info-icon.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -69,7 +69,7 @@ export type LernendeViewState = 'overview' | 'gender-detail' | 'residence-detail
 	styleUrls: ['./oeb-dashboard-learners.component.scss'],
 })
 export class OebDashboardLearnersComponent implements OnInit, OnDestroy {
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 	private router = inject(Router);
 	private translate = inject(TranslateService);
 

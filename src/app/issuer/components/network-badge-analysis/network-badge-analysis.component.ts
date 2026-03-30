@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -21,11 +21,10 @@ import {
 } from '@ng-icons/lucide';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-	BadgeTypeStats,
 	BadgeAwardData,
 	BadgeDeliveryMethod,
-	PlzStatisticsData,
-} from '../../../dashboard/models/dashboard-models';
+	ZipCodeStatisticsData,
+} from '../../../dashboard/models/dashboard-api.model';
 import { HlmTableImports } from '../../../components/spartan/ui-table-helm/src';
 import { OebTableImports } from '../../../components/oeb-table';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
@@ -57,8 +56,8 @@ import {
 	CompetencyAreaClickData,
 } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { ApiRootSkill } from '../../../common/model/ai-skills.model';
-import { ESCORootSkill } from '../../../dashboard/models/network-dashboard-api.model';
-import { NetworkDashboardApiService } from '../../../dashboard/services/network-dashboard-api.service';
+import { ESCORootSkill } from '../../../dashboard/models/dashboard-api.model';
+import { DashboardApiService } from '../../../dashboard/services/dashboard-api.service';
 import { OebTabsComponent, Tab } from '../../../components/oeb-tabs.component';
 import {
 	BadgesYearlyLineChartComponent,
@@ -71,9 +70,9 @@ import {
 import {
 	NetworkBadgeAwardTimelineEntry,
 	NetworkBadgeTypeDistributionEntry,
-	NetworkRecentActivityData,
-	NetworkRecentBadgeAwardEntry,
-	NetworkCompetencyAreaData,
+	DashboardRecentActivityData,
+	DashboardRecentBadgeAwardEntry,
+	DashboardCompetencyAreaData,
 	NetworkStrengthenedCompetencyData,
 	NetworkBadgeLocationsResponse,
 	DeliveryMethodType,
@@ -82,7 +81,7 @@ import {
 	getBadgeTypeDisplayConfig,
 	getCompetencyAreaDisplayConfig,
 	BadgeTypeStatsExtended,
-} from '../../../dashboard/models/network-dashboard-api.model';
+} from '../../../dashboard/models/dashboard-api.model';
 
 // Re-export Top3Badge from dashboard component for consistency
 export { Top3Badge } from '../../../dashboard/components/dashboard-stats-bar/dashboard-top-badges.component';
@@ -117,7 +116,7 @@ export interface DeliveryMethodDetailData {
 	totalHours: number;
 	topCompetencyAreas: CompetencyAreaData[];
 	individualCompetencies?: CompetencyAreaData[]; // Individual competencies with ESCO URIs for hours tab
-	plzDistribution?: PlzStatisticsData[];
+	plzDistribution?: ZipCodeStatisticsData[];
 }
 
 // Individual competency with ESCO URI
@@ -189,7 +188,7 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 
 	networkSlug: string = '';
 
@@ -526,7 +525,7 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 	/**
 	 * Transform recent badge awards from API to MonthlyBadgeData format for table
 	 */
-	private transformRecentBadgeAwardsToMonthlyBadges(awards: NetworkRecentBadgeAwardEntry[]): MonthlyBadgeData[] {
+	private transformRecentBadgeAwardsToMonthlyBadges(awards: DashboardRecentBadgeAwardEntry[]): MonthlyBadgeData[] {
 		const apiBaseUrl = this.configService.apiConfig.baseUrl;
 		return awards.map((award) => ({
 			badgeKey: award.badgeId,
@@ -944,10 +943,10 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 	}
 
 	/**
-	 * Transform BadgeLocation from API to PlzStatisticsData format
+	 * Transform BadgeLocation from API to ZipCodeStatisticsData format
 	 * Translates "other" to "Andere" and keeps original order (sorted by badgeCount from API)
 	 */
-	private transformBadgeLocationsToPlzStats(locations: BadgeLocation[]): PlzStatisticsData[] {
+	private transformBadgeLocationsToPlzStats(locations: BadgeLocation[]): ZipCodeStatisticsData[] {
 		return locations.map((location) => ({
 			zipCode: location.city,
 			regionName:
@@ -969,9 +968,9 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 	}
 
 	/**
-	 * Transform NetworkCompetencyAreaData to CompetencyAreaData for delivery method detail view
+	 * Transform DashboardCompetencyAreaData to CompetencyAreaData for delivery method detail view
 	 */
-	private transformCompetencyAreasToDetailData(areas: NetworkCompetencyAreaData[]): CompetencyAreaData[] {
+	private transformCompetencyAreasToDetailData(areas: DashboardCompetencyAreaData[]): CompetencyAreaData[] {
 		return areas.map((area) => {
 			const displayConfig = getCompetencyAreaDisplayConfig(area.id);
 

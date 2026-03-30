@@ -8,15 +8,15 @@ import { catchError } from 'rxjs/operators';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { lucideClockFading } from '@ng-icons/lucide';
-import { KPIData, BadgeAwardData } from '../../models/dashboard-models';
+import { BadgeAwardData } from '../../models/dashboard-api.model';
 import { DashboardStatsBarComponent } from '../dashboard-stats-bar/dashboard-stats-bar.component';
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
 import { KpiCardGridComponent } from '../kpi-card-grid/kpi-card-grid.component';
-import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
+import { DashboardApiService } from '../../services/dashboard-api.service';
 import { KpiCardData } from '../../models/kpi-card.model';
 import {
-	NetworkKPIData,
-	NetworkRecentActivityData,
+	DashboardKPIData,
+	DashboardRecentActivityData,
 	NetworkStrengthenedCompetencyData,
 	NetworkBadgeAwardTimelineEntry,
 	NetworkBadgeTypeDistributionEntry,
@@ -27,7 +27,7 @@ import {
 	ESCORootSkill,
 	SocialspaceInstitution,
 	BadgeTypeStatsExtended,
-} from '../../models/network-dashboard-api.model';
+} from '../../models/dashboard-api.model';
 import { RecentActivityTableComponent } from '../recent-activity-table/recent-activity-table.component';
 import {
 	RecipientSkillVisualisationComponent,
@@ -79,7 +79,7 @@ export interface CompetencyData {
 })
 export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChanges {
 	private router = inject(Router);
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 	private translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
 	private issuerManager = inject(IssuerManager);
@@ -90,7 +90,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	@Input() networkSlug?: string;
 
 	// The 5 main KPIs that should be displayed
-	@Input() kpis: KPIData[] = [];
+	@Input() kpis: DashboardKPIData[] = [];
 
 	// Statistics for the summary bar
 	// totalBadges is now computed from badgeTypeStats via getter
@@ -110,7 +110,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	top3Institutions: Top3Badge[] = [];
 
 	// Recent activities data - loaded for network dashboard
-	recentActivities: NetworkRecentActivityData[] = [];
+	recentActivities: DashboardRecentActivityData[] = [];
 
 	// KPI cards data for the new grid layout
 	kpiCards: KpiCardData[] = [];
@@ -378,7 +378,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 				}) => {
 					// Transform KPIs to KpiCardData
 					if (kpis?.kpis) {
-						this.kpiCards = this.transformNetworkKpisToCards(kpis.kpis);
+						this.kpiCards = this.transformDashboardKPIsToCards(kpis.kpis);
 					}
 
 					// Transform ESCO skills data for skill visualisation
@@ -604,7 +604,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	/**
 	 * Transform network KPIs from API to KpiCardData for display
 	 */
-	private transformNetworkKpisToCards(kpis: NetworkKPIData[]): KpiCardData[] {
+	private transformDashboardKPIsToCards(kpis: DashboardKPIData[]): KpiCardData[] {
 		const cards: KpiCardData[] = [];
 
 		// Sort KPIs by their display order
@@ -711,7 +711,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	/**
 	 * Format trend label for a KPI
 	 */
-	private formatTrendLabelForKpi(kpi: NetworkKPIData): string {
+	private formatTrendLabelForKpi(kpi: DashboardKPIData): string {
 		if (!kpi.trend || kpi.trendValue === undefined) return '';
 
 		const sign = kpi.trend === 'up' ? '+' : kpi.trend === 'down' ? '-' : '';
@@ -869,7 +869,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	 * Navigate to KPI detail page
 	 * @param kpi - The KPI data to view details for
 	 */
-	viewKpiDetails(kpi: KPIData): void {
+	viewKpiDetails(kpi: DashboardKPIData): void {
 		if (!kpi.id) {
 			return;
 		}
@@ -880,7 +880,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	/**
 	 * Check if a KPI has clickable details
 	 */
-	hasClickableDetails(kpi: KPIData): boolean {
+	hasClickableDetails(kpi: DashboardKPIData): boolean {
 		return kpi.hasMonthlyDetails === true && kpi.trendValue !== undefined && kpi.trendValue > 0;
 	}
 

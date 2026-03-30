@@ -51,7 +51,7 @@ import {
 	SocialspaceViewState,
 } from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
 import { SvgIconComponent } from '~/common/components/svg-icon.component';
-import { NetworkDashboardApiService } from '~/dashboard/services/network-dashboard-api.service';
+import { DashboardApiService } from '~/dashboard/services/dashboard-api.service';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
@@ -91,7 +91,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private publicApiService = inject(PublicApiService);
 	private messageService = inject(MessageService);
 	private networkApiService = inject(NetworkApiService);
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 
 	networkLoaded: Promise<unknown>;
 	networkSlug: string;
