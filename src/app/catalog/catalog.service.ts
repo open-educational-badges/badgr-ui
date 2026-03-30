@@ -43,14 +43,17 @@ export class CatalogService extends BaseHttpApiService {
 	 * @param entityType The type of entity to get tags for (e.g., 'badges', 'learningpaths')
 	 * @returns An array of available tags to filter by
 	 */
-	private async getEntityTags(entityType: 'badges' | 'learningpaths'): Promise<string[]> {
+	private async getEntityMetadata(
+		entityType: 'badges' | 'learningpaths',
+		segment: 'tags' | 'areas',
+	): Promise<string[]> {
 		try {
-			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/${entityType}/tags`);
+			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/${entityType}/${segment}`);
 
 			if (response.ok) return response.body;
 			else {
 				console.warn(
-					`Request for ${entityType} tags did not return ok, got ${response.status}: ${response.statusText}`,
+					`Request for ${entityType} ${segment} did not return ok, got ${response.status}: ${response.statusText}`,
 				);
 				return [];
 			}
@@ -66,7 +69,11 @@ export class CatalogService extends BaseHttpApiService {
 	 * @returns An array of available tags to filter badges by
 	 */
 	async getBadgeTags(): Promise<string[]> {
-		return this.getEntityTags('badges');
+		return this.getEntityMetadata('badges', 'tags');
+	}
+
+	async getBadgeAreas(): Promise<string[]> {
+		return this.getEntityMetadata('badges', 'areas');
 	}
 
 	/**
@@ -75,7 +82,7 @@ export class CatalogService extends BaseHttpApiService {
 	 * @returns An array of available tags to filter learning paths by
 	 */
 	async getLearningPathTags(): Promise<string[]> {
-		return this.getEntityTags('learningpaths');
+		return this.getEntityMetadata('learningpaths', 'tags');
 	}
 
 	/**
