@@ -13,7 +13,7 @@ import {
 	SortingState,
 } from '@tanstack/angular-table';
 import { NgIcon } from '@ng-icons/core';
-import { NetworkRecentActivityData } from '../../models/network-dashboard-api.model';
+import { DashboardRecentActivityData } from '../../models/dashboard-api.model';
 
 @Component({
 	selector: 'app-recent-activity-table',
@@ -148,7 +148,7 @@ import { NetworkRecentActivityData } from '../../models/network-dashboard-api.mo
 	`,
 })
 export class RecentActivityTableComponent {
-	activities = input.required<NetworkRecentActivityData[]>();
+	activities = input.required<DashboardRecentActivityData[]>();
 
 	translateHeaderCellTemplate = viewChild.required<TemplateRef<any>>('translateHeaderCellTemplate');
 	badgeCellTemplate = viewChild.required<TemplateRef<any>>('badgeCellTemplate');
@@ -172,7 +172,7 @@ export class RecentActivityTableComponent {
 		}
 	}
 
-	private readonly activityTableColumnDefinition: ColumnDef<NetworkRecentActivityData>[] = [
+	private readonly activityTableColumnDefinition: ColumnDef<DashboardRecentActivityData>[] = [
 		{
 			id: 'Network.Dashboard.recentActivity.date',
 			header: () => this.translateHeaderCellTemplate(),

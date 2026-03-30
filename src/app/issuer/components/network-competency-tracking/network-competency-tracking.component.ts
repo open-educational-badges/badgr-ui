@@ -14,7 +14,7 @@ import { Network } from '../../../issuer/network.model';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { HlmH1 } from '@spartan-ng/helm/typography';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { NetworkDashboardApiService } from '../../../dashboard/services/network-dashboard-api.service';
+import { DashboardApiService } from '../../../dashboard/services/dashboard-api.service';
 import {
 	HorizontalBarChartComponent,
 	HorizontalBarItem,
@@ -40,14 +40,14 @@ import {
 	LearnerGenderStatistic,
 	mapGenderTypeToLabel,
 	BadgeCompetencyWithEsco,
-	NetworkCompetencyDetailResponse,
-	NetworkCompetencyInstitution,
+	DashboardCompetencyDetailResponse,
+	DashboardCompetencyInstitution,
 	CompetencyAreaDetailRequest,
 	CompetencyAreaDetailResponse,
 	CompetencyAreaTopCompetency,
-	NetworkKPIsResponse,
-	NetworkKPIData,
-} from '../../../dashboard/models/network-dashboard-api.model';
+	DashboardKPIsResponse,
+	DashboardKPIData,
+} from '../../../dashboard/models/dashboard-api.model';
 import { CompetencyAreaClickData } from '../../../recipient/components/recipient-skill-visualisation/recipient-skill-visualisation.component';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { Issuer } from '~/issuer/models/issuer.model';
@@ -136,7 +136,7 @@ interface CompetencyAreaDetailData {
 	templateUrl: './network-competency-tracking.component.html',
 	styleUrls: ['./network-competency-tracking.component.scss'],
 })
-export class NetworkCompetencyTrackingComponent
+export class DashboardCompetencyTrackingComponent
 	extends BaseAuthenticatedRoutableComponent
 	implements OnInit, OnDestroy
 {
@@ -145,7 +145,7 @@ export class NetworkCompetencyTrackingComponent
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 
 	networkSlug: string = '';
 	initialCompetencyId: string | null = null;
@@ -317,7 +317,7 @@ export class NetworkCompetencyTrackingComponent
 			kpis: this.networkDashboardApi.getKpis(this.networkSlug).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-COMPETENCY-TRACKING] Error loading KPIs:', error);
-					return of({ kpis: [] } as NetworkKPIsResponse);
+					return of({ kpis: [] } as DashboardKPIsResponse);
 				}),
 			),
 		})
@@ -366,7 +366,7 @@ export class NetworkCompetencyTrackingComponent
 					// Process KPIs to extract trend data for competency hours
 					if (kpis?.kpis?.length > 0) {
 						const competencyHoursKpi = kpis.kpis.find(
-							(kpi: NetworkKPIData) => kpi.id === 'competency_hours',
+							(kpi: DashboardKPIData) => kpi.id === 'competency_hours',
 						);
 						if (
 							competencyHoursKpi &&
@@ -544,7 +544,7 @@ export class NetworkCompetencyTrackingComponent
 	openCompetencyDetail(competency: NetworkStrengthenedCompetencyData): void {
 		const networkSlug = this.issuerOrNetwork()?.slug || this.networkSlug;
 		if (!networkSlug) {
-			console.error('[NetworkCompetencyTracking] No network slug available');
+			console.error('[DashboardCompetencyTracking] No network slug available');
 			return;
 		}
 
@@ -556,12 +556,12 @@ export class NetworkCompetencyTrackingComponent
 			.pipe(
 				takeUntil(this.destroy$),
 				catchError((error) => {
-					console.error('[NetworkCompetencyTracking] Failed to load competency details:', error);
+					console.error('[DashboardCompetencyTracking] Failed to load competency details:', error);
 					this.competencyDetailLoading = false;
 					return of(null);
 				}),
 			)
-			.subscribe((response: NetworkCompetencyDetailResponse | null) => {
+			.subscribe((response: DashboardCompetencyDetailResponse | null) => {
 				if (response) {
 					// Map API response to component's CompetencyDetailData format
 					const detailData: CompetencyDetailData = {
@@ -585,7 +585,7 @@ export class NetworkCompetencyTrackingComponent
 	/**
 	 * Map institutions from API response to component format
 	 */
-	private mapInstitutionsFromApi(apiInstitutions: NetworkCompetencyInstitution[]): CompetencyInstitution[] {
+	private mapInstitutionsFromApi(apiInstitutions: DashboardCompetencyInstitution[]): CompetencyInstitution[] {
 		const apiBaseUrl = this.configService.apiConfig.baseUrl;
 		// Remove trailing slash from base URL if present
 		const cleanBaseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
@@ -678,13 +678,13 @@ export class NetworkCompetencyTrackingComponent
 	onCompetencyAreaClick(areaData: CompetencyAreaClickData): void {
 		const networkSlug = this.issuerOrNetwork()?.slug || this.networkSlug;
 		if (!networkSlug) {
-			console.error('[NetworkCompetencyTracking] No network slug available');
+			console.error('[DashboardCompetencyTracking] No network slug available');
 			return;
 		}
 
 		// Don't proceed if there are no competency URIs
 		if (!areaData.competencyUris || areaData.competencyUris.length === 0) {
-			console.warn('[NetworkCompetencyTracking] No competency URIs for area:', areaData.areaName);
+			console.warn('[DashboardCompetencyTracking] No competency URIs for area:', areaData.areaName);
 			return;
 		}
 
@@ -704,7 +704,7 @@ export class NetworkCompetencyTrackingComponent
 			.pipe(
 				takeUntil(this.destroy$),
 				catchError((error) => {
-					console.error('[NetworkCompetencyTracking] Failed to load competency area details:', error);
+					console.error('[DashboardCompetencyTracking] Failed to load competency area details:', error);
 					this.areaDetailLoading = false;
 					return of(null);
 				}),

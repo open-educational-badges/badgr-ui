@@ -1339,13 +1339,6 @@
 			"city": "Kreisfreie Stadt",
 			"district": "Landkreis"
 		},
-		"dataSource": {
-			"mock": "Mock",
-			"api": "API",
-			"toggleLabel": "Datenquelle umschalten",
-			"liveStatus": "Live",
-			"mockStatus": "Demo"
-		},
 		"Stats": {
 			"badges": "Badges",
 			"competencyHours": "Kompetenzstunden",
@@ -1456,13 +1449,6 @@
 			"competenciesCount": "Anzahl der insgesamt angesprochenen Kompetenzen in allen Badges.",
 			"diversityIndex": "Anzahl der durchschnittlich angesprochenen Kompetenzen pro Kurs",
 			"zipCodeDistribution": "Verteilung der Lernenden nach Postleitzahl"
-		},
-		"dataSource": {
-			"mock": "Mockdaten",
-			"api": "Live API",
-			"toggleLabel": "Datenquelle umschalten",
-			"mockStatus": "Testdaten aktiv",
-			"liveStatus": "Live-Daten aktiv"
 		},
 		"legend": {
 			"low": "Niedrig",

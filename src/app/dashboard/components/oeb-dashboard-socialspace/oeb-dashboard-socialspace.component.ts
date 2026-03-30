@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
+import { DashboardApiService } from '../../services/dashboard-api.service';
 import { AppConfigService } from '../../../common/app-config.service';
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 import {
@@ -15,7 +15,7 @@ import {
 	SocialspaceTopInstitution,
 	SocialspaceCityEntry,
 	BadgeTypeStatsExtended,
-} from '../../models/network-dashboard-api.model';
+} from '../../models/dashboard-api.model';
 import { ZipCodeMapComponent } from '../zip-code-map/zip-code-map.component';
 import { InstitutionsTableComponent, InstitutionTableData } from '../institutions-table/institutions-table.component';
 import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-bar-chart/horizontal-bar-chart.component';
@@ -66,7 +66,7 @@ export type SocialspaceViewState = 'overview' | 'city-detail' | 'city-learner-de
 	styleUrls: ['./oeb-dashboard-socialspace.component.scss'],
 })
 export class OebDashboardSocialspaceComponent implements OnInit, OnDestroy {
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 	private configService = inject(AppConfigService);
 	private router = inject(Router);
 	private translate = inject(TranslateService);

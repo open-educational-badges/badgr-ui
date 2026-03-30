@@ -51,7 +51,7 @@ import {
 	SocialspaceViewState,
 } from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
 import { SvgIconComponent } from '~/common/components/svg-icon.component';
-import { NetworkDashboardApiService } from '~/dashboard/services/network-dashboard-api.service';
+import { DashboardApiService } from '~/dashboard/services/dashboard-api.service';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
@@ -91,7 +91,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private publicApiService = inject(PublicApiService);
 	private messageService = inject(MessageService);
 	private networkApiService = inject(NetworkApiService);
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 
 	networkLoaded: Promise<unknown>;
 	networkSlug: string;
@@ -142,8 +142,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	@ViewChild('socialspaceComponentRef') socialspaceComponentRef: OebDashboardSocialspaceComponent;
 
-	constructor(...args: unknown[]);
-
 	constructor() {
 		const loginService = inject(SessionService);
 		const router = inject(Router);
@@ -176,8 +174,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this.initializeMenuItems();
 		});
 
-		const networkDashboardLoaded = this.networkDashboardApi.getKpis(this.networkSlug).subscribe((kpis) => {
-			this.networkDashboardAvailable.set(true);
+		const networkDashboardLoaded = new Promise<void>((r) => {
+			this.networkDashboardApi.getKpis(this.networkSlug).subscribe({
+				next: (kpis) => {
+					this.networkDashboardAvailable.set(true);
+					r();
+				},
+				error: r,
+			});
 		});
 
 		Promise.all([this.networkLoaded, networkDashboardLoaded]).then(() => {
@@ -249,6 +253,8 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				component: this.learnersTemplate,
 			},
 		];
+
+		console.log([this.networkDashboardAvailable(), hasDashboardAccess]);
 
 		if (this.networkDashboardAvailable() && hasDashboardAccess) {
 			this.tabs = [...baseTabs, ...dashboardTabs];

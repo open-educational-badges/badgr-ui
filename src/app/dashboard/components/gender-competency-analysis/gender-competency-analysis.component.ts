@@ -8,16 +8,16 @@ import { Subject, of, forkJoin } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
 import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-bar-chart/horizontal-bar-chart.component';
-import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
+import { DashboardApiService } from '../../services/dashboard-api.service';
 import {
 	getCompetencyAreaDisplayConfig,
 	GenderType,
 	mapGenderLabelToType,
 	GenderIndividualCompetency,
 	GenderTopBadge,
-	NetworkCompetencyAreaData,
+	DashboardCompetencyAreaData,
 	ESCORootSkill,
-} from '../../models/network-dashboard-api.model';
+} from '../../models/dashboard-api.model';
 import {
 	RecipientSkillVisualisationComponent,
 	CompetencyAreaClickData,
@@ -84,7 +84,7 @@ export interface GenderCompetencyData {
 	styleUrls: ['./gender-competency-analysis.component.scss'],
 })
 export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 
 	private destroy$ = new Subject<void>();
 
@@ -232,7 +232,7 @@ export class GenderCompetencyAnalysisComponent implements OnInit, OnDestroy {
 	/**
 	 * Transform competency areas from API format
 	 */
-	private transformCompetencyAreas(areas: NetworkCompetencyAreaData[]): CompetencyAreaData[] {
+	private transformCompetencyAreas(areas: DashboardCompetencyAreaData[]): CompetencyAreaData[] {
 		return areas.map((item) => {
 			const displayConfig = getCompetencyAreaDisplayConfig(item.id);
 			return {

@@ -1,18 +1,4 @@
-import {
-	Component,
-	OnInit,
-	Input,
-	Output,
-	EventEmitter,
-	OnDestroy,
-	signal,
-	OnChanges,
-	SimpleChanges,
-	ViewChild,
-	ElementRef,
-	AfterViewInit,
-	inject,
-} from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, signal, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -22,32 +8,26 @@ import { catchError } from 'rxjs/operators';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { lucideClockFading } from '@ng-icons/lucide';
-import * as d3 from 'd3';
-import { KPIData, BadgeAwardData } from '../../models/dashboard-models';
+import { BadgeAwardData } from '../../models/dashboard-api.model';
 import { DashboardStatsBarComponent } from '../dashboard-stats-bar/dashboard-stats-bar.component';
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
-import { DataSourceToggleComponent } from '../data-source-toggle/data-source-toggle.component';
 import { KpiCardGridComponent } from '../kpi-card-grid/kpi-card-grid.component';
-import { DashboardDataSourceService } from '../../services/dashboard-data-source.service';
-import { DashboardOverviewApiService } from '../../services/dashboard-overview-api.service';
-import { NetworkDashboardApiService } from '../../services/network-dashboard-api.service';
-import { MOCK_KPI_CARDS, KpiCardData } from '../../models/kpi-card.model';
+import { DashboardApiService } from '../../services/dashboard-api.service';
+import { KpiCardData } from '../../models/kpi-card.model';
 import {
-	NetworkKPIData,
-	NetworkKPIId,
-	NetworkRecentActivityData,
+	DashboardKPIData,
+	DashboardRecentActivityData,
 	NetworkStrengthenedCompetencyData,
 	NetworkBadgeAwardTimelineEntry,
 	NetworkBadgeTypeDistributionEntry,
 	KPI_DISPLAY_CONFIG,
 	formatKPIValue,
-	getCompetencyAreaDisplayConfig,
 	getBadgeRankDisplayConfig,
 	getBadgeTypeDisplayConfig,
 	ESCORootSkill,
 	SocialspaceInstitution,
 	BadgeTypeStatsExtended,
-} from '../../models/network-dashboard-api.model';
+} from '../../models/dashboard-api.model';
 import { RecentActivityTableComponent } from '../recent-activity-table/recent-activity-table.component';
 import {
 	RecipientSkillVisualisationComponent,
@@ -84,7 +64,6 @@ export interface CompetencyData {
 		TranslatePipe,
 		DashboardStatsBarComponent,
 		DashboardTopBadgesComponent,
-		DataSourceToggleComponent,
 		KpiCardGridComponent,
 		RecentActivityTableComponent,
 		NgIcon,
@@ -100,9 +79,7 @@ export interface CompetencyData {
 })
 export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChanges {
 	private router = inject(Router);
-	private dataSourceService = inject(DashboardDataSourceService);
-	private overviewApiService = inject(DashboardOverviewApiService);
-	private networkDashboardApi = inject(NetworkDashboardApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 	private translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
 	private issuerManager = inject(IssuerManager);
@@ -114,13 +91,15 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	@Input() isNetwork?: boolean = true;
 
 	// The 5 main KPIs that should be displayed
-	@Input() kpis: KPIData[] = [];
+	@Input() kpis: DashboardKPIData[] = [];
 
 	// Statistics for the summary bar
 	// totalBadges is now computed from badgeTypeStats via getter
 	@Input() totalCompetencyHours: number = 0;
 	@Input() totalInstitutions: number = 0;
 	@Input() totalLearners: number = 0;
+
+	kpiCardConfig: KpiCardData[] = [];
 
 	// Skill visualisation data - ESCO-compatible skills for the force-directed graph
 	skillVisualisationData: ApiRootSkill[] = [];
@@ -132,7 +111,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	top3Institutions: Top3Badge[] = [];
 
 	// Recent activities data - loaded for network dashboard
-	recentActivities: NetworkRecentActivityData[] = [];
+	recentActivities: DashboardRecentActivityData[] = [];
 
 	// KPI cards data for the new grid layout
 	kpiCards: KpiCardData[] = [];
@@ -226,13 +205,6 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 
 		// Load initial data
 		this.loadDashboardData();
-
-		// Reload data when data source changes (only for non-network mode)
-		if (!this.networkSlug) {
-			this.dataSourceService.dataSource$.pipe(takeUntil(this.destroy$)).subscribe((source) => {
-				this.loadDashboardData();
-			});
-		}
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
@@ -311,16 +283,6 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 		if (this.networkSlug) {
 			this.loadNetworkData();
 			return;
-		}
-
-		const isMockMode = this.dataSourceService.isMockData;
-
-		if (isMockMode) {
-			// Mock mode: Use mock data directly
-			this.loadMockData();
-		} else {
-			// Live API mode: Use new overview API endpoints (NO FALLBACK)
-			this.loadLiveApiData();
 		}
 	}
 
@@ -417,7 +379,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 				}) => {
 					// Transform KPIs to KpiCardData
 					if (kpis?.kpis) {
-						this.kpiCards = this.transformNetworkKpisToCards(kpis.kpis);
+						this.kpiCards = this.transformDashboardKPIsToCards(kpis.kpis);
 					}
 
 					// Transform ESCO skills data for skill visualisation
@@ -643,7 +605,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	/**
 	 * Transform network KPIs from API to KpiCardData for display
 	 */
-	private transformNetworkKpisToCards(kpis: NetworkKPIData[]): KpiCardData[] {
+	private transformDashboardKPIsToCards(kpis: DashboardKPIData[]): KpiCardData[] {
 		const cards: KpiCardData[] = [];
 
 		// Sort KPIs by their display order
@@ -750,7 +712,7 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	/**
 	 * Format trend label for a KPI
 	 */
-	private formatTrendLabelForKpi(kpi: NetworkKPIData): string {
+	private formatTrendLabelForKpi(kpi: DashboardKPIData): string {
 		if (!kpi.trend || kpi.trendValue === undefined) return '';
 
 		const sign = kpi.trend === 'up' ? '+' : kpi.trend === 'down' ? '-' : '';
@@ -775,64 +737,6 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Load data from Live API (NO mock fallback)
-	 */
-	private loadLiveApiData(): void {
-		this.useFallbackData();
-		this.kpiCards = MOCK_KPI_CARDS;
-
-		// Load top badges from new endpoint
-		this.overviewApiService
-			.getTopBadges({ limit: 3, period: 'all_time' })
-			.pipe(
-				takeUntil(this.destroy$),
-				catchError((error) => {
-					console.error('[OEB-OVERVIEW] API Error loading top badges:', error);
-					this.handleError(this.translate.instant('Dashboard.error.topBadgesLoadFailed'));
-					return EMPTY;
-				}),
-			)
-			.subscribe({
-				next: (response) => {
-					// Map TopBadgeData to Top3Badge
-					this.top3Badges = response.badges.map((badge) => ({
-						rank: badge.rank as 1 | 2 | 3,
-						name: badge.badgeTitle,
-						count: badge.count,
-						icon: badge.visualization?.icon || this.getIconForRank(badge.rank),
-						color: badge.visualization?.color || this.getColorForRank(badge.rank),
-					}));
-					this.isLoading.set(false);
-					this.dataLoaded = true;
-					// Render chart after Angular updates the DOM with the content block
-					this.scheduleChartRender();
-				},
-			});
-	}
-
-	/**
-	 * Load data from mock service - no longer uses mock competency data
-	 * Shows "no data available" for competency areas when no API data
-	 */
-	private loadMockData(): void {
-		this.useFallbackData();
-		this.kpiCards = MOCK_KPI_CARDS;
-
-		// Set empty competency data - shows "no data available" in UI
-		this.skillVisualisationData = [];
-		this.individualCompetencyData = [];
-
-		// Set empty top badges - shows "no data available" in UI
-		this.top3Badges = [];
-		this.top3Institutions = [];
-
-		this.isLoading.set(false);
-		this.dataLoaded = true;
-		// Render chart after Angular updates the DOM with the content block
-		this.scheduleChartRender();
 	}
 
 	/**
@@ -963,21 +867,10 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	}
 
 	/**
-	 * Fallback top badges data if API/mock fails
-	 */
-	private getFallbackTopBadges(): Top3Badge[] {
-		return [
-			{ rank: 1, name: 'Digital Marketing Expert', count: 87, icon: 'lucideTrophy', color: '#FFCC00' },
-			{ rank: 2, name: 'Web Development Fundamentals', count: 64, icon: 'lucideMedal', color: '#492E98' },
-			{ rank: 3, name: 'Project Management Professional', count: 52, icon: 'lucideAward', color: '#492E98' },
-		];
-	}
-
-	/**
 	 * Navigate to KPI detail page
 	 * @param kpi - The KPI data to view details for
 	 */
-	viewKpiDetails(kpi: KPIData): void {
+	viewKpiDetails(kpi: DashboardKPIData): void {
 		if (!kpi.id) {
 			return;
 		}
@@ -988,34 +881,8 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 	/**
 	 * Check if a KPI has clickable details
 	 */
-	hasClickableDetails(kpi: KPIData): boolean {
+	hasClickableDetails(kpi: DashboardKPIData): boolean {
 		return kpi.hasMonthlyDetails === true && kpi.trendValue !== undefined && kpi.trendValue > 0;
-	}
-
-	getTrendIcon(trend: string): string {
-		switch (trend) {
-			case 'up':
-				return '↗';
-			case 'down':
-				return '↘';
-			case 'stable':
-				return '→';
-			default:
-				return '→';
-		}
-	}
-
-	getTrendColor(trend: string): string {
-		switch (trend) {
-			case 'up':
-				return 'var(--color-green)';
-			case 'down':
-				return 'var(--color-red)';
-			case 'stable':
-				return 'var(--color-darkgray)';
-			default:
-				return 'var(--color-darkgray)';
-		}
 	}
 
 	/**

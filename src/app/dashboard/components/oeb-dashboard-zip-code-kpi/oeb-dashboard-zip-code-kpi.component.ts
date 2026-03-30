@@ -2,7 +2,8 @@ import { Component, OnInit, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ZipCodeStatisticsData } from '../../models/dashboard-models';
+import { ZipCodeStatisticsData } from '../../models/dashboard-api.model';
+import { DashboardUtilService } from '~/dashboard/services/util.service';
 
 /**
  * ZIP Code KPI Card Component
@@ -26,6 +27,7 @@ import { ZipCodeStatisticsData } from '../../models/dashboard-models';
 })
 export class OebDashboardZipCodeKpiComponent {
 	private router = inject(Router);
+	public utilService = inject(DashboardUtilService);
 
 	/** ZIP code statistics data */
 	@Input() zipCodeData: ZipCodeStatisticsData[] = [];
@@ -67,38 +69,6 @@ export class OebDashboardZipCodeKpiComponent {
 	/** @deprecated Use getTopZipCodeAreas instead */
 	getTopPlzAreas(): ZipCodeStatisticsData[] {
 		return this.getTopZipCodeAreas();
-	}
-
-	/**
-	 * Get trend icon based on trend direction
-	 */
-	getTrendIcon(trend: string): string {
-		switch (trend) {
-			case 'up':
-				return '↗';
-			case 'down':
-				return '↘';
-			case 'stable':
-				return '→';
-			default:
-				return '→';
-		}
-	}
-
-	/**
-	 * Get trend color based on trend direction
-	 */
-	getTrendColor(trend: string): string {
-		switch (trend) {
-			case 'up':
-				return 'var(--color-green)';
-			case 'down':
-				return 'var(--color-red)';
-			case 'stable':
-				return 'var(--color-darkgray)';
-			default:
-				return 'var(--color-darkgray)';
-		}
 	}
 
 	/**
