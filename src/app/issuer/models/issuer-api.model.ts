@@ -92,6 +92,7 @@ export interface ApiQuotas {
 		ACCOUNTS_MEMBER: ApiQuotasNumberQuota;
 		AISKILLS_REQUESTS: ApiQuotasNumberQuota;
 		PDFEDITOR: ApiQuotasBooleanQuota;
+		DASHBOARD: ApiQuotasBooleanQuota;
 		NETWORK_MEMBERSHIPS: ApiQuotasNumberQuota;
 		NETWORK_CREATE: ApiQuotasNumberQuota;
 	};

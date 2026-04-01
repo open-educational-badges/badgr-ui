@@ -172,20 +172,21 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			];
 			this.crumbs = [...this.baseCrumbs];
 			this.initializeMenuItems();
-		});
 
-		const networkDashboardLoaded = new Promise<void>((r) => {
-			this.networkDashboardApi.getKpis(this.networkSlug).subscribe({
-				next: (kpis) => {
-					this.networkDashboardAvailable.set(true);
-					r();
-				},
-				error: r,
-			});
-		});
-
-		Promise.all([this.networkLoaded, networkDashboardLoaded]).then(() => {
-			this.initializeTabs();
+			// if quotas allow dashboard, check for dashboard backend availability before initializing tabs
+			if (this.network().quotas.quotas.DASHBOARD.quota) {
+				this.networkDashboardApi.getKpis(this.networkSlug).subscribe({
+					next: (kpis) => {
+						this.networkDashboardAvailable.set(true);
+						this.initializeTabs();
+					},
+					error: () => {
+						this.initializeTabs();
+					},
+				});
+			} else {
+				this.initializeTabs();
+			}
 		});
 	}
 
@@ -253,8 +254,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				component: this.learnersTemplate,
 			},
 		];
-
-		console.log([this.networkDashboardAvailable(), hasDashboardAccess]);
 
 		if (this.networkDashboardAvailable() && hasDashboardAccess) {
 			this.tabs = [...baseTabs, ...dashboardTabs];

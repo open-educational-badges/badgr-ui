@@ -169,7 +169,7 @@ export class OebIssuerDetailComponent implements OnInit {
 	sharedBadgeSlugs = new Set<string>();
 
 	tabs: Tab[] = undefined;
-	activeTab = 'dashboard';
+	activeTab = 'badges';
 
 	badgeTemplateTabs: any = undefined;
 	activeTabBadgeTemplate = 'issuer-badges';
@@ -489,22 +489,35 @@ export class OebIssuerDetailComponent implements OnInit {
 				}, 0);
 		}
 
+		this.tabs = [];
+
+		if (this.isFullIssuer(this.issuer)) {
+			if (!this.issuer.quotas || this.issuer.quotas.quotas['DASHBOARD'].quota) {
+				this.tabs = [
+					{
+						key: 'dashboard',
+						title: 'NavItems.dashboard',
+						component: this.dashboardTemplate(),
+					},
+				];
+				this.activeTab = 'dashboard';
+			}
+		}
+
 		this.tabs = [
-			{
-				key: 'dashboard',
-				title: 'NavItems.dashboard',
-				component: this.dashboardTemplate(),
-			},
-			{
-				key: 'badges',
-				title: 'Badges',
-				component: this.badgesTemplate(),
-			},
-			{
-				key: 'micro-degrees',
-				title: 'LearningPath.learningpathsPlural',
-				component: this.learningPathTemplate(),
-			},
+			...this.tabs,
+			...[
+				{
+					key: 'badges',
+					title: 'Badges',
+					component: this.badgesTemplate(),
+				},
+				{
+					key: 'micro-degrees',
+					title: 'LearningPath.learningpathsPlural',
+					component: this.learningPathTemplate(),
+				},
+			],
 		];
 	}
 
