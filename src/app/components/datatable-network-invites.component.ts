@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { Component, input, output, signal, TemplateRef, viewChild, inject } from '@angular/core';
@@ -27,7 +27,6 @@ import { Issuer } from '../issuer/models/issuer.model';
 		FormsModule,
 		...HlmTableImports,
 		...OebTableImports,
-		CommonModule,
 		TranslateModule,
 		RouterModule,
 		OebButtonComponent,
