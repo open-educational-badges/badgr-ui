@@ -20,7 +20,7 @@ import { OebTableImports } from './oeb-table';
 import { NgIcon } from '@ng-icons/core';
 
 @Component({
-	selector: 'learningpaths-datatable',
+	selector: 'learningpaths-archived-datatable',
 	imports: [
 		...HlmTableImports,
 		...OebTableImports,
@@ -35,7 +35,7 @@ import { NgIcon } from '@ng-icons/core';
 	host: {
 		class: 'tw-block tw-overflow-x-auto',
 	},
-	template: ` <table hlmTable oeb-table>
+	template: ` <table hlmTable oeb-table-secondary>
 			<thead hlmTHead>
 				@for (headerRow of badgeTable.getHeaderGroups(); track headerRow.id) {
 					<tr hlmTr>
@@ -121,33 +121,16 @@ import { NgIcon } from '@ng-icons/core';
 					{{ context.getValue() }}
 				</p>
 			</div>
-		</ng-template>
-
-		<ng-template #badgeActionsCellTemplate let-context>
-			<div class="tw-flex tw-flex-col tw-gap-1 md:tw-gap-2 tw-leading-relaxed">
-				<oeb-button
-					class="tw-w-full"
-					variant="secondary"
-					size="xs"
-					width="full_width"
-					(click)="deleteLearningPath.emit(context.row.original)"
-					[text]="'General.delete' | translate"
-					[disabled]="!issuer().canDeleteBadge"
-					[class]="issuer().canDeleteBadge ? '' : 'disabled'"
-				/>
-			</div>
 		</ng-template>`,
 })
-export class LearningPathDatatableComponent {
+export class LearningPathArchivedDatatableComponent {
 	private translate = inject(TranslateService);
 
 	learningPaths = input.required<ApiLearningPath[]>();
 	issuer = input<Issuer | null>(null);
-	deleteLearningPath = output<ApiLearningPath>();
 	navigateToDetail = output<string>();
 	translateHeaderIDCellTemplate = viewChild.required<TemplateRef<any>>('translateHeaderIDCellTemplate');
 	badgeCellTemplate = viewChild.required<TemplateRef<any>>('badgeCellTemplate');
-	badgeActionsTemplate = viewChild.required<TemplateRef<any>>('badgeActionsCellTemplate');
 
 	readonly tableSorting = signal<SortingState>([
 		{
@@ -195,13 +178,6 @@ export class LearningPathDatatableComponent {
 			cell: (info) => {
 				return info.getValue();
 			},
-		},
-		{
-			id: 'actions',
-			cell: (info) => {
-				return this.badgeActionsTemplate();
-			},
-			enableSorting: false,
 		},
 	];
 

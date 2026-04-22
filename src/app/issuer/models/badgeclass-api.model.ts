@@ -28,6 +28,7 @@ export interface ApiBadgeClassForCreation {
 	image: string;
 	imageFrame?: boolean;
 	description: string;
+	language: string;
 	course_url?: string;
 	criteria_url?: string;
 	criteria_text?: string;

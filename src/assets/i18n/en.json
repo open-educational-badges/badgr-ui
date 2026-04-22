@@ -130,7 +130,8 @@
 		"end": "End",
 		"person": "person",
 		"persons": "persons",
-		"via": "via"
+		"via": "via",
+		"archive": "archive"
 	},
 	"NavItems": {
 		"register": "Register",
@@ -683,7 +684,9 @@
 		"cantRemoveFromNetwork": "The badge CANNOT be removed from the network.",
 		"shareBadgeOnNetwork": "Share badge on network",
 		"alreadyShared": "The badge was already shared on a network.",
-		"unknownRecipient": "Recipient unknown"
+		"unknownRecipient": "Recipient unknown",
+		"badgeLanguage": "Language of this badge",
+		"badgeLanguageHint": "(and of the badge email incl. corresponding PDF certificate)"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
@@ -777,8 +780,7 @@
 			"headline": "ESCO Competencies",
 			"description": "To ensure our badges are standardized and comparable in terms of content, the AI assistant uses <a class='tw-text-[var(--color-link)] tw-underline' href='https://esco.ec.europa.eu/en/about-esco' target='_blank'>the European Classification of Skills, Competences and Occupations (ESCO)</a>. You can search for suitable skills yourself here and add them:",
 			"search": "Search ESCO database",
-			"inputPlaceholder": "Enter keyword",
-			"resultsIn": "Results in"
+			"inputPlaceholder": "Enter keyword"
 		},
 		"competencyOwn": "Own competency",
 		"competencyOwnDescription": "If the ESCO search does not provide a suitable skill, you can manually add a self-defined skill here:",
@@ -1246,6 +1248,7 @@
 		"getYourPath": "Get your Micro Degree badge",
 		"continue": "Continue learning",
 		"finished": "Finished",
+		"completedSuccessfully": "100% - learning path completed successfully",
 		"includedBadges": "Contained badges",
 		"badgeTabs": {
 			"all": "All",
@@ -1255,7 +1258,7 @@
 		"chooseBadges": "Choose included badges",
 		"badgeSequenceStep": "Badge order",
 		"badgeSequence": "Order of badges in the learning path",
-		"combineBadgeCategories": "You can combine competency badges and participation badges.",
+		"combineBadgeCategories": "You can combine all badge types.",
 		"min2Badges": "The learning path must contain at least 2 badges.",
 		"youHave": "You have",
 		"choosenForLp": "selected for the learning path.",
@@ -1294,7 +1297,14 @@
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
 		"institutions": "institutions",
-		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded.",
+		"archive": "Archiving instead of deletion",
+		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
+		"canOnlyBeArchived": "It can therefore only be archived.",
+		"mdArchived": "We have archived the micro degree.",
+		"archivedLearningPaths": "Archived learning paths",
+		"archivedSince": "Archived since {{ date }}",
+		"archivedBy": "This learning path was archived by {{ issuer }}."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",

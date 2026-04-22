@@ -130,7 +130,8 @@
 		"end": "Ende",
 		"person": "Person",
 		"persons": "Personen",
-		"via": "über"
+		"via": "über",
+		"archive": "Archivieren"
 	},
 	"NavItems": {
 		"register": "Registrieren",
@@ -694,7 +695,9 @@
 		"cantRemoveFromNetwork": "Der Badge kann NICHT wieder aus dem Netzwerk entfernt werden.",
 		"shareBadgeOnNetwork": "Badge für Netzwerk freigeben",
 		"alreadyShared": "Der Badge wurde bereits für ein Netzwerk freigegeben.",
-		"unknownRecipient": "Empfänger:in unbekannt"
+		"unknownRecipient": "Empfänger:in unbekannt",
+		"badgeLanguage": "Sprache des Badges",
+		"badgeLanguageHint": "(und der Badge-Mail inkl. zugehörigem PDF-Zertifikat)"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Kategorie wählen",
@@ -788,8 +791,7 @@
 			"headline": "ESCO-Kompetenz",
 			"description": "Damit unsere Badges inhaltlich standardisiert und vergleichbar sind, nutzt der KI-Assistent <a class='tw-text-[var(--color-link)] tw-underline' href='https://esco.ec.europa.eu/de/about-esco' target='_blank'>die Europäische Klassifizierung für Kompetenzen (ESCO)</a>. Du kannst hier selbst nach passenden Kompetenzen suchen und sie hinzufügen:",
 			"search": "ESCO-Datenbank durchsuchen",
-			"inputPlaceholder": "Stichwort eingeben",
-			"resultsIn": "Ergebnisse auf"
+			"inputPlaceholder": "Stichwort eingeben"
 		},
 		"competencyOwn": "Eigene Kompetenz",
 		"competencyOwnDescription": "Falls die ESCO-Suche dir keine passende Kompetenz liefert, kannst du hier händisch eine selbst definierte Kompetenz ergänzen:",
@@ -1257,6 +1259,7 @@
 		"getYourPath": "Hol dir deinen Micro Degree-Badge ab",
 		"continue": "Weiterlernen",
 		"finished": "Abgeschlossen",
+		"completedSuccessfully": "100% - Lernpfad erfolgreich abgeschlossen",
 		"includedBadges": "Enthaltene Badges",
 		"badgeTabs": {
 			"all": "Alle",
@@ -1266,7 +1269,7 @@
 		"chooseBadges": "Enthaltene Badges wählen",
 		"badgeSequenceStep": "Badge-Reihenfolge",
 		"badgeSequence": "Reihenfolge der Badges im Lernpfad",
-		"combineBadgeCategories": "Du kannst Kompetenz-Badges und Teilnahme-Badges kombinieren.",
+		"combineBadgeCategories": "Du kannst alle Badge-Typen kombinieren.",
 		"min2Badges": "Der Lernpfad muss mindestens 2 Badges enthalten.",
 		"youHave": "Du hast",
 		"choosenForLp": "für den Lernpfad ausgewählt.",
@@ -1305,7 +1308,14 @@
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
 		"institutions": "Institutionen",
-		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen."
+		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen.",
+		"archive": "Archivierung statt Löschung",
+		"alreadyAwarded": "Mindestens eine Person hat den Micro Degree bereits erworben.",
+		"canOnlyBeArchived": "Er kann daher nur archiviert werden.",
+		"mdArchived": "Wir haben den Micro Degree archiviert.",
+		"archivedLearningPaths": "Archivierte Lernpfade",
+		"archivedSince": "Seit {{ date }} archiviert",
+		"archivedBy": "Dieser Lernpfad wurde von {{ issuer }} archiviert."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",

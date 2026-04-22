@@ -48,9 +48,9 @@ import { base64ByteSize } from '../../../common/util/file-util';
 import { StepperComponent } from '../../../components/stepper/stepper.component';
 import { BadgeClassDetailsComponent } from '../badgeclass-create-steps/badgeclass-details/badgeclass-details.component';
 import { Issuer } from '../../models/issuer.model';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, firstValueFrom, map } from 'rxjs';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
-import { NgClass, NgStyle, DecimalPipe } from '@angular/common';
+import { NgClass, NgStyle, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { BadgeLegendComponent } from '../../../common/components/badge-legend/badge-legend.component';
 import { StepComponent } from '../../../components/stepper/step.component';
 import { CdkStep } from '@angular/cdk/stepper';
@@ -67,6 +67,7 @@ import { Network } from '~/issuer/network.model';
 import { PositiveIntegerOrNullValidator } from '~/common/validators/positive-integer-or-null.validator';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { CatalogService } from '~/catalog/catalog.service';
+import { LanguageService, lngs } from '~/common/services/language.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
@@ -103,6 +104,7 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		DecimalPipe,
 		TranslatePipe,
 		TranslateModule,
+		UpperCasePipe,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
 	],
@@ -119,6 +121,7 @@ export class BadgeClassEditFormComponent
 	private translate = inject(TranslateService);
 	private navService = inject(NavigationService);
 	protected catalogService = inject(CatalogService);
+	private languageService = inject(LanguageService);
 	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	baseUrl: string;
@@ -127,7 +130,6 @@ export class BadgeClassEditFormComponent
 	aiCompetenciesLoading = false;
 	selectedKeywordCompetencies: ApiSkill[] = [];
 	keywordCompetenciesResult: ApiSkill[] = [];
-	keywordCompetenciesLanguage = 'de';
 	keywordCompetenciesShowResults = false;
 	keywordCompetenciesLoading = false;
 	keywordCompetenciesLoaded = false;
@@ -238,16 +240,40 @@ export class BadgeClassEditFormComponent
 	readonly badgeClassPlaceholderImageUrl = '../../../../breakdown/static/images/placeholderavatar.svg';
 
 	criteriaOptions = [
-		{ controlName: 'activeParticipation', text: this.translate.instant('Badge.activeParticipation') },
-		{ controlName: 'selfReflection', text: this.translate.instant('Badge.selfReflection') },
-		{ controlName: 'peerFeedback', text: 'Peer-Feedback' },
-		{ controlName: 'achievedIndividualLearning', text: this.translate.instant('Badge.achievedIndividualLearning') },
-		{ controlName: 'passed75', text: this.translate.instant('Badge.passed75') },
-		{ controlName: 'practicalApplication', text: this.translate.instant('Badge.practicalApplication') },
-		{ controlName: 'onlineCourseCompleted', text: this.translate.instant('Badge.onlineCourseCompleted') },
-		{ controlName: 'portfolio', text: 'Portfolio' },
-		{ controlName: 'projectCompleted', text: this.translate.instant('Badge.projectCompleted') },
-		{ controlName: 'exam', text: this.translate.instant('General.exam') },
+		{
+			controlName: 'activeParticipation',
+			text: this.translate.instant('Badge.activeParticipation'),
+			translationKey: 'Badge.activeParticipation',
+		},
+		{
+			controlName: 'selfReflection',
+			text: this.translate.instant('Badge.selfReflection'),
+			translationKey: 'Badge.selfReflection',
+		},
+		{ controlName: 'peerFeedback', text: 'Peer-Feedback', translationKey: null },
+		{
+			controlName: 'achievedIndividualLearning',
+			text: this.translate.instant('Badge.achievedIndividualLearning'),
+			translationKey: 'Badge.achievedIndividualLearning',
+		},
+		{ controlName: 'passed75', text: this.translate.instant('Badge.passed75'), translationKey: 'Badge.passed75' },
+		{
+			controlName: 'practicalApplication',
+			text: this.translate.instant('Badge.practicalApplication'),
+			translationKey: 'Badge.practicalApplication',
+		},
+		{
+			controlName: 'onlineCourseCompleted',
+			text: this.translate.instant('Badge.onlineCourseCompleted'),
+			translationKey: 'Badge.onlineCourseCompleted',
+		},
+		{ controlName: 'portfolio', text: 'Portfolio', translationKey: null },
+		{
+			controlName: 'projectCompleted',
+			text: this.translate.instant('Badge.projectCompleted'),
+			translationKey: 'Badge.projectCompleted',
+		},
+		{ controlName: 'exam', text: this.translate.instant('General.exam'), translationKey: 'General.exam' },
 	];
 	/**
 	 * The name the badge is not allowed to have.
@@ -294,11 +320,16 @@ export class BadgeClassEditFormComponent
 	savePromise: Promise<BadgeClass> | null = null;
 	criteriaForm = typedFormGroup()
 		.addControl('name', '', [Validators.required, Validators.maxLength(50)])
-		.addControl('description', '', Validators.maxLength(300));
+		.addControl('description', '', Validators.maxLength(300))
+		.addControl('translationKey', null);
 
 	criteriaSelectionsForm = typedFormGroup().addArray(
 		'selections',
-		typedFormGroup().addControl('controlName', '').addControl('selected', false).addControl('text', ''),
+		typedFormGroup()
+			.addControl('controlName', '')
+			.addControl('selected', false)
+			.addControl('text', '')
+			.addControl('translationKey', null),
 	);
 
 	badgeClassForm = typedFormGroup([
@@ -324,6 +355,10 @@ export class BadgeClassEditFormComponent
 		.addControl('badge_study_load', 0, [(control) => PositiveIntegerOrNullValidator.valid(control, this.translate)])
 		.addControl('badge_hours', 1, (control) => PositiveIntegerOrNullValidator.valid(control, this.translate))
 		.addControl('badge_minutes', 0, (control) => PositiveIntegerOrNullValidator.valid(control, this.translate))
+		.addControl<'badge_language', (typeof lngs)[number]>(
+			'badge_language',
+			this.languageService.getSelectedLngValue(),
+		)
 		.addControl('badge_category', '', Validators.required)
 		.addControl('badge_level', 'a1', Validators.required)
 		.addControl('badge_based_on', {
@@ -427,7 +462,6 @@ export class BadgeClassEditFormComponent
 
 	@ViewChild('keywordCompetenciesInput') keywordCompetenciesInput: ElementRef<HTMLInputElement>;
 	@ViewChild('keywordCompetenciesInputModel') keywordCompetenciesInputModel: NgModel;
-	@ViewChild('keywordCompetenciesLanguageSelectModel') keywordCompetenciesLanguageSelectModel: NgModel;
 
 	existingBadgeClass: BadgeClass | null = null;
 
@@ -503,11 +537,7 @@ export class BadgeClassEditFormComponent
 
 	constructor() {
 		super();
-		const translate = this.translate;
-
 		this.baseUrl = this.configService.apiConfig.baseUrl;
-
-		this.keywordCompetenciesLanguage = translate.currentLang;
 	}
 
 	initFormFromExisting(badgeClass: BadgeClass) {
@@ -546,7 +576,7 @@ export class BadgeClassEditFormComponent
 		this.badgeClassForm.setValue({
 			badge_name: badgeClass.name,
 			badge_image: badgeClass.imageFrame ? badgeClass.image : null,
-			badge_customImage: !badgeClass.imageFrame ? badgeClass.image : null,
+			badge_customImage: null,
 			useIssuerImageInBadge: this.badgeClassForm.value.useIssuerImageInBadge,
 			badge_description: badgeClass.description,
 			badge_hours: badgeClass.extension['extensions:StudyLoadExtension']
@@ -555,6 +585,7 @@ export class BadgeClassEditFormComponent
 			badge_minutes: badgeClass.extension['extensions:StudyLoadExtension']
 				? badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad % 60
 				: null,
+			badge_language: badgeClass.language,
 			badge_study_load: badgeClass.extension['extensions:StudyLoadExtension']
 				? badgeClass.extension['extensions:StudyLoadExtension'].StudyLoad
 				: null,
@@ -595,7 +626,11 @@ export class BadgeClassEditFormComponent
 			courseUrl: badgeClass.courseUrl,
 			expiration: badgeClass.expiration,
 			expiration_unit: 'days', // api always returns expiration in days
-			criteria: badgeClass.apiModel.criteria,
+			criteria: badgeClass.apiModel.criteria.map((c) => ({
+				name: c.name,
+				description: c.description,
+				translationKey: null,
+			})),
 			copy_permissions_allow_others: this.existing ? badgeClass.canCopy('others') : false,
 		});
 
@@ -607,11 +642,16 @@ export class BadgeClassEditFormComponent
 			? badgeClass.extension['extensions:OrgImageExtension'].OrgImage
 			: undefined;
 
-		setTimeout(() => {
+		setTimeout(async () => {
 			if (badgeClass.imageFrame) {
 				// regenerating the upload image for the issuer image in case it changed via copying
 				// or if it was not part of the badge image yet
 				this.generateUploadImage(this.currentImage, this.badgeClassForm.value, true, true);
+			} else if (badgeClass.image) {
+				const dataUrl = await this.urlToDataUrl(badgeClass.image);
+				this.currentImage = dataUrl;
+
+				this.customImageField.useDataUrl(dataUrl, 'BADGE', false, true);
 			}
 		}, 1);
 
@@ -635,7 +675,8 @@ export class BadgeClassEditFormComponent
 			const selectionGroup = typedFormGroup()
 				.addControl('controlName', option.controlName)
 				.addControl('selected', false)
-				.addControl('text', option.text);
+				.addControl('text', option.text)
+				.addControl('translationKey', option.translationKey);
 
 			this.criteriaSelectionsForm.controls.selections.push(selectionGroup);
 		});
@@ -643,9 +684,10 @@ export class BadgeClassEditFormComponent
 		this.criteriaSelectionsForm.controls.selections.controls.forEach((group, index) => {
 			group.controls.selected.rawControl.valueChanges.subscribe((isSelected) => {
 				const controlName = group.controls.text.value;
+				const translationKey = group.controls.translationKey.value;
 
 				if (isSelected) {
-					this.addCriteriaIfNotExists(controlName);
+					this.addCriteriaIfNotExists(controlName, translationKey);
 				} else {
 					this.removeCriteria(controlName);
 				}
@@ -742,14 +784,29 @@ export class BadgeClassEditFormComponent
 	}
 
 	ngAfterViewChecked() {
-		if (
-			this.keywordCompetenciesInputModel &&
-			this.keywordCompetenciesLanguageSelectModel &&
-			!this.keywordCompetenciesViewChildrenInitialized
-		) {
+		if (this.keywordCompetenciesInputModel && !this.keywordCompetenciesViewChildrenInitialized) {
 			this.initializeViewChildSubscriptions();
 			this.keywordCompetenciesViewChildrenInitialized = true;
 		}
+	}
+
+	private urlToDataUrl(url: string): Promise<string> {
+		return fetch(url, { credentials: 'include' })
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Failed to fetch image: ${url}`);
+				}
+				return response.blob();
+			})
+			.then(
+				(blob) =>
+					new Promise<string>((resolve, reject) => {
+						const reader = new FileReader();
+						reader.onload = () => resolve(reader.result as string);
+						reader.onerror = reject;
+						reader.readAsDataURL(blob);
+					}),
+			);
 	}
 
 	private initializeViewChildSubscriptions() {
@@ -760,13 +817,6 @@ export class BadgeClassEditFormComponent
 			.subscribe(() => {
 				this.keywordCompetenciesKeywordsChange();
 			});
-
-		this.keywordCompetenciesLanguageSelectModel.valueChanges.subscribe((val: string) => {
-			// valueChanges is triggered before the value has been set, so we set it manually
-			this.keywordCompetenciesLanguage = val;
-			this.keywordCompetenciesInput.nativeElement.focus();
-			this.keywordCompetenciesKeywordsChange();
-		});
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
@@ -788,15 +838,19 @@ export class BadgeClassEditFormComponent
 	}
 
 	isPredefinedCriteria(criteria: typeof this.criteriaForm): boolean {
+		const controlTranslationKey = criteria.controls.translationKey.value;
 		const controlName = criteria.value.name;
-		return this.criteriaOptions.some((option) => option.text === controlName);
+		return this.criteriaOptions.some(
+			(option) => option.text === controlName || option.translationKey === controlTranslationKey,
+		);
 	}
 
-	addCriteriaIfNotExists(controlName: string) {
+	addCriteriaIfNotExists(controlName: string, translationKey: string = null) {
 		if (this.findCriteriaIndex(controlName) === -1) {
 			const newGroup = typedFormGroup()
 				.addControl('name', controlName, [Validators.required, Validators.maxLength(50)])
-				.addControl('description', '', Validators.maxLength(300));
+				.addControl('description', '', Validators.maxLength(300))
+				.addControl('translationKey', translationKey);
 
 			this.badgeClassForm.controls.criteria.push(newGroup);
 		}
@@ -1047,7 +1101,7 @@ export class BadgeClassEditFormComponent
 				this.keywordCompetenciesResult = [];
 				this.keywordCompetenciesResult = await this.aiSkillsService.getAiKeywordSkills(
 					this.keywordCompetenciesKeywords,
-					this.keywordCompetenciesLanguage,
+					this.badgeClassForm.rawControlMap.badge_language.value,
 				);
 			} catch (error) {
 				this.messageService.reportAndThrowError(`Failed to obtain ai skills: ${error.message}`, error);
@@ -1353,7 +1407,7 @@ export class BadgeClassEditFormComponent
 				return;
 			}
 
-			if (this.issuer.quotas) {
+			if (this.issuer.quotas && !this.existingBadgeClass) {
 				// recheck quotas and show dialog if something changed while starting the creation process
 				await this.issuer.update();
 				if (!this.checkQuotasDialog('BADGE_CREATE')) {
@@ -1389,12 +1443,16 @@ export class BadgeClassEditFormComponent
 			if (this.existingBadgeClass) {
 				this.existingBadgeClass.name = formState.badge_name;
 				this.existingBadgeClass.description = formState.badge_description;
+				this.existingBadgeClass.language = formState.badge_language;
 				this.existingBadgeClass.image = !imageFrame ? formState.badge_image : null;
 				this.existingBadgeClass.imageFrame = imageFrame;
 				this.existingBadgeClass.alignments = this.alignmentsEnabled ? formState.alignments : [];
 				this.existingBadgeClass.tags = Array.from(this.tags);
 				this.existingBadgeClass.courseUrl = formState.courseUrl;
-				this.existingBadgeClass.criteria = formState.criteria;
+				this.existingBadgeClass.criteria = await this.getCriteriaAsBadgeLanguage(
+					formState.criteria,
+					formState.badge_language,
+				);
 				this.existingBadgeClass.expiration = expirationDays;
 				this.existingBadgeClass.criteria_text = '';
 				this.existingBadgeClass.extension = {
@@ -1445,13 +1503,14 @@ export class BadgeClassEditFormComponent
 				let badgeClassData = {
 					name: formState.badge_name,
 					description: formState.badge_description,
+					language: formState.badge_language,
 					// if not custom, generate image on the server
 					image: !imageFrame ? formState.badge_image : null,
 					imageFrame: imageFrame,
 					tags: Array.from(this.tags),
 					alignment: this.alignmentsEnabled ? formState.alignments : [],
 					expiration: expirationDays,
-					criteria: formState.criteria,
+					criteria: await this.getCriteriaAsBadgeLanguage(formState.criteria, formState.badge_language),
 					course_url: formState.courseUrl,
 					extensions: {
 						'extensions:StudyLoadExtension': {
@@ -1516,6 +1575,35 @@ export class BadgeClassEditFormComponent
 			sessionStorage.removeItem('oeb-create-badgeclassvalues');
 		} catch (e) {
 			console.log(e);
+		}
+	}
+
+	getCriteriaAsBadgeLanguage(
+		criteria: (Record<'name', string> & Record<'description', string> & Record<'translationKey', string>)[],
+		targetLanguage: string,
+	): Promise<{ name: string; description: string }[]> {
+		if (this.translate.currentLang === targetLanguage) {
+			return Promise.resolve(criteria.map((c) => ({ name: c.name, description: c.description })));
+		}
+
+		const previousLang = this.translate.currentLang;
+		try {
+			return firstValueFrom(
+				this.translate.use(targetLanguage).pipe(
+					map((t) => {
+						return criteria.map((c) => {
+							const name =
+								c.translationKey?.split('.').reduce((obj, key) => (obj ? obj[key] : null), t) || c.name;
+							return {
+								name: name,
+								description: c.description,
+							};
+						});
+					}),
+				),
+			);
+		} finally {
+			this.translate.use(previousLang);
 		}
 	}
 

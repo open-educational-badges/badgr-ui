@@ -8,14 +8,26 @@
 				<div class="tw-grow">
 					<div class="oeb-headline-container tw-max-w-[370px] md:tw-max-w-[770px]">
 						<h1 class="tw-text-oebblack tw-font-extrabold tw-break-words" hlmH1>{{ learningPath.name }}</h1>
-						<p size="sm" hlmP class="tw-text-oebblack tw-mt-2">
-							{{ 'LearningPath.lpFrom' | translate }}
-							<a
-								class="tw-underline !tw-text-link hover:!tw-text-buttonhover tw-cursor-pointer"
-								[routerLink]="['/public/issuers/', issuer.slug]"
-								>{{ issuer.name }}</a
-							>
-						</p>
+						@if (learningPath.archived) {
+							<p size="sm" class="tw-mt-2 tw-text-lg tw-text-darkgray">
+								{{
+									'LearningPath.archivedBy'
+										| translate
+											: {
+													issuer: issuer.name,
+											  }
+								}}
+							</p>
+						} @else {
+							<p size="sm" hlmP class="tw-text-oebblack tw-mt-2">
+								{{ 'LearningPath.lpFrom' | translate }}
+								<a
+									class="tw-underline !tw-text-link hover:!tw-text-buttonhover tw-cursor-pointer"
+									[routerLink]="['/public/issuers/', issuer.slug]"
+									>{{ issuer.name }}</a
+								>
+							</p>
+						}
 						<div class="tw-flex tw-flex-row tw-gap-2 tw-text-[#6B7280] tw-mt-1 tw-items-end">
 							<ng-icon hlm name="lucideClock" />
 							<span>{{ minutesTotal | hourPipe }} {{ 'LearningPath.hours' | translate }}</span>
@@ -128,6 +140,7 @@
 											[badgeIssueDate]="badge.badge.created_at"
 											[public]="true"
 											[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
+											[category]="badge.badge.extensions['extensions:CategoryExtension'].Category"
 											[publicUrl]="'/public/badges/' + badge.badge.slug"
 											[completed]="completedBadgeIds.includes(badge.badge.slug)"
 										></bg-badgecard>
@@ -142,12 +155,10 @@
 						<div class="tw-absolute tw-flex tw-flex-col tw-w-full tw-text-right tw-right-4">
 							<span hlmH1 class="tw-font-extrabold tw-text-purple">{{ progressValue() }} %</span>
 							<span hlmP class="tw-mt-2 tw-text-oebblack tw-flex tw-justify-end">
-								<span
-									[countUp]="minutesCompleted"
-									[options]="{ formattingFn: formatCountUpMinutes }"
-								></span>
+								<span>{{ learningPath.completed_badges?.length ?? 0 }}</span>
 								<span> / </span>
-								<span> {{ minutesTotal | hourPipe }} h</span>
+								<span>{{ learningPath.required_badges_count }}</span>
+								<span>&nbsp;Badges</span>
 							</span>
 						</div>
 					</ng-template>
@@ -209,6 +220,7 @@
 						[badgeIssueDate]="badge.badge.created_at"
 						[public]="true"
 						[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
+						[category]="badge.badge.extensions['extensions:CategoryExtension'].Category"
 						[publicUrl]="'/public/badges/' + badge.badge.slug"
 						[completed]="completedBadgeIds.includes(badge.badge.slug)"
 					></bg-badgecard>
@@ -230,6 +242,7 @@
 						[badgeIssueDate]="badge.badge.created_at"
 						[public]="true"
 						[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
+						[category]="badge.badge.extensions['extensions:CategoryExtension'].Category"
 						[publicUrl]="'/public/badges/' + badge.badge.slug"
 					></bg-badgecard>
 				</div>
@@ -251,6 +264,7 @@
 						[public]="true"
 						[publicUrl]="'/public/badges/' + badge.slug"
 						[competencies]="badge.extensions['extensions:CompetencyExtension']"
+						[category]="badge.extensions['extensions:CategoryExtension'].Category"
 						[completed]="completedBadgeIds.includes(badge.slug)"
 					></bg-badgecard>
 				</div>

@@ -248,4 +248,5 @@ export interface PublicApiLearningPath {
 	learningPathBadgeInstanceSlug?: string;
 	required_badges_count: number;
 	activated: boolean;
+	archived: boolean;
 }
