@@ -172,6 +172,7 @@ export class BadgeClassEditFormComponent
 
 	chooseDuration = this.translate.instant('CreateBadge.chooseDuration');
 	newTag = this.translate.instant('CreateBadge.newTag');
+	newArea = this.translate.instant('CreateBadge.newArea');
 
 	suggestCompetenciesText = this.translate.instant('CreateBadge.suggestCompetencies');
 
@@ -455,6 +456,9 @@ export class BadgeClassEditFormComponent
 	@ViewChild('newTagInput')
 	newTagInput: ElementRef<HTMLInputElement>;
 
+	@ViewChild('newAreaInput')
+	newAreaInput: ElementRef<HTMLInputElement>;
+
 	@ViewChild('formElem')
 	formElem: ElementRef<HTMLFormElement>;
 
@@ -494,6 +498,20 @@ export class BadgeClassEditFormComponent
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Tags
 	tags = new Set<string>();
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Areas
+	areas = new Set<string>();
+
+	/**
+	 * Indicates whether the existing areas are currently being loaded.
+	 */
+	existingAreasLoading: boolean;
+
+	/**
+	 * The already existing areas for other badges, for the autocomplete to show.
+	 */
+	existingAreas: { id: number; name: string }[];
 
 	collapsedCompetenciesOpen = false;
 
@@ -658,12 +676,18 @@ export class BadgeClassEditFormComponent
 		this.tags = new Set();
 		this.badgeClass.tags.forEach((t) => this.tags.add(t));
 
+		this.areas = new Set();
+		if (this.badgeClass.areas) {
+			this.badgeClass.areas.forEach((a) => this.areas.add(a));
+		}
+
 		this.alignmentsEnabled = this.badgeClass.alignments.length > 0;
 	}
 
 	ngOnInit() {
 		super.ngOnInit();
 		this.fetchTags();
+		this.fetchAreas();
 
 		this.durationOptions = getDurationOptions(this.translate);
 
@@ -1010,6 +1034,50 @@ export class BadgeClassEditFormComponent
 
 	removeTag(tag: string) {
 		this.tags.delete(tag);
+	}
+
+	/**
+	 * Fetches the areas from the catalogService.
+	 * The areas are then assigned to existingAreas in an appropriate format.
+	 */
+	fetchAreas() {
+		this.existingAreas = [];
+		this.existingAreasLoading = true;
+		this.catalogService.getBadgeAreas().then(
+			(areas) => {
+				this.existingAreas = areas.map((area, index) => ({
+					id: index,
+					name: area,
+				}));
+				this.existingAreasLoading = false;
+			},
+			(err) => {
+				console.error("Couldn't fetch areas: " + err);
+				this.existingAreasLoading = false;
+			},
+		);
+	}
+
+	addArea() {
+		const newArea = (this.newAreaInput['query'] || '').trim().toLowerCase();
+
+		if (newArea.length > 0) {
+			this.areas.add(newArea);
+
+			this.newAreaInput['query'] = '';
+		}
+	}
+
+	handleAreaInputKeyPress(event: KeyboardEvent) {
+		if (event.keyCode === 13 /* Enter */) {
+			this.addArea();
+			this.newAreaInput.nativeElement.focus();
+			event.preventDefault();
+		}
+	}
+
+	removeArea(area: string) {
+		this.areas.delete(area);
 	}
 
 	enableAlignments() {
@@ -1448,6 +1516,7 @@ export class BadgeClassEditFormComponent
 				this.existingBadgeClass.imageFrame = imageFrame;
 				this.existingBadgeClass.alignments = this.alignmentsEnabled ? formState.alignments : [];
 				this.existingBadgeClass.tags = Array.from(this.tags);
+				this.existingBadgeClass.areas = Array.from(this.areas);
 				this.existingBadgeClass.courseUrl = formState.courseUrl;
 				this.existingBadgeClass.criteria = await this.getCriteriaAsBadgeLanguage(
 					formState.criteria,
@@ -1508,6 +1577,7 @@ export class BadgeClassEditFormComponent
 					image: !imageFrame ? formState.badge_image : null,
 					imageFrame: imageFrame,
 					tags: Array.from(this.tags),
+					areas: Array.from(this.areas),
 					alignment: this.alignmentsEnabled ? formState.alignments : [],
 					expiration: expirationDays,
 					criteria: await this.getCriteriaAsBadgeLanguage(formState.criteria, formState.badge_language),

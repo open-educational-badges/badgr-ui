@@ -79,6 +79,27 @@ export class CatalogService extends BaseHttpApiService {
 	}
 
 	/**
+	 * Gets a list of areas for badges
+	 * @returns An array of available areas to filter badges by
+	 */
+	async getBadgeAreas(): Promise<string[]> {
+		try {
+			const response = await this.get<string[]>(`${this.baseUrl}/${ENDPOINT}/badges/areas`);
+
+			if (response.ok) return response.body;
+			else {
+				console.warn(
+					`Request for badge areas did not return ok, got ${response.status}: ${response.statusText}`,
+				);
+				return [];
+			}
+		} catch (e) {
+			console.warn(e);
+			return [];
+		}
+	}
+
+	/**
 	 * Gets a paginated list of badges, optionally filtered by name and/or tags.
 	 * Offset-based pagination is used, so pagination is achieved by setting the limit and offset
 	 * by multiples of the limit to go through pages (e.g. limit = 3, offset = 6 results in a request

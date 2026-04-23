@@ -46,6 +46,7 @@
 		"remove": "Remove",
 		"add": "Add",
 		"added": "Added",
+		"area": "Area",
 		"save": "Save",
 		"saveChanges": "Save Changes",
 		"aboutBadges": "Badges",
@@ -752,9 +753,15 @@
 		"valuePositive": "Please enter a positive number",
 		"optionalBadgeDetails": "Optional badge details",
 		"addTags": "Add tags",
+		"addTagsAndAreas": "Add tags & areas",
+		"tagsAndAreas": "Tags & Areas",
+		"addAreas": "Add areas",
 		"newTag": "Enter a tag...",
 		"tagDoesNotExist": "This tag does not exist yet",
 		"tagInfo": "Tags help categorize {{items}} and help learners on OEB search for {{items2}} on specific topics.",
+		"newArea": "Enter an area...",
+		"areaDoesNotExist": "This area does not exist yet",
+		"areaInfo": "Areas help categorize {{items}} by subject area and help learners find {{items2}} in their field of interest.",
 		"removeAlignment": "Remove link",
 		"removeAlignmentInfo": "Are you sure you want to remove the link(s)? ",
 		"irreversibleAction": "This action cannot be undone.",
@@ -1006,6 +1013,9 @@
 		"cancel": "Cancel",
 		"save": "Save",
 		"saving": "Saving"
+	},
+	"BadgeDetail": {
+		"areas": "Areas"
 	},
 	"RecBadgeDetail": {
 		"shareBadge": "Share badge",
