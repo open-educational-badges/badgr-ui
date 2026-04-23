@@ -130,8 +130,7 @@
 		"end": "Ende",
 		"person": "Person",
 		"persons": "Personen",
-		"via": "über",
-		"archive": "Archivieren"
+		"via": "über"
 	},
 	"NavItems": {
 		"register": "Registrieren",
@@ -1259,7 +1258,6 @@
 		"getYourPath": "Hol dir deinen Micro Degree-Badge ab",
 		"continue": "Weiterlernen",
 		"finished": "Abgeschlossen",
-		"completedSuccessfully": "100% - Lernpfad erfolgreich abgeschlossen",
 		"includedBadges": "Enthaltene Badges",
 		"badgeTabs": {
 			"all": "Alle",
@@ -1269,7 +1267,7 @@
 		"chooseBadges": "Enthaltene Badges wählen",
 		"badgeSequenceStep": "Badge-Reihenfolge",
 		"badgeSequence": "Reihenfolge der Badges im Lernpfad",
-		"combineBadgeCategories": "Du kannst alle Badge-Typen kombinieren.",
+		"combineBadgeCategories": "Du kannst Kompetenz-Badges und Teilnahme-Badges kombinieren.",
 		"min2Badges": "Der Lernpfad muss mindestens 2 Badges enthalten.",
 		"youHave": "Du hast",
 		"choosenForLp": "für den Lernpfad ausgewählt.",
@@ -1308,14 +1306,7 @@
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
 		"institutions": "Institutionen",
-		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen.",
-		"archive": "Archivierung statt Löschung",
-		"alreadyAwarded": "Mindestens eine Person hat den Micro Degree bereits erworben.",
-		"canOnlyBeArchived": "Er kann daher nur archiviert werden.",
-		"mdArchived": "Wir haben den Micro Degree archiviert.",
-		"archivedLearningPaths": "Archivierte Lernpfade",
-		"archivedSince": "Seit {{ date }} archiviert",
-		"archivedBy": "Dieser Lernpfad wurde von {{ issuer }} archiviert."
+		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",

@@ -309,22 +309,9 @@
 						*ngIf="!public"
 						[learningPaths]="apiLearningPaths"
 						[issuer]="isFullIssuer(issuer) ? issuer : null"
-						(deleteLearningPath)="deleteLearningPath($event, issuer)"
-						(navigateToDetail)="redirectToLearningPathDetail($event, issuer)"
+						(onDelete)="deleteLearningPath($event, issuer)"
+						(onNavigateToDetail)="redirectToLearningPathDetail($event, issuer)"
 					></learningpaths-datatable>
-
-					<div *ngIf="!public && archivedLearningPaths.length > 0" class="tw-mt-10">
-						<h3 class="tw-text-lg tw-font-semibold tw-mb-4">
-							{{ 'LearningPath.archivedLearningPaths' | translate }}
-						</h3>
-
-						<learningpaths-archived-datatable
-							[learningPaths]="archivedLearningPaths"
-							[issuer]="isFullIssuer(issuer) ? issuer : null"
-							(navigateToDetail)="redirectToLearningPathDetail($event, issuer)"
-						>
-						</learningpaths-archived-datatable>
-					</div>
 
 					<ng-container *ngIf="public">
 						<div class="tw-grid tw-grid-cols-learningpaths tw-gap-6">
@@ -339,6 +326,7 @@
 										[studyLoad]="calculateStudyLoad(lp)"
 										[completed]="false"
 										[requested]="lp.requested"
+										[matchOrProgress]="undefined"
 										[badgeImage]="lp.participationBadge_image"
 									></bg-learningpathcard>
 								}

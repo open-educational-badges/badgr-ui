@@ -138,7 +138,6 @@
 				[publicUrl]="badge.url"
 				[issuerSlug]="badge.issuerSlug"
 				[competencies]="badge.extension['extensions:CompetencyExtension']"
-				[category]="badge.extension['extensions:CategoryExtension'].Category"
 				[tags]="badge.tags"
 			></bg-badgecard>
 		}
@@ -159,7 +158,6 @@
 				[publicUrl]="badge.badgeclass.json.id"
 				[issuerSlug]="badge.shared_by_issuer.slug"
 				[competencies]="badge.badgeclass.extensions['extensions:CompetencyExtension']"
-				[category]="badge.badgeclass.extensions['extensions:CategoryExtension'].Category"
 				[tags]="badge.badgeclass.tags"
 			></bg-badgecard>
 		}
