@@ -345,7 +345,7 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 		);
 	}
 
-	public openDialog(text: string) {
+	public openDialog() {
 		if (!this.checkQuotasDialog()) {
 			return false;
 		}
@@ -354,11 +354,9 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
 				headerTemplate: this.dialogHeaderTemplate(),
-				text: text,
 				subtitle: 'Are you sure you want to proceed?',
 				content: this.addMemberFormTemplate(),
 				variant: 'default',
-				footer: false,
 			},
 		});
 		this.dialogRef = dialogRef;
@@ -398,9 +396,9 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 		this.selectedStaffRequestEmail = event.user.email;
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
+				variant: 'default',
 				headerTemplate: this.confirmDialogHeaderTemplate(),
 				content: this.staffRequestRoleTemplate(),
-				footer: false,
 				templateContext: {
 					email: this.selectedStaffRequestEmail,
 					requestid: event.entity_id,

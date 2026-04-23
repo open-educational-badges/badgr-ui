@@ -182,6 +182,7 @@ export class AddBadgeDialogComponent implements AfterViewInit {
 						case 'VERIFY_RECIPIENT_IDENTIFIER':
 							this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 								context: {
+									variant: 'default',
 									headerTemplate: this.failureHeader,
 									content: this.failureContent,
 									templateContext: {
@@ -196,6 +197,7 @@ export class AddBadgeDialogComponent implements AfterViewInit {
 						case 'DUPLICATE_BADGE':
 							this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 								context: {
+									variant: 'default',
 									headerTemplate: this.failureHeader,
 									content: this.failureContent,
 									templateContext: {
@@ -209,6 +211,7 @@ export class AddBadgeDialogComponent implements AfterViewInit {
 						case 'INVALID_BADGE_VERSION':
 							this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 								context: {
+									variant: 'default',
 									headerTemplate: this.failureHeader,
 									content: this.failureContent,
 									templateContext: {
@@ -222,6 +225,7 @@ export class AddBadgeDialogComponent implements AfterViewInit {
 						default:
 							this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 								context: {
+									variant: 'default',
 									headerTemplate: this.failureHeader,
 									content: this.failureContent,
 									templateContext: {

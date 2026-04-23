@@ -373,6 +373,7 @@ export class IssuerEditFormComponent implements OnInit {
 	public openLinkedInInfoDialog() {
 		this.dialogService.open(DialogComponent, {
 			context: {
+				variant: 'default',
 				headerTemplate: this.linkedInIdHeaderTemplate(),
 				content: this.linkedInIdBodyTemplate(),
 			},

@@ -373,6 +373,7 @@ export class BadgeClassDetailComponent
 
 		this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
+				variant: 'default',
 				headerTemplate: this.networkSelectionHeader(),
 				content: this.networkSelection(),
 			},
@@ -388,6 +389,7 @@ export class BadgeClassDetailComponent
 		} else if (this.userIssuers.length > 1) {
 			const dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
+					variant: 'default',
 					headerTemplate: this.headerTemplate(),
 					content: this.issuerSelection(),
 				},
@@ -900,6 +902,7 @@ export class BadgeClassDetailComponent
 				} else {
 					const dialogRef = this._hlmDialogService.open(DialogComponent, {
 						context: {
+							variant: 'default',
 							headerTemplate: this.networkIssuerSelectionHeader(),
 							content: this.networkIssuerSelection(),
 							templateContext: {
@@ -954,6 +957,7 @@ export class BadgeClassDetailComponent
 				} else {
 					const dialogRef = this._hlmDialogService.open(DialogComponent, {
 						context: {
+							variant: 'default',
 							headerTemplate: this.networkIssuerSelectionHeader(),
 							content: this.networkIssuerSelection(),
 							templateContext: {

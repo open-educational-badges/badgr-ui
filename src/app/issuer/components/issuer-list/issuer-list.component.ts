@@ -129,6 +129,9 @@ export class IssuerListComponent
 	@ViewChild('requestStaffMembershipTemplate')
 	requestStaffMembershipTemplate: TemplateRef<void>;
 
+	@ViewChild('successfullyRequestedMembershipContentTemplate')
+	successfullyRequestedMembershipContentTemplate: TemplateRef<void>;
+
 	@ViewChild('issuerInfoTemplate')
 	issuerInfoTemplate: TemplateRef<void>;
 
@@ -397,7 +400,6 @@ export class IssuerListComponent
 				headerTemplate: this.headerTemplate,
 				content: this.issuerInfoTemplate,
 				variant: 'default',
-				footer: false,
 			},
 		});
 
@@ -409,7 +411,7 @@ export class IssuerListComponent
 			context: {
 				headerTemplate: this.headerQuestionMarkTemplate,
 				content: this.requestStaffMembershipTemplate,
-				variant: 'info',
+				variant: 'default',
 				templateContext: {
 					issuername: this.selectedIssuer.name,
 				},
@@ -421,26 +423,11 @@ export class IssuerListComponent
 	public openSuccessfullyRequestedMembershipDialog() {
 		this._hlmDialogService.open(DialogComponent, {
 			context: {
-				headerTemplate: null,
-				content: `
-					<p class='tw-text-oebblack tw-text-lg'>
-						<span>
-						${this.translate.instant('Issuer.staffRequestForwarded')}
-						</span>
-						<span class='tw-font-bold'>
-						${this.selectedIssuer.name}
-						</span>
-						<span>
-						${this.translate.instant('General.forwarded') + '.'}
-						</span>
-					</p>
-					<br>
-					<span class='tw-text-oebblack tw-text-lg tw-mt-6'>
-					${this.translate.instant('Issuer.staffRequestForwardedEmail')}
-					</span>
-					`,
+				content: this.successfullyRequestedMembershipContentTemplate,
+				templateContext: {
+					selectedIssuerName: this.selectedIssuer.name,
+				},
 				variant: 'success',
-				footer: false,
 			},
 		});
 	}
@@ -471,6 +458,7 @@ export class IssuerListComponent
 		if (!promptedInstitutions.find((x) => x === issuerSlug)) {
 			this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
+					variant: 'default',
 					headerTemplate: this.linkedInIdHeaderTemplate(),
 					content: this.linkedInIdBodyTemplate(),
 					templateContext: { slug: issuerSlug },

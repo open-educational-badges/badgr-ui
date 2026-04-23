@@ -254,6 +254,7 @@ export class PublicBadgeClassComponent implements OnInit {
 		} else if (this.userIssuers.length > 1) {
 			const dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
+					variant: 'default',
 					headerTemplate: this.headerTemplate,
 					content: this.issuerSelection,
 				},

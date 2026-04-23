@@ -250,6 +250,7 @@ export class NetworkBadgesComponent implements OnInit {
 		} else {
 			this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
+					variant: 'default',
 					headerTemplate: this.headerTemplate,
 					content: this.issuerSelection,
 				},
@@ -272,6 +273,7 @@ export class NetworkBadgesComponent implements OnInit {
 		} else {
 			this.dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
+					variant: 'default',
 					headerTemplate: this.headerTemplate,
 					content: this.issuerSelection,
 				},

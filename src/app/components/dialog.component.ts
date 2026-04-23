@@ -35,12 +35,12 @@ interface DialogContext {
 						class="!tw-h-28 !tw-w-28 tw-text-purple"
 					></ng-icon>
 				</div>
-				@if (isTemplate(context.headerTemplate)) {
+				@if (isTemplate(context.content)) {
 					<ng-container
-						*ngTemplateOutlet="context.headerTemplate; context: context.templateContext || {}"
+						*ngTemplateOutlet="context.content; context: context.templateContext || {}"
 					></ng-container>
-				} @else if (context.title) {
-					<p class="tw-text-center" [innerHTML]="context.title"></p>
+				} @else if (context.text) {
+					<p class="tw-text-center" [innerHTML]="context.text"></p>
 				}
 			}
 
@@ -54,23 +54,14 @@ interface DialogContext {
 							</svg>
 						</div>
 					</div>
+
+					@if (isTemplate(context.content)) {
+						<ng-container
+							*ngTemplateOutlet="context.content; context: context.templateContext || {}"
+						></ng-container>
+					}
 				</div>
 			}
-
-			<!-- @if (context.variant === 'failure') {
-				<div class="tw-px-4">
-					<p class="tw-text-lg tw-text-oebblack tw-text-center tw-font-bold tw-mt-2 tw-leading-[130%]">
-						{{ context.message }}
-					</p>
-					<p [innerHTML]="context.text" class="tw-mt-2 tw-text-purple tw-italic tw-text-center"></p>
-				</div>
-			} @else if (isTemplate(context.content)) {
-				<ng-container
-					*ngTemplateOutlet="context.content; context: context.templateContext || {}"
-				></ng-container>
-			} @else if (context.content) {
-				<p class="tw-text-center" [innerHTML]="context.content"></p>
-			} -->
 
 			@if (context.variant === 'danger') {
 				<div class="tw-flex tw-justify-center tw-my-6">
@@ -82,6 +73,19 @@ interface DialogContext {
 					></ng-container>
 				} @else if (context.title) {
 					<p class="tw-text-center" [innerHTML]="context.title"></p>
+				}
+			}
+
+			@if (context.variant === 'default') {
+				@if (isTemplate(context.headerTemplate)) {
+					<ng-container
+						*ngTemplateOutlet="context.headerTemplate; context: context.templateContext || {}"
+					></ng-container>
+				}
+				@if (isTemplate(context.content)) {
+					<ng-container
+						*ngTemplateOutlet="context.content; context: context.templateContext || {}"
+					></ng-container>
 				}
 			}
 		</oeb-dialog>

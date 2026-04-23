@@ -21,7 +21,7 @@ import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.servic
 import { DialogComponent } from '~/components/dialog.component';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
-import { DangerDialogComponent } from '~/common/dialogs/oeb-dialogs/danger-dialog.component';
+import { DangerDialogComponentTemplate } from '~/common/dialogs/oeb-dialogs/danger-dialog-template.component';
 import { formatDate } from '@angular/common';
 
 @Component({
@@ -120,7 +120,7 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 	}
 
 	private openDeleteDialog() {
-		this.dialogRef = this._hlmDialogService.open(DangerDialogComponent, {
+		this.dialogRef = this._hlmDialogService.open(DangerDialogComponentTemplate, {
 			context: {
 				delete: () => this.deleteLearningPathApi(this.learningPath.slug, this.issuer),
 				variant: 'danger',

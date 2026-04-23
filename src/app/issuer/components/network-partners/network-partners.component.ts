@@ -76,7 +76,6 @@ export class NetworkPartnersComponent {
 				headerTemplate: this.headerTemplate,
 				content: this.addInstitutionsTemplate(),
 				variant: 'default',
-				footer: false,
 			},
 		});
 		this.dialogRefPartner = dialogRef;

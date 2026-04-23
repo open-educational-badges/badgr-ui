@@ -179,6 +179,7 @@ export class QrCodeAwardsComponent implements OnChanges {
 			} else {
 				const dialogRef = this._hlmDialogService.open(DialogComponent, {
 					context: {
+						variant: 'default',
 						headerTemplate: this.networkIssuerSelectionHeader(),
 						content: this.networkIssuerSelection(),
 						templateContext: {

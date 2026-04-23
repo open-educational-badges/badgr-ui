@@ -253,7 +253,6 @@ export class RecipientBackpack {
 				headerTemplate: this.collectionInfoHeaderTemplate(),
 				content: this.collectionInfoContentTemplate(),
 				variant: 'default',
-				footer: false,
 			},
 		});
 	}

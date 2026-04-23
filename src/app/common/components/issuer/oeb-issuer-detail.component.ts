@@ -124,6 +124,8 @@ export class OebIssuerDetailComponent implements OnInit {
 	private pdfTemplateApiService = inject(PDFTemplateApiService);
 	protected pdfTemplateManager = inject(PDFTemplateManager);
 
+	deletePtRejectedTemplate = viewChild.required<TemplateRef<any>>('deletePtRejectedTemplate');
+
 	@Input() issuer: Issuer | PublicApiIssuer;
 	@Input() issuerPlaceholderSrc: string;
 	@Input() issuerActionsMenu: any;
@@ -659,7 +661,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			const dialogRef = this._hlmDialogService.open(DialogComponent, {
 				context: {
 					variant: 'failure',
-					message: this.translate.instant('PDFTemplate.deleteNotPossibleDialogTitle'),
+					content: this.deletePtRejectedTemplate(),
 				},
 			});
 		} else {

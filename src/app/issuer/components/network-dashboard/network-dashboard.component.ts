@@ -353,7 +353,6 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				headerTemplate: this.headerTemplate(),
 				content: this.addInstitutionsTemplate(),
 				variant: 'default',
-				footer: false,
 			},
 		});
 		this.dialogRef = dialogRef;
