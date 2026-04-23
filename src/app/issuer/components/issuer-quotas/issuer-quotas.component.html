@@ -195,7 +195,7 @@
 						<ng-icon
 							size="24px"
 							hlm
-							[name]="issuer.quotas.quotas['PDFEDITOR'] ? 'lucideCheck' : 'lucideX'"
+							[name]="issuer.quotas.quotas['PDFEDITOR'].quota ? 'lucideCheck' : 'lucideX'"
 						/>
 						{{ 'Quotas.page.featurePdfEditor' | translate }}
 					</li>
@@ -203,7 +203,7 @@
 						<ng-icon
 							size="24px"
 							hlm
-							[name]="issuer.quotas.key === 'ENTERPRISE' ? 'lucideCheck' : 'lucideX'"
+							[name]="issuer.quotas.quotas['DASHBOARD'].quota ? 'lucideCheck' : 'lucideX'"
 						/>
 						{{ 'Quotas.page.featureDashboardInstitution' | translate }}
 					</li>
@@ -211,12 +211,20 @@
 						<ng-icon
 							size="24px"
 							hlm
-							[name]="issuer.quotas.quotas['NETWORK_CREATE'] ? 'lucideCheck' : 'lucideX'"
+							[name]="issuer.quotas.quotas['NETWORK_CREATE'].quota ? 'lucideCheck' : 'lucideX'"
 						/>
 						{{ 'Quotas.page.featureCreateNetwork' | translate }}
 					</li>
 					<li class="tw-flex tw-items-center tw-gap-2">
-						<ng-icon size="24px" hlm [name]="issuer.quotas.key === 'NETWORK' ? 'lucideCheck' : 'lucideX'" />
+						<ng-icon
+							size="24px"
+							hlm
+							[name]="
+								issuer.quotas.key === 'NETWORK' || issuer.quotas.quotas['NETWORK_CREATE'].quota
+									? 'lucideCheck'
+									: 'lucideX'
+							"
+						/>
 						{{ 'Quotas.page.featureDashboardNetwork' | translate }}
 					</li>
 				</ul>
