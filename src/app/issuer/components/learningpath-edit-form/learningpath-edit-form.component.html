@@ -164,11 +164,9 @@
 						<h2 hlmH2 class="tw-font-bold">3. {{ 'LearningPath.chooseBadges' | translate }}</h2>
 
 						<div class="tw-m-4 md:tw-m-12 tw-rounded-2xl tw-p-6 md:tw-p-8 tw-bg-white">
-							<p class="tw-italic tw-text-[18px] tw-leading-[23.4px]">
-								<span class="tw-text-oebblack">{{
-									'LearningPath.combineBadgeCategories' | translate
-								}}</span>
-								<span class="tw-text-purple"> {{ 'LearningPath.min2Badges' | translate }}</span>
+							<p class="tw-flex tw-flex-col tw-gap-2 tw-text-purple tw-text-[18px] tw-leading-[23.4px]">
+								<span class="tw-italic">{{ 'LearningPath.combineBadgeCategories' | translate }}</span>
+								<span> {{ 'LearningPath.min2Badges' | translate }}</span>
 							</p>
 							<div class="tw-flex tw-flex-wrap tw-py-6 tw-justify-between">
 								<!-- Search  -->
@@ -211,7 +209,6 @@
 											[publicUrl]="badge.url"
 											[issuerSlug]="badge.issuerSlug"
 											[competencies]="badge.extension['extensions:CompetencyExtension']"
-											[category]="badge.extension['extensions:CategoryExtension'].Category"
 											(ngModelChange)="checkboxChange($event, badge)"
 											(checkboxChange)="checkboxChange($event, badge)"
 											[checked]="badgeChecked(badge)"
@@ -241,7 +238,6 @@
 												[public]="true"
 												[publicUrl]="badge.url"
 												[competencies]="badge.extension['extensions:CompetencyExtension']"
-												[category]="badge.extension['extensions:CategoryExtension'].Category"
 												[showCheckbox]="true"
 												(ngModelChange)="checkboxChange($event, badge)"
 												(checkboxChange)="checkboxChange($event, badge)"
@@ -272,7 +268,6 @@
 												[public]="true"
 												[publicUrl]="badge.url"
 												[competencies]="badge.extension['extensions:CompetencyExtension']"
-												[category]="badge.extension['extensions:CategoryExtension'].Category"
 												[showCheckbox]="true"
 												(ngModelChange)="checkboxChange($event, badge)"
 												(checkboxChange)="checkboxChange($event, badge)"

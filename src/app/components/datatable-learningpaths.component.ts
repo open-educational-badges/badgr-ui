@@ -2,7 +2,7 @@ import { CommonModule, formatDate } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { RouterModule } from '@angular/router';
-import { Component, input, output, signal, TemplateRef, viewChild, inject, untracked } from '@angular/core';
+import { Component, input, output, signal, TemplateRef, viewChild, inject } from '@angular/core';
 import { HlmTableImports } from './spartan/ui-table-helm/src';
 import { OebButtonComponent } from './oeb-button.component';
 import { Issuer } from '../issuer/models/issuer.model';
@@ -100,7 +100,7 @@ import { NgIcon } from '@ng-icons/core';
 		<ng-template #badgeCellTemplate let-context>
 			<div
 				class="tw-flex tw-flex-row tw-gap-2 tw-cursor-pointer"
-				(click)="navigateToDetail.emit(context.row.original.slug)"
+				(click)="onNavigateToDetail.emit(context.row.original.slug)"
 			>
 				<div>
 					<img
@@ -130,7 +130,7 @@ import { NgIcon } from '@ng-icons/core';
 					variant="secondary"
 					size="xs"
 					width="full_width"
-					(click)="deleteLearningPath.emit(context.row.original)"
+					(click)="onDelete.emit(context.row.original.slug)"
 					[text]="'General.delete' | translate"
 					[disabled]="!issuer().canDeleteBadge"
 					[class]="issuer().canDeleteBadge ? '' : 'disabled'"
@@ -143,8 +143,8 @@ export class LearningPathDatatableComponent {
 
 	learningPaths = input.required<ApiLearningPath[]>();
 	issuer = input<Issuer | null>(null);
-	deleteLearningPath = output<ApiLearningPath>();
-	navigateToDetail = output<string>();
+	onDelete = output<string>();
+	onNavigateToDetail = output<string>();
 	translateHeaderIDCellTemplate = viewChild.required<TemplateRef<any>>('translateHeaderIDCellTemplate');
 	badgeCellTemplate = viewChild.required<TemplateRef<any>>('badgeCellTemplate');
 	badgeActionsTemplate = viewChild.required<TemplateRef<any>>('badgeActionsCellTemplate');
@@ -156,74 +156,45 @@ export class LearningPathDatatableComponent {
 		},
 	]);
 
-	constructor() {}
-
 	private readonly tableColumnDefinition: ColumnDef<ApiLearningPath>[] = [
 		{
 			id: 'LearningPath.learningpathSingular',
-			header: () => {
-				return this.translateHeaderIDCellTemplate();
-			},
-			accessorFn: (row) => {
-				return row.name;
-			},
-			cell: () => {
-				return this.badgeCellTemplate();
-			},
+			header: () => this.translateHeaderIDCellTemplate(),
+			accessorFn: (row) => row.name,
+			cell: () => this.badgeCellTemplate(),
 			sortDescFirst: false,
 		},
 		{
 			id: 'Badge.createdOn',
-			header: () => {
-				return this.translateHeaderIDCellTemplate();
-			},
-			accessorFn: (row) => {
-				return row.created_at;
-			},
-			cell: (info) => {
-				return formatDate(info.getValue() as Date, 'dd.MM.yyyy', 'de-DE');
-			},
+			header: () => this.translateHeaderIDCellTemplate(),
+			accessorFn: (row) => row.created_at,
+			cell: (info) => formatDate(info.getValue() as Date, 'dd.MM.yyyy', 'de-DE'),
 		},
 		{
 			id: 'Issuer.learningPathParticipants',
-			header: () => {
-				return this.translateHeaderIDCellTemplate();
-			},
-			accessorFn: (row) => {
-				return row.participant_count;
-			},
-			cell: (info) => {
-				return info.getValue();
-			},
+			header: () => this.translateHeaderIDCellTemplate(),
+			accessorFn: (row) => row.participant_count,
+			cell: (info) => info.getValue(),
 		},
 		{
 			id: 'actions',
-			cell: (info) => {
-				return this.badgeActionsTemplate();
-			},
+			cell: (info) => this.badgeActionsTemplate(),
 			enableSorting: false,
 		},
 	];
 
-	badgeTable = (() => {
-		return createAngularTable(() => {
-			return {
-				data: this.learningPaths(),
-				columns: this.tableColumnDefinition,
-				getCoreRowModel: getCoreRowModel(),
-				getSortedRowModel: getSortedRowModel(),
-				state: {
-					sorting: this.tableSorting(),
-				},
-				onSortingChange: (updater) => {
-					if (updater instanceof Function) {
-						this.tableSorting.update(updater);
-					} else {
-						this.tableSorting.set(updater);
-					}
-				},
-				enableSortingRemoval: false,
-			};
-		});
-	})();
+	badgeTable = createAngularTable(() => ({
+		data: this.learningPaths(),
+		columns: this.tableColumnDefinition,
+		getCoreRowModel: getCoreRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		state: {
+			sorting: this.tableSorting(),
+		},
+		onSortingChange: (updater) =>
+			updater instanceof Function ? this.tableSorting.update(updater) : this.tableSorting.set(updater),
+		enableSortingRemoval: false, // ensures at least one column is sorted
+	}));
+
+	constructor() {}
 }

@@ -63,8 +63,9 @@ export class BadgeClassCreateComponent extends BaseAuthenticatedRoutableComponen
 	}
 
 	async ngOnInit() {
-		if (this.navigationState?.issuer) {
-			this.issuer = this.navigationState.issuer;
+		const state = this.router.currentNavigation()?.extras.state;
+		if (state?.issuer) {
+			this.issuer = state.issuer;
 			this.issuerLoaded = Promise.resolve(this.issuer);
 		} else {
 			this.issuerLoaded = this.issuerManager

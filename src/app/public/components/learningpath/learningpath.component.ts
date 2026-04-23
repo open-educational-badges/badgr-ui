@@ -112,6 +112,9 @@ export class PublicLearningPathComponent implements OnInit, AfterContentInit {
 
 	crumbs = [{ title: this.translate.instant('General.learningPaths'), routerLink: ['/catalog/learningpaths'] }];
 
+	/** Inserted by Angular inject() migration for backwards compatibility */
+	constructor(...args: unknown[]);
+
 	constructor() {
 		const injector = this.injector;
 
@@ -179,15 +182,10 @@ export class PublicLearningPathComponent implements OnInit, AfterContentInit {
 	}
 
 	progressValue(): number {
-		if (!this.loggedIn) return 0;
-
-		const required = this.learningPath?.required_badges_count ?? 0;
-		if (required <= 0) return 0;
-
-		const completed = this.learningPath?.completed_badges?.length ?? 0;
-
-		const pct = Math.floor((Math.min(completed, required) / required) * 100);
-		return pct;
+		if (this.loggedIn && this.learningPath.required_badges_count <= this.learningPath.completed_badges.length) {
+			return 100;
+		}
+		return Math.floor((this.minutesCompleted / this.minutesTotal) * 100);
 	}
 
 	requestPath() {

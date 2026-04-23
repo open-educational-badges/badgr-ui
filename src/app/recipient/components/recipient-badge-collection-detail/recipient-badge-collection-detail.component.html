@@ -82,7 +82,6 @@
 							[issuerSlug]="entry.badge.badgeClass.issuer.slug"
 							[badgeSlug]="entry.badge.slug"
 							[competencies]="entry.badge.getExtension('extensions:CompetencyExtension', [{}])"
-							[category]="entry.badge.getExtension('extensions:CategoryExtension', '').Category"
 							[showXIcon]="true"
 							(closeEmit)="removeBadge($event)"
 						></bg-badgecard>

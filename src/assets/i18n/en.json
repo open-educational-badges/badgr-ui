@@ -130,8 +130,7 @@
 		"end": "End",
 		"person": "person",
 		"persons": "persons",
-		"via": "via",
-		"archive": "archive"
+		"via": "via"
 	},
 	"NavItems": {
 		"register": "Register",
@@ -1248,7 +1247,6 @@
 		"getYourPath": "Get your Micro Degree badge",
 		"continue": "Continue learning",
 		"finished": "Finished",
-		"completedSuccessfully": "100% - learning path completed successfully",
 		"includedBadges": "Contained badges",
 		"badgeTabs": {
 			"all": "All",
@@ -1258,7 +1256,7 @@
 		"chooseBadges": "Choose included badges",
 		"badgeSequenceStep": "Badge order",
 		"badgeSequence": "Order of badges in the learning path",
-		"combineBadgeCategories": "You can combine all badge types.",
+		"combineBadgeCategories": "You can combine competency badges and participation badges.",
 		"min2Badges": "The learning path must contain at least 2 badges.",
 		"youHave": "You have",
 		"choosenForLp": "selected for the learning path.",
@@ -1297,14 +1295,7 @@
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
 		"institutions": "institutions",
-		"catalogAllLoaded": "All learning paths matching your search criteria loaded.",
-		"archive": "Archiving instead of deletion",
-		"alreadyAwarded": "At least one person has already earned the Micro Degree.",
-		"canOnlyBeArchived": "It can therefore only be archived.",
-		"mdArchived": "We have archived the micro degree.",
-		"archivedLearningPaths": "Archived learning paths",
-		"archivedSince": "Archived since {{ date }}",
-		"archivedBy": "This learning path was archived by {{ issuer }}."
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",
