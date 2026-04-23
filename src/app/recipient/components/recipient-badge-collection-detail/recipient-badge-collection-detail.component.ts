@@ -69,9 +69,6 @@ export class RecipientBadgeCollectionDetailComponent extends BaseAuthenticatedRo
 	@ViewChild('recipientBadgeDialog')
 	recipientBadgeDialog: RecipientBadgeSelectionDialog;
 
-	@ViewChild('dangerDialogHeaderTemplate')
-	dangerDialogHeaderTemplate: ElementRef;
-
 	@ViewChild('deleteBadgeDialogContentTemplate')
 	deleteBadgeDialogContentTemplate: ElementRef;
 
@@ -232,7 +229,6 @@ export class RecipientBadgeCollectionDetailComponent extends BaseAuthenticatedRo
 	public openBadgeDeleteDialog(badge: RecipientBadgeInstance) {
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
-				headerTemplate: this.dangerDialogHeaderTemplate,
 				content: this.deleteBadgeDialogContentTemplate,
 				variant: 'danger',
 				templateContext: {
@@ -260,7 +256,6 @@ export class RecipientBadgeCollectionDetailComponent extends BaseAuthenticatedRo
 	public openCollectionDeleteDialog() {
 		const dialogRef = this._hlmDialogService.open(DialogComponent, {
 			context: {
-				headerTemplate: this.dangerDialogHeaderTemplate,
 				content: this.deleteCollectionDialogContentTemplate,
 				variant: 'danger',
 				templateContext: {
