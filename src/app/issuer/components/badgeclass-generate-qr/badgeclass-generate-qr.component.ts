@@ -8,7 +8,6 @@ import { BadgeClass } from '../../models/badgeclass.model';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { BadgeRequestApiService } from '../../services/badgerequest-api.service';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
-import { SuccessDialogComponent } from '../../../common/dialogs/oeb-dialogs/success-dialog.component';
 import { DangerDialogComponent } from '../../../common/dialogs/oeb-dialogs/danger-dialog.component';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { QrCodeApiService } from '../../services/qrcode-api.service';
@@ -211,15 +210,6 @@ export class BadgeClassGenerateQrComponent extends BaseAuthenticatedRoutableComp
 	}
 
 	private readonly _hlmDialogService = inject(HlmDialogService);
-	public openSuccessDialog() {
-		const dialogRef = this._hlmDialogService.open(SuccessDialogComponent, {
-			context: {
-				text: this.translate.instant('QrCode.downloadedSuccessfully'),
-				qrCodeRequested: this.badgeRequested,
-				variant: 'success',
-			},
-		});
-	}
 
 	async savePdf(parent: any) {
 		let parentElement = null;

@@ -6,8 +6,6 @@ import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-a
 import { SessionService } from '../../../common/services/session.service';
 import { BadgeClass } from '../../models/badgeclass.model';
 import { QrCodeApiService } from '../../services/qrcode-api.service';
-import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
-import { SuccessDialogComponent } from '../../../common/dialogs/oeb-dialogs/success-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { EditQrFormComponent } from '../edit-qr-form/edit-qr-form.component';
@@ -72,15 +70,5 @@ export class BadgeClassEditQrComponent extends BaseAuthenticatedRoutableComponen
 					{ title: 'Award Badge' },
 				];
 			});
-	}
-
-	private readonly _hlmDialogService = inject(HlmDialogService);
-	public openSuccessDialog() {
-		const dialogRef = this._hlmDialogService.open(SuccessDialogComponent, {
-			context: {
-				text: this.translate.instant('QrCode.savedSuccessfully'),
-				variant: 'success',
-			},
-		});
 	}
 }
