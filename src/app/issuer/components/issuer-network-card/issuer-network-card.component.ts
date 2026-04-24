@@ -133,6 +133,7 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 							[variant]="inputAsPrivateNetwork() ? 'secondary' : 'default'"
 							[routerLink]="['/issuer', inputAsIssuer() ? 'issuers' : 'networks', issuerOrNetwork().slug]"
 							[queryParams]="inputAsPrivateNetwork() ? { tab: 'badges' } : undefined"
+							[fragment]="inputAsPrivateNetwork() ? null : 'badges'"
 							class="tw-whitespace-nowrap"
 						/>
 					}
