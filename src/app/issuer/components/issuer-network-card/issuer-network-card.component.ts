@@ -202,7 +202,7 @@ export class OebIssuerNetworkCard {
 		if (this.isPublic()) return false;
 		if (this.inputAsPrivateIssuer()) return this.inputAsPrivateIssuer().canCreateBadge;
 		if (this.inputAsPrivateNetwork())
-			return (this.inputAsPrivateNetwork().current_user_network_role ?? '') == 'staff';
+			return (this.inputAsPrivateNetwork().current_user_network_role ?? '') !== 'staff';
 
 		return false;
 	});
