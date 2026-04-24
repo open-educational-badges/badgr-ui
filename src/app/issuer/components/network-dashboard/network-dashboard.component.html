@@ -74,17 +74,42 @@
 						</oeb-button>
 					</div>
 				}
-				@if (
-					activeTab === 'partners' &&
-					network().current_user_network_role !== 'staff' &&
-					networkInvites().length
-				) {
+				@if (network().current_user_network_role !== 'staff') {
 					<div class="tw-ml-auto">
-						<oeb-button
-							[text]="'Network.shortInviteInstitutions' | translate"
-							(click)="openDialog()"
-						></oeb-button>
-						<quota-information quotas="NETWORK_MEMBERSHIPS" class="tw-block tw-mt-2 tw-text-right" />
+						@switch (activeTab) {
+							@case ('partners') {
+								@if (network().current_user_network_role !== 'staff' && networkInvites().length) {
+									<oeb-button
+										[text]="'Network.shortInviteInstitutions' | translate"
+										(click)="openDialog()"
+									></oeb-button>
+									<quota-information
+										quotas="NETWORK_MEMBERSHIPS"
+										class="tw-block tw-mt-2 tw-text-right"
+									/>
+								}
+							}
+							@case ('badges') {
+								@if (network().badgeClassCount) {
+									<oeb-button
+										variant="secondary"
+										[text]="'Network.createBadge' | translate"
+										[routerLink]="[`/issuer/issuers/${network().slug}/badges/select`]"
+									>
+									</oeb-button>
+								}
+							}
+							@case ('learningpaths') {
+								@if (network().learningpathCount) {
+									<oeb-button
+										variant="secondary"
+										[text]="'Network.createLp' | translate"
+										[routerLink]="[`/issuer/issuers/${network().slug}/learningpaths/create/`]"
+									>
+									</oeb-button>
+								}
+							}
+						}
 					</div>
 				}
 			</section>
