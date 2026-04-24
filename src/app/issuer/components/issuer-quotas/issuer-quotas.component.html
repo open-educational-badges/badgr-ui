@@ -247,7 +247,7 @@
 						<span><time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time></span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-purple">
-						{{ 'Quotas.page.renewalNetwork2' | translate }}
+						{{ 'Quotas.page.renewalNetwork2' | translate: { quota: issuer.quotas.name } }}
 					</p>
 				} @else {
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
