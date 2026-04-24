@@ -74,6 +74,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { SessionService } from '~/common/services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { LanguageService, lngs } from '~/common/services/language.service';
 
 type BadgeResult = BadgeClass & { selected?: boolean };
 
@@ -129,6 +130,7 @@ export class LearningPathEditFormComponent
 	protected learningPathManager = inject(LearningPathManager);
 	protected configService = inject(AppConfigService);
 	protected pdfTemplateManager = inject(PDFTemplateManager);
+	private languageService = inject(LanguageService);
 	protected authService: SessionService;
 
 	@ViewChild(StepperComponent) stepper: StepperComponent;
@@ -353,20 +355,21 @@ export class LearningPathEditFormComponent
 		});
 
 		if (!this.initialisedLearningpath) {
-			// restore name and description from sessionStorage
+			// restore name, description and language from sessionStorage
 			const sessionValuesJSON = sessionStorage.getItem('oeb-create-badgeclassvalues');
 			if (sessionValuesJSON) {
 				const sessionValues = JSON.parse(sessionValuesJSON);
 				this.learningPathForm.rawControl.patchValue({
 					name: sessionValues['badge_name'] || '',
 					description: sessionValues['badge_description'] || '',
+					language: sessionValues['badge_language'] || '',
 				});
 			}
-			// save name and description to sessionStorage on Change
+			// save name, description and language to sessionStorage on Change
 			this.learningPathForm.rawControl.valueChanges.subscribe((v) => {
 				let saveableSessionValues = {};
 				for (const [k, v] of Object.entries(this.learningPathForm.rawControl.value)) {
-					if (['name', 'description'].includes(k)) {
+					if (['name', 'description', 'language'].includes(k)) {
 						saveableSessionValues['badge_' + k] = v;
 					}
 				}
@@ -384,6 +387,7 @@ export class LearningPathEditFormComponent
 		this.learningPathForm.setValue({
 			name: lp.name,
 			description: lp.description,
+			language: badge.language,
 			badge_category: 'learningpath',
 			badge_image: badge.imageFrame ? lp.participationBadgeImage : null,
 			badge_customImage: !badge.imageFrame ? lp.participationBadgeImage : null,
@@ -485,6 +489,7 @@ export class LearningPathEditFormComponent
 	learningPathForm = typedFormGroup([this.imageValidation.bind(this), this.minSelectedBadges.bind(this)])
 		.addControl('name', '', [Validators.required, Validators.maxLength(60)])
 		.addControl('description', '', [Validators.required, Validators.maxLength(700)])
+		.addControl<'language', (typeof lngs)[number]>('language', this.languageService.getSelectedLngValue())
 		.addControl('badge_image', '')
 		.addControl('badge_category', 'learningpath')
 		.addControl('badge_customImage', '')
@@ -748,15 +753,18 @@ export class LearningPathEditFormComponent
 			categoryResults.addBadge(item);
 			return true;
 		};
-		this.badges
-			.filter(this.badgeMatcher(this.searchQuery))
-			.filter(this.badgeTagMatcher(this.selectedTag))
-			.filter((i) => !i.apiModel.source_url)
-			.forEach((item) => {
-				this.badgeResults.push(item);
-				addBadgeToResultsByIssuer(item);
-				addBadgeToResultsByCategory(item);
-			});
+
+		if (this.badges) {
+			this.badges
+				.filter(this.badgeMatcher(this.searchQuery))
+				.filter(this.badgeTagMatcher(this.selectedTag))
+				.filter((i) => !i.apiModel.source_url)
+				.forEach((item) => {
+					this.badgeResults.push(item);
+					addBadgeToResultsByIssuer(item);
+					addBadgeToResultsByCategory(item);
+				});
+		}
 	}
 
 	readonly badgeLoadingImageUrl = 'breakdown/static/images/badge-loading.svg';
@@ -891,6 +899,7 @@ export class LearningPathEditFormComponent
 			this.existingLpBadge.image = !imageFrame ? formState.badge_image : null;
 			this.existingLpBadge.name = formState.name;
 			this.existingLpBadge.description = formState.description;
+			this.existingLpBadge.language = formState.language;
 			this.existingLpBadge.tags = Array.from(this.lpTags);
 			this.existingLpBadge.criteria_text = criteriaText;
 			this.existingLpBadge.criteria_url = '';
@@ -962,6 +971,7 @@ export class LearningPathEditFormComponent
 						imageFrame: imageFrame,
 						name: this.learningPathForm.controls.name.value,
 						description: this.learningPathForm.controls.description.value,
+						language: this.learningPathForm.controls.language.value,
 						tags: Array.from(this.lpTags),
 						criteria_text: criteriaText,
 						criteria_url: '',

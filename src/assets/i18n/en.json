@@ -1295,7 +1295,8 @@
 		"deleteMd": "Delete learning path",
 		"institution": "institution",
 		"institutions": "institutions",
-		"catalogAllLoaded": "All learning paths matching your search criteria loaded."
+		"catalogAllLoaded": "All learning paths matching your search criteria loaded.",
+		"language": "Language"
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Summary description of the learning program.",

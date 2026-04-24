@@ -1306,7 +1306,8 @@
 		"deleteMd": "Lernpfad löschen",
 		"institution": "Institution",
 		"institutions": "Institutionen",
-		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen."
+		"catalogAllLoaded": "Alle Lernpfade, die deinen Suchkriterien entsprechen, wurden geladen.",
+		"language": "Sprache"
 	},
 	"LearningPathEditor": {
 		"shortDescriptionLine1": "Zusammenfassende Beschreibung des Lernangebots.",

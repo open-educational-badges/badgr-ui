@@ -17,9 +17,10 @@
 				[label]="'CreateBadge.enterDetailsStep' | translate"
 				[optional]="false"
 				[errorMessage]="'General.validationCompleteForm' | translate"
-				[completed]="(validateFields(['name', 'description']) && !imageValidation()) || isDevMode"
+				[completed]="(validateFields(['name', 'description', 'language']) && !imageValidation()) || isDevMode"
 				[hasError]="
-					((!validateFields(['name', 'description']) && dirtyFields(['name', 'description'])) ||
+					((!validateFields(['name', 'description', 'language']) &&
+						dirtyFields(['name', 'description', 'language'])) ||
 						(imageFieldDirty && imageValidation())) &&
 					!isDevMode
 				"
@@ -34,6 +35,17 @@
 							[autofocus]="true"
 							[sublabelRight]="'(max. 60 ' + ('General.characters' | translate) + ')'"
 						></oeb-input>
+
+						<oeb-select
+							[control]="learningPathForm.rawControlMap.language"
+							[label]="'Badge.badgeLanguage' | translate | uppercase"
+							[description]="'Badge.badgeLanguageHint' | translate"
+							[options]="[
+								{ label: 'General.language.de' | translate, value: 'de' },
+								{ label: 'General.language.en' | translate, value: 'en' },
+							]"
+						/>
+
 						<oeb-input
 							[label]="'LearningPath.description' | translate | uppercase"
 							[control]="learningPathForm.rawControlMap.description"
@@ -490,6 +502,14 @@
 								{{ 'LearningPath.shortDescription' | translate }}
 							</h3>
 							<span> {{ learningPathForm.rawControlMap.description.value }}</span>
+
+							<h3
+								hlmH3
+								class="tw-text-oebblack tw-font-bold tw-uppercase tw-text-[18px] tw-leading-[21.6px]"
+							>
+								{{ 'LearningPath.language' | translate }}
+							</h3>
+							<span> {{ learningPathForm.rawControlMap.language.value }}</span>
 						</div>
 					</div>
 				</div>
