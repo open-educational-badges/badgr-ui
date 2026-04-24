@@ -867,7 +867,7 @@ export class LearningPathEditFormComponent
 			'*Folgende Kriterien sind auf Basis deiner Eingaben als Metadaten im Badge hinterlegt*: \n\n';
 		const participationText = `Du hast erfolgreich an **${this.learningPathForm.controls.name.value}** teilgenommen.  \n\n `;
 
-		if (this.issuer.quotas) {
+		if (this.issuer.quotas && !this.existingLpBadge) {
 			// recheck quotas and show dialog if something changed while starting the creation process
 			await this.issuer.update();
 			if (!this.checkQuotasDialog('LEARNINGPATH_CREATE')) {
