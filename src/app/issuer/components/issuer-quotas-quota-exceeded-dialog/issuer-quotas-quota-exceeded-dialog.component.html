@@ -241,7 +241,10 @@
 
 						<div class="tw-mt-6">
 							@for (package of packageOptions; track package; let last = $last) {
-								@if (package.value !== 'NETWORK') {
+								@if (
+									!(quota().key === 'ENTERPRISE' && package.value === 'PRO') &&
+									package.value !== 'NETWORK'
+								) {
 									<bg-formfield-radio
 										class="tw-mt-4"
 										[control]="upgradeRequestForm.rawControlMap.package"
