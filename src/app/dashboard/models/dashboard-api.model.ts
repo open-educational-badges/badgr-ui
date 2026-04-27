@@ -321,7 +321,7 @@ export const KPI_DISPLAY_CONFIG: Record<DashboardKPIId, KPIDisplayConfig> = {
 		order: 7,
 	},
 	learners_with_paths: {
-		descriptionKey: 'Network.Dashboard.kpi.learnersWithPaths',
+		descriptionKey: 'Network.Dashboard.kpi.learnersWithNetworkPaths',
 		unitKey: 'Network.Dashboard.unit.persons',
 		icon: 'Route',
 		iconSize: 80,

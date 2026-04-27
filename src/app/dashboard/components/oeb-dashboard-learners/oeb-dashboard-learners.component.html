@@ -1,58 +1,60 @@
 <div class="oeb-dashboard-learners">
 	@if (viewState === 'overview') {
-		<div class="kpi-card-grid kpi-card-grid--two">
-			<div class="kpi-card">
-				<div class="kpi-card__content">
-					<div class="kpi-card__top">
-						<div class="kpi-card__icon">
-							<ng-icon name="lucideUserStar" size="80px" style="color: #492e98" />
-						</div>
-						<div class="kpi-card__main">
-							<div class="kpi-card__value">{{ totalLearners | number }}</div>
-							<div class="kpi-card__description">
-								{{ 'Dashboard.Learners.totalLearnersLabel' | translate }}
+		@if (!noGeneralStats) {
+			<div class="kpi-card-grid kpi-card-grid--two">
+				<div class="kpi-card">
+					<div class="kpi-card__content">
+						<div class="kpi-card__top">
+							<div class="kpi-card__icon">
+								<ng-icon name="lucideUserStar" size="80px" style="color: #492e98" />
+							</div>
+							<div class="kpi-card__main">
+								<div class="kpi-card__value">{{ totalLearners | number }}</div>
+								<div class="kpi-card__description">
+									{{ 'Dashboard.Learners.totalLearnersLabel' | translate }}
+								</div>
 							</div>
 						</div>
+						@if (
+							totalLearnersTrend === 'up' &&
+							totalLearnersTrendValue !== undefined &&
+							totalLearnersTrendValue > 0
+						) {
+							<div class="kpi-card__growth">
+								+{{ totalLearnersTrendValue }}%
+								{{ getTrendPeriodTranslationKey(totalLearnersTrendPeriod) | translate }}
+							</div>
+						}
 					</div>
-					@if (
-						totalLearnersTrend === 'up' &&
-						totalLearnersTrendValue !== undefined &&
-						totalLearnersTrendValue > 0
-					) {
-						<div class="kpi-card__growth">
-							+{{ totalLearnersTrendValue }}%
-							{{ getTrendPeriodTranslationKey(totalLearnersTrendPeriod) | translate }}
-						</div>
-					}
 				</div>
-			</div>
 
-			<div class="kpi-card">
-				<div class="kpi-card__content">
-					<div class="kpi-card__top">
-						<div class="kpi-card__icon">
-							<ng-icon name="lucideClock" size="80px" style="color: #492e98" />
-						</div>
-						<div class="kpi-card__main">
-							<div class="kpi-card__value">{{ totalCompetencyHours | number }}</div>
-							<div class="kpi-card__description">
-								{{ 'Network.Dashboard.kpi.competencyHours' | translate }}
+				<div class="kpi-card">
+					<div class="kpi-card__content">
+						<div class="kpi-card__top">
+							<div class="kpi-card__icon">
+								<ng-icon name="lucideClock" size="80px" style="color: #492e98" />
+							</div>
+							<div class="kpi-card__main">
+								<div class="kpi-card__value">{{ totalCompetencyHours | number }}</div>
+								<div class="kpi-card__description">
+									{{ 'Network.Dashboard.kpi.competencyHours' | translate }}
+								</div>
 							</div>
 						</div>
+						@if (
+							competencyHoursTrend === 'up' &&
+							competencyHoursTrendValue !== undefined &&
+							competencyHoursTrendValue > 0
+						) {
+							<div class="kpi-card__growth">
+								+{{ competencyHoursTrendValue }}%
+								{{ getTrendPeriodTranslationKey(competencyHoursTrendPeriod) | translate }}
+							</div>
+						}
 					</div>
-					@if (
-						competencyHoursTrend === 'up' &&
-						competencyHoursTrendValue !== undefined &&
-						competencyHoursTrendValue > 0
-					) {
-						<div class="kpi-card__growth">
-							+{{ competencyHoursTrendValue }}%
-							{{ getTrendPeriodTranslationKey(competencyHoursTrendPeriod) | translate }}
-						</div>
-					}
 				</div>
 			</div>
-		</div>
+		}
 
 		@if (loadingResidence || loadingGender) {
 			<div class="tw-mt-6 tw-flex tw-items-center tw-justify-center tw-p-12">

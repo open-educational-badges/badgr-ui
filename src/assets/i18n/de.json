@@ -502,7 +502,8 @@
 				"competencyHours": "Stunden Kompetenzen insgesamt gestärkt",
 				"learnersCount": "Lernende Personen haben Badges erhalten",
 				"badgesPerMonth": "Badges durchschnittlich pro Monat vergeben",
-				"learnersWithPaths": "Lernende haben Netzwerk-Pfade absolviert"
+				"learnersWithPaths": "Lernende haben Lernpfade absolviert",
+				"learnersWithNetworkPaths": "Lernende haben Netzwerk-Pfade absolviert"
 			},
 			"unit": {
 				"badges": "Badges",

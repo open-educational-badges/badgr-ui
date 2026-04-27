@@ -626,6 +626,10 @@ export class OebDashboardOverviewComponent implements OnInit, OnDestroy, OnChang
 				continue;
 			}
 
+			if (!this.isNetwork && kpi.id == 'learners_with_paths') {
+				config.descriptionKey = 'Network.Dashboard.kpi.learnersWithPaths';
+			}
+
 			if (config.variant === 'dual' && config.pairedWith) {
 				// Find the paired KPI
 				const pairedKpi = kpis.find((k) => k.id === config.pairedWith);

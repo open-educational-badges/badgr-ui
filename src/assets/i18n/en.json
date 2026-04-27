@@ -503,7 +503,8 @@
 				"competencyHours": "Hours of competencies strengthened in total",
 				"learnersCount": "Learners have received Badges",
 				"badgesPerMonth": "Badges awarded on average per month",
-				"learnersWithPaths": "Learners have completed Network paths"
+				"learnersWithPaths": "Learners have completed Learning Paths",
+				"learnersWithNetworkPaths": "Learners have completed Network Paths"
 			},
 			"unit": {
 				"badges": "Badges",
