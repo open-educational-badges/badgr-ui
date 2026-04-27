@@ -768,7 +768,6 @@ export class OebIssuerDetailComponent implements OnInit {
 				return false;
 			}
 		}
-		console.log(url);
 		this.router.navigate(url, { relativeTo: this.route });
 	}
 
