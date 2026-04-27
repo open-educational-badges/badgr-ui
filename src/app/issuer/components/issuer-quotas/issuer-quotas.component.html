@@ -141,21 +141,21 @@
 							}
 						</span>
 					</p>
-				}
-				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
-					<strong>{{ 'Quotas.page.label_ACCOUNTS_MEMBER' | translate }}</strong
-					><span>
-						<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_MEMBER']) ? 'tw-text-red' : ''">
-							<span>{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].used }}</span>
-							@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].max >= 0) {
-								<span>/{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].max }}</span>
+					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
+						<strong>{{ 'Quotas.page.label_ACCOUNTS_MEMBER' | translate }}</strong
+						><span>
+							<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_MEMBER']) ? 'tw-text-red' : ''">
+								<span>{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].used }}</span>
+								@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].max >= 0) {
+									<span>/{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].max }}</span>
+								}
+							</span>
+							@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].custom) {
+								<span>*</span>
 							}
 						</span>
-						@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].custom) {
-							<span>*</span>
-						}
-					</span>
-				</p>
+					</p>
+				}
 				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
 					<strong>{{ 'Quotas.page.label_AISKILLS_REQUESTS' | translate }}</strong
 					><span>
