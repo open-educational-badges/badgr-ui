@@ -37,13 +37,12 @@
 					<oeb-button
 						class="tw-whitespace-nowrap"
 						*ngIf="!public"
-						[routerLink]="activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create']"
-						[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
 						[text]="
 							activeTab === 'badges'
 								? ('Issuer.createBadge' | translate)
 								: ('Issuer.myInstitutionsCreateLearningPath' | translate)
 						"
+						(click)="clickCreateBadge()"
 						[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
 						[umamiEvent]="'create-badge'"
 					>
@@ -192,13 +191,13 @@
 				[class]="
 					'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
 				"
-				[routerLink]="activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create']"
 				[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
 				[text]="
 					activeTab === 'badges'
 						? ('Issuer.createBadge' | translate)
 						: ('Issuer.myInstitutionsCreateLearningPath' | translate)
 				"
+				(click)="clickCreateBadge()"
 				[umamiEvent]="'create-badge'"
 			>
 			</oeb-button>

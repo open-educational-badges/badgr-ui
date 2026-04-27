@@ -9,7 +9,7 @@ import {
 	viewChild,
 	ViewChild,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
@@ -105,6 +105,7 @@ import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashbo
 })
 export class OebIssuerDetailComponent implements OnInit {
 	private router = inject(Router);
+	private route = inject(ActivatedRoute);
 	translate = inject(TranslateService);
 	protected messageService = inject(MessageService);
 	protected title = inject(Title);
@@ -760,15 +761,31 @@ export class OebIssuerDetailComponent implements OnInit {
 		}, 0);
 	}
 
-	async checkQuotasDialog(badge: BadgeClass) {
-		let issuer: Issuer | Network = this.issuer as Issuer;
-		if (badge.isNetworkBadge) {
-			issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.issuerSlug);
-		} else if (badge.sharedOnNetwork) {
-			issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.sharedOnNetwork.slug);
+	async clickCreateBadge() {
+		const url = this.activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create'];
+		if (this.activeTab !== 'badges') {
+			if (!(await this.checkQuotasDialog(undefined, 'LEARNINGPATH_CREATE'))) {
+				return false;
+			}
 		}
+		console.log(url);
+		this.router.navigate(url, { relativeTo: this.route });
+	}
+
+	async checkQuotasDialog(badge?: BadgeClass, quota = 'BADGE_AWARD') {
+		let issuer: Issuer | Network = this.issuer as Issuer;
+		if (badge) {
+			if (badge.isNetworkBadge) {
+				issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.issuerSlug);
+			} else if (badge.sharedOnNetwork) {
+				issuer = await this.issuerManager.issuerOrNetworkBySlug(badge.sharedOnNetwork.slug);
+			}
+		} else {
+			issuer = await this.issuerManager.issuerOrNetworkBySlug(this.issuer.slug);
+		}
+
 		if (this.isFullIssuer(issuer) && issuer.quotas) {
-			if (issuer.quotas?.quotas['BADGE_AWARD']?.quota === 0) {
+			if (issuer.quotas?.quotas[quota]?.quota === 0) {
 				this._hlmDialogService.open(QuotaExceededDialog, {
 					context: {
 						issuer: issuer,
