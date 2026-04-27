@@ -90,6 +90,7 @@
 							}
 
 							@if (
+								!issuer.is_network &&
 								learningPath.activated &&
 								pdfTemplateManager.pdfEditorAvailable() &&
 								(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
