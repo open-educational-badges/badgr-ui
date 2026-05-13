@@ -230,6 +230,7 @@ export class LearningPathEditFormComponent
 
 	badgeResultsByCategory: MatchingBadgeCategory[] = [];
 	badgeResultsByIssuer: MatchingBadgeIssuer[] = [];
+	private activeLpBadgeSlugs = new Set<string>();
 
 	selectedTag: string = null;
 	order = 'asc';
@@ -241,6 +242,13 @@ export class LearningPathEditFormComponent
 		this._searchQuery = query;
 		this.updateResults();
 	}
+
+	private readonly categoryOrder = ['participation', 'competency', 'learningpath'];
+	private sortByCategory = (a: string, b: string) => {
+		const ai = this.categoryOrder.indexOf(a);
+		const bi = this.categoryOrder.indexOf(b);
+		return (ai < 0 ? Infinity : ai) - (bi < 0 ? Infinity : bi);
+	};
 
 	private _groupBy: '---' | 'Category' | 'Issuer' = '---';
 	get groupBy() {
@@ -661,6 +669,9 @@ export class LearningPathEditFormComponent
 				(a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
 			);
 
+			const activeLps = await this.learningPathApiService.getLearningPathsForIssuer(this.issuerSlug);
+			this.activeLpBadgeSlugs = new Set((activeLps ?? []).map((lp) => lp.participationBadge_id).filter(Boolean));
+
 			this.badgeResults = this.badges;
 			this.badgesFormArray = this.learningPathForm.controls.badges.value;
 
@@ -698,7 +709,7 @@ export class LearningPathEditFormComponent
 				.sort((a, b) => a.issuerName.localeCompare(b.issuerName))
 				.forEach((r) => r.badges.sort((a, b) => a.name.localeCompare(b.name)));
 			this.badgeResultsByCategory
-				.sort((a, b) => a.category.localeCompare(b.category))
+				.sort((a, b) => this.sortByCategory(a.category, b.category))
 				.forEach((r) => r.badges.sort((a, b) => a.name.localeCompare(b.name)));
 		} else {
 			this.badgeResults.sort((a, b) => b.name.localeCompare(a.name));
@@ -706,7 +717,7 @@ export class LearningPathEditFormComponent
 				.sort((a, b) => b.issuerName.localeCompare(a.issuerName))
 				.forEach((r) => r.badges.sort((a, b) => b.name.localeCompare(a.name)));
 			this.badgeResultsByCategory
-				.sort((a, b) => b.category.localeCompare(a.category))
+				.sort((a, b) => this.sortByCategory(a.category, b.category))
 				.forEach((r) => r.badges.sort((a, b) => b.name.localeCompare(a.name)));
 		}
 	}
@@ -755,11 +766,18 @@ export class LearningPathEditFormComponent
 				.filter(this.badgeMatcher(this.searchQuery))
 				.filter(this.badgeTagMatcher(this.selectedTag))
 				.filter((i) => !i.apiModel.source_url)
+				.filter((i) => !this.existingLpBadge || i.slug !== this.existingLpBadge.slug)
+				.filter(
+					(i) =>
+						i.extension?.['extensions:CategoryExtension']?.Category !== 'learningpath' ||
+						this.activeLpBadgeSlugs.has(i.slug),
+				)
 				.forEach((item) => {
 					this.badgeResults.push(item);
 					addBadgeToResultsByIssuer(item);
 					addBadgeToResultsByCategory(item);
 				});
+			this.badgeResultsByCategory.sort((a, b) => this.sortByCategory(a.category, b.category));
 		}
 	}
 

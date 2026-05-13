@@ -823,13 +823,18 @@ export class BadgeClassDetailComponent
 
 	deleteBadge() {
 		if (this.recipientCount === 0) {
+			const affectedLps = (this.learningPaths ?? []).filter((lp) => lp.badges?.length <= 2);
+			const lpWarning =
+				affectedLps.length > 0 ? `<br><br>${this.translate.instant('Badge.deleteWillDeleteLp')}` : '';
+
 			this.confirmDialog
 				.openResolveRejectDialog({
 					dialogTitle: this.translate.instant('General.warning'),
 					dialogBody:
 						this.translate.instant('Badge.deletePart1') +
 						`<strong>${this.badgeClass.name}</strong>` +
-						this.translate.instant('Badge.deletePart2'),
+						this.translate.instant('Badge.deletePart2') +
+						lpWarning,
 					resolveButtonLabel: this.translate.instant('Badge.deleteConfirm'),
 					rejectButtonLabel: this.translate.instant('General.cancel'),
 				})

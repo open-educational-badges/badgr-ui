@@ -162,6 +162,7 @@ export default class RecipientEarnedBadgesOverview {
 	searchQuery = signal<string>('');
 	filteredBadges = computed(() => {
 		return this.badges()
+			.filter((b) => b.getExtension('extensions:CategoryExtension', {}).Category !== 'learningpath')
 			.filter(MatchingAlgorithm.badgeMatcher(this.searchQuery()))
 			.sort(this.sortBadgesBy(this.sortOption()));
 	});
