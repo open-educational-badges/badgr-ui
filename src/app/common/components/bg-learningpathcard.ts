@@ -41,7 +41,7 @@ type MatchOrProgressType = { match?: string; progress?: number };
 		<ng-template #contentTemplate>
 			<div class="tw-flex tw-flex-col tw-h-full">
 				<div
-					class="tw-bg-[var(--color-lightgray)] tw-w-full tw-relative tw-h-[175px] tw-items-center tw-flex tw-justify-center tw-p-2 tw-rounded-[3px]"
+					class="tw-bg-white tw-w-full tw-relative tw-h-[175px] tw-items-center tw-flex tw-justify-center tw-p-2 tw-rounded-[3px]"
 				>
 					@if (!completed()) {
 						<div class="tw-absolute tw-top-[10px] tw-right-[10px]">
