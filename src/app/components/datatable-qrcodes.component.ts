@@ -32,7 +32,7 @@ import { OebSpinnerComponent } from './oeb-spinner.component';
 import { BadgeInstanceBatchAssertion } from '../issuer/models/badgeinstance-api.model';
 import { BadgeInstanceApiService } from '../issuer/services/badgeinstance-api.service';
 import { TaskPollingManagerService, TaskResult, TaskStatus } from '../common/task-manager.service';
-import { formatDate, TitleCasePipe } from '@angular/common';
+import { formatDate } from '@angular/common';
 import {
 	ColumnDef,
 	createAngularTable,
@@ -77,8 +77,6 @@ export type RequestedBadge = {
 		OebCheckboxComponent,
 		FlexRenderDirective,
 		OebCheckboxComponent,
-		TitleCasePipe,
-		QuotaExceededDialog,
 	],
 	template: `
 		@if (this.isTaskProcessing() || this.isTaskPending()) {

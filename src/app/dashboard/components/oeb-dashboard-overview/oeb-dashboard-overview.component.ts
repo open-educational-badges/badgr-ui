@@ -5,11 +5,10 @@ import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil, EMPTY, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import { provideIcons } from '@ng-icons/core';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { lucideClockFading } from '@ng-icons/lucide';
 import { BadgeAwardData } from '../../models/dashboard-api.model';
-import { DashboardStatsBarComponent } from '../dashboard-stats-bar/dashboard-stats-bar.component';
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
 import { KpiCardGridComponent } from '../kpi-card-grid/kpi-card-grid.component';
 import { DashboardApiService } from '../../services/dashboard-api.service';
@@ -62,11 +61,9 @@ export interface CompetencyData {
 		CommonModule,
 		FormsModule,
 		TranslatePipe,
-		DashboardStatsBarComponent,
 		DashboardTopBadgesComponent,
 		KpiCardGridComponent,
 		RecentActivityTableComponent,
-		NgIcon,
 		HlmIconModule,
 		RecipientSkillVisualisationComponent,
 		HorizontalBarChartComponent,

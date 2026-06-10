@@ -31,7 +31,6 @@ import { HlmIconModule } from '@spartan-ng/helm/icon';
 import {
 	ColumnDef,
 	createAngularTable,
-	FlexRenderDirective,
 	getCoreRowModel,
 	getSortedRowModel,
 	SortingState,
@@ -163,7 +162,6 @@ export interface MonthlyBadgeData {
 		HorizontalBarChartComponent,
 		...HlmTableImports,
 		...OebTableImports,
-		FlexRenderDirective,
 		HlmIconModule,
 	],
 	providers: [

@@ -106,7 +106,6 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		TranslateModule,
 		UpperCasePipe,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 	],
 })
 export class BadgeClassEditFormComponent

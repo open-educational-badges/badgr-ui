@@ -11,16 +11,13 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
-import { NgIcon } from '@ng-icons/core';
 import { NgModel, FormsModule, FormControl } from '@angular/forms';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
-import { NgStyle } from '@angular/common';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { FormFieldSelectOption, OebSelectComponent } from '../../../components/select.component';
 import { NetworkApiService } from '../../../issuer/services/network-api.service';
-import { HlmIcon } from '@spartan-ng/helm/icon';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
 import { Network } from '~/issuer/network.model';
 import { BadgeClassApiService } from '~/issuer/services/badgeclass-api.service';
@@ -33,7 +30,7 @@ import { BadgeClassManager } from '~/issuer/services/badgeclass-manager.service'
 @Component({
 	selector: 'select-network',
 	templateUrl: './select-network.component.html',
-	imports: [TranslatePipe, OebButtonComponent, NgIcon, HlmIcon, FormsModule, NgStyle, OebSelectComponent],
+	imports: [TranslatePipe, OebButtonComponent, FormsModule, OebSelectComponent],
 })
 export class SelectNetworkComponent implements OnInit {
 	private publicApiService = inject(PublicApiService);

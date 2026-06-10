@@ -1,10 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PDFTemplateApiService } from '../services/pdftemplate-api.service';
-import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { BgImageStatusPlaceholderDirective } from '../directives/bg-image-status-placeholder.directive';
 import { TranslatePipe } from '@ngx-translate/core';
-import { HlmP } from '@spartan-ng/helm/typography';
 
 @Component({
 	selector: 'bg-pdftemplatecard',
@@ -60,7 +58,7 @@ import { HlmP } from '@spartan-ng/helm/typography';
 			</div>
 		</div>
 	`,
-	imports: [RouterLink, NgIcon, BgImageStatusPlaceholderDirective, HlmP, TranslatePipe],
+	imports: [NgIcon, BgImageStatusPlaceholderDirective, TranslatePipe],
 })
 export class BgPDFTemplateCard {
 	readonly pdfTemplateFailedImageUrl = '../../../breakdown/static/images/image-failed.svg';

@@ -102,7 +102,6 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		NgTemplateOutlet,
 		CommonModule,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 		OebDashboardOverviewComponent,
 		OebDashboardLearnersComponent,
 		OebFeatureTeaserComponent,

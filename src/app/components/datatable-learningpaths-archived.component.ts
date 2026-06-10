@@ -4,7 +4,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { Component, input, output, signal, TemplateRef, viewChild, inject, untracked } from '@angular/core';
 import { HlmTableImports } from './spartan/ui-table-helm/src';
-import { OebButtonComponent } from './oeb-button.component';
 import { Issuer } from '../issuer/models/issuer.model';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { ApiLearningPath } from '~/common/model/learningpath-api.model';
@@ -27,7 +26,6 @@ import { NgIcon } from '@ng-icons/core';
 		FlexRenderDirective,
 		HlmIconModule,
 		CommonModule,
-		OebButtonComponent,
 		TranslateModule,
 		RouterModule,
 		NgIcon,

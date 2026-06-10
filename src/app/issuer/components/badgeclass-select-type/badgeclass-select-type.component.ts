@@ -28,7 +28,6 @@ import { HlmDialogService } from '@spartan-ng/helm/dialog';
 		TranslatePipe,
 		BgAwaitPromises,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 	],
 })
 export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComponent {

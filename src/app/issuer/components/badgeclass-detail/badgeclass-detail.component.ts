@@ -70,7 +70,6 @@ interface groupedInstances {
 		TranslatePipe,
 		OebTabsComponent,
 		SelectNetworkComponent,
-		QuotaExceededDialog,
 	],
 })
 export class BadgeClassDetailComponent

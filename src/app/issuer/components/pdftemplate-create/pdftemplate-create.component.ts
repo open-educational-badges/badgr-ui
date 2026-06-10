@@ -14,7 +14,7 @@ import { FormMessageComponent } from '../../../common/components/form-message.co
 import { PDFTemplate } from '../../models/pdftemplate.model';
 import { PDFTemplateEditFormComponent } from '../pdftemplate-edit-form/pdftemplate-edit-form.component';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
-import { HlmH1, HlmH2, HlmH3 } from '@spartan-ng/helm/typography';
+import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 
 @Component({
 	selector: 'pdftemplate-create',
@@ -24,7 +24,6 @@ import { HlmH1, HlmH2, HlmH3 } from '@spartan-ng/helm/typography';
 		FormMessageComponent,
 		HlmH1,
 		HlmH2,
-		HlmH3,
 		PDFTemplateEditFormComponent,
 		TranslatePipe,
 	],

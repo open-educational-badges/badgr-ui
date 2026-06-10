@@ -21,7 +21,7 @@ import { RecipientIdentifierType } from '../../models/badgeinstance-api.model';
 import { typedFormGroup } from '../../../common/util/typed-forms';
 import { TelephoneValidator } from '../../../common/validators/telephone.validator';
 import { EventsService } from '../../../common/services/events.service';
-import { FormFieldTextInputType, FormFieldText } from '../../../common/components/formfield-text';
+import { FormFieldTextInputType } from '../../../common/components/formfield-text';
 import striptags from 'striptags';
 import { DateValidator } from '../../../common/validators/date.validator';
 import { AppConfigService } from '../../../common/app-config.service';
@@ -34,21 +34,14 @@ import { FormMessageComponent } from '../../../common/components/form-message.co
 import { BgImageStatusPlaceholderDirective } from '../../../common/directives/bg-image-status-placeholder.directive';
 import { OebInputComponent } from '../../../components/input.component';
 import { OebSelectComponent } from '../../../components/select.component';
-import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component';
-import { NgClass, DatePipe } from '@angular/common';
-import { SvgIconComponent } from '../../../common/components/svg-icon.component';
-import { FormFieldMarkdown } from '../../../common/components/formfield-markdown';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
-import { OebCollapsibleComponent } from '~/components/oeb-collapsible.component';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
 import { FormFieldSelectOption } from '~/common/components/formfield-select';
 import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { PreviewCanvas } from '~/common/util/pdftemplate-util';
 import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
-import { NgIcon } from '@ng-icons/core';
-import { OebSeparatorComponent } from '~/components/oeb-separator.component';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
@@ -98,17 +91,8 @@ import { Network } from '~/issuer/network.model';
 		RouterLink,
 		OebInputComponent,
 		OebSelectComponent,
-		OebCheckboxComponent,
-		SvgIconComponent,
-		FormFieldMarkdown,
-		FormFieldText,
-		NgClass,
 		OebButtonComponent,
-		DatePipe,
 		TranslatePipe,
-		OebCollapsibleComponent,
-		NgIcon,
-		OebSeparatorComponent,
 		OptionalDetailsComponent,
 	],
 })

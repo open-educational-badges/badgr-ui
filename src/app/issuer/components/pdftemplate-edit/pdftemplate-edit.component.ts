@@ -15,7 +15,7 @@ import { IssuerManager } from '../../services/issuer-manager.service';
 import { PDFTemplate } from '../../models/pdftemplate.model';
 import { PDFTemplateEditFormComponent } from '../pdftemplate-edit-form/pdftemplate-edit-form.component';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
-import { HlmH1, HlmH2, HlmH3 } from '@spartan-ng/helm/typography';
+import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
 
 @Component({
@@ -26,7 +26,6 @@ import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
 		FormMessageComponent,
 		HlmH1,
 		HlmH2,
-		HlmH3,
 		BgAwaitPromises,
 		PDFTemplateEditFormComponent,
 		TranslatePipe,
