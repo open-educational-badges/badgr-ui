@@ -19,14 +19,7 @@ import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 @Component({
 	selector: 'pdftemplate-create',
 	templateUrl: './pdftemplate-create.component.html',
-	imports: [
-		BgBreadcrumbsComponent,
-		FormMessageComponent,
-		HlmH1,
-		HlmH2,
-		PDFTemplateEditFormComponent,
-		TranslatePipe,
-	],
+	imports: [BgBreadcrumbsComponent, FormMessageComponent, HlmH1, HlmH2, PDFTemplateEditFormComponent, TranslatePipe],
 })
 export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableComponent {
 	breadcrumbLinkEntries: LinkEntry[] = [];

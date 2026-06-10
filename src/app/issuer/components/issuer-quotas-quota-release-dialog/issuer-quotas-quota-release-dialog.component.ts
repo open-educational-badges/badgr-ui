@@ -26,14 +26,7 @@ import { QuotaManager } from '~/issuer/services/quota-manager.service';
 			list-style-type: disc;
 		}
 	`,
-	imports: [
-		OebButtonComponent,
-		TranslatePipe,
-		FormsModule,
-		ReactiveFormsModule,
-		HlmDialogModule,
-		HlmH2,
-	],
+	imports: [OebButtonComponent, TranslatePipe, FormsModule, ReactiveFormsModule, HlmDialogModule, HlmH2],
 })
 export class QuotaReleaseDialog extends BaseDialog {
 	protected translate = inject(TranslateService);

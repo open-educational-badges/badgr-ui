@@ -19,12 +19,7 @@ import { Router } from '@angular/router';
 @Component({
 	selector: 'network-partners',
 	templateUrl: './network-partners.component.html',
-	imports: [
-		TranslatePipe,
-		OebButtonComponent,
-		NetworkPartnersDatatableComponent,
-		NetworkInvitesDatatableComponent,
-	],
+	imports: [TranslatePipe, OebButtonComponent, NetworkPartnersDatatableComponent, NetworkInvitesDatatableComponent],
 })
 export class NetworkPartnersComponent {
 	private networkApiService = inject(NetworkApiService);
