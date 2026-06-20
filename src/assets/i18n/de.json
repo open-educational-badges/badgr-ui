@@ -629,10 +629,15 @@
 		"durationPositive": "Bitte gib eine positive Zahl oder 0 ein",
 		"valuePositive": "Bitte gib eine positive Zahl ein",
 		"optionalBadgeDetails": "Optionale Badge-Details",
+		"tagsAndAreaStep": "Tags and Bereiche",
 		"addTags": "Tags hinzufügen",
 		"newTag": "Einen Tag eingeben...",
 		"tagDoesNotExist": "Dieser Tag existiert noch nicht",
 		"tagInfo": "Tags verschlagworten {{items}} und helfen Lernenden auf OEB bei der Suche von {{items2}} zu bestimmten Themen.",
+		"addAreas": "Bereiche hinzufügen",
+		"newArea": "Einen Bereich eingeben...",
+		"areaDoesNotExist": "Dieser Bereich existiert noch nicht",
+		"areaInfo": "Bereiche helfen Lernenden {{items}} zu kategorisieren.",
 		"removeAlignment": "Verknpüfung entfernen",
 		"removeAlignmentInfo": "Bist du sicher, dass du die Verknpüfung(en) entfernen möchtest? ",
 		"irreversibleAction": "Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -879,7 +884,8 @@
 		"pdfDownload": "Badge-PDF herunterladen",
 		"downloadMicroDegree": "Micro Degree herunterladen",
 		"place": "Ort",
-		"expiryAfter": "Gültigkeit ab Vergabe"
+		"expiryAfter": "Gültigkeit ab Vergabe",
+		"area": "Bereiche"
 	},
 	"BadgeCollection": {
 		"collectionInfo": "Mit Sammlungen kannst du deine erhaltenen Badges organisieren und teilen.",
@@ -1099,6 +1105,7 @@
 		"dragDropInfo": "Mittels <span class='tw-font-bold'>Drag & Drop</span> kannst du deine ausgewählten Badges hier in die Reihenfolge bringen, in der sie innerhalb des Lernpfads angezeigt werden sollen.",
 		"lpDerivedData": "Folgende Daten haben wir übernommen:",
 		"addTag": "Tag hinzufügen",
+		"addArea": "Bereich hinzufügen",
 		"createdSuccessfully": "Dein Lernpfad wurde erfolgreich erstellt.",
 		"savedSuccessfully": "Deine Änderungen wurden erfolgreich gespeichert",
 		"description": "Kurz-Beschreibung für Lernende",

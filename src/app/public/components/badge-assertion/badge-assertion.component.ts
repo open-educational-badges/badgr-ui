@@ -259,6 +259,7 @@ export class PublicBadgeAssertionComponent {
 					slug: assertion.badge.id,
 					category: assertion.badge['extensions:CategoryExtension'].Category,
 					tags: assertion.badge.tags,
+					areas: assertion.badge.areas,
 					issuerName: assertion.badge.issuer.name,
 					issuerImagePlacholderUrl: this.issuerImagePlacholderUrl,
 					issuerImage: assertion.badge.issuer.image,
