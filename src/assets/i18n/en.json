@@ -573,7 +573,9 @@
 		"alreadyShared": "The badge was already shared on a network.",
 		"unknownRecipient": "Recipient unknown",
 		"badgeLanguage": "Language of this badge",
-		"badgeLanguageHint": "(and of the badge email incl. corresponding PDF certificate)"
+		"badgeLanguageHint": "(and of the badge email incl. corresponding PDF certificate)",
+		"tag": "Tag",
+		"area": "Area"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
@@ -626,6 +628,9 @@
 		"newTag": "Enter a tag...",
 		"tagDoesNotExist": "This tag does not exist yet",
 		"tagInfo": "Tags help categorize {{items}} and help learners on OEB search for {{items2}} on specific topics.",
+		"addAreas": "Add Areas",
+		"newArea": "Enter an area...",
+		"areaDoesNotExist": "This area does not exist yet",
 		"removeAlignment": "Remove link",
 		"removeAlignmentInfo": "Are you sure you want to remove the link(s)? ",
 		"irreversibleAction": "This action cannot be undone.",
