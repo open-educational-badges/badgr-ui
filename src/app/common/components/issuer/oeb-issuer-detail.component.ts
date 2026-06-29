@@ -245,7 +245,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 			}
 
 			if (badge instanceof BadgeClass) {
-				if (badge.extension && badge.extension['extensions:CategoryExtension'].Category === 'learningpath') {
+				if (badge.extension && badge.extension['extensions:CategoryExtension']?.Category === 'learningpath') {
 					return false;
 				}
 
