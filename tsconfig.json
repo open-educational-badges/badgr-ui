@@ -39,5 +39,12 @@
 	},
 	"angularCompilerOptions": {
 		"strictTemplates": true
+	},
+	"ts-node": {
+		"comment": "Used only when betterer loads .betterer.ts via ts-node. ts-node compiles to CommonJS, which is incompatible with moduleResolution 'bundler', so override it here.",
+		"compilerOptions": {
+			"module": "commonjs",
+			"moduleResolution": "node"
+		}
 	}
 }
