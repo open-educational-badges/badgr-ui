@@ -115,7 +115,6 @@ export class BadgeClassIssueBulkAwardPreviewComponent extends BaseAuthenticatedR
 		this.removeFromInvalidRowsWithEmptyOptionalCells();
 		this.transformInvalidRows();
 		this.transformValidRows();
-		this.removeDuplicateEmails();
 		this.emitTransformedData();
 	}
 
