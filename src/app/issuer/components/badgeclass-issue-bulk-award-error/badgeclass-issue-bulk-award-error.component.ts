@@ -79,7 +79,6 @@ export class BadgeclassIssueBulkAwardError extends BaseAuthenticatedRoutableComp
 					email: row['email'] ? row['email'].trim() : null,
 				});
 			});
-			this.removeDuplicateEmails();
 			this.updateViewState('importConfirmation');
 		}
 	}
