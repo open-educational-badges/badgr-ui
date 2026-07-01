@@ -674,14 +674,14 @@ exports[`strict: strictNullChecks`] = {
       [407, 25, 12, "No overload matches this call.\\n  Overload 1 of 4, \'(value: string | number | Date): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number | Date\'.\\n      Type \'undefined\' is not assignable to type \'string | number | Date\'.\\n  Overload 2 of 4, \'(value: string | number): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number\'.\\n      Type \'undefined\' is not assignable to type \'string | number\'.", "2867830979"],
       [407, 60, 12, "No overload matches this call.\\n  Overload 1 of 4, \'(value: string | number | Date): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number | Date\'.\\n      Type \'undefined\' is not assignable to type \'string | number | Date\'.\\n  Overload 2 of 4, \'(value: string | number): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number\'.\\n      Type \'undefined\' is not assignable to type \'string | number\'.", "2584151072"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:1967415593": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:3490548086": [
       [57, 5, 173, "Argument of type \'FormGroup<ɵNullableFormControls<{ name: (string | ((control: AbstractControl<any, any, any>) => ValidationErrors | null))[]; email: (string | ValidatorFn | null)[]; }>>\' is not assignable to parameter of type \'never\'.", "60859945"]
     ],
     "src/app/issuer/components/badgeclass-issue-bulk-award-import/badgeclass-issue-bulk-award-import.component.ts:3134574843": [
       [52, 1, 6, "Type \'null\' is not assignable to type \'string\'.", "2128359271"],
       [120, 24, 10, "Variable \'destColumn\' is used before being assigned.", "1638126997"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:3211665071": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:1192879833": [
       [89, 2, 28, "Type \'null\' is not assignable to type \'boolean\'.", "2144645975"]
     ],
     "src/app/issuer/components/badgeclass-issue-qr/badgeclass-issue-qr.component.ts:3911706692": [
@@ -1794,7 +1794,7 @@ exports[`strict: noImplicitAny`] = {
       [296, 59, 1, "Parameter \'e\' implicitly has an \'any\' type.", "177600"],
       [401, 29, 10, "Parameter \'issuerSlug\' implicitly has an \'any\' type.", "1374427843"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:1967415593": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:3490548086": [
       [54, 9, 9, "Variable \'formArray\' implicitly has type \'any[]\' in some locations where its type cannot be determined.", "992002122"],
       [63, 10, 9, "Variable \'formArray\' implicitly has an \'any[]\' type.", "992002122"],
       [75, 48, 3, "Parameter \'row\' implicitly has an \'any\' type.", "193432495"]
@@ -1802,15 +1802,15 @@ exports[`strict: noImplicitAny`] = {
     "src/app/issuer/components/badgeclass-issue-bulk-award-import/badgeclass-issue-bulk-award-import.component.ts:3134574843": [
       [92, 20, 4, "Parameter \'data\' implicitly has an \'any\' type.", "2087377941"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:3211665071": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:1192879833": [
       [71, 13, 7, "Parameter \'changes\' implicitly has an \'any\' type.", "3841422320"],
-      [191, 41, 8, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "2465395934"],
-      [193, 41, 8, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "2465395934"],
-      [197, 41, 8, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "2465395934"],
-      [205, 17, 3, "Parameter \'row\' implicitly has an \'any\' type.", "193432495"],
-      [209, 16, 3, "Parameter \'row\' implicitly has an \'any\' type.", "193432495"],
-      [221, 44, 3, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "193424690"],
-      [222, 72, 3, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "193424690"]
+      [190, 41, 8, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "2465395934"],
+      [192, 41, 8, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "2465395934"],
+      [196, 41, 8, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "2465395934"],
+      [204, 17, 3, "Parameter \'row\' implicitly has an \'any\' type.", "193432495"],
+      [208, 16, 3, "Parameter \'row\' implicitly has an \'any\' type.", "193432495"],
+      [220, 44, 3, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "193424690"],
+      [221, 72, 3, "Element implicitly has an \'any\' type because index expression is not of type \'number\'.", "193424690"]
     ],
     "src/app/issuer/components/badgeclass-issue-bulk-award/badgeclass-issue-bulk-award.component.ts:2325295932": [
       [132, 25, 21, "Parameter \'transformedImportData\' implicitly has an \'any\' type.", "2330417669"]
@@ -3219,7 +3219,7 @@ exports[`strict: strictPropertyInitialization`] = {
       [407, 25, 12, "No overload matches this call.\\n  Overload 1 of 4, \'(value: string | number | Date): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number | Date\'.\\n      Type \'undefined\' is not assignable to type \'string | number | Date\'.\\n  Overload 2 of 4, \'(value: string | number): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number\'.\\n      Type \'undefined\' is not assignable to type \'string | number\'.", "2867830979"],
       [407, 60, 12, "No overload matches this call.\\n  Overload 1 of 4, \'(value: string | number | Date): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number | Date\'.\\n      Type \'undefined\' is not assignable to type \'string | number | Date\'.\\n  Overload 2 of 4, \'(value: string | number): Date\', gave the following error.\\n    Argument of type \'Date | null | undefined\' is not assignable to parameter of type \'string | number\'.\\n      Type \'undefined\' is not assignable to type \'string | number\'.", "2584151072"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:1967415593": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:3490548086": [
       [26, 10, 21, "Property \'transformedImportData\' has no initializer and is not definitely assigned in the constructor.", "2330417669"],
       [29, 1, 15, "Property \'importErrorForm\' has no initializer and is not definitely assigned in the constructor.", "3432026742"],
       [30, 1, 6, "Property \'issuer\' has no initializer and is not definitely assigned in the constructor.", "1645597486"],
@@ -3233,7 +3233,7 @@ exports[`strict: strictPropertyInitialization`] = {
       [53, 1, 9, "Property \'viewState\' has no initializer and is not definitely assigned in the constructor.", "3266703359"],
       [120, 24, 10, "Variable \'destColumn\' is used before being assigned.", "1638126997"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:3211665071": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:1192879833": [
       [35, 10, 17, "Property \'importPreviewData\' has no initializer and is not definitely assigned in the constructor.", "3055987490"],
       [44, 1, 18, "Property \'columnHeadersCount\' has no initializer and is not definitely assigned in the constructor.", "1589366492"],
       [45, 1, 25, "Property \'destNameToColumnHeaderMap\' has no initializer and is not definitely assigned in the constructor.", "2298181418"],
@@ -4374,8 +4374,8 @@ exports[`strict: cheap flags`] = {
       [96, 41, 23, "Argument of type \'(control: FormControl<any>) => { [errorName: string]: boolean; }\' is not assignable to parameter of type \'ValidatorFn | ValidatorFn[]\'.\\n  Type \'(control: FormControl<any>) => { [errorName: string]: boolean; }\' is not assignable to type \'ValidatorFn\'.\\n    Types of parameters \'control\' and \'control\' are incompatible.\\n      Type \'AbstractControl<any, any, any>\' is missing the following properties from type \'FormControl<any>\': defaultValue, registerOnChange, registerOnDisabledChange", "3021810531"],
       [106, 3, 23, "Type \'(control: FormControl<any>) => { [errorName: string]: boolean; }\' is not assignable to type \'ValidatorFn\'.\\n  Types of parameters \'control\' and \'control\' are incompatible.\\n    Type \'AbstractControl<any, any, any>\' is missing the following properties from type \'FormControl<any>\': defaultValue, registerOnChange, registerOnDisabledChange", "3021810531"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:1967415593": [
-      [105, 29, 23, "Argument of type \'(group: FormGroup) => void\' is not assignable to parameter of type \'(value: AbstractControl<any, any, any>, index: number, array: AbstractControl<any, any, any>[]) => void\'.\\n  Types of parameters \'group\' and \'value\' are incompatible.\\n    Type \'AbstractControl<any, any, any>\' is missing the following properties from type \'FormGroup<any>\': controls, registerControl, addControl, removeControl, and 2 more.", "1039145264"]
+    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:3490548086": [
+      [104, 29, 23, "Argument of type \'(group: FormGroup) => void\' is not assignable to parameter of type \'(value: AbstractControl<any, any, any>, index: number, array: AbstractControl<any, any, any>[]) => void\'.\\n  Types of parameters \'group\' and \'value\' are incompatible.\\n    Type \'AbstractControl<any, any, any>\' is missing the following properties from type \'FormGroup<any>\': controls, registerControl, addControl, removeControl, and 2 more.", "1039145264"]
     ],
     "src/app/issuer/components/badgeclass-issue-qr/badgeclass-issue-qr.component.ts:3911706692": [
       [49, 32, 23, "Argument of type \'(control: FormControl<any>) => { [errorName: string]: boolean; }\' is not assignable to parameter of type \'ValidatorFn | ValidatorFn[]\'.\\n  Type \'(control: FormControl<any>) => { [errorName: string]: boolean; }\' is not assignable to type \'ValidatorFn\'.\\n    Types of parameters \'control\' and \'control\' are incompatible.\\n      Type \'AbstractControl<any, any, any>\' is missing the following properties from type \'FormControl<any>\': defaultValue, registerOnChange, registerOnDisabledChange", "3021810531"],
@@ -4750,13 +4750,13 @@ exports[`lint: noUnusedLocals`] = {
       [229, 7, 4, "\'data\' is declared but its value is never read.", "2087377941"],
       [238, 8, 9, "\'dialogRef\' is declared but its value is never read.", "2507646940"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:1967415593": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-error/badgeclass-issue-bulk-award-error.component.ts:3490548086": [
       [9, 0, 72, "\'UrlValidator\' is declared but its value is never read.", "2873910130"]
     ],
     "src/app/issuer/components/badgeclass-issue-bulk-award-import/badgeclass-issue-bulk-award-import.component.ts:3134574843": [
       [19, 0, 57, "\'tlds\' is declared but its value is never read.", "142017996"]
     ],
-    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:3211665071": [
+    "src/app/issuer/components/badgeclass-issue-bulk-award-preview/badgeclass-issue-bulk-award-preview.component.ts:1192879833": [
       [19, 0, 57, "\'tlds\' is declared but its value is never read.", "142017996"]
     ],
     "src/app/issuer/components/badgeclass-issue-qr/badgeclass-issue-qr.component.ts:3911706692": [
