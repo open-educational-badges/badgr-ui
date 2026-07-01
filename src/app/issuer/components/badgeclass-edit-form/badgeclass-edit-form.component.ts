@@ -1163,7 +1163,10 @@ export class BadgeClassEditFormComponent
 					this.badgeClassForm.rawControlMap.badge_language.value,
 				);
 			} catch (error) {
-				this.messageService.reportAndThrowError(`Failed to obtain ai skills: ${error.message}`, error);
+				this.messageService.reportAndThrowError(
+					`Failed to obtain ai skills: ${error instanceof Error ? error.message : String(error)}`,
+					error,
+				);
 			}
 			this.keywordCompetenciesLoading = false;
 			this.keywordCompetenciesLoaded = true;
@@ -1654,7 +1657,10 @@ export class BadgeClassEditFormComponent
 					map((t) => {
 						return criteria.map((c) => {
 							const name =
-								c.translationKey?.split('.').reduce((obj, key) => (obj ? obj[key] : null), t) || c.name;
+								(c.translationKey
+									?.split('.')
+									.reduce((obj, key) => (obj ? obj[key] : null), t) as unknown as string | null) ||
+								c.name;
 							return {
 								name: name,
 								description: c.description,

@@ -103,7 +103,10 @@ export class NetworkPartnersComponent {
 				this.issuerSearchResults = [];
 				this.issuerSearchResults = await this.publicApiService.searchIssuers(this.issuerSearchQuery);
 			} catch (error) {
-				this.messageService.reportAndThrowError(`Failed to issuers: ${error.message}`, error);
+				this.messageService.reportAndThrowError(
+					`Failed to issuers: ${error instanceof Error ? error.message : String(error)}`,
+					error,
+				);
 			}
 			this.issuersLoading = false;
 			this.issuerSearchLoaded = true;

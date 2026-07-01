@@ -254,21 +254,22 @@ export const defaultValidatorMessages: { [validatorKey: string]: (label: string,
 	validUrl: () => `Bitte gültige URL eingeben.`,
 	invalidTelephone: () => `Bitte gültige Telefonnummer eingeben`,
 	invalidEmail: () => `Bitte gültige E-Mail Adresse eingeben`,
-	maxlength: (
-		label: string | undefined,
-		{ actualLength, requiredLength }: { actualLength: number; requiredLength: number },
-	) =>
-		actualLength && requiredLength
+	maxlength: (label: string | undefined, result?: unknown) => {
+		const { actualLength, requiredLength } = (result ?? {}) as { actualLength: number; requiredLength: number };
+		return actualLength && requiredLength
 			? `${label ?? 'Text'} überschreitet maximale Länge von ${requiredLength} um ${
 					actualLength - requiredLength
 				} Zeichen`
-			: `${label ?? 'Text'} überschreitet maximale Länge.`,
-	minlength: (label: string, { actualLength, requiredLength }: { actualLength: number; requiredLength: number }) =>
-		actualLength && requiredLength
+			: `${label ?? 'Text'} überschreitet maximale Länge.`;
+	},
+	minlength: (label: string, result?: unknown) => {
+		const { actualLength, requiredLength } = (result ?? {}) as { actualLength: number; requiredLength: number };
+		return actualLength && requiredLength
 			? `${label} unterschreitet erforderliche Länge von ${requiredLength} um ${
 					requiredLength - actualLength
 				} Zeichen`
-			: `${label} unterschreitet erforderliche Länge.`,
+			: `${label} unterschreitet erforderliche Länge.`;
+	},
 };
 
 export function messagesForValidationError(

@@ -76,7 +76,7 @@ export function setupEmbeddedBadges() {
 						includeVerifyButton,
 						badgeClassName: data.badge.name,
 						recipientName,
-						awardDate: format_date(getAssertionIssuedDate(this.badge)),
+						awardDate: format_date(getAssertionIssuedDate(data)),
 						verified,
 						includeScript: false,
 						staticPrefix,

@@ -102,7 +102,7 @@ export class BadgeclassIssueBulkAwardError extends BaseAuthenticatedRoutableComp
 	markFormControllsAsDirty() {
 		const formArray: FormArray = this.importErrorForm.controls['users'] as FormArray;
 
-		formArray.controls.forEach((group: FormGroup) => {
+		(formArray.controls as FormGroup[]).forEach((group) => {
 			Object.getOwnPropertyNames(group.controls).forEach((controlName) => {
 				group.controls[controlName].markAsDirty();
 			});
