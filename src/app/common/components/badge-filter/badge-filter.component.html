@@ -1,0 +1,38 @@
+<div class="tw-flex tw-flex-wrap tw-items-center tw-gap-4 tw-mb-6">
+	<input
+		type="text"
+		[value]="keyword"
+		(input)="onKeywordInput($event)"
+		[placeholder]="'BadgeFilter.keywordPlaceholder' | translate"
+		class="tw-w-[300px]"
+		hlmInput
+		data-testid="keyword-input"
+	/>
+	<div class="tw-flex tw-items-center tw-gap-2">
+		<label class="tw-text-sm tw-text-oebblack">{{ 'BadgeFilter.fromLabel' | translate }}</label>
+		<input
+			type="date"
+			[value]="fromDate"
+			(change)="onFromDateChange($event)"
+			hlmInput
+			data-testid="from-date"
+		/>
+	</div>
+	<div class="tw-flex tw-items-center tw-gap-2">
+		<label class="tw-text-sm tw-text-oebblack">{{ 'BadgeFilter.toLabel' | translate }}</label>
+		<input
+			type="date"
+			[value]="toDate"
+			(change)="onToDateChange($event)"
+			hlmInput
+			data-testid="to-date"
+		/>
+	</div>
+	<oeb-button
+		variant="secondary"
+		size="sm"
+		[text]="'BadgeFilter.resetButton' | translate"
+		(click)="reset()"
+		data-testid="reset-button"
+	></oeb-button>
+</div>

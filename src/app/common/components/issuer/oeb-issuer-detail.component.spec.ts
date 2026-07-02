@@ -15,6 +15,9 @@ import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src
 import { PublicApiIssuer } from '../../../public/models/public-api.model';
 import { createCommonProviders } from '../../../testing/common-providers';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { BadgeClass } from '../../../issuer/models/badgeclass.model';
+import { BadgeFilter } from '../badge-filter/badge-filter.types';
+import { QrCodeApiService } from '../../../issuer/services/qrcode-api.service';
 
 export const mockPublicIssuer: PublicApiIssuer = {
 	'@context': 'https://w3id.org/openbadges/v2',
