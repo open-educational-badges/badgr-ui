@@ -57,6 +57,8 @@ import { CommonEntityManager } from '~/entity-manager/services/common-entity-man
 import { IssuerApiService } from '~/issuer/services/issuer-api.service';
 import { CommonModule } from '@angular/common';
 import { PublicApiService } from '~/public/services/public-api.service';
+import { BadgeFilter, EMPTY_BADGE_FILTER } from '../badge-filter/badge-filter.types';
+import { BadgeFilterComponent } from '../badge-filter/badge-filter.component';
 
 interface NetworkBadgeGroup {
 	issuerName: string;
@@ -91,6 +93,7 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		OebTabsComponent,
 		BgAwaitPromises,
 		DatatableComponent,
+		BadgeFilterComponent,
 		FormsModule,
 		HlmInput,
 		NgFor,
@@ -208,12 +211,20 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
 	maxDisplayedResults = 100;
 
+	currentFilter: BadgeFilter = { ...EMPTY_BADGE_FILTER };
+
 	private _searchQuery = '';
 	get searchQuery() {
 		return this._searchQuery;
 	}
 	set searchQuery(query) {
 		this._searchQuery = query;
+		this.updateResults();
+	}
+
+	onFilterChange(filter: BadgeFilter): void {
+		this.currentFilter = filter;
+		this._searchQuery = filter.keyword;
 		this.updateResults();
 	}
 
@@ -266,8 +277,19 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 			return true;
 		};
 
-		this.badges.filter(MatchingAlgorithm.badgeMatcher(this._searchQuery)).forEach(addBadgeToResults);
+		this.badges
+			.filter(MatchingAlgorithm.badgeMatcher(this._searchQuery))
+			.filter((badge) => this.matchesDateRange(badge))
+			.forEach(addBadgeToResults);
 		this.badgeResults.sort(this.sortBadgeResult);
+	}
+
+	private matchesDateRange(badge: BadgeClass | PublicApiBadgeClass): boolean {
+		const created = (badge as BadgeClass).createdAt;
+		if (!(created instanceof Date)) return true;
+		if (this.currentFilter.fromDate !== null && created < this.currentFilter.fromDate) return false;
+		if (this.currentFilter.toDate !== null && created > this.currentFilter.toDate) return false;
+		return true;
 	}
 
 	private async updateNetworkResults() {

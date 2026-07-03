@@ -511,13 +511,19 @@
 				}}.
 			</h2>
 			<ng-template [bgAwaitPromises]="requestsLoaded">
-				<badges-datatable
-					*ngIf="!public"
-					[badges]="$any(badgeResults)"
-					(directBadgeAward)="routeToBadgeAward($event, issuer)"
-					(qrCodeAward)="routeToQRCodeAward($event, issuer)"
-					(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
-				></badges-datatable>
+				<ng-container *ngIf="!public">
+					<badge-filter (filterChange)="onFilterChange($event)"></badge-filter>
+					<p *ngIf="!badgeResults.length" class="tw-text-lg tw-text-oebblack tw-my-6">
+						{{ 'BadgeFilter.noResults' | translate }}
+					</p>
+					<badges-datatable
+						*ngIf="badgeResults.length"
+						[badges]="$any(badgeResults)"
+						(directBadgeAward)="routeToBadgeAward($event, issuer)"
+						(qrCodeAward)="routeToQRCodeAward($event, issuer)"
+						(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
+					></badges-datatable>
+				</ng-container>
 			</ng-template>
 
 			<ng-container *ngIf="public">
