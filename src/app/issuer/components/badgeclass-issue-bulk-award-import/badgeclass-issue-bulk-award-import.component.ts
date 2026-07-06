@@ -96,6 +96,8 @@ export class BadgeClassIssueBulkAwardImportComponent extends BaseAuthenticatedRo
 
 	//////// Parsing ////////
 	parseCsv(rawCSV: string) {
+		// Excel's "CSV UTF-8" export prepends a BOM, which would break header matching
+		rawCSV = rawCSV.replace(/^\uFEFF/, '');
 		const rows: ParsedRow[] = [];
 		const validRows: ParsedRow[] = [];
 		const invalidRows: ParsedRow[] = [];
