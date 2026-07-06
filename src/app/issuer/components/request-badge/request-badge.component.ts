@@ -1,6 +1,6 @@
 import { Component, Input, inject, OnInit } from '@angular/core';
 import { typedFormGroup } from '../../../common/util/typed-forms';
-import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Validators, FormsModule, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { BadgeRequestApiService } from '../../services/badgerequest-api.service';
 import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
@@ -152,7 +152,7 @@ export class RequestBadgeComponent extends BaseRoutableComponent implements OnIn
 		.addControl('firstname', '', Validators.required)
 		.addControl('lastname', '', Validators.required)
 		.addControl('email', '', [Validators.required, EmailValidator.validEmail])
-		.addControl('dateOfBirth', '', DateValidator.validDate)
+		.addControl('dateOfBirth', '', DateValidator.validDate as ValidatorFn)
 		.addControl('qrCodeId', '', Validators.required)
 		.addControl('ageConfirmation', false, Validators.requiredTrue);
 

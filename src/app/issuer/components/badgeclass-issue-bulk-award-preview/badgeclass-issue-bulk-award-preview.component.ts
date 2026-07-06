@@ -221,7 +221,7 @@ export class BadgeClassIssueBulkAwardPreviewComponent extends BaseAuthenticatedR
 		return [firstName, lastName].filter(Boolean).join(' ');
 	}
 
-	getDateOfBirthFromRow(row) {
+	getDateOfBirthFromRow(row: ParsedRow) {
 		return this.getCellFromRowByDestName('dateOfBirth', row);
 	}
 

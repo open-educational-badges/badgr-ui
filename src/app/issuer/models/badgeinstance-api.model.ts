@@ -43,7 +43,7 @@ export interface ApiBadgeInstanceForCreation {
 	activity_online?: boolean;
 	name?: string;
 	course_url?: string;
-	date_of_birth?: string;
+	date_of_birth?: string | null;
 }
 
 export type RecipientIdentifierType = 'email' | 'openBadgeId' | 'telephone' | 'url';
@@ -89,7 +89,7 @@ export interface BadgeInstanceBatchAssertion {
 	activity_city?: string;
 	activity_online?: boolean;
 	course_url?: string;
-	date_of_birth?: string;
+	date_of_birth?: string | null;
 	request_entity_id?: string;
 }
 

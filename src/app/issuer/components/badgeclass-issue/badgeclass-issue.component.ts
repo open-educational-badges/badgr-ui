@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, OnDestroy, signal } from '@angular/core';
-import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, Validators, FormsModule, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { SessionService } from '../../../common/services/session.service';
@@ -193,7 +193,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		.addControl('activity_zip', '')
 		.addControl('activity_city', '')
 		.addControl('activity_online', false)
-		.addControl('date_of_birth', '', DateValidator.validDate)
+		.addControl('date_of_birth', '', DateValidator.validDate as ValidatorFn)
 		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('notify_earner', true)
 		.addArray(
