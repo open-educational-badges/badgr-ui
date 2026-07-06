@@ -212,6 +212,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	maxDisplayedResults = 100;
 
 	currentFilter: BadgeFilter = { ...EMPTY_BADGE_FILTER };
+	private cachedRequestMap: Map<string, ApiQRCode[]> = new Map();
 
 	private _searchQuery = '';
 	get searchQuery() {
@@ -225,15 +226,13 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	onFilterChange(filter: BadgeFilter): void {
 		this.currentFilter = filter;
 		this._searchQuery = filter.keyword;
-		this.updateResults();
+		this.applyBadgeFilter();
 	}
 
 	apiLearningPaths: ApiLearningPath[] = [];
 	archivedLearningPaths: ApiLearningPath[] = [];
 
 	private async updateResults() {
-		this.badgeResults.length = 0;
-
 		if (this.sessionService.isLoggedIn) {
 			this.requestsLoaded = Promise.all(
 				this.badges.map((b) =>
@@ -248,40 +247,35 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 				}, new Map<string, ApiQRCode[]>()),
 			);
 		}
-		const requestMap = await this.requestsLoaded;
+		this.cachedRequestMap = (await this.requestsLoaded) ?? new Map();
+		this.applyBadgeFilter();
+	}
 
-		const addBadgeToResults = async (badge: BadgeClass | PublicApiBadgeClass) => {
-			if (this.badgeResults.length > this.maxDisplayedResults) {
-				return false;
-			}
-
-			if (badge instanceof BadgeClass) {
-				if (badge.extension && badge.extension['extensions:CategoryExtension'].Category === 'learningpath') {
-					return false;
-				}
-
-				if (badge.isNetworkBadge || badge.sharedOnNetwork) {
-					return false;
-				}
-			}
-
-			this.badgeResults.push(
-				new BadgeResult(
-					badge,
-					this.issuer.name,
-					badge instanceof BadgeClass ? this.getRequestCount(badge, requestMap) : 0,
-					badge instanceof BadgeClass ? badge.recipientCount : 0,
-				),
-			);
-
-			return true;
-		};
-
+	private applyBadgeFilter(): void {
+		const results: BadgeResult[] = [];
 		this.badges
 			.filter(MatchingAlgorithm.badgeMatcher(this._searchQuery))
 			.filter((badge) => this.matchesDateRange(badge))
-			.forEach(addBadgeToResults);
-		this.badgeResults.sort(this.sortBadgeResult);
+			.forEach((badge) => {
+				if (results.length > this.maxDisplayedResults) return;
+
+				if (badge instanceof BadgeClass) {
+					if (badge.extension && badge.extension['extensions:CategoryExtension'].Category === 'learningpath')
+						return;
+					if (badge.isNetworkBadge || badge.sharedOnNetwork) return;
+				}
+
+				results.push(
+					new BadgeResult(
+						badge,
+						this.issuer.name,
+						badge instanceof BadgeClass ? this.getRequestCount(badge, this.cachedRequestMap) : 0,
+						badge instanceof BadgeClass ? badge.recipientCount : 0,
+					),
+				);
+			});
+		results.sort(this.sortBadgeResult);
+		this.badgeResults = results;
 	}
 
 	private matchesDateRange(badge: BadgeClass | PublicApiBadgeClass): boolean {

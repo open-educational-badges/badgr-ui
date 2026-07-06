@@ -5,6 +5,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { BadgeFilter, EMPTY_BADGE_FILTER } from './badge-filter.types';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { HlmIconModule } from '@spartan-ng/helm/icon';
+import { lucideSearch, lucideCalendar } from '@ng-icons/lucide';
 
 function parseLocalDate(dateStr: string): Date {
 	const [year, month, day] = dateStr.split('-').map(Number);
@@ -18,12 +21,15 @@ function endOfDay(d: Date): Date {
 @Component({
 	selector: 'badge-filter',
 	templateUrl: './badge-filter.component.html',
-	imports: [TranslatePipe, HlmInput, OebButtonComponent],
+	imports: [TranslatePipe, HlmInput, OebButtonComponent, NgIcon, HlmIconModule],
+	providers: [provideIcons({ lucideSearch, lucideCalendar })],
 })
 export class BadgeFilterComponent implements OnDestroy {
 	keyword: string = '';
 	fromDate: string = '';
 	toDate: string = '';
+	fromInputType: 'date' | 'text' = 'text';
+	toInputType: 'date' | 'text' = 'text';
 
 	@Output() filterChange = new EventEmitter<BadgeFilter>();
 
@@ -52,10 +58,24 @@ export class BadgeFilterComponent implements OnDestroy {
 		this.emit();
 	}
 
+	openDatePicker(input: HTMLInputElement, which: 'from' | 'to'): void {
+		if (which === 'from') this.fromInputType = 'date';
+		else this.toInputType = 'date';
+		setTimeout(() => {
+			try {
+				(input as HTMLInputElement & { showPicker(): void }).showPicker();
+			} catch {
+				input.focus();
+			}
+		}, 0);
+	}
+
 	reset(): void {
 		this.keyword = '';
 		this.fromDate = '';
 		this.toDate = '';
+		this.fromInputType = 'text';
+		this.toInputType = 'text';
 		this.filterChange.emit({ ...EMPTY_BADGE_FILTER });
 	}
 
