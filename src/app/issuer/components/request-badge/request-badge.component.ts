@@ -11,6 +11,7 @@ import { PublicApiService } from '../../../public/services/public-api.service';
 import { BadgeRequest } from '../../models/badgerequest-api.model';
 import { PublicApiBadgeClassWithIssuer } from '../../../public/models/public-api.model';
 import { EmailValidator } from '../../../common/validators/email.validator';
+import { DateValidator } from '../../../common/validators/date.validator';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { BgImageStatusPlaceholderDirective } from '../../../common/directives/bg-image-status-placeholder.directive';
 import { OebInputComponent } from '../../../components/input.component';
@@ -151,6 +152,7 @@ export class RequestBadgeComponent extends BaseRoutableComponent implements OnIn
 		.addControl('firstname', '', Validators.required)
 		.addControl('lastname', '', Validators.required)
 		.addControl('email', '', [Validators.required, EmailValidator.validEmail])
+		.addControl('dateOfBirth', '', DateValidator.validDate)
 		.addControl('qrCodeId', '', Validators.required)
 		.addControl('ageConfirmation', false, Validators.requiredTrue);
 
@@ -167,6 +169,7 @@ export class RequestBadgeComponent extends BaseRoutableComponent implements OnIn
 			email: formState.email,
 			ageConfirmation: formState.ageConfirmation,
 			qrCodeId: formState.qrCodeId,
+			dateOfBirth: formState.dateOfBirth || undefined,
 		};
 
 		this.badgeRequestApiService.requestBadge(this.qrSlug, userData).then((response) => {

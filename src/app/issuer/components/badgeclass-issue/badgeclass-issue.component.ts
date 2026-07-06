@@ -193,6 +193,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		.addControl('activity_zip', '')
 		.addControl('activity_city', '')
 		.addControl('activity_online', false)
+		.addControl('date_of_birth', '', DateValidator.validDate)
 		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('notify_earner', true)
 		.addArray(
@@ -376,6 +377,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
+				date_of_birth: formState.date_of_birth || null,
 				course_url: formState.courseUrl,
 			})
 			.then(() => this.badgeClass.update())

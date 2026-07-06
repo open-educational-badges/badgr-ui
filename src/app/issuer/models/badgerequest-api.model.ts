@@ -4,6 +4,8 @@ export interface BadgeRequest {
 	email: string;
 	ageConfirmation: boolean;
 	qrCodeId: string;
+	/** ISO date (yyyy-mm-dd), optional */
+	dateOfBirth?: string;
 }
 
 export interface ApiRequestedBadge {
@@ -13,6 +15,7 @@ export interface ApiRequestedBadge {
 	firstName: string;
 	lastName: string;
 	email: string;
+	dateOfBirth?: string | null;
 	requestedOn: string;
 	status: string;
 	user: null | number;
