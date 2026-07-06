@@ -1,126 +1,159 @@
-import { IssuerListComponent } from './components/issuer-list/issuer-list.component';
-import { IssuerCreateComponent } from './components/issuer-create/issuer-create.component';
-import { IssuerDetailComponent } from './components/issuer-detail/issuer-detail.component';
-import { IssuerEditComponent } from './components/issuer-edit/issuer-edit.component';
-import { BadgeClassCreateComponent } from './components/badgeclass-create/badgeclass-create.component';
-import { BadgeClassEditComponent } from './components/badgeclass-edit/badgeclass-edit.component';
-import { BadgeClassDetailComponent } from './components/badgeclass-detail/badgeclass-detail.component';
-import { IssuerStaffComponent } from './components/issuer-staff/issuer-staff.component';
-import { BadgeClassEditQrComponent } from './components/badgeclass-edit-qr/badgeclass-edit-qr.component';
-import { BadgeClassIssueQrComponent } from './components/badgeclass-issue-qr/badgeclass-issue-qr.component';
-import { BadgeClassGenerateQrComponent } from './components/badgeclass-generate-qr/badgeclass-generate-qr.component';
-import { LearningPathCreateComponent } from './components/learningpath-create/learningpath-create.component';
-import { IssuerLearningPathComponent } from './components/issuer-learning-path/issuer-learning-path.component';
-import { LearningPathEditComponent } from './components/learningpath-edit/learningpath-edit.component';
-import { BadgeClassSelectTypeComponent } from './components/badgeclass-select-type/badgeclass-select-type.component';
-import { BadgeClassEditIssuedComponent } from './components/badgeclass-edit-issued/badgeclass-edit-issued';
-import { NetworkCreateComponent } from './components/network-create/network-create.component';
-import { NetworkDashboardComponent } from './components/network-dashboard/network-dashboard.component';
-import { NetworkInviteConfirmationComponent } from './components/network-invite-confirmation/network-invite-confirmation.component';
-import { NetworkEditComponent } from './components/network-edit/network-edit.component';
-import { NetworkBadgeAnalysisComponent } from './components/network-badge-analysis/network-badge-analysis.component';
-import { DashboardCompetencyTrackingComponent } from './components/network-competency-tracking/network-competency-tracking.component';
-import { IssuerQuotasComponent } from './components/issuer-quotas/issuer-quotas.component';
 import { BadgeClassMembershipGuard } from '../common/guards/badgeclass-membership.guard';
 
 export const routes = [
 	/* Issuer */
 	{
 		path: '',
-		component: IssuerListComponent,
+		loadComponent: () =>
+			import('./components/issuer-list/issuer-list.component').then((m) => m.IssuerListComponent),
 	},
 	{
 		path: 'create',
-		component: IssuerCreateComponent,
+		loadComponent: () =>
+			import('./components/issuer-create/issuer-create.component').then((m) => m.IssuerCreateComponent),
 	},
 	{
 		path: 'networks/create',
-		component: NetworkCreateComponent,
+		loadComponent: () =>
+			import('./components/network-create/network-create.component').then((m) => m.NetworkCreateComponent),
 	},
 	{
 		path: 'networks/:networkSlug',
-		component: NetworkDashboardComponent,
+		loadComponent: () =>
+			import('./components/network-dashboard/network-dashboard.component').then(
+				(m) => m.NetworkDashboardComponent,
+			),
 	},
 	{
 		path: 'networks/:networkSlug/edit',
-		component: NetworkEditComponent,
+		loadComponent: () =>
+			import('./components/network-edit/network-edit.component').then((m) => m.NetworkEditComponent),
 	},
 	{
 		path: 'networks/:networkSlug/badge-analysis',
-		component: NetworkBadgeAnalysisComponent,
+		loadComponent: () =>
+			import('./components/network-badge-analysis/network-badge-analysis.component').then(
+				(m) => m.NetworkBadgeAnalysisComponent,
+			),
 	},
 	{
 		path: 'networks/:networkSlug/competency-tracking',
-		component: DashboardCompetencyTrackingComponent,
+		loadComponent: () =>
+			import('./components/network-competency-tracking/network-competency-tracking.component').then(
+				(m) => m.DashboardCompetencyTrackingComponent,
+			),
 	},
 	{
 		path: 'networks/:networkSlug/competency-tracking/:competencyId',
-		component: DashboardCompetencyTrackingComponent,
+		loadComponent: () =>
+			import('./components/network-competency-tracking/network-competency-tracking.component').then(
+				(m) => m.DashboardCompetencyTrackingComponent,
+			),
 	},
 	{
 		path: 'networks/invite/:inviteSlug',
-		component: NetworkInviteConfirmationComponent,
+		loadComponent: () =>
+			import('./components/network-invite-confirmation/network-invite-confirmation.component').then(
+				(m) => m.NetworkInviteConfirmationComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug',
-		component: IssuerDetailComponent,
+		loadComponent: () =>
+			import('./components/issuer-detail/issuer-detail.component').then((m) => m.IssuerDetailComponent),
 	},
 	{
 		path: 'issuers/:issuerSlug/edit',
-		component: IssuerEditComponent,
+		loadComponent: () =>
+			import('./components/issuer-edit/issuer-edit.component').then((m) => m.IssuerEditComponent),
 	},
 	{
 		path: 'issuers/:issuerSlug/staff',
-		component: IssuerStaffComponent,
+		loadComponent: () =>
+			import('./components/issuer-staff/issuer-staff.component').then((m) => m.IssuerStaffComponent),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/select',
-		component: BadgeClassSelectTypeComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-select-type/badgeclass-select-type.component').then(
+				(m) => m.BadgeClassSelectTypeComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/create/:category',
-		component: BadgeClassCreateComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-create/badgeclass-create.component').then(
+				(m) => m.BadgeClassCreateComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/create',
-		component: BadgeClassCreateComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-create/badgeclass-create.component').then(
+				(m) => m.BadgeClassCreateComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug',
-		component: BadgeClassDetailComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-detail/badgeclass-detail.component').then(
+				(m) => m.BadgeClassDetailComponent,
+			),
 		canActivate: [BadgeClassMembershipGuard],
 	},
 	{
 		path: 'issuers/:issuerSlug/learningpaths/create',
-		component: LearningPathCreateComponent,
+		loadComponent: () =>
+			import('./components/learningpath-create/learningpath-create.component').then(
+				(m) => m.LearningPathCreateComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/learningpaths/:learningPathSlug/edit',
-		component: LearningPathEditComponent,
+		loadComponent: () =>
+			import('./components/learningpath-edit/learningpath-edit.component').then(
+				(m) => m.LearningPathEditComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/learningpaths/:learningPathSlug',
-		component: IssuerLearningPathComponent,
+		loadComponent: () =>
+			import('./components/issuer-learning-path/issuer-learning-path.component').then(
+				(m) => m.IssuerLearningPathComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/qr',
-		component: BadgeClassIssueQrComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-issue-qr/badgeclass-issue-qr.component').then(
+				(m) => m.BadgeClassIssueQrComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/qr/:qrCodeId/edit',
-		component: BadgeClassEditQrComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-edit-qr/badgeclass-edit-qr.component').then(
+				(m) => m.BadgeClassEditQrComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/qr/:qrCodeId/generate',
-		component: BadgeClassGenerateQrComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-generate-qr/badgeclass-generate-qr.component').then(
+				(m) => m.BadgeClassGenerateQrComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/edit',
-		component: BadgeClassEditComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-edit/badgeclass-edit.component').then((m) => m.BadgeClassEditComponent),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/edit-issued',
-		component: BadgeClassEditIssuedComponent,
+		loadComponent: () =>
+			import('./components/badgeclass-edit-issued/badgeclass-edit-issued').then(
+				(m) => m.BadgeClassEditIssuedComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/badges/:badgeSlug/issue',
@@ -155,26 +188,38 @@ export const routes = [
 	},
 	{
 		path: 'issuers/:networkSlug/badge-analysis',
-		component: NetworkBadgeAnalysisComponent,
+		loadComponent: () =>
+			import('./components/network-badge-analysis/network-badge-analysis.component').then(
+				(m) => m.NetworkBadgeAnalysisComponent,
+			),
 	},
 	{
 		path: 'issuers/:networkSlug/competency-tracking',
-		component: DashboardCompetencyTrackingComponent,
+		loadComponent: () =>
+			import('./components/network-competency-tracking/network-competency-tracking.component').then(
+				(m) => m.DashboardCompetencyTrackingComponent,
+			),
 	},
 	{
 		path: 'issuers/:networkSlug/competency-tracking/:competencyId',
-		component: DashboardCompetencyTrackingComponent,
+		loadComponent: () =>
+			import('./components/network-competency-tracking/network-competency-tracking.component').then(
+				(m) => m.DashboardCompetencyTrackingComponent,
+			),
 	},
 	{
 		path: 'issuers/:issuerSlug/quotas',
-		component: IssuerQuotasComponent,
+		loadComponent: () =>
+			import('./components/issuer-quotas/issuer-quotas.component').then((m) => m.IssuerQuotasComponent),
 	},
 	{
 		path: 'networks/:issuerSlug/quotas',
-		component: IssuerQuotasComponent,
+		loadComponent: () =>
+			import('./components/issuer-quotas/issuer-quotas.component').then((m) => m.IssuerQuotasComponent),
 	},
 	{
 		path: '**',
-		component: IssuerListComponent,
+		loadComponent: () =>
+			import('./components/issuer-list/issuer-list.component').then((m) => m.IssuerListComponent),
 	},
 ];

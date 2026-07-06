@@ -101,6 +101,15 @@ export class BadgeClassManager extends BaseHttpApiService {
 		return entitySet.loaded$.pipe(map(() => this.getNetworkBadgeClassesByIssuerUrl(networkSlug)));
 	}
 
+	async getBadgesForIssuer(issuerSlug: string): Promise<BadgeClass[]> {
+		const apiBadges = await this.badgeClassApi.getBadgesForIssuer(issuerSlug);
+		return apiBadges.map((apiModel) => {
+			const badge = new BadgeClass(this.commonEntityManager);
+			badge.applyApiModel(apiModel);
+			return badge;
+		});
+	}
+
 	async getAwardableBadgesForIssuer(issuerSlug: string): Promise<BadgeClass[]> {
 		const promise = this.badgeClassApi.getAwardableBadgesForIssuer(issuerSlug).then((apiBadges) =>
 			apiBadges.map((apiModel) => {

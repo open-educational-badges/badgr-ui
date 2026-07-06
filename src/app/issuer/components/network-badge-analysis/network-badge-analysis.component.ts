@@ -364,39 +364,41 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 			{ title: 'Badge-Analyse', routerLink: [] },
 		];
 
-		this.networkLoaded = this.issuerManager.issuerOrNetworkBySlug(this.networkSlug).then((issuerOrNetwork) => {
-			this.issuerOrNetwork.set(issuerOrNetwork);
-			this.title.setTitle(
-				`Badge-Analyse - ${this.issuerOrNetwork().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
-			);
+		this.networkLoaded = this.issuerManager
+			.issuerOrNetworkBySlugDirect(this.networkSlug)
+			.then((issuerOrNetwork) => {
+				this.issuerOrNetwork.set(issuerOrNetwork);
+				this.title.setTitle(
+					`Badge-Analyse - ${this.issuerOrNetwork().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
+				);
 
-			if (issuerOrNetwork.is_network) {
-				this.crumbs[0] = {
-					title: this.translate.instant('General.networks'),
-					routerLink: ['/issuer/networks'],
+				if (issuerOrNetwork.is_network) {
+					this.crumbs[0] = {
+						title: this.translate.instant('General.networks'),
+						routerLink: ['/issuer/networks'],
+					};
+				} else {
+					this.crumbs[0] = {
+						title: this.translate.instant('NavItems.myInstitutions'),
+						routerLink: ['/issuer/issuers'],
+					};
+				}
+				this.crumbs[1] = {
+					title: issuerOrNetwork.name,
+					routerLink: [`/issuer/${issuerOrNetwork.is_network ? 'networks' : 'issuers'}`, this.networkSlug],
 				};
-			} else {
-				this.crumbs[0] = {
-					title: this.translate.instant('NavItems.myInstitutions'),
-					routerLink: ['/issuer/issuers'],
-				};
-			}
-			this.crumbs[1] = {
-				title: issuerOrNetwork.name,
-				routerLink: [`/issuer/${issuerOrNetwork.is_network ? 'networks' : 'issuers'}`, this.networkSlug],
-			};
 
-			// this.crumbs = [
-			// 	{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
-			// 	{
-			// 		title: this.translate.instant('General.networks'),
-			// 		routerLink: ['/issuer'],
-			// 		queryParams: { tab: 'networks' },
-			// 	},
-			// 	{ title: this.issuerOrNetwork().name, routerLink: ['/issuer/networks/' + this.issuerOrNetwork().slug] },
-			// 	{ title: 'Badge-Analyse', routerLink: [] },
-			// ];
-		});
+				// this.crumbs = [
+				// 	{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
+				// 	{
+				// 		title: this.translate.instant('General.networks'),
+				// 		routerLink: ['/issuer'],
+				// 		queryParams: { tab: 'networks' },
+				// 	},
+				// 	{ title: this.issuerOrNetwork().name, routerLink: ['/issuer/networks/' + this.issuerOrNetwork().slug] },
+				// 	{ title: 'Badge-Analyse', routerLink: [] },
+				// ];
+			});
 	}
 
 	ngOnInit(): void {

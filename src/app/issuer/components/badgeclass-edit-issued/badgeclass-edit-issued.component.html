@@ -15,6 +15,7 @@
 			<form [formGroup]="badgeClassForm.rawControl" #formElem (ngSubmit)="onSubmit()" novalidate>
 				@if (
 					pdfTemplateManager.pdfEditorAvailable() &&
+					!issuer?.is_network &&
 					(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
 				) {
 					<section class="section tw-text-oebblack tw-mt-6">

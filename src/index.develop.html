@@ -88,8 +88,6 @@
 		</style>
 		<link rel="stylesheet" href="https://sibforms.com/forms/end-form/build/sib-styles.css" />
 
-		<script src="/assets/ace-builds/ace.js"></script>
-
 		<script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
 
 		<!-- Include umami tracking -->
@@ -118,11 +116,13 @@
 				z-index: 1000;
 			"
 		>
-			<img class="initial-loading-image" style="animation: loading-fade 1.25s ease-out infinite" />
+			<img
+				class="initial-loading-image"
+				style="animation: loading-fade 1.25s ease-out infinite"
+				width="80"
+				height="80"
+			/>
 		</div>
-
-		<!-- TODO: load conditionally -->
-		<script type="text/javascript" src="assets/zipjs/zip.js"></script>
 
 		<!-- Include the unsupported browser check -->
 		<script type="text/javascript" src="assets/unsupported-browser-check.js" async></script>
