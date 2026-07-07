@@ -99,7 +99,7 @@ export class BgBadgeDetail {
 	}
 
 	getLearningPaths(): PublicApiLearningPath[] {
-		return (this.config.learningPaths as PublicApiLearningPath[]).filter((l) => l.activated);
+		return ((this.config.learningPaths as PublicApiLearningPath[]) ?? []).filter((l) => l.activated);
 	}
 
 	get hasCriteria(): boolean {
