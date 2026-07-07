@@ -580,7 +580,7 @@ export class BadgeClassEditFormComponent
 		}
 
 		// transform minutes into hours and minutes
-		let competencies = badgeClass.extension['extensions:CompetencyExtension'].map((comp) => {
+		let competencies = (badgeClass.extension['extensions:CompetencyExtension'] || []).map((comp) => {
 			return { ...comp, hours: Math.floor(comp.studyLoad / 60), minutes: comp.studyLoad % 60 };
 		});
 
@@ -591,7 +591,7 @@ export class BadgeClassEditFormComponent
 		// When copying a badge from a *different* institution, the source badge's own
 		// image must not be pre-filled (the copying institution provides its own image).
 		// Editing an existing badge, or copying within the same institution, keeps it.
-		const isForeignCopy = !this.existing && badgeClass.issuerSlug !== this.issuer?.slug;
+		const isForeignCopy = !this.existing && this.issuer != null && badgeClass.issuerSlug !== this.issuer.slug;
 
 		this.badgeClassForm.setValue({
 			badge_name: badgeClass.name,
@@ -636,7 +636,7 @@ export class BadgeClassEditFormComponent
 			aiCompetencies: [],
 			keywordCompetencies: [],
 			competencies: badgeClass.extension['extensions:CompetencyExtension'] ? competencies : [],
-			alignments: this.badgeClass.alignments.map((alignment) => ({
+			alignments: (this.badgeClass.alignments || []).map((alignment) => ({
 				target_name: alignment.target_name,
 				target_url: alignment.target_url,
 				target_description: alignment.target_description,
@@ -646,7 +646,7 @@ export class BadgeClassEditFormComponent
 			courseUrl: badgeClass.courseUrl,
 			expiration: badgeClass.expiration,
 			expiration_unit: 'days', // api always returns expiration in days
-			criteria: badgeClass.apiModel.criteria.map((c) => ({
+			criteria: (badgeClass.apiModel.criteria || []).map((c) => ({
 				name: c.name,
 				description: c.description,
 				translationKey: null,
@@ -687,7 +687,10 @@ export class BadgeClassEditFormComponent
 						true,
 					);
 				} else if (badgeClass.image) {
-					const dataUrl = await this.urlToDataUrl(badgeClass.image);
+					const imageUrl = badgeClass.image.startsWith('/')
+						? `${this.baseUrl}${badgeClass.image}`
+						: badgeClass.image;
+					const dataUrl = await this.urlToDataUrl(imageUrl);
 					this.currentImage = dataUrl;
 
 					this.customImageField.useDataUrl(dataUrl, 'BADGE', false, true);
@@ -832,7 +835,7 @@ export class BadgeClassEditFormComponent
 	}
 
 	private urlToDataUrl(url: string): Promise<string> {
-		return fetch(url, { credentials: 'include' })
+		return fetch(url)
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error(`Failed to fetch image: ${url}`);
