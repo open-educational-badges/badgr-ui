@@ -5,6 +5,7 @@
 			[value]="keyword"
 			(input)="onKeywordInput($event)"
 			[placeholder]="'BadgeFilter.keywordPlaceholder' | translate"
+			[attr.aria-label]="'BadgeFilter.keywordPlaceholder' | translate"
 			class="!tw-bg-white tw-w-full min-[880px]:tw-w-96 tw-border-1 tw-border-purple tw-border-solid tw-h-12 tw-rounded-lg tw-p-2 tw-pr-10"
 			hlmInput
 			data-testid="keyword-input"
@@ -22,6 +23,7 @@
 			[type]="fromInputType"
 			[value]="fromDate"
 			[placeholder]="'BadgeFilter.fromLabel' | translate"
+			[attr.aria-label]="'BadgeFilter.fromLabel' | translate"
 			(focus)="fromInputType = 'date'"
 			(blur)="fromInputType = fromDate ? 'date' : 'text'"
 			(change)="onFromDateChange($event)"
@@ -43,6 +45,7 @@
 			[type]="toInputType"
 			[value]="toDate"
 			[placeholder]="'BadgeFilter.toLabel' | translate"
+			[attr.aria-label]="'BadgeFilter.toLabel' | translate"
 			(focus)="toInputType = 'date'"
 			(blur)="toInputType = toDate ? 'date' : 'text'"
 			(change)="onToDateChange($event)"
