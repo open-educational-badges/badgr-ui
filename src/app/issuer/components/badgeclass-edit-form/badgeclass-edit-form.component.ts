@@ -835,7 +835,7 @@ export class BadgeClassEditFormComponent
 	}
 
 	private urlToDataUrl(url: string): Promise<string> {
-		return fetch(url, { credentials: 'include' })
+		return fetch(url)
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error(`Failed to fetch image: ${url}`);
