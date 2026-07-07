@@ -18,7 +18,6 @@ import { LinkEntry, BgBreadcrumbsComponent } from '../../../common/components/bg
 import { MenuItem } from '../../../common/components/badge-detail/badge-detail.component.types';
 import { LearningPathApiService } from '../../../common/services/learningpath-api.service';
 import { ApiLearningPath } from '../../../common/model/learningpath-api.model';
-import { firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
@@ -97,7 +96,6 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 		];
 
 		const issuerPromise = this.issuerManager.issuerBySlugDirect(this.issuerSlug);
-		const badgesUpdatePromise = this.badgeClassService.badgesList.updateList();
 
 		this.issuerLoaded = issuerPromise.then(
 			(issuer) => {
@@ -121,13 +119,11 @@ export class IssuerDetailComponent extends BaseAuthenticatedRoutableComponent im
 			},
 		);
 
-		this.badgesLoaded = Promise.all([issuerPromise, badgesUpdatePromise])
-			.then(() => firstValueFrom(this.badgeClassService.badgesByIssuerUrl$))
-			.then((badgesByIssuer) => {
+		this.badgesLoaded = this.badgeClassService
+			.getBadgesForIssuer(this.issuerSlug)
+			.then((badges) => {
 				const cmp = (a, b) => (a === b ? 0 : a < b ? -1 : 1);
-				this.badges = (badgesByIssuer[this.issuer.issuerUrl] || []).sort((a, b) =>
-					cmp(b.createdAt, a.createdAt),
-				);
+				this.badges = badges.sort((a, b) => cmp(b.createdAt, a.createdAt));
 				this.badgesLoading = false;
 			})
 			.catch((error) => {

@@ -35,6 +35,8 @@ jobs:
               run: npm run lint
             - name: Prettier
               run: npx prettier --check .
+            - name: Typecheck ratchet
+              run: npm run typecheck
 
     test:
         name: 🧪 Test

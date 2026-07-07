@@ -289,9 +289,9 @@ export class LearningPathEditFormComponent
 
 	selectMinBadgesOptions: FormFieldSelectOption[] = [];
 
-	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<void>;
 	pdfTemplates: ApiPDFTemplate[];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 
 	constructor() {
 		const sessionService = inject(SessionService);
@@ -1086,14 +1086,11 @@ export class LearningPathEditFormComponent
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(issuerSlug)
-			.then(
-				(pdfTemplates) =>
-					(this.pdfTemplates = pdfTemplates.sort(
-						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-					)),
+		this.pdfTemplatesPromise = this.pdfTemplateManager.getPDFTemplatesForIssuer(issuerSlug).then((pdfTemplates) => {
+			this.pdfTemplates = pdfTemplates.sort(
+				(a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
 			);
+		});
 	}
 
 	checkQuotasDialog(quota: string) {

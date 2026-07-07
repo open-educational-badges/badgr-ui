@@ -237,9 +237,8 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 				}, new Map<string, ApiQRCode[]>()),
 			);
 		}
-		const requestMap = await this.requestsLoaded;
 
-		const addBadgeToResults = async (badge: BadgeClass | PublicApiBadgeClass) => {
+		const addBadgeToResults = (badge: BadgeClass | PublicApiBadgeClass) => {
 			if (this.badgeResults.length > this.maxDisplayedResults) {
 				return false;
 			}
@@ -255,12 +254,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 			}
 
 			this.badgeResults.push(
-				new BadgeResult(
-					badge,
-					this.issuer.name,
-					badge instanceof BadgeClass ? this.getRequestCount(badge, requestMap) : 0,
-					badge instanceof BadgeClass ? badge.recipientCount : 0,
-				),
+				new BadgeResult(badge, this.issuer.name, 0, badge instanceof BadgeClass ? badge.recipientCount : 0),
 			);
 
 			return true;
@@ -268,6 +262,14 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 
 		this.badges.filter(MatchingAlgorithm.badgeMatcher(this._searchQuery)).forEach(addBadgeToResults);
 		this.badgeResults.sort(this.sortBadgeResult);
+
+		if (this.sessionService.isLoggedIn) {
+			this.requestsLoaded.then((requestMap) => {
+				this.badgeResults.forEach((result) => {
+					result.requestCount = this.getRequestCount(result.badge as BadgeClass, requestMap);
+				});
+			});
+		}
 	}
 
 	private async updateNetworkResults() {

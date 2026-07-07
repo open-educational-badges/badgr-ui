@@ -1157,6 +1157,7 @@
 		"selectAlignment": "Please select a text alignment",
 		"selectFormat": "Please select a PDF format",
 		"titleLabel": "Name of the template",
+		"nameRequiredError": "Please enter the template name",
 		"variableContentNote": "Note: Real badge content varies in length and may differ from the preview. If a badge PDF doesn't look the best, please contact us.",
 		"openEditDialogTitle": "Do you really want to make changes?",
 		"openEditDialogText": "When learners download their received badge PDF from OEB, it contains the changes.<br><br><span class='tw-font-bold'>Therefore, only edit the template if basic information has changed, such as your logo or address.</span><br><br>If the time period changes on the background (e.g., year, semester), create a new template.",

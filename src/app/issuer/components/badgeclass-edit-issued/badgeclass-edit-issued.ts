@@ -25,6 +25,9 @@ import { OebInputComponent } from '~/components/input.component';
 import { OebSelectComponent } from '~/components/select.component';
 import { getDurationOptions, expirationToDays, ExpirationUnit } from '~/common/util/expiration-util';
 import { UrlValidator } from '~/common/validators/url.validator';
+import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
+import { ApiPDFTemplate } from '~/common/model/pdftemplate-api.model';
+import { RouterLink } from '@angular/router';
 
 @Component({
 	templateUrl: 'badgeclass-edit-issued.component.html',
@@ -42,6 +45,7 @@ import { UrlValidator } from '~/common/validators/url.validator';
 		HlmP,
 		OebInputComponent,
 		OebSelectComponent,
+		RouterLink,
 	],
 })
 export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
@@ -49,6 +53,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 	protected messageService = inject(MessageService);
 	protected issuerManager = inject(IssuerManager);
 	protected badgeManager = inject(BadgeClassManager);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 	private configService = inject(AppConfigService);
 	private translate = inject(TranslateService);
 
@@ -62,6 +67,9 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 	breadcrumbLinkEntries: LinkEntry[] = [];
 
 	durationOptions = null;
+	pdfTemplatesPromise: Promise<void>;
+	pdfTemplates: ApiPDFTemplate[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 
 	@ViewChild('formElem')
 	formElem: ElementRef<HTMLFormElement>;
@@ -74,9 +82,10 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 			,
 			Validators.max(10000),
 		])
-		.addControl('expiration_unit', 'days');
+		.addControl('expiration_unit', 'days')
+		.addControl('pdf_template', null);
 
-	savePromise: Promise<BadgeClass> | null = null;
+	savePromise: Promise<unknown> | null = null;
 
 	constructor() {
 		const sessionService = inject(SessionService);
@@ -102,6 +111,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 					copy_permissions_allow_others: badgeClass.canCopy('others'),
 					expiration: badgeClass.expiration,
 					expiration_unit: 'days',
+					pdf_template: badgeClass.pdfTemplate ?? null,
 				});
 			},
 			(error) =>
@@ -124,6 +134,24 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 	ngOnInit() {
 		super.ngOnInit();
 		this.durationOptions = getDurationOptions(this.translate);
+		this.loadPDFTemplates();
+	}
+
+	loadPDFTemplates() {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(this.issuerSlug)
+			.then(async (pdfTemplates) => {
+				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
+				this.selectPDFTemplateOptions = [
+					{ label: this.translate.instant('PDFTemplate.oebDesign'), value: null },
+					...this.pdfTemplates.map((t) => ({ label: t.name, value: t.slug })),
+				];
+				// Ensure badge class has loaded so the form value is set before we re-trigger writeValue.
+				await this.badgeClassLoaded;
+				const ctrl = this.badgeClassForm.rawControl.controls['pdf_template'];
+				const savedValue = ctrl.value;
+				setTimeout(() => ctrl.setValue(savedValue, { emitEvent: false }), 0);
+			});
 	}
 
 	badgeClassCreated(promise: Promise<BadgeClass>) {
@@ -151,6 +179,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 		this.badgeClass.expiration = expirationDays;
 		this.badgeClass.copyPermissions = copy_permissions;
 		this.badgeClass.courseUrl = formState.courseUrl;
+		this.badgeClass.pdfTemplate = formState.pdf_template ?? null;
 		try {
 			this.savePromise = this.badgeClass.save();
 			await this.savePromise;

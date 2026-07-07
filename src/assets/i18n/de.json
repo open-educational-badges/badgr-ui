@@ -1200,6 +1200,7 @@
 		"selectAlignment": "Bitte wähle eine Textausrichtung",
 		"selectFormat": "Bitte wähle ein PDF Format",
 		"titleLabel": "Name der Vorlage",
+		"nameRequiredError": "Bitte Name der Vorlage eingeben",
 		"variableContentNote": "Hinweis: Echte Badge-Inhalte variieren in der Länge und können von der Vorschau abweichen. Falls ein vergebenes Badge-PDF einmal nicht optimal aussieht, melde dich gerne bei uns.",
 		"openEditDialogTitle": "Möchtest du wirklich Änderungen vornehmen?",
 		"openEditDialogText": "Wenn Lernende ihr erhaltenes Badge-PDF neu von OEB herunterladen, enthält es die Änderungen.<br><br><span class='tw-font-bold'>Bearbeite die Vorlage daher nur, wenn sich grundlegende Informationen geändert haben – zum Beispiel euer Logo oder eure Adresse.</span><br><br>Wenn sich der Zeitraum auf dem Hintergrund ändert (z. B. Jahr, Semester), erstelle eine neue Vorlage.",
