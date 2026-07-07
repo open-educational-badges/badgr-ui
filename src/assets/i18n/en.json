@@ -576,6 +576,13 @@
 		"badgeLanguage": "Language of this badge",
 		"badgeLanguageHint": "(and of the badge email incl. corresponding PDF certificate)"
 	},
+	"BadgeFilter": {
+		"fromLabel": "From",
+		"keywordPlaceholder": "Search badges",
+		"noResults": "No badges match your current filters.",
+		"resetButton": "Reset Filters",
+		"toLabel": "To"
+	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
 		"chooseABadgeCategory": "Choose a badge category",
