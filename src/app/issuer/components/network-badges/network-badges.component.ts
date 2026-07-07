@@ -170,7 +170,7 @@ export class NetworkBadgesComponent implements OnInit {
 			requestCount: this.getRequestCount(badge, requestMap),
 			awardedCount: badge.recipientCount,
 		}));
-		this.applyFilters();
+		this.applyBadgeFilter();
 	}
 
 	private async loadSharedBadgesAndRequests() {
@@ -230,7 +230,7 @@ export class NetworkBadgesComponent implements OnInit {
 		}, new Map<string, ApiQRCode[]>());
 	}
 
-	applyFilters(): void {
+	private applyBadgeFilter(): void {
 		const { keyword, fromDate, toDate } = this.currentFilter;
 		this.filteredBadgeResults = this.badgeResults.filter((result) => {
 			if (!MatchingAlgorithm.badgeMatcher<BadgeClass | PublicApiBadgeClass>(keyword)(result.badge)) return false;
@@ -245,7 +245,7 @@ export class NetworkBadgesComponent implements OnInit {
 
 	onFilterChange(filter: BadgeFilter): void {
 		this.currentFilter = filter;
-		this.applyFilters();
+		this.applyBadgeFilter();
 	}
 
 	onTabChange(tab) {

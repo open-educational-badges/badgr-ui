@@ -19,7 +19,7 @@ function endOfDay(d: Date): Date {
 }
 
 @Component({
-	selector: 'badge-filter',
+	selector: 'oeb-badge-filter',
 	templateUrl: './badge-filter.component.html',
 	imports: [TranslatePipe, HlmInput, OebButtonComponent, NgIcon, HlmIconModule],
 	providers: [provideIcons({ lucideSearch, lucideCalendar })],

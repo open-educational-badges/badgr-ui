@@ -12,7 +12,7 @@
 
 <ng-template #networkTemplate>
 	@if (badges.length) {
-		<badge-filter (filterChange)="onFilterChange($event)"></badge-filter>
+		<oeb-badge-filter (filterChange)="onFilterChange($event)"></oeb-badge-filter>
 		@if (filteredBadgeResults.length) {
 			<div class="tw-mt-12">
 				<badges-datatable

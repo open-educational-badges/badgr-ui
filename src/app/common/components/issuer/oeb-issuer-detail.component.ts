@@ -280,7 +280,13 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 
 	private matchesDateRange(badge: BadgeClass | PublicApiBadgeClass): boolean {
 		const created = (badge as BadgeClass).createdAt;
-		if (!(created instanceof Date)) return true;
+		if (!(created instanceof Date)) {
+			if (ngDevMode)
+				console.warn(
+					`[BadgeFilter] Badge "${(badge as BadgeClass).name}" has no valid createdAt — skipping date filter`,
+				);
+			return true;
+		}
 		if (this.currentFilter.fromDate !== null && created < this.currentFilter.fromDate) return false;
 		if (this.currentFilter.toDate !== null && created > this.currentFilter.toDate) return false;
 		return true;

@@ -514,7 +514,7 @@
 			</h2>
 			<ng-template [bgAwaitPromises]="requestsLoaded">
 				<ng-container *ngIf="!public">
-					<badge-filter (filterChange)="onFilterChange($event)"></badge-filter>
+					<oeb-badge-filter (filterChange)="onFilterChange($event)"></oeb-badge-filter>
 					<p *ngIf="!badgeResults.length" class="tw-text-lg tw-text-oebblack tw-my-6">
 						{{ 'BadgeFilter.noResults' | translate }}
 					</p>

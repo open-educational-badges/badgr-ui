@@ -17,7 +17,7 @@ import { HlmDialogService } from '~/components/spartan/ui-dialog-helm/src/lib/hl
 import { of } from 'rxjs';
 import { createCommonProviders } from '~/testing/common-providers';
 
-// applyFilters uses `createdAt instanceof Date` — plain object with a real Date works.
+// applyBadgeFilter uses `createdAt instanceof Date` — plain object with a real Date works.
 function makeDatatableResult(name: string, createdAt: Date): DatatableBadgeResult {
 	return {
 		badge: { name, slug: name.toLowerCase().replace(/ /g, '-'), createdAt } as unknown as BadgeClass,
@@ -26,7 +26,7 @@ function makeDatatableResult(name: string, createdAt: Date): DatatableBadgeResul
 	};
 }
 
-describe('NetworkBadgesComponent — applyFilters', () => {
+describe('NetworkBadgesComponent — applyBadgeFilter', () => {
 	let component: NetworkBadgesComponent;
 
 	beforeEach(async () => {

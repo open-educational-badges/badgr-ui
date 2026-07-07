@@ -28,6 +28,7 @@ describe('BadgeFilterComponent', () => {
 		input.dispatchEvent(new Event('input'));
 		expect(emitted.length).toBe(0);
 		tick(300);
+		expect(emitted.length).toBe(1); // debounce fires after 300ms
 	}));
 
 	it('emits keyword after 300ms debounce', fakeAsync(() => {
