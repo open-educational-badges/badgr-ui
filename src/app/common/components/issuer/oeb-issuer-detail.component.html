@@ -512,13 +512,21 @@
 					badges.length === 1 ? '' : 's'
 				}}.
 			</h2>
-			<badges-datatable
-				*ngIf="!public"
-				[badges]="$any(badgeResults)"
-				(directBadgeAward)="routeToBadgeAward($event, issuer)"
-				(qrCodeAward)="routeToQRCodeAward($event, issuer)"
-				(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
-			></badges-datatable>
+			<ng-template [bgAwaitPromises]="requestsLoaded">
+				<ng-container *ngIf="!public">
+					<oeb-badge-filter (filterChange)="onFilterChange($event)"></oeb-badge-filter>
+					<p *ngIf="!badgeResults.length" class="tw-text-lg tw-text-oebblack tw-my-6">
+						{{ 'BadgeFilter.noResults' | translate }}
+					</p>
+					<badges-datatable
+						*ngIf="badgeResults.length"
+						[badges]="$any(badgeResults)"
+						(directBadgeAward)="routeToBadgeAward($event, issuer)"
+						(qrCodeAward)="routeToQRCodeAward($event, issuer)"
+						(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
+					></badges-datatable>
+				</ng-container>
+			</ng-template>
 
 			<ng-container *ngIf="public">
 				<div *ngIf="badges.length > 0">

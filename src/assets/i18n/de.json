@@ -588,6 +588,13 @@
 		"badgeLanguage": "Sprache des Badges",
 		"badgeLanguageHint": "(und der Badge-Mail inkl. zugehörigem PDF-Zertifikat)"
 	},
+	"BadgeFilter": {
+		"fromLabel": "Von",
+		"keywordPlaceholder": "Badges durchsuchen",
+		"noResults": "Keine Badges entsprechen deinen Filtereinstellungen.",
+		"resetButton": "Zurücksetzen",
+		"toLabel": "Bis"
+	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Kategorie wählen",
 		"chooseABadgeCategory": "Wähle eine Badge-Kategorie",
