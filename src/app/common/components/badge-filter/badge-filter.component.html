@@ -22,6 +22,7 @@
 			#fromDateInput
 			[type]="fromInputType"
 			[value]="fromDate"
+			[attr.max]="today"
 			[placeholder]="'BadgeFilter.fromLabel' | translate"
 			[attr.aria-label]="'BadgeFilter.fromLabel' | translate"
 			(focus)="fromInputType = 'date'"
@@ -44,6 +45,8 @@
 			#toDateInput
 			[type]="toInputType"
 			[value]="toDate"
+			[attr.min]="fromDate || null"
+			[attr.max]="today"
 			[placeholder]="'BadgeFilter.toLabel' | translate"
 			[attr.aria-label]="'BadgeFilter.toLabel' | translate"
 			(focus)="toInputType = 'date'"

@@ -72,7 +72,7 @@ export class OebNetworkDetailComponent implements OnInit {
 	linkentries: LinkEntry[] = [];
 
 	partnerBadges: ApiBadgeClassNetworkShare[] = [];
-	networkBadges: BadgeClass[];
+	networkBadges: BadgeClass[] = [];
 
 	tabs: Tab[] = undefined;
 
