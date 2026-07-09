@@ -31,6 +31,8 @@ export class BadgeFilterComponent implements OnDestroy {
 	fromInputType: 'date' | 'text' = 'text';
 	toInputType: 'date' | 'text' = 'text';
 
+	readonly today: string = new Date().toISOString().slice(0, 10);
+
 	@Output() filterChange = new EventEmitter<BadgeFilter>();
 
 	private readonly keywordSubject = new Subject<string>();

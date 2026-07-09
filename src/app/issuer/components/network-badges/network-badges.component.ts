@@ -103,8 +103,10 @@ export class NetworkBadgesComponent implements OnInit {
 
 	sharedBadges: ApiBadgeClassNetworkShare[] = [];
 	sharedBadgeResults: SharedBadgeWithRequests[] = [];
+	filteredSharedBadgeResults: SharedBadgeWithRequests[] = [];
 	filteredBadgeResults: DatatableBadgeResult[] = [];
 	currentFilter: BadgeFilter = { ...EMPTY_BADGE_FILTER };
+	currentSharedFilter: BadgeFilter = { ...EMPTY_BADGE_FILTER };
 
 	@ViewChild('networkTemplate', { static: true }) networkTemplate: ElementRef;
 	@ViewChild('partnerTemplate', { static: true }) partnerTemplate: ElementRef;
@@ -200,6 +202,7 @@ export class NetworkBadgesComponent implements OnInit {
 		});
 
 		this.sharedBadgeResults = await Promise.all(sharedBadgePromises);
+		this.applySharedFilter();
 	}
 
 	private sortBadgesByCreatedAt(badges: BadgeClass[]) {
@@ -246,6 +249,26 @@ export class NetworkBadgesComponent implements OnInit {
 	onFilterChange(filter: BadgeFilter): void {
 		this.currentFilter = filter;
 		this.applyBadgeFilter();
+	}
+
+	onSharedFilterChange(filter: BadgeFilter): void {
+		this.currentSharedFilter = filter;
+		this.applySharedFilter();
+	}
+
+	private applySharedFilter(): void {
+		const { keyword, fromDate, toDate } = this.currentSharedFilter;
+		this.filteredSharedBadgeResults = this.sharedBadgeResults.filter((badge) => {
+			if (keyword) {
+				const name = badge.badgeclass.name?.toLowerCase() ?? '';
+				const desc = badge.badgeclass.description?.toLowerCase() ?? '';
+				if (!name.includes(keyword.toLowerCase()) && !desc.includes(keyword.toLowerCase())) return false;
+			}
+			const shared = new Date(badge.shared_at);
+			if (fromDate !== null && shared < fromDate) return false;
+			if (toDate !== null && shared > toDate) return false;
+			return true;
+		});
 	}
 
 	onTabChange(tab) {
