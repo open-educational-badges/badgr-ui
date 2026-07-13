@@ -230,7 +230,7 @@ export class DashboardCompetencyTrackingComponent
 		];
 
 		// Load network data using networkBySlug (not loadNetwork)
-		this.networkLoaded = this.issuerManager.issuerOrNetworkBySlug(this.networkSlug).then(
+		this.networkLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.networkSlug).then(
 			(issuerOrNetwork) => {
 				this.issuerOrNetwork.set(issuerOrNetwork);
 				// Update breadcrumb with network name

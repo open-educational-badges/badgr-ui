@@ -1,6 +1,6 @@
 {
 	"strictNullChecks": 1001,
 	"noImplicitAny": 553,
-	"strictPropertyInitialization": 1626,
-	"noUnusedLocals": 272
+	"strictPropertyInitialization": 1625,
+	"noUnusedLocals": 271
 }

@@ -75,7 +75,6 @@ import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issu
 		NgClass,
 		SvgIconComponent,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 		OebDashboardOverviewComponent,
 		OebDashboardLearnersComponent,
 		OebDashboardSocialspaceComponent,

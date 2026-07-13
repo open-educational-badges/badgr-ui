@@ -15,18 +15,11 @@ import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Network } from '~/issuer/network.model';
 import { Router } from '@angular/router';
-import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 
 @Component({
 	selector: 'network-partners',
 	templateUrl: './network-partners.component.html',
-	imports: [
-		TranslatePipe,
-		OebButtonComponent,
-		NetworkPartnersDatatableComponent,
-		NetworkInvitesDatatableComponent,
-		QuotaInformationComponent,
-	],
+	imports: [TranslatePipe, OebButtonComponent, NetworkPartnersDatatableComponent, NetworkInvitesDatatableComponent],
 })
 export class NetworkPartnersComponent {
 	private networkApiService = inject(NetworkApiService);

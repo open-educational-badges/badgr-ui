@@ -96,6 +96,8 @@ export class BadgeClassIssueBulkAwardImportComponent extends BaseAuthenticatedRo
 
 	//////// Parsing ////////
 	parseCsv(rawCSV: string) {
+		// Excel's "CSV UTF-8" export prepends a BOM, which would break header matching
+		rawCSV = rawCSV.replace(/^\uFEFF/, '');
 		const rows: ParsedRow[] = [];
 		const validRows: ParsedRow[] = [];
 		const invalidRows: ParsedRow[] = [];
@@ -115,8 +117,11 @@ export class BadgeClassIssueBulkAwardImportComponent extends BaseAuthenticatedRo
 			const lower = columnHeaderName.toLowerCase();
 			let destColumn: DestSelectOptions;
 
-			if (lower === 'email' || lower === 'e-mail-adresse') destColumn = 'email';
+			if (lower === 'email' || lower === 'e-mail-adresse' || lower === 'email address') destColumn = 'email';
 			if (lower === 'name' || lower === 'vor- / nachname') destColumn = 'name';
+			if (lower === 'vorname' || lower === 'first name') destColumn = 'firstname';
+			if (lower === 'nachname' || lower === 'surname' || lower === 'last name') destColumn = 'lastname';
+			if (lower.includes('geburtsdatum') || lower.includes('date of birth')) destColumn = 'dateOfBirth';
 
 			return { destColumn: destColumn ?? 'NA', sourceName: columnHeaderName };
 		});
@@ -130,7 +135,10 @@ export class BadgeClassIssueBulkAwardImportComponent extends BaseAuthenticatedRo
 				row.cells = row.cells.concat(this.createRange(this.columnHeadersCount - row.cells.length));
 			}
 
-			const rowIsValid = row.cells.every((cell) => cell.length > 0);
+			// empty cells are allowed in the optional date of birth column
+			const rowIsValid = row.cells.every(
+				(cell, index) => cell.length > 0 || columnHeaders[index]?.destColumn === 'dateOfBirth',
+			);
 			let emailInvalid = false;
 
 			if (emailColIndex >= 0) {

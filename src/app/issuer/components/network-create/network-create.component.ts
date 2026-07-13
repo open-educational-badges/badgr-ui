@@ -4,11 +4,10 @@ import { FormMessageComponent } from '../../../common/components/form-message.co
 import { IssuerEditFormComponent } from '../issuer-edit-form/issuer-edit-form.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HlmH1 } from '@spartan-ng/helm/typography';
-import { HlmP } from '@spartan-ng/helm/typography';
 
 @Component({
 	selector: 'network-create',
 	templateUrl: './network-create.component.html',
-	imports: [FormMessageComponent, HlmH1, HlmP, IssuerEditFormComponent, TranslatePipe],
+	imports: [FormMessageComponent, HlmH1, IssuerEditFormComponent, TranslatePipe],
 })
 export class NetworkCreateComponent extends BaseAuthenticatedRoutableComponent {}
