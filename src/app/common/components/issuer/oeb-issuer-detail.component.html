@@ -9,6 +9,8 @@
 						[error-src]="issuerPlaceholderSrc"
 						alt="{{ issuer.name }} avatar"
 						class="tw-h-[70px] md:tw-h-[100px] tw-w-auto tw-min-w-[70px] md:tw-min-w-[100px] tw-aspect-square"
+						width="100"
+						height="100"
 					/>
 				</figure>
 				<hgroup class="tw-flex tw-flex-col tw-justify-center tw-pl-8 oeb-break-words">
@@ -109,7 +111,7 @@
 											[attr.aria-label]="'Visit ' + network.name + ' network'"
 										>
 											<img
-												class="tw-w-[33px]"
+												class="tw-w-[33px] tw-h-[33px] tw-aspect-square"
 												[src]="network.image"
 												[alt]="network.name + ' logo'"
 											/>
@@ -141,7 +143,7 @@
 											[attr.aria-label]="'Visit ' + partner.name + ' profile'"
 										>
 											<img
-												class="tw-w-[33px]"
+												class="tw-w-[33px] tw-h-[33px] tw-aspect-square"
 												[src]="partner.image"
 												[alt]="partner.name + ' logo'"
 											/>
@@ -483,7 +485,15 @@
 	}
 
 	<ng-template #issuerBadgesTemplate>
-		<section class="oeb-section-sm" *ngIf="!badges?.length">
+		<section class="oeb-section-sm tw-min-h-[500px]" *ngIf="badgesLoading || !badgeResultsReady">
+			<h2
+				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
+			>
+				{{ 'Issuer.issuerLoadingBadges' | translate }}
+			</h2>
+		</section>
+
+		<section class="oeb-section-sm" *ngIf="!badgesLoading && badgeResultsReady && !badges?.length">
 			<h2
 				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
 			>
@@ -491,7 +501,10 @@
 			</h2>
 		</section>
 
-		<section class="oeb-section-sm tw-relative oeb-break-words" *ngIf="badges?.length">
+		<section
+			class="oeb-section-sm tw-relative oeb-break-words"
+			*ngIf="!badgesLoading && badgeResultsReady && badges?.length"
+		>
 			<h2
 				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] tw-py-4"
 			>
@@ -499,15 +512,13 @@
 					badges.length === 1 ? '' : 's'
 				}}.
 			</h2>
-			<ng-template [bgAwaitPromises]="requestsLoaded">
-				<badges-datatable
-					*ngIf="!public"
-					[badges]="$any(badgeResults)"
-					(directBadgeAward)="routeToBadgeAward($event, issuer)"
-					(qrCodeAward)="routeToQRCodeAward($event, issuer)"
-					(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
-				></badges-datatable>
-			</ng-template>
+			<badges-datatable
+				*ngIf="!public"
+				[badges]="$any(badgeResults)"
+				(directBadgeAward)="routeToBadgeAward($event, issuer)"
+				(qrCodeAward)="routeToQRCodeAward($event, issuer)"
+				(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
+			></badges-datatable>
 
 			<ng-container *ngIf="public">
 				<div *ngIf="badges.length > 0">
@@ -582,12 +593,6 @@
 						></badges-datatable>
 					</div>
 				}
-
-				@if (networkGroupsArray.length === 0) {
-					<div class="tw-px-2 tw-py-8 tw-text-center tw-text-gray-500">
-						{{ 'Issuer.noSharedNetworkBadges' | translate }}
-					</div>
-				}
 			</div>
 		}
 		@if (networkBadgeInstanceResults.length) {
@@ -601,7 +606,11 @@
 						class="tw-px-2 tw-py-2 tw-gap-2 tw-flex tw-items-center tw-font-semibold tw-text-lg tw-leading-[130%] tw-uppercase tw-text-oebblack tw-cursor-pointer"
 						[routerLink]="['/issuer/networks', group.networkIssuer.slug]"
 					>
-						<img class="tw-w-12" [src]="group.networkIssuer.image" alt="Network Logo" />
+						<img
+							class="tw-w-12 tw-h-12 tw-aspect-square"
+							[src]="group.networkIssuer.image"
+							alt="Network Logo"
+						/>
 						<span>{{ group.issuerName }}</span>
 					</div>
 

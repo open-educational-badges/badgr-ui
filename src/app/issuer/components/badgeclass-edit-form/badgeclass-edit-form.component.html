@@ -908,6 +908,7 @@
 												<oeb-button
 													size="sm"
 													type="button"
+													[id]="'add-competency-btn'"
 													(click)="addAnotherCompetency()"
 													text="{{
 														(badgeClassForm.controls.competencies.controls.length > 0
@@ -938,7 +939,11 @@
 					</cdk-step>
 				}
 
-				<cdk-step label="Tags" [optional]="true" errorMessage="Bitte Tags auswählen">
+				<cdk-step
+					[label]="'CreateBadge.optionalDetails' | translate"
+					[optional]="true"
+					errorMessage="Bitte Tags auswählen"
+				>
 					<div class="section tw-text-oebblack tw-mt-6">
 						<div>
 							@if (badgeCategory !== 'competency' || existingBadgeClass) {
@@ -1019,6 +1024,42 @@
 					<h2 hlmH2 class="tw-pt-1 tw-px-1 tw-mr-auto !tw-text-oebblack !tw-font-bold">
 						{{ 'CreateBadge.optionalBadgeDetails' | translate }}
 					</h2>
+
+					@if (
+						pdfTemplateManager.pdfEditorAvailable() &&
+						!issuer?.is_network &&
+						(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+					) {
+						<section class="section tw-text-oebblack tw-mt-6">
+							<h2 hlmH2 class="!tw-text-oebblack tw-pb-4">
+								{{ 'PDFTemplate.backgroundLabel' | translate }}
+							</h2>
+							<div class="tw-mt-4 tw-mb-4 tw-flex tw-flex-wrap tw-gap-6 tw-items-end">
+								<oeb-select
+									class="tw-block tw-flex-grow"
+									[options]="selectPDFTemplateOptions"
+									[control]="badgeClassForm.rawControlMap.pdf_template"
+									[noTopMargin]="true"
+									label="{{ 'PDFTemplate.backgroundLabel' | translate }}"
+								></oeb-select>
+								@if (issuer?.currentUserStaffMember?.canEditBadge) {
+									<oeb-button
+										class="tw-whitespace-nowrap tw-flex-grow"
+										[routerLink]="['/issuer/issuers', issuer.slug]"
+										fragment="pdf-templates"
+										[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
+										width="full_width"
+										size="sm"
+										variant="secondary"
+										weight="normal"
+										icon="lucidePlus"
+										iconSize="sm"
+										[iconLeft]="true"
+									></oeb-button>
+								}
+							</div>
+						</section>
+					}
 
 					@if (category === 'competency') {
 						<div class="section tw-text-oebblack tw-mt-6">
@@ -1204,42 +1245,48 @@
 			/>
 
 			@if (!lastStep()) {
-				<oeb-button
-					class="tw-float-right"
-					type="button"
-					[text]="next"
-					(click)="nextStep()"
-					[umamiEvent]="
-						!existingBadgeClass ? `create-${category}-badge-${this.stepper?.selectedIndex + 1}` : undefined
-					"
-				/>
+				<span data-testid="next-step-btn">
+					<oeb-button
+						class="tw-float-right"
+						type="button"
+						[text]="next"
+						(click)="nextStep()"
+						[umamiEvent]="
+							!existingBadgeClass
+								? `create-${category}-badge-${this.stepper?.selectedIndex + 1}`
+								: undefined
+						"
+					/>
+				</span>
 			}
 
 			@if (lastStep()) {
-				<oeb-button
-					id="create-badge-btn"
-					type="submit"
-					width="max_content"
-					[disabled]="!!savePromise"
-					[loading-promises]="[savePromise]"
-					loading-message="{{
-						((!existingBadgeClass ? 'Issuer.creatingBadge' : 'EditBadge.saving') | translate) + ' ...'
-					}}"
-					text="{{
-						(!existingBadgeClass
-							? category === 'competency'
-								? 'Issuer.createCompetencyBadge'
-								: 'Issuer.createParticipationBadge'
-							: 'General.save'
-						) | translate
-					}}"
-					[umamiEvent]="
-						!existingBadgeClass
-							? `create-${category}-badge-done-${this.stepper?.selectedIndex + 1}`
-							: undefined
-					"
-				>
-				</oeb-button>
+				<span data-testid="submit-badge-btn">
+					<oeb-button
+						id="create-badge-btn"
+						type="submit"
+						width="max_content"
+						[disabled]="!!savePromise"
+						[loading-promises]="[savePromise]"
+						loading-message="{{
+							((!existingBadgeClass ? 'Issuer.creatingBadge' : 'EditBadge.saving') | translate) + ' ...'
+						}}"
+						text="{{
+							(!existingBadgeClass
+								? category === 'competency'
+									? 'Issuer.createCompetencyBadge'
+									: 'Issuer.createParticipationBadge'
+								: 'General.save'
+							) | translate
+						}}"
+						[umamiEvent]="
+							!existingBadgeClass
+								? `create-${category}-badge-done-${this.stepper?.selectedIndex + 1}`
+								: undefined
+						"
+					>
+					</oeb-button>
+				</span>
 			}
 		</div>
 

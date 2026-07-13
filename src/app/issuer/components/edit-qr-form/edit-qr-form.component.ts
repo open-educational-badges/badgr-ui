@@ -23,10 +23,6 @@ import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { Issuer } from '~/issuer/models/issuer.model';
 import { environment } from '../../../../environments/environment';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
-import { OebSelectComponent } from '../../../components/select.component';
-import { FormFieldSelectOption } from '~/common/components/formfield-select';
-import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
-import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
@@ -45,7 +41,6 @@ import { UrlValidator } from '~/common/validators/url.validator';
 		OebButtonComponent,
 		TranslatePipe,
 		OptionalDetailsComponent,
-		OebSelectComponent,
 		RouterLink,
 	],
 })
@@ -55,7 +50,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 	protected badgeClassManager = inject(BadgeClassManager);
 	protected issuerManager = inject(IssuerManager);
 	protected _location = inject(Location);
-	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected authService: SessionService;
 
 	static datePipe = new DatePipe('de');
@@ -101,10 +95,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 
 	subscriptions: Subscription[] = [];
 
-	pdfTemplatesPromise: Promise<unknown>;
-	pdfTemplates: ApiPDFTemplate[];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
-
 	qrForm = typedFormGroup([this.missingStartDate.bind(this)])
 		.addControl('title', '', Validators.required)
 		.addControl('createdBy', '', Validators.required)
@@ -130,8 +120,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		.addControl('badgeclass_id', '', Validators.required)
 		.addControl('issuer_id', '', Validators.required)
 		.addControl('courseUrl', null, UrlValidator.validUrl)
-		.addControl('notifications', false)
-		.addControl('pdftemplate', null);
+		.addControl('notifications', false);
 
 	constructor() {
 		const route = inject(ActivatedRoute);
@@ -187,11 +176,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 
 		if (this.qrSlug) {
 			this.qrCodeApiService.getQrCode(this.issuerSlug, this.badgeSlug, this.qrSlug).then((qrCode) => {
-				let pdftemplate = null;
-				if (qrCode.pdftemplate != null) {
-					pdftemplate = qrCode.pdftemplate.replace('PDFTemplate', '');
-				}
-
 				this.qrForm.setValue({
 					title: qrCode.title,
 					createdBy: qrCode.createdBy,
@@ -221,7 +205,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					badgeclass_id: qrCode.badgeclass_id,
 					issuer_id: qrCode.issuer_id,
 					notifications: qrCode.notifications,
-					pdftemplate: pdftemplate,
 					courseUrl: qrCode.course_url,
 				});
 			});
@@ -250,20 +233,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		}
 
 		await this.issuerLoaded;
-
-		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
-			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
-			await this.pdfTemplatesPromise;
-
-			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
-				label: t.name,
-				value: t.slug,
-			}));
-			this.selectPDFTemplateOptions.push({
-				label: this.translate.instant('PDFTemplate.oebDesign'),
-				value: null,
-			});
-		}
 	}
 
 	ngOnDestroy() {
@@ -336,7 +305,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					badgeclass_id: this.badgeSlug,
 					issuer_id: this.issuerSlug,
 					notifications: formState.notifications,
-					pdftemplate: formState.pdftemplate,
 					course_url: formState.courseUrl,
 				})
 				.then((qrcode) => {
@@ -377,7 +345,6 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					expires_at: formState.expires_at ? expiresDate.toISOString() : undefined,
 					valid_from: formState.valid_from ? new Date(formState.valid_from).toISOString() : undefined,
 					notifications: formState.notifications,
-					pdftemplate: formState.pdftemplate,
 					course_url: formState.courseUrl,
 				})
 				.then((qrcode) => {
@@ -393,16 +360,5 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					]);
 				});
 		}
-	}
-
-	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(issuerSlug)
-			.then(
-				(pdfTemplates) =>
-					(this.pdfTemplates = pdfTemplates.sort(
-						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-					)),
-			);
 	}
 }

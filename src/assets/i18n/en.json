@@ -15,7 +15,7 @@
 		"collection": "Collection",
 		"collections": "Collections",
 		"cancel": "Cancel",
-		"forward": "Ok",
+		"forward": "OK",
 		"or": "or",
 		"of": "of",
 		"and": "and",
@@ -70,7 +70,7 @@
 		"copy": "copy",
 		"place": "place",
 		"forwarded": "forwarded",
-		"revoke": "revoke",
+		"revoke": "Revoke",
 		"withdraw": "Withdraw",
 		"confirm": "Confirm",
 		"license": "License",
@@ -192,6 +192,7 @@
 		"issuerHasNoBadgesYet": "has no badges yet.",
 		"issuerHasNoLearningPathYet": "has no learning paths yet.",
 		"issuerHasBadges": "has",
+		"issuerLoadingBadges": "Loading badges...",
 		"myInstitutionsText": "Through your institutions, you can <span class='tw-font-medium'>create badges and then award them to your learners</span>.",
 		"myLearningPathText": "Learning paths are created as part of the Micro Degree badge type.",
 		"myInstitutionsCreateLearningPath": "Create learning path",
@@ -280,7 +281,7 @@
 		"rowsOfYourFile": "rows of your file.",
 		"chooseColumn": "Select the heading that matches the respective column of your CSV file.",
 		"importPreview": "Import preview",
-		"rowsWereImported": "rows could be imported.",
+		"rowsWereImported": "rows were imported.",
 		"rowsAreDuplicates": "rows are duplicates and are ignored.",
 		"clickOnAwardBadges": "Click on \"award badges\" to award the badges to your learners now.",
 		"creatingBadge": "Creating Badge",
@@ -622,6 +623,7 @@
 		"durationPositive": "Please enter a positive number or 0",
 		"valuePositive": "Please enter a positive number",
 		"optionalBadgeDetails": "Optional badge details",
+		"optionalDetails": "Optional Details",
 		"addTags": "Add tags",
 		"newTag": "Enter a tag...",
 		"tagDoesNotExist": "This tag does not exist yet",
@@ -731,6 +733,7 @@
 		"forgotPassword": "Forgot password",
 		"welcome": "Welcome to",
 		"failLogin": "Login failed. Please check your email address and password and try again.",
+		"invalidTwoFactorCode": "Invalid code. Please try again.",
 		"loginBildungsraum": "Log in with Mein Bildungsraum",
 		"createAccount": "Create account",
 		"enterYourEmail": "Enter your email address and we will help you reset your password.",
@@ -910,6 +913,7 @@
 		"collectionNotPublic": "This collection is currently not available to the public."
 	},
 	"Profile": {
+		"profile": "Profile",
 		"more": "More",
 		"password": "Password",
 		"edit": "Edit",
@@ -1118,10 +1122,10 @@
 	"PDFTemplate": {
 		"pdfTemplates": "PDF Templates",
 		"preview": "Preview",
-		"descriptionText": "With each badge, a PDF certificate in OEB design is automatically sent to your apprentices. Here you can upload <strong>personalized PDF backgrounds for your institution</strong>, which can then <strong>be selected</strong> instead of the OEB design <strong>when awarding the badge</strong>.",
+		"descriptionText": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then be selected when <strong>creating or editing badges</strong>.",
 		"createdTemplates": "Created templates",
 		"editor": "PDF Template Editor",
-		"createPDFTemplate": "Create pdf template",
+		"createPDFTemplate": "Create PDF template",
 		"createHeading": "Create a new template",
 		"backgroundHeading": "Upload your own PDF background:",
 		"createdSuccessfully": "Your pdf template has been created successfully.",
@@ -1153,6 +1157,7 @@
 		"selectAlignment": "Please select a text alignment",
 		"selectFormat": "Please select a PDF format",
 		"titleLabel": "Name of the template",
+		"nameRequiredError": "Please enter the template name",
 		"variableContentNote": "Note: Real badge content varies in length and may differ from the preview. If a badge PDF doesn't look the best, please contact us.",
 		"openEditDialogTitle": "Do you really want to make changes?",
 		"openEditDialogText": "When learners download their received badge PDF from OEB, it contains the changes.<br><br><span class='tw-font-bold'>Therefore, only edit the template if basic information has changed, such as your logo or address.</span><br><br>If the time period changes on the background (e.g., year, semester), create a new template.",
@@ -1164,7 +1169,7 @@
 		"createCustomPDFTemplate": "Create own PDF template",
 		"ownPDFBackground": "Own PDF background",
 		"noTemplateDefaultDesign": "If you don't use your own template, the PDF for the badge will receive our OEB design.",
-		"exampleZipLink": "<a class='tw-block tw-mt-4 tw-underline tw-text-link' hlmA href='./assets/examplePDFCertificates.zip' download='Sample-View-PDF-Certificates.zip'>Download example file</a>",
+		"exampleZipLink": "<a class='tw-block tw-mt-4 tw-underline tw-text-link' hlmA href='./assets/Sample-View-PDF-Certificates.zip' download='Sample-View-PDF-Certificates.zip'>Download example file</a>",
 		"lpChooseTemplateHeadline": "PDF certificate",
 		"lpChooseTemplateDesc": "A PDF template can be selected here.",
 		"editPDF": "Edit PDF",
@@ -1213,7 +1218,7 @@
 	},
 	"PDFEditorTeaser": {
 		"heading": "PDF Editor",
-		"body": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then <strong>be selected when issuing badges</strong> instead of the OEB design.",
+		"body": "With every badge, a PDF certificate in the OEB design is automatically sent to your learners. With the PDF Editor you can upload <strong>personalized backgrounds in your own design</strong> that can then be selected when <strong>creating or editing badges</strong>.",
 		"upgradeLine": "Upgrade to our <a class='tw-text-link tw-underline' href='/page/pricing' target='_blank'>PRO plan</a> to use the PDF Editor.",
 		"buttonLabel": "Request upgrade",
 		"defaultCaption": "Badge PDF in the OEB design.",
@@ -1485,6 +1490,63 @@
 			"text2": "Check your current (Free) plan’s usage on your institution’s details page:",
 			"text3": "Your Bonus: As an existing institution, you’ll receive a 10% discount on all paid plans.",
 			"cta": "Explore plans"
+		}
+	},
+	"TwoFactor": {
+		"reminder": {
+			"title": "Protect your account with Two-Factor Authentication (2FA)",
+			"body": "Increase your account security by requiring a verification code from an authenticator app in addition to your password.",
+			"hintPrefix": "You can manage two-factor authentication at any time under",
+			"hintLink": "Account → My Account",
+			"hintSuffix": ".",
+			"remindLater": "Remind me later",
+			"setupNow": "Set up 2FA now",
+			"neverRemind": "Don't remind me again"
+		},
+		"disable": {
+			"title": "Disable two-factor authentication (2FA)",
+			"description1": "Do you really want to remove the additional layer of protection for your account?",
+			"description2": "Please confirm your identity with your password for security reasons.",
+			"passwordLabel": "Password",
+			"passwordError": "Please enter your password.",
+			"genericError": "An error occurred. Please try again.",
+			"disableButton": "Disable"
+		},
+		"login": {
+			"backupCodeHint": "Enter one of your backup codes.",
+			"totpHint": "Enter the 6-digit code from your authenticator app.",
+			"backupCodeLabel": "Backup Code",
+			"totpLabel": "Authentication Code",
+			"codeError": "Please enter your code.",
+			"useAuthApp": "Use authenticator app",
+			"useBackupCode": "Use backup code",
+			"confirm": "Confirm",
+			"checking": "Checking..."
+		},
+		"setup": {
+			"title": "Set up Two-Factor Authentication",
+			"breadcrumb": "Set up 2FA",
+			"scanInstructions": "Scan the QR code with your authenticator app (e.g. Google Authenticator or Authy).",
+			"loading": "Loading...",
+			"qrAlt": "QR code for two-factor authentication setup",
+			"manualEntry": "No QR scanner? Enter this code manually:",
+			"confirmTitle": "Confirm Code",
+			"confirmInstructions": "Enter the 6-digit code from your authenticator app to complete setup.",
+			"codeLabel": "Verification Code",
+			"codeError": "Please enter a 6-digit code.",
+			"backupTitle": "2FA successfully activated",
+			"backupInstructions": "Save these backup codes securely. Each code can be used once if you don't have access to your authenticator app.",
+			"backupWarning": "They will not be shown again.",
+			"copyCodes": "Copy codes",
+			"copied": "Copied!",
+			"done": "Done",
+			"setupError": "Setup failed. Please try again.",
+			"invalidCode": "Invalid code. Please try again."
+		},
+		"profile": {
+			"menuItem": "Two-Factor Authentication",
+			"menuItemDisable": "Disable 2FA",
+			"disabledSuccess": "2FA has been disabled. A confirmation email has been sent to your address."
 		}
 	}
 }

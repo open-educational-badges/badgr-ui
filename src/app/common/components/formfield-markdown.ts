@@ -4,6 +4,7 @@ import {
 	ElementRef,
 	Input,
 	OnChanges,
+	OnInit,
 	SimpleChanges,
 	ViewChild,
 	ViewEncapsulation,
@@ -30,17 +31,35 @@ interface UploadResult {
 		'[class.forminput-is-error]': 'isErrorState',
 		'[class.forminput-locked]': 'isLockedState',
 	},
-	template: ` <md-editor (input)="change()" [(ngModel)]="markdown_content" [upload]="doUpload" (paste)="change()">
-	</md-editor>`,
+	template: `@if (aceReady) {
+		<md-editor (input)="change()" [(ngModel)]="markdown_content" [upload]="doUpload" (paste)="change()">
+		</md-editor>
+	}`,
 	styleUrls: ['./formfield-markdown.css'],
 	encapsulation: ViewEncapsulation.ShadowDom,
 	imports: [LMarkdownEditorModule, FormsModule],
 })
-export class FormFieldMarkdown implements OnChanges, AfterViewInit {
+export class FormFieldMarkdown implements OnInit, OnChanges, AfterViewInit {
 	private http = inject(HttpClient);
 	private configService = inject(AppConfigService);
 
 	markdown_content = '';
+	aceReady = false;
+
+	private static aceLoadPromise: Promise<void> | null = null;
+
+	private loadAce(): Promise<void> {
+		if ((window as any).ace) return Promise.resolve();
+		if (FormFieldMarkdown.aceLoadPromise) return FormFieldMarkdown.aceLoadPromise;
+		FormFieldMarkdown.aceLoadPromise = new Promise<void>((resolve, reject) => {
+			const script = document.createElement('script');
+			script.src = '/assets/ace-builds/ace.js';
+			script.onload = () => resolve();
+			script.onerror = () => reject(new Error('Failed to load ace.js'));
+			document.head.appendChild(script);
+		});
+		return FormFieldMarkdown.aceLoadPromise;
+	}
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -171,6 +190,12 @@ export class FormFieldMarkdown implements OnChanges, AfterViewInit {
 	private cachedDirtyState = null;
 
 	private randomName = 'field' + Math.random();
+
+	ngOnInit() {
+		this.loadAce().then(() => {
+			this.aceReady = true;
+		});
+	}
 
 	ngAfterViewInit() {
 		if (this.autofocus) {

@@ -3,7 +3,6 @@ import { Component, ElementRef, Renderer2, ViewChild, SecurityContext, inject } 
 import { BaseDialog } from '../base-dialog';
 import { RecipientBadgeInstance } from '../../../recipient/models/recipient-badge.model';
 
-import jsPDF from 'jspdf';
 import { ApiRecipientBadgeIssuer } from '../../../recipient/models/recipient-badge-api.model';
 import { RecipientBadgeCollection } from '../../../recipient/models/recipient-badge-collection.model';
 import { UserProfile } from '../../model/user-profile.model';
@@ -36,7 +35,7 @@ export class ExportPdfDialog extends BaseDialog {
 	badgeResults: BadgeResult[] | null = null;
 	badgePdf: string | null = null;
 	pdfSrc: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
-	doc: jsPDF = null;
+	doc: any = null;
 	themeColor: string;
 	pdfError: Error;
 
@@ -105,9 +104,10 @@ export class ExportPdfDialog extends BaseDialog {
 	}
 
 	// disclaimer: unfinished
-	generateBadgeCollectionPdf(collection: RecipientBadgeCollection) {
+	async generateBadgeCollectionPdf(collection: RecipientBadgeCollection) {
 		this.pdfError = undefined;
 		const badges: RecipientBadgeInstance[] = collection.badges;
+		const { default: jsPDF } = await import('jspdf');
 		this.doc = new jsPDF('l', 'mm', 'a4', true);
 
 		let yPos = 20;

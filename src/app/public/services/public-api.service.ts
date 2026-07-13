@@ -188,7 +188,9 @@ export class PublicApiService extends BaseHttpApiService {
 	}
 
 	getPublicAssertionPdf(assertionId: string): Promise<Blob> {
-		const url = assertionId.startsWith('http') ? assertionId : `/assertions/${assertionId}/pdf`;
+		const url = assertionId.startsWith('http')
+			? assertionId
+			: `${this.configService.apiConfig.baseUrl}/v1/earner/badges/pdf/${assertionId}`;
 
 		return this.http
 			.get(url, {

@@ -7,7 +7,7 @@ import { ShadowDomComponent } from '../shadow-dom/shadow-dom.component';
 	selector: 'cms-content',
 	template: `
 		<div class="oeb">
-			<div class="tw-overflow-hidden tw-pt-24">
+			<div class="tw-overflow-hidden">
 				@if (headline() || image()) {
 					<div class="page-padding">
 						@if (headline()) {

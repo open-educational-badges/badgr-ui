@@ -2,6 +2,8 @@ import {
 	Component,
 	Input,
 	OnInit,
+	OnChanges,
+	SimpleChanges,
 	Output,
 	EventEmitter,
 	inject,
@@ -107,7 +109,7 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		OebFeatureTeaserComponent,
 	],
 })
-export class OebIssuerDetailComponent implements OnInit {
+export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	private router = inject(Router);
 	route = inject(ActivatedRoute);
 	translate = inject(TranslateService);
@@ -130,6 +132,8 @@ export class OebIssuerDetailComponent implements OnInit {
 	@Input() issuerPlaceholderSrc: string;
 	@Input() issuerActionsMenu: any;
 	@Input() badges: BadgeClass[] | PublicApiBadgeClass[];
+	@Input() badgesLoading: boolean = false;
+	badgeResultsReady: boolean = false;
 	@Input() pdfTemplates: ApiPDFTemplate[];
 	@Input() networks: PublicApiIssuer[];
 	@Input() partner_issuers: PublicApiIssuer[];
@@ -232,9 +236,8 @@ export class OebIssuerDetailComponent implements OnInit {
 				}, new Map<string, ApiQRCode[]>()),
 			);
 		}
-		const requestMap = await this.requestsLoaded;
 
-		const addBadgeToResults = async (badge: BadgeClass | PublicApiBadgeClass) => {
+		const addBadgeToResults = (badge: BadgeClass | PublicApiBadgeClass) => {
 			if (this.badgeResults.length > this.maxDisplayedResults) {
 				return false;
 			}
@@ -250,12 +253,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			}
 
 			this.badgeResults.push(
-				new BadgeResult(
-					badge,
-					this.issuer.name,
-					badge instanceof BadgeClass ? this.getRequestCount(badge, requestMap) : 0,
-					badge instanceof BadgeClass ? badge.recipientCount : 0,
-				),
+				new BadgeResult(badge, this.issuer.name, 0, badge instanceof BadgeClass ? badge.recipientCount : 0),
 			);
 
 			return true;
@@ -263,6 +261,14 @@ export class OebIssuerDetailComponent implements OnInit {
 
 		this.badges.filter(MatchingAlgorithm.badgeMatcher(this._searchQuery)).forEach(addBadgeToResults);
 		this.badgeResults.sort(this.sortBadgeResult);
+
+		if (this.sessionService.isLoggedIn) {
+			this.requestsLoaded.then((requestMap) => {
+				this.badgeResults.forEach((result) => {
+					result.requestCount = this.getRequestCount(result.badge as BadgeClass, requestMap);
+				});
+			});
+		}
 	}
 
 	private async updateNetworkResults() {
@@ -455,6 +461,18 @@ export class OebIssuerDetailComponent implements OnInit {
 		this.archivedLearningPaths = apiLearningPaths.filter((lp) => lp.archived);
 	}
 
+	ngOnChanges(changes: SimpleChanges) {
+		if (changes['badges'] && !changes['badges'].firstChange) {
+			this.badgeResultsReady = false;
+			this.updateResults().then(() => {
+				this.badgeResultsReady = true;
+				if (this.badgeTemplateTabs) {
+					this.badgeTemplateTabs[0].count = this.badgeResults.length;
+				}
+			});
+		}
+	}
+
 	async ngOnInit() {
 		if (this.isFullIssuer(this.issuer)) {
 			if (this.issuer.canUpdateDeleteIssuer) {
@@ -485,6 +503,7 @@ export class OebIssuerDetailComponent implements OnInit {
 			await this.getPublicLearningPaths(this.issuer.slug);
 		}
 		await this.updateResults();
+		this.badgeResultsReady = true;
 		// must run before updateNetworkResults to populate sharedBadgeSlugs
 		await this.updateSharedNetworkResults();
 		await this.updateNetworkResults();

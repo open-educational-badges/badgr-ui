@@ -1,0 +1,138 @@
+<div class="tw-relative tw-w-full">
+	<div class="oeb page-padding">
+		<div class="oeb-headline-container-sm">
+			<div class="oeb-breadcrumbs">
+				<bg-breadcrumbs [linkentries]="crumbs"></bg-breadcrumbs>
+			</div>
+		</div>
+
+		<!-- Step 1: QR Code -->
+		@if (step === 'qr') {
+			<div class="oeb-headline-container-sm">
+				<h1 hlmH1 class="tw-text-purple">{{ 'TwoFactor.setup.title' | translate }}</h1>
+				<p hlmP class="tw-font-normal">
+					{{ 'TwoFactor.setup.scanInstructions' | translate }}
+				</p>
+			</div>
+
+			<div class="oeb-max-form-width">
+				@if (isLoading) {
+					<div class="tw-flex tw-justify-center tw-py-8">
+						<p hlmP>{{ 'TwoFactor.setup.loading' | translate }}</p>
+					</div>
+				}
+
+				@if (qrCode && !isLoading) {
+					<div class="tw-flex tw-flex-col tw-items-center tw-gap-6">
+						<img
+							[src]="'data:image/png;base64,' + qrCode"
+							[attr.alt]="'TwoFactor.setup.qrAlt' | translate"
+							class="tw-w-48 tw-h-48 tw-border tw-border-grey-20 tw-rounded"
+						/>
+
+						<div class="tw-w-full">
+							<p hlmP size="sm" class="tw-text-grey-40 tw-mb-1">
+								{{ 'TwoFactor.setup.manualEntry' | translate }}
+							</p>
+							<code class="tw-block tw-bg-grey-5 tw-rounded tw-p-3 tw-text-sm tw-break-all tw-font-mono">
+								{{ secret }}
+							</code>
+						</div>
+
+						<div
+							class="tw-w-full tw-flex tw-justify-between tw-flex-wrap sm:tw-flex-nowrap tw-gap-2 tw-mt-4"
+						>
+							<oeb-button
+								variant="secondary"
+								type="button"
+								[routerLink]="['/profile/profile']"
+								[text]="'General.cancel' | translate"
+							></oeb-button>
+							<oeb-button
+								type="button"
+								width="max_content"
+								[text]="'General.forward' | translate"
+								(click)="step = 'confirm'"
+							></oeb-button>
+						</div>
+					</div>
+				}
+			</div>
+		}
+
+		<!-- Step 2: Enter verification code -->
+		@if (step === 'confirm') {
+			<div class="oeb-headline-container-sm">
+				<h1 hlmH1 class="tw-text-purple">{{ 'TwoFactor.setup.confirmTitle' | translate }}</h1>
+				<p hlmP class="tw-font-normal">
+					{{ 'TwoFactor.setup.confirmInstructions' | translate }}
+				</p>
+			</div>
+
+			<form class="oeb-max-form-width" [formGroup]="codeForm.rawControl" (ngSubmit)="submitCode()" novalidate>
+				<oeb-input
+					[control]="codeForm.rawControlMap.code"
+					[label]="'TwoFactor.setup.codeLabel' | translate"
+					[autofocus]="true"
+					[errorMessage]="'TwoFactor.setup.codeError' | translate"
+					inputmode="numeric"
+					maxlength="6"
+				></oeb-input>
+
+				<div class="tw-flex tw-justify-between tw-flex-wrap sm:tw-flex-nowrap tw-gap-2 tw-mt-8">
+					<oeb-button
+						variant="secondary"
+						type="button"
+						(click)="step = 'qr'"
+						[disabled-when-requesting]="true"
+						[text]="'General.back' | translate"
+					></oeb-button>
+					<oeb-button
+						type="submit"
+						width="max_content"
+						[disabled-when-requesting]="true"
+						[text]="'TwoFactor.login.confirm' | translate"
+					></oeb-button>
+				</div>
+			</form>
+		}
+
+		<!-- Step 3: Backup codes -->
+		@if (step === 'backup') {
+			<div class="oeb-headline-container-sm">
+				<h1 hlmH1 class="tw-text-purple">{{ 'TwoFactor.setup.backupTitle' | translate }}</h1>
+				<p hlmP class="tw-font-normal">
+					{{ 'TwoFactor.setup.backupInstructions' | translate }}
+					<strong>{{ 'TwoFactor.setup.backupWarning' | translate }}</strong>
+				</p>
+			</div>
+
+			<div class="oeb-max-form-width">
+				<div class="tw-bg-grey-5 tw-rounded tw-p-4 tw-mb-6">
+					@for (code of backupCodes; track code) {
+						<code class="tw-block tw-font-mono tw-text-sm tw-py-1 tw-tracking-widest">
+							{{ code }}
+						</code>
+					}
+				</div>
+
+				<div class="tw-flex tw-justify-between tw-flex-wrap sm:tw-flex-nowrap tw-gap-2">
+					<oeb-button
+						variant="secondary"
+						type="button"
+						(click)="copyBackupCodes()"
+						[text]="
+							(copiedToClipboard ? 'TwoFactor.setup.copied' : 'TwoFactor.setup.copyCodes') | translate
+						"
+					></oeb-button>
+					<oeb-button
+						type="button"
+						width="max_content"
+						(click)="finish()"
+						[text]="'TwoFactor.setup.done' | translate"
+					></oeb-button>
+				</div>
+			</div>
+		}
+	</div>
+</div>

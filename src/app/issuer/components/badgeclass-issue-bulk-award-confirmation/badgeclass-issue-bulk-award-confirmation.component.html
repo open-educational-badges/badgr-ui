@@ -3,9 +3,7 @@
 		<h1 hlmH1 class="tw-text-purple">{{ 'Issuer.importPreview' | translate }}</h1>
 	</div>
 	<p hlmP class="oeb-standard-padding-bottom">
-		<span
-			>{{ transformedImportData().validRowsTransformed.size }} {{ 'Issuer.rowsWereImported' | translate }}
-			{{ transformedImportData().duplicateRecords.length }} {{ 'Issuer.rowsAreDuplicates' | translate }}</span
+		<span>{{ transformedImportData().validRowsTransformed.size }} {{ 'Issuer.rowsWereImported' | translate }}</span
 		><br />
 		@if (!quotasCanIssue()) {
 			<span class="tw-text-red">
@@ -119,55 +117,6 @@
 		[courseUrlDefaultOpen]="badgeInstanceCourseUrl() !== null && badgeInstanceCourseUrl().length > 0"
 	/>
 
-	@if (
-		pdfTemplateManager.pdfEditorAvailable() && (!issuer()?.quotas || issuer()?.quotas?.quotas['PDFEDITOR'].quota)
-	) {
-		<section
-			class="tw-mt-6 tw-border tw-border-purple tw-border-solid tw-bg-white tw-rounded-[10px] tw-flex tw-flex-col tw-items-start tw-gap-4 tw-p-6"
-		>
-			<span
-				class="tw-mb-2 tw-text-oebblack tw-text-lg tw-uppercase tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]"
-			>
-				<span class="tw-font-normal tw-italic">Optional:</span>
-				{{ 'PDFTemplate.ownPDFBackground' | translate }}
-			</span>
-
-			<span class="tw-text-purple tw-italic tw-leading-[18.2px]">
-				{{ 'PDFTemplate.noTemplateDefaultDesign' | translate }}
-			</span>
-
-			<div class="tw-flex tw-flex-wrap tw-gap-6 tw-items-end tw-w-full">
-				<oeb-select
-					class="tw-block tw-flex-grow tw-max-w-[300px]"
-					[options]="selectPDFTemplateOptions"
-					[control]="optionalDetailsForm.rawControlMap.pdftemplate"
-					[noTopMargin]="true"
-				></oeb-select>
-
-				@if (issuer().currentUserStaffMember.canEditBadge) {
-					<oeb-button
-						[id]="'create-new-pdftemplate-btn'"
-						[class.disabled]="!issuer().canCreateBadge"
-						class="tw-whitespace-nowrap tw-flex-grow tw-max-w-[300px]"
-						[routerLink]="['/issuer/issuers', issuer().slug]"
-						fragment="pdf-templates"
-						[disabled]="!issuer().currentUserStaffMember"
-						[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
-						width="full_width"
-						size="sm"
-						variant="secondary"
-						weight="normal"
-						icon="lucidePlus"
-						iconSize="sm"
-						[iconLeft]="true"
-						[umamiEvent]="'create-pdftemplate'"
-					>
-					</oeb-button>
-				}
-			</div>
-		</section>
-	}
-
 	<div class="oeb-standard-padding-bottom tw-flex tw-flex-col tw-text-end tw-gap-6 tw-mt-6">
 		@if (invalidEmailCount === 1) {
 			<span class="tw-text-red tw-text-lg">
@@ -192,6 +141,7 @@
 		></oeb-button>
 
 		<oeb-button
+			[id]="'bulk-confirm-btn'"
 			[class.button-is-disabled]="buttonDisabledClass"
 			[disabled]="buttonDisabledAttribute || hasInvalidEmails || !quotasCanIssue()"
 			(click)="!hasInvalidEmails && quotasCanIssue() && dataConfirmed()"

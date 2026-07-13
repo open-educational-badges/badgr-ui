@@ -40,6 +40,7 @@ export interface ApiBadgeClassForCreation {
 	expiration?: number; // in days
 	copy_permissions?: BadgeClassCopyPermissions[];
 	criteria?: Array<{ name: string; description: string }>;
+	pdf_template?: string | null;
 }
 
 export interface ApiBadgeClassAlignment {

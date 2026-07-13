@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
-import { FormBuilder, Validators, FormsModule } from '@angular/forms';
+import { AfterViewInit, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EmailValidator } from '../../../common/validators/email.validator';
 import { UserCredential } from '../../../common/model/user-credential.type';
-import { SessionService } from '../../../common/services/session.service';
+import { SessionService, TwoFactorRequiredError } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
 import { DomSanitizer, Title } from '@angular/platform-browser';
@@ -18,6 +19,8 @@ import { BadgrApiFailure } from '../../../common/services/api-failure';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { UserProfileApiService } from '../../../common/services/user-profile-api.service';
+import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
+import { MfaReminderDialogComponent } from '../../../common/dialogs/oeb-dialogs/mfa-reminder-dialog.component';
 import { OebInputComponent } from '../../../components/input.component';
 import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
@@ -40,6 +43,7 @@ type RedirectHttpResponse = HttpResponse<RedirectResponse>;
 		HlmP,
 		RouterLink,
 		FormsModule,
+		ReactiveFormsModule,
 		OebInputComponent,
 		OebCheckboxComponent,
 		OebButtonComponent,
@@ -49,7 +53,7 @@ type RedirectHttpResponse = HttpResponse<RedirectResponse>;
 	],
 })
 export class LoginComponent extends BaseRoutableComponent implements OnInit, AfterViewInit {
-	private fb = inject(FormBuilder);
+	private destroyRef = inject(DestroyRef);
 	private title = inject(Title);
 	sessionService = inject(SessionService);
 	private messageService = inject(MessageService);
@@ -58,6 +62,7 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 	oAuthManager = inject(OAuthManager);
 	private profileManager = inject(UserProfileManager);
 	private userProfileApiService = inject(UserProfileApiService);
+	private dialogService = inject(HlmDialogService);
 	private sanitizer = inject(DomSanitizer);
 	private http = inject(HttpClient);
 	private translate = inject(TranslateService);
@@ -75,6 +80,19 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 
 	verifiedName: string;
 	verifiedEmail: string;
+
+	showTwoFactor = false;
+	partialToken = '';
+	twoFactorForm = typedFormGroup().addControl('code', '', [Validators.required, Validators.minLength(6)]);
+	useBackupCode = false;
+
+	toggleBackupCode() {
+		this.useBackupCode = !this.useBackupCode;
+		const control = this.twoFactorForm.rawControlMap.code;
+		control.setValue('');
+		control.setValidators([Validators.required, Validators.minLength(this.useBackupCode ? 8 : 6)]);
+		control.updateValueAndValidity();
+	}
 
 	@ViewChild('passwordField')
 	passwordField: FormFieldText;
@@ -116,6 +134,23 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 		}
 	}
 
+	private navigateAfterLogin() {
+		if (this.oAuthManager.isAuthorizationInProgress) {
+			this.router.navigate(['/auth/oauth2/authorize']);
+		} else {
+			this.userProfileApiService
+				.getRedirectUrl()
+				.then((response: RedirectHttpResponse) => {
+					if (response.body.success && response.body.redirectPath) {
+						this.router.navigateByUrl(response.body.redirectPath);
+					} else {
+						this.router.navigate([localStorage.signup ? 'auth/welcome' : 'issuer']);
+					}
+				})
+				.catch(() => this.router.navigate(['/public/start']));
+		}
+	}
+
 	afterLogin() {
 		this.profileManager.reloadUserProfileSet().then(() => {
 			this.profileManager.userProfilePromise.then((profile) => {
@@ -123,31 +158,23 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 					// fetch user profile and emails to check if they are verified
 					profile.emails.updateList().then(() => {
 						if (profile.isVerified) {
-							if (this.oAuthManager.isAuthorizationInProgress) {
-								this.router.navigate(['/auth/oauth2/authorize']);
+							if (!profile.totpEnabled && !profile.mfaReminderDismissed) {
+								const dialogRef = this.dialogService.open(MfaReminderDialogComponent, {
+									closeOnBackdropClick: false,
+									closeOnOutsidePointerEvents: false,
+									contentClass: 'tw-max-w-[600px] tw-border-4 tw-min-h-[614px]',
+									context: {
+										onNeverRemind: () => {
+											profile.mfaReminderDismissed = true;
+											profile.save();
+										},
+									},
+								});
+								dialogRef.closed$
+									.pipe(takeUntilDestroyed(this.destroyRef))
+									.subscribe(() => this.navigateAfterLogin());
 							} else {
-								this.userProfileApiService
-									.getRedirectUrl()
-									.then((response: RedirectHttpResponse) => {
-										if (response.body.success && response.body.redirectPath) {
-											this.router.navigateByUrl(response.body.redirectPath);
-										} else {
-											this.router.navigate([localStorage.signup ? 'auth/welcome' : 'issuer']);
-										}
-									})
-									.catch(() => this.router.navigate(['/public/start']));
-
-								// this.http.post<{success: boolean, redirectPath: string}>(`${this.baseUrl}/v1/user/get-redirect-path`, {}, {withCredentials: true})
-								// .subscribe({
-								//   next: (response) => {
-								// 	if (response.success && response.redirectPath) {
-								// 	  this.router.navigateByUrl(response.redirectPath);
-								// 	} else {
-								// 	  this.router.navigate([localStorage.signup ? 'auth/welcome' : 'issuer',]);
-								// 	}
-								//   },
-								//   error: () => this.router.navigate(['/public/start'])
-								// });
+								this.navigateAfterLogin();
 							}
 						} else {
 							this.router.navigate([
@@ -218,12 +245,32 @@ export class LoginComponent extends BaseRoutableComponent implements OnInit, Aft
 			.login(credential)
 			.then(
 				() => this.afterLogin(),
-				(response: HttpErrorResponse) =>
-					this.messageService.reportHandledError(
-						BadgrApiFailure.messageIfThrottableError(response.error) ||
-							this.translate.instant('Login.failLogin'),
-						response,
-					),
+				(error: unknown) => {
+					if (error instanceof TwoFactorRequiredError) {
+						this.partialToken = error.partialToken;
+						this.showTwoFactor = true;
+					} else {
+						const response = error as HttpErrorResponse;
+						this.messageService.reportHandledError(
+							BadgrApiFailure.messageIfThrottableError(response?.error) ||
+								this.translate.instant('Login.failLogin'),
+							response,
+						);
+					}
+				},
+			)
+			.then(() => (this.loginFinished = null));
+	}
+
+	submitTwoFactor() {
+		if (!this.twoFactorForm.markTreeDirtyAndValidate()) {
+			return;
+		}
+		this.loginFinished = this.sessionService
+			.verify2FA(this.partialToken, this.twoFactorForm.value.code)
+			.then(
+				() => this.afterLogin(),
+				() => this.messageService.reportHandledError(this.translate.instant('Login.invalidTwoFactorCode')),
 			)
 			.then(() => (this.loginFinished = null));
 	}

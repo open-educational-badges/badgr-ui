@@ -19,7 +19,7 @@
 				}
 				@for (qrGroup of networkQrCodeApiAwards; track qrGroup.issuer.slug) {
 					<div class="tw-mt-8 tw-mb-2 tw-flex tw-gap-2 tw-items-center">
-						<img class="tw-w-11" [src]="qrGroup.issuer.image" alt="Issuer Logo" />
+						<img class="tw-w-11 tw-h-11 tw-aspect-square" [src]="qrGroup.issuer.image" alt="Issuer Logo" />
 						<span class="tw-text-oebblack tw-text-lg tw-font-semibold tw-uppercase">{{
 							qrGroup.issuer.name
 						}}</span>
@@ -54,7 +54,11 @@
 							@if (!partner.has_access && partner.instance_count > 0) {
 								<div class="tw-mb-4">
 									<div class="tw-mt-8 tw-mb-2 tw-flex tw-gap-2 tw-items-center">
-										<img class="tw-w-11" [src]="partner.issuer.image" alt="Partner Logo" />
+										<img
+											class="tw-w-11 tw-h-11 tw-aspect-square"
+											[src]="partner.issuer.image"
+											alt="Partner Logo"
+										/>
 										<span class="tw-text-oebblack tw-font-bold tw-text-lg tw-uppercase">{{
 											partner.issuer.name
 										}}</span>
@@ -68,7 +72,11 @@
 							} @else if (partner.instances.length) {
 								<div>
 									<div class="tw-mt-8 tw-flex tw-gap-2 tw-items-center">
-										<img class="tw-w-11" [src]="partner.issuer.image" alt="Partner Logo" />
+										<img
+											class="tw-w-11 tw-h-11 tw-aspect-square"
+											[src]="partner.issuer.image"
+											alt="Partner Logo"
+										/>
 										<span class="tw-text-oebblack tw-font-bold tw-text-lg tw-uppercase">{{
 											partner.issuer.name
 										}}</span>

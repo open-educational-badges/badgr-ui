@@ -1,13 +1,14 @@
 <form-message></form-message>
 <div class="oeb tw-relative tw-w-full">
 	<div class="page-padding">
-		<ng-template [bgAwaitPromises]="[issuerLoaded, badgesLoaded]">
+		<ng-template [bgAwaitPromises]="[issuerLoaded]">
 			<div class="tw-mb-8 tw-pb-6 tw-border-b tw-border-solid tw-border-[var(--color-light4)]">
 				<bg-breadcrumbs [linkentries]="crumbs"> </bg-breadcrumbs>
 			</div>
 			<oeb-issuer-detail
 				(issuerDeleted)="delete($event)"
-				[badges]="badges"
+				[badges]="badges || []"
+				[badgesLoading]="badgesLoading"
 				[issuer]="issuer"
 				[issuerPlaceholderSrc]="issuerImagePlaceHolderUrl"
 				[crumbs]="crumbs"
