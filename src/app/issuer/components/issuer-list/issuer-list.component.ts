@@ -38,7 +38,6 @@ import { FormMessageComponent } from '../../../common/components/form-message.co
 import { NgTemplateOutlet, NgClass, NgStyle } from '@angular/common';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { NgIcon } from '@ng-icons/core';
-import { BgImageStatusPlaceholderDirective } from '../../../common/directives/bg-image-status-placeholder.directive';
 import { OebTabsComponent } from '../../../components/oeb-tabs.component';
 import { environment } from 'src/environments/environment';
 import { NetworkListComponent } from '../network-list/network-list.component';
@@ -65,7 +64,6 @@ import { NavigationType, OebIssuerNetworkCard } from '../issuer-network-card/iss
 		NgTemplateOutlet,
 		NgIcon,
 		HlmIcon,
-		BgImageStatusPlaceholderDirective,
 		NgClass,
 		FormsModule,
 		NgStyle,

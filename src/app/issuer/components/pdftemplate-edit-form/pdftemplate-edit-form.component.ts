@@ -26,18 +26,14 @@ import { Issuer } from '../../models/issuer.model';
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
 import { OebInputComponent } from '../../../components/input.component';
-import { OebSelectComponent } from '../../../components/select.component';
-import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { FormFieldSelectOption } from '../../../common/components/formfield-select';
 import { FormFieldRadio } from '../../../common/components/formfield-radio';
 import { FormFieldIconRadio } from '../../../common/components/formfield-icon-radio';
-import { HlmH2, HlmH3, HlmP } from '@spartan-ng/helm/typography';
-import { UpperCasePipe } from '@angular/common';
+import { HlmH3, HlmP } from '@spartan-ng/helm/typography';
 import { NgIcon } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { StepperComponent } from '../../../components/stepper/stepper.component';
-import { StepComponent } from '../../../components/stepper/step.component';
 import { CdkStep } from '@angular/cdk/stepper';
 import { BgFormFieldImageComponent } from '~/common/components/formfield-image';
 import { preloadImageURL, base64ByteSize } from '~/common/util/file-util';
@@ -52,22 +48,17 @@ import { debounce, interval } from 'rxjs';
 		FormMessageComponent,
 		FormsModule,
 		ReactiveFormsModule,
-		HlmH2,
 		HlmH3,
 		HlmP,
 		OebInputComponent,
-		OebSelectComponent,
-		OebCheckboxComponent,
 		OebButtonComponent,
 		FormFieldRadio,
 		FormFieldIconRadio,
 		TranslatePipe,
 		TranslateModule,
-		UpperCasePipe,
 		NgIcon,
 		HlmIcon,
 		StepperComponent,
-		StepComponent,
 		CdkStep,
 		BgFormFieldImageComponent,
 	],

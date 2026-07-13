@@ -28,8 +28,10 @@ import { VersionComponent } from '~/public/components/version.component';
 	styleUrls: ['./shadow-dom.component.scss'],
 	encapsulation: ViewEncapsulation.ShadowDom,
 	standalone: true,
-	// FIXME: AiAssistantComponent, TimestampComponent used in CMS HTML, ignore Angular warning?
-	imports: [DynamicHooksComponent, LoadingDotsComponent, AiAssistantComponent, VersionComponent],
+	// AiAssistantComponent and VersionComponent are rendered in CMS HTML via the
+	// `dynamicComponents` parser config below, not the static template, so they are
+	// intentionally not listed in `imports`.
+	imports: [DynamicHooksComponent, LoadingDotsComponent],
 })
 export class ShadowDomComponent implements OnChanges {
 	private router = inject(Router);

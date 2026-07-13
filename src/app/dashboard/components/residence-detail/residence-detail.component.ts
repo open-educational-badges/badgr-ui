@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import { provideIcons } from '@ng-icons/core';
 import { lucideClockFading } from '@ng-icons/lucide';
 import { Subject, forkJoin } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
@@ -60,7 +60,7 @@ export interface ResidenceDetailData {
 @Component({
 	selector: 'app-residence-detail',
 	standalone: true,
-	imports: [CommonModule, TranslateModule, NgIcon, RecipientSkillVisualisationComponent, HorizontalBarChartComponent],
+	imports: [CommonModule, TranslateModule, RecipientSkillVisualisationComponent, HorizontalBarChartComponent],
 	providers: [provideIcons({ lucideClockFading })],
 	templateUrl: './residence-detail.component.html',
 	styleUrls: ['./residence-detail.component.scss'],
