@@ -13,6 +13,41 @@
 				{{ 'CreateBadge.optionalBadgeDetails' | translate }}
 			</h2>
 			<form [formGroup]="badgeClassForm.rawControl" #formElem (ngSubmit)="onSubmit()" novalidate>
+				@if (
+					pdfTemplateManager.pdfEditorAvailable() &&
+					!issuer?.is_network &&
+					(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+				) {
+					<section class="section tw-text-oebblack tw-mt-6">
+						<h2 hlmH2 class="!tw-text-oebblack tw-pb-4">
+							{{ 'PDFTemplate.backgroundLabel' | translate }}
+						</h2>
+						<div class="tw-mt-4 tw-mb-4 tw-flex tw-flex-wrap tw-gap-6 tw-items-end">
+							<oeb-select
+								class="tw-block tw-flex-grow"
+								[options]="selectPDFTemplateOptions"
+								[control]="badgeClassForm.rawControlMap.pdf_template"
+								[noTopMargin]="true"
+								label="{{ 'PDFTemplate.backgroundLabel' | translate }}"
+							></oeb-select>
+							@if (issuer?.currentUserStaffMember?.canEditBadge) {
+								<oeb-button
+									class="tw-whitespace-nowrap tw-flex-grow"
+									[routerLink]="['/issuer/issuers', issuerSlug]"
+									fragment="pdf-templates"
+									[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
+									width="full_width"
+									size="sm"
+									variant="secondary"
+									weight="normal"
+									icon="lucidePlus"
+									iconSize="sm"
+									[iconLeft]="true"
+								></oeb-button>
+							}
+						</div>
+					</section>
+				}
 				<section class="section tw-text-oebblack tw-text-lg tw-pb-6">
 					<h2 hlmH2 class="!tw-text-oebblack tw-mb-4">{{ 'Badge.copyBadgeHeadline' | translate }}</h2>
 					<p class="tw-italic tw-mb-4" [innerHTML]="'Badge.copyBadgeDescription1' | translate"></p>
@@ -58,7 +93,7 @@
 							[id]="'duration-type'"
 							ariaLabel="chooseDuration"
 							[control]="badgeClassForm.rawControlMap.expiration_unit"
-							[optionMap]="durationOptions"
+							[optionMap]="durationOptions || {}"
 						></oeb-select>
 					</div>
 					<p class="tw-italic tw-text-purple" [innerHTML]="'CreateBadge.expirationInfo' | translate"></p>

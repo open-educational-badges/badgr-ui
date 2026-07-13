@@ -21,12 +21,19 @@
 			</div>
 		</div>
 		<bg-popup-menu #editMenu class="menu" id="menu2">
+			<div (click)="manage2FA()" class="menuitem">
+				<ng-icon hlm name="lucideLockKeyhole"></ng-icon>
+				{{
+					(profile?.totpEnabled ? 'TwoFactor.profile.menuItemDisable' : 'TwoFactor.profile.menuItem')
+						| translate
+				}}
+			</div>
 			<div [routerLink]="['/profile/edit']" class="menuitem">
-				<svg icon="icon_edit"></svg>
+				<ng-icon hlm name="lucidePencil"></ng-icon>
 				{{ 'Profile.edit' | translate }}
 			</div>
 			<div (click)="delete()" class="menuitem">
-				<svg icon="icon_remove"></svg>
+				<ng-icon hlm name="lucideTrash2"></ng-icon>
 				{{ 'Profile.delete' | translate }}
 			</div>
 		</bg-popup-menu>

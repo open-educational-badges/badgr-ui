@@ -14,7 +14,7 @@ import {
 	computed,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -39,18 +39,27 @@ import { FormsModule } from '@angular/forms';
 import { isValidEmail } from '~/common/util/is-valid-email';
 import { DateValidator } from '~/common/validators/date.validator';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
+import { IssuerManager } from '../../services/issuer-manager.service';
+import { Issuer } from '../../models/issuer.model';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { UrlValidator } from '~/common/validators/url.validator';
 import { BadgeClass } from '~/issuer/models/badgeclass.model';
-import { Issuer } from '~/issuer/models/issuer.model';
-import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { Network } from '~/issuer/network.model';
 
 @Component({
 	selector: 'badgeclass-issue-bulk-award-confirmation',
 	templateUrl: './badgeclass-issue-bulk-award-confirmation.component.html',
-	imports: [HlmH1, HlmP, OebButtonComponent, TranslatePipe, NgClass, FormsModule, OptionalDetailsComponent],
+	imports: [
+		HlmH1,
+		HlmP,
+		OebButtonComponent,
+		TranslatePipe,
+		NgClass,
+		FormsModule,
+		OptionalDetailsComponent,
+		RouterLink,
+	],
 })
 export class BadgeclassIssueBulkAwardConformation
 	extends BaseAuthenticatedRoutableComponent

@@ -559,8 +559,14 @@ export function issuerImageLoader(file: File | string): Promise<string> {
 	}
 }
 
+// file can either be file or url to a file
+export function pdftemplateImageLoader(file: File | string): Promise<string> {
+	return basicImageLoader(file);
+}
+
 export const namedImageLoaders = {
 	badge: badgeImageLoader,
 	issuer: issuerImageLoader,
 	basic: basicImageLoader,
+	pdftemplate: pdftemplateImageLoader,
 };

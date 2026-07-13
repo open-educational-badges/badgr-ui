@@ -16,6 +16,7 @@ export interface ApiLearningPathForCreation {
 	badges: Array<{ badge: any; order: number }>;
 	required_badges_count: number;
 	activated: boolean;
+	pdftemplate?: string;
 }
 
 export interface ApiLearningPath extends Omit<ApiLearningPathForCreation, 'badges'> {

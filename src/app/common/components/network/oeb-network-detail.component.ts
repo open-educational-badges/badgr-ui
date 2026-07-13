@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MessageService } from '../../../common/services/message.service';
 import { Title } from '@angular/platform-browser';
@@ -46,7 +46,7 @@ import { QuotaInformationComponent } from '~/issuer/components/quota-information
 		QuotaInformationComponent,
 	],
 })
-export class OebNetworkDetailComponent {
+export class OebNetworkDetailComponent implements OnInit {
 	translate = inject(TranslateService);
 	protected messageService = inject(MessageService);
 	protected title = inject(Title);

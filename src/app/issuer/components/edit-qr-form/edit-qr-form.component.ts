@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, inject, OnDestroy, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { LinkEntry } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { BadgeClassManager } from '../../services/badgeclass-manager.service';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { SessionService } from '../../../common/services/session.service';
@@ -40,6 +41,7 @@ import { UrlValidator } from '~/common/validators/url.validator';
 		OebButtonComponent,
 		TranslatePipe,
 		OptionalDetailsComponent,
+		RouterLink,
 	],
 })
 export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent implements OnInit, OnDestroy {
@@ -48,6 +50,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 	protected badgeClassManager = inject(BadgeClassManager);
 	protected issuerManager = inject(IssuerManager);
 	protected _location = inject(Location);
+	protected authService: SessionService;
 
 	static datePipe = new DatePipe('de');
 
@@ -126,8 +129,10 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 
 		super(router, route, sessionService);
 
+		this.authService = sessionService;
+
 		if (this.isNetworkBadge) {
-			this.badgeClassLoaded = this.badgeClassManager
+			this.issuerLoaded = this.badgeClassLoaded = this.badgeClassManager
 				.badgeByIssuerSlugAndSlug(this.issuerSlug, this.badgeSlug)
 				.then((badgeClass) => {
 					this.badgeClass = badgeClass;
@@ -221,11 +226,13 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		});
 	}
 
-	ngOnInit() {
+	async ngOnInit() {
 		this.subscriptions.push(...setupActivityOnlineSync(this.qrForm));
 		if (this.qrForm.controls.evidence_items.length === 0) {
 			this.qrForm.controls.evidence_items.addFromTemplate();
 		}
+
+		await this.issuerLoaded;
 	}
 
 	ngOnDestroy() {

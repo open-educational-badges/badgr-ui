@@ -1,82 +1,96 @@
 <ng-container>
 	@if (!loading()) {
-		@if (networks().length === 0) {
-			@if (!canList()) {
+		@switch (scenario()) {
+			@case (1) {
 				<p
 					class="tw-pb-4 tw-mt-10 tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]"
 				>
 					{{ 'Network.noIssuer' | translate }}
 				</p>
-			} @else {
-				<p
-					class="tw-pb-4 tw-mt-10 tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]"
-				>
-					<span class="tw-font-bold tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
-					<span class="tw-mt-1 tw-mb-2" [innerHTML]="'Network.networkDashboard' | translate"></span>
-					<span class="tw-pb-4" [innerHTML]="'Network.networkLogoOnBadge' | translate"></span>
-					@if (!canCreate()) {
-						<span class="tw-italic tw-text-purple" [innerHTML]="'Network.upgradeToUse' | translate"></span>
-					} @else {
-						<span
-							class="tw-italic tw-text-purple"
-							[innerHTML]="'Network.youCanAddInstitutions' | translate"
-						></span>
-					}
-				</p>
-				@if (!canCreate()) {
-					@if (issuerOwnerOrEditor()) {
-						<oeb-button
-							(click)="showUpgradeDialog()"
-							[disabled-when-requesting]="true"
-							[text]="'Quotas.requestUpgrade' | translate"
-						></oeb-button>
-					}
-				} @else {
+			}
+			@case (2) {
+				<div class="tw-pb-4 tw-mt-10 lg:tw-flex lg:tw-gap-8 lg:tw-items-center tw-max-w-[800px]">
+					<div class="tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]">
+						<span class="tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
+						<span class="tw-mt-1 tw-mb-2" [innerHTML]="'Network.networkDashboard' | translate"></span>
+						<span class="tw-pb-4" [innerHTML]="'Network.networkLogoOnBadge' | translate"></span>
+						<img
+							class="lg:tw-hidden tw-self-center tw-my-4 tw-w-[200px]"
+							src="assets/oeb/images/network/badge-network.svg"
+							alt=""
+						/>
+						<span class="tw-pb-4" [innerHTML]="'Network.canBeInvitedToExisting' | translate"></span>
+						<span class="tw-text-purple" [innerHTML]="'Network.upgradeToUse' | translate"></span>
+					</div>
+					<img
+						class="tw-hidden lg:tw-block lg:tw-w-[260px] lg:tw-flex-shrink-0"
+						src="assets/oeb/images/network/badge-network.svg"
+						alt=""
+					/>
+				</div>
+				@if (issuerOwnerOrEditor()) {
 					<oeb-button
-						[routerLink]="['/issuer/networks/create']"
+						(click)="showUpgradeDialog()"
 						[disabled-when-requesting]="true"
-						[text]="'Network.create' | translate"
+						[text]="'Network.requestUpgrade' | translate"
 					></oeb-button>
 				}
 			}
-		} @else {
-			<span class="tw-mt-8 tw-flex tw-text-oebblack tw-text-lg">{{
-				'Issuer.yourIssuersAreInNetworks' | translate
-			}}</span>
-			<div class="md:tw-flex tw-mt-4">
-				<div
-					class="tw-grid tw-grid-cols-myIssuersMobile sm:tw-grid-cols-myIssuers tw-gap-6 tw-w-full tw-relative"
-				>
-					@for (network of networks(); track network) {
-						<oeb-issuer-network-card
-							[issuerOrNetwork]="network"
-							(navigate)="handleNavigate($event, network)"
-						/>
-					}
-				</div>
-			</div>
-
-			@if (!canCreate()) {
+			@case (3) {
+				<span class="tw-mt-8 tw-flex tw-text-oebblack tw-text-lg">{{
+					'Issuer.yourIssuersAreInNetworks' | translate
+				}}</span>
+				<ng-container *ngTemplateOutlet="networkCardGrid"></ng-container>
 				<div class="tw-mt-16 tw-text-[18px]/[1.3em] tw-max-w-[535px]">
-					<p class="tw-mb-6 tw-text-purple tw-font-bold">
-						Upgrade auf unser NETZWERK-Paket, um selbst ein Netzwerk zu erstellen.
-					</p>
-					<oeb-button
-						variant="secondary"
-						(click)="showUpgradeDialog()"
-						[disabled-when-requesting]="true"
-						[text]="'Quotas.requestUpgrade' | translate"
-					></oeb-button>
+					<p class="tw-mb-6 tw-text-purple" [innerHTML]="'Network.upgradeToUseNew' | translate"></p>
+					@if (issuerOwnerOrEditor()) {
+						<oeb-button
+							variant="secondary"
+							(click)="showUpgradeDialog()"
+							[disabled-when-requesting]="true"
+							[text]="'Network.requestUpgrade' | translate"
+						></oeb-button>
+					}
 					<p class="tw-mt-6">
 						<a
 							class="tw-text-right tw-text-link tw-underline tw-mt-6"
 							[href]="this.translate.currentLang === 'de' ? '/page/produkte' : '/page/pricing'"
-							tgarget="_blank"
+							target="_blank"
 							>{{ 'Quotas.FeatureListPlanComparison' | translate }}</a
 						>
 					</p>
 				</div>
 			}
+			@case (4) {
+				<div
+					class="tw-pb-4 tw-mt-10 tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]"
+				>
+					<span class="tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
+					<span class="tw-pb-4" [innerHTML]="'Network.canBeInvitedToExisting' | translate"></span>
+					<span class="tw-text-purple" [innerHTML]="'Network.youCanAddInstitutions' | translate"></span>
+				</div>
+				<oeb-button
+					[routerLink]="['/issuer/networks/create']"
+					[disabled-when-requesting]="true"
+					[text]="'Network.create' | translate"
+				></oeb-button>
+			}
+			@case (5) {
+				<span class="tw-mt-8 tw-flex tw-text-oebblack tw-text-lg">{{
+					'Issuer.yourIssuersAreInNetworks' | translate
+				}}</span>
+				<ng-container *ngTemplateOutlet="networkCardGrid"></ng-container>
+			}
 		}
 	}
+
+	<ng-template #networkCardGrid>
+		<div class="md:tw-flex tw-mt-4">
+			<div class="tw-grid tw-grid-cols-myIssuersMobile sm:tw-grid-cols-myIssuers tw-gap-6 tw-w-full tw-relative">
+				@for (network of networks(); track network) {
+					<oeb-issuer-network-card [issuerOrNetwork]="network" (navigate)="handleNavigate($event, network)" />
+				}
+			</div>
+		</div>
+	</ng-template>
 </ng-container>

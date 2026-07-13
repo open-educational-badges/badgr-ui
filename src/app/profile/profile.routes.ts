@@ -41,6 +41,11 @@ export const routes: Routes = [
 			import('./components/change-password/change-password.component').then((m) => m.ChangePasswordComponent),
 	},
 	{
+		path: '2fa',
+		loadComponent: () =>
+			import('./components/two-factor-setup/two-factor-setup.component').then((m) => m.TwoFactorSetupComponent),
+	},
+	{
 		path: '**',
 		loadComponent: () => import('./components/profile/profile.component').then((m) => m.ProfileComponent),
 	},

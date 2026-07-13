@@ -43,7 +43,7 @@ import { HlmIcon } from '@spartan-ng/helm/icon';
 		</button>
 
 		<ng-template #menu>
-			<hlm-menu class="tw-border-[var(--color-purple)] tw-border-2">
+			<hlm-menu class="!tw-border !tw-border-solid !tw-border-[var(--color-purple)] !tw-shadow-none">
 				@if (label) {
 					<hlm-menu-label>{{ label }}</hlm-menu-label>
 				}

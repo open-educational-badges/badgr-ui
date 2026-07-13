@@ -1,0 +1,201 @@
+{
+	"uri": "bne-skills",
+	"label": {
+		"de": "Bildung für nachhaltige Entwicklung",
+		"en": "Education for Sustainable Development"
+	},
+	"skills": {
+		"weltoffen": {
+			"concept_uri": "weltoffen",
+			"de": {
+				"preferred_label": "Weltoffen und neue Perspektiven integrierend Wissen aufbauen",
+				"description": "Die Schüler:innen benennen die Ansätze und Konzepte zur nachhaltigen Entwicklung von Entscheidungsträgern in der staatlichen Politik wie der Zivilgesellschaft, stellen aufgrund von Perspektivübernahme unterschiedliche Sichtweisen und Wissensformen über globale und lokale (nicht) nachhaltige Entwicklungen dar und beschreiben Vielfalt und Verschiedenheit (Diversität) im kulturellen und ökologischen Bereich."
+			},
+			"en": {
+				"preferred_label": "Building knowledge with openness and integration of new perspectives",
+				"description": "Learners can identify approaches to sustainable development, take different perspectives on global and local developments, and describe cultural and ecological diversity."
+			}
+		},
+		"vorausschauend": {
+			"concept_uri": "vorausschauend",
+			"de": {
+				"preferred_label": "Vorausschauend denken und handeln",
+				"description": "Die Fähigkeit, zukünftige Entwicklungen und deren Folgen antizipierend zu analysieren und zu beurteilen sowie vorausschauend und gestaltend zu handeln."
+			},
+			"en": {
+				"preferred_label": "Anticipatory thinking and acting / Analysing and assessing developments",
+				"description": "The ability to anticipatorily analyse and assess future developments and their consequences, and to act in a forward-looking and formative manner."
+			}
+		},
+		"interdisziplinaer": {
+			"concept_uri": "interdisziplinaer",
+			"de": {
+				"preferred_label": "Interdisziplinär Erkenntnisse gewinnen",
+				"description": "Die Fähigkeit, Erkenntnisse aus verschiedenen Disziplinen zu gewinnen, zusammenzuführen und ganzheitlich zu denken."
+			},
+			"en": {
+				"preferred_label": "Gaining knowledge interdisciplinarily",
+				"description": "The ability to gather insights from different disciplines, to synthesise them, and to think holistically."
+			}
+		},
+		"risikokompetenz": {
+			"concept_uri": "risikokompetenz",
+			"de": {
+				"preferred_label": "Risiken, Gefahren und Unsicherheiten erkennen und abwägen können",
+				"description": "Die Fähigkeit, Risiken, Gefahren und Unsicherheiten in Bezug auf nachhaltige Entwicklung zu erkennen, zu analysieren und abzuwägen."
+			},
+			"en": {
+				"preferred_label": "Identifying and weighing risks, hazards and uncertainties",
+				"description": "The ability to identify, analyse and weigh up risks, hazards and uncertainties in the context of sustainable development."
+			}
+		},
+		"gemeinsam-handeln": {
+			"concept_uri": "gemeinsam-handeln",
+			"de": {
+				"preferred_label": "Gemeinsam mit anderen planen und handeln können",
+				"description": "Die Fähigkeit, gemeinsam mit anderen zu planen, Verantwortung zu übernehmen und solidarisch zu handeln."
+			},
+			"en": {
+				"preferred_label": "Planning and acting together with others",
+				"description": "The ability to plan together with others, take on responsibility and act in solidarity."
+			}
+		},
+		"partizipation": {
+			"concept_uri": "partizipation",
+			"de": {
+				"preferred_label": "An Entscheidungsprozessen partizipieren können",
+				"description": "Die Fähigkeit, an gesellschaftlichen und demokratischen Entscheidungsprozessen aktiv und konstruktiv teilzunehmen."
+			},
+			"en": {
+				"preferred_label": "Participating in decision-making processes",
+				"description": "The ability to actively and constructively participate in societal and democratic decision-making processes."
+			}
+		},
+		"motivationskompetenz": {
+			"concept_uri": "motivationskompetenz",
+			"de": {
+				"preferred_label": "Sich und andere motivieren können, aktiv zu werden",
+				"description": "Die Fähigkeit, sich selbst und andere zu motivieren, aktiv für eine nachhaltige Entwicklung einzutreten."
+			},
+			"en": {
+				"preferred_label": "Motivating oneself and others to take action",
+				"description": "The ability to motivate oneself and others to actively engage for sustainable development."
+			}
+		},
+		"zielkonflikte": {
+			"concept_uri": "zielkonflikte",
+			"de": {
+				"preferred_label": "Zielkonflikte bei der Reflexion über Handlungsstrategien berücksichtigen können",
+				"description": "Die Fähigkeit, Zielkonflikte zu erkennen, zu reflektieren und bei der Entwicklung von Handlungsstrategien zu berücksichtigen."
+			},
+			"en": {
+				"preferred_label": "Considering goal conflicts when reflecting on action strategies",
+				"description": "The ability to identify, reflect on and consider goal conflicts when developing action strategies."
+			}
+		},
+		"leitbilder-reflexion": {
+			"concept_uri": "leitbilder-reflexion",
+			"de": {
+				"preferred_label": "Die eigenen Leitbilder und die anderer reflektieren können",
+				"description": "Die Fähigkeit, eigene und fremde Leitbilder und Wertvorstellungen kritisch zu reflektieren und in Bezug auf Nachhaltigkeit zu beurteilen."
+			},
+			"en": {
+				"preferred_label": "Reflecting on one's own guiding principles and those of others",
+				"description": "The ability to critically reflect on one's own and others' guiding principles and values, and to assess them in terms of sustainability."
+			}
+		},
+		"selbststaendig-handeln": {
+			"concept_uri": "selbststaendig-handeln",
+			"de": {
+				"preferred_label": "Selbstständig planen und handeln können",
+				"description": "Die Fähigkeit, eigenverantwortlich und selbstständig zu planen, Entscheidungen zu treffen und zu handeln."
+			},
+			"en": {
+				"preferred_label": "Planning and acting independently",
+				"description": "The ability to plan, make decisions and act responsibly and independently."
+			}
+		},
+		"empathie-solidaritaet": {
+			"concept_uri": "empathie-solidaritaet",
+			"de": {
+				"preferred_label": "Empathie und Solidarität für Benachteiligte zeigen können",
+				"description": "Die Fähigkeit, Empathie zu zeigen, Solidarität mit Benachteiligten zu üben und interkulturelle Sensibilität zu entwickeln."
+			},
+			"en": {
+				"preferred_label": "Showing empathy and solidarity for disadvantaged people",
+				"description": "The ability to show empathy, practise solidarity with disadvantaged people and develop intercultural sensitivity."
+			}
+		},
+		"gerechtigkeitssinn": {
+			"concept_uri": "gerechtigkeitssinn",
+			"de": {
+				"preferred_label": "Vorstellungen von Gerechtigkeit als Entscheidungs- und Handlungsgrundlagen nutzen können",
+				"description": "Die Fähigkeit, Gerechtigkeitsvorstellungen als Grundlage für Entscheidungen und Handlungen zu nutzen und Empathie für andere zu zeigen."
+			},
+			"en": {
+				"preferred_label": "Using concepts of justice as a basis for decisions and actions",
+				"description": "The ability to apply concepts of justice as the basis for decisions and actions, and to show empathy for others."
+			}
+		}
+	},
+	"escoMap": {
+		"/esco/skill/9a58cd26-58eb-4a1c-b1b6-64037fe9cfa1": "weltoffen",
+		"/esco/skill/4707da90-9cfc-46ca-8de0-38a0b7bfb137": ["weltoffen", "risikokompetenz"],
+		"/esco/skill/fd89f784-88dc-4d35-abd7-86aa073cab12": ["weltoffen", "interdisziplinaer"],
+		"/esco/skill/e186976a-64f0-4052-a25b-297d19e1d0ec": "weltoffen",
+		"/esco/skill/c29aa9d2-4da8-4bdd-831c-8d4a2fb51730": ["weltoffen", "selbststaendig-handeln"],
+		"/esco/skill/2aaad52d-599e-4e77-a681-bbc236825821": ["weltoffen", "leitbilder-reflexion", "gerechtigkeitssinn"],
+		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": [
+			"weltoffen",
+			"vorausschauend",
+			"interdisziplinaer",
+			"zielkonflikte",
+			"gerechtigkeitssinn"
+		],
+		"/esco/skill/4fc1d2b4-9645-4fda-be99-abdf8e66c88d": "vorausschauend",
+		"/esco/skill/c2a0c52c-0b4b-4180-a918-92650ea3b458": "vorausschauend",
+		"/esco/skill/adc6dc11-3376-467b-96c5-9b0a21edc869": "vorausschauend",
+		"/esco/skill/03b9b491-fc9b-4868-914a-bf7cd47b5041": [
+			"vorausschauend",
+			"zielkonflikte",
+			"selbststaendig-handeln"
+		],
+		"/esco/skill/c624c6a3-b0ba-4a31-a296-0d433fe47e41": "vorausschauend",
+		"/esco/skill/f715be1d-5fc4-49d3-82a5-0b8090d12849": ["interdisziplinaer", "gemeinsam-handeln"],
+		"/esco/skill/6eaeea3a-f100-43e4-b694-16a4dc5a79e1": ["interdisziplinaer", "zielkonflikte"],
+		"/esco/skill/0f9958d2-f700-4f62-b90b-a5873cb5ae4c": "interdisziplinaer",
+		"/esco/skill/d7b66759-c40c-44de-9f31-9418f84e10c5": "risikokompetenz",
+		"/esco/skill/75f312e1-622b-4751-8d93-815b32feaf8d": "risikokompetenz",
+		"/esco/skill/db33c0f3-43ee-4ba3-ba47-9269ac837697": "risikokompetenz",
+		"/esco/skill/bf5ab3df-9589-4e99-b8f6-a83b494f40be": ["gemeinsam-handeln", "empathie-solidaritaet"],
+		"/esco/skill/001115fb-569f-4ee6-8381-c6807ef2527f": "gemeinsam-handeln",
+		"/esco/skill/7f321b88-3d16-4e30-8163-5494ca8ce978": [
+			"gemeinsam-handeln",
+			"leitbilder-reflexion",
+			"gerechtigkeitssinn"
+		],
+		"/esco/skill/646d871b-4503-4dc8-a076-06d7085e4cde": "gemeinsam-handeln",
+		"/esco/skill/60c78287-22eb-4103-9c8c-28deaa460da0": "partizipation",
+		"/esco/skill/996243ee-543f-4c36-a31a-e0f2403c0c5d": ["partizipation", "empathie-solidaritaet"],
+		"/esco/skill/7954861c-86d4-4529-afbb-2c23dab9ac74": "partizipation",
+		"/esco/skill/59429f7f-8b95-4094-b1cf-97cbb556f03d": "partizipation",
+		"/esco/skill/99c4c69a-025c-464f-adda-874c7f107a31": "partizipation",
+		"/esco/skill/469e19ed-a0bd-445a-ae2d-4ba9430e296b": "partizipation",
+		"/esco/skill/6385444a-2e10-41c9-9a65-88455655543d": "partizipation",
+		"/esco/skill/96de2e86-e287-41f2-88ab-15a2343afc6f": "partizipation",
+		"/esco/skill/1fce1197-3a5b-45b7-8797-575cd3b57a01": "motivationskompetenz",
+		"/esco/skill/a2151ed1-82b9-4314-8ca3-339bc923da9d": "motivationskompetenz",
+		"/esco/skill/7d9bace0-63d0-4848-ac87-350a98082c12": "motivationskompetenz",
+		"/esco/skill/f4bcdb75-df28-441d-a52b-9730904f36a1": "motivationskompetenz",
+		"/esco/skill/409a0245-0e6c-4aac-ba16-0920ecb76a8d": ["motivationskompetenz", "selbststaendig-handeln"],
+		"/esco/skill/e2d44a9b-f28c-489e-9861-b654b5ded507": "motivationskompetenz",
+		"/esco/skill/7dd94ad3-13d6-43fe-8b94-51fcbf67ced9": ["zielkonflikte", "gerechtigkeitssinn"],
+		"/esco/skill/8abdc43c-2bfd-417c-97c2-27fcdaf53171": "zielkonflikte",
+		"/esco/skill/e541c69c-ea80-4b17-87cb-4001d0b9d303": "zielkonflikte",
+		"/esco/skill/a0cad388-3c4c-4786-b238-fc39f8c495af": "leitbilder-reflexion",
+		"/esco/skill/19a64e91-bfe3-4c48-9225-3bb1229b12f0": "selbststaendig-handeln",
+		"/esco/skill/77b636e8-fab3-41a8-8022-1e0a354059dc": "empathie-solidaritaet",
+		"/esco/skill/a1a8e4ae-f1e3-44aa-9067-e587e69634cd": "empathie-solidaritaet",
+		"/esco/skill/7ff2c668-0e86-418a-a962-4958262ee337": "gerechtigkeitssinn"
+	}
+}

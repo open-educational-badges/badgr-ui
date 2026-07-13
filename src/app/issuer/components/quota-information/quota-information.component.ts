@@ -40,7 +40,7 @@ export class QuotaInformationComponent {
 	constructor() {
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'] || this.route.snapshot.params['networkSlug'];
 		if (this.issuerSlug) {
-			this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
+			this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 				if (issuer) {
 					// typescript union signatures hack https://github.com/microsoft/TypeScript/issues/33591
 					(issuer.changed$ as Observable<Issuer | Network>).subscribe((issuer) => {

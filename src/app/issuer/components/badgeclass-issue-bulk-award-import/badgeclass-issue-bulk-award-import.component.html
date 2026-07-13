@@ -46,6 +46,7 @@
 				></oeb-button>
 
 				<oeb-button
+					[id]="'bulk-import-btn'"
 					[class.button-is-disabled]="rawCsv === null"
 					[disabled]="rawCsv ? null : true"
 					(click)="importAction()"

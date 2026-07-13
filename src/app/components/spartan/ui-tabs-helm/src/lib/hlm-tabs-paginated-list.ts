@@ -92,10 +92,10 @@ export class HlmTabsPaginatedList extends BrnTabsPaginatedList {
 		hlm('flex overflow-hidden relative gap-1 flex-shrink-0', this.userClass()),
 	);
 
-	public readonly tabListClass = input<ClassValue>('', { alias: 'tabListClass' });
+	public readonly tabListClass = input<ClassValue>('');
 	protected readonly _tabListClass = computed(() => hlm(listVariants(), this.tabListClass()));
 
-	public readonly paginationButtonClass = input<ClassValue>('', { alias: 'paginationButtonClass' });
+	public readonly paginationButtonClass = input<ClassValue>('');
 	protected readonly _paginationButtonClass = computed(() =>
 		hlm(
 			'relative z-[2] select-none disabled:cursor-default',

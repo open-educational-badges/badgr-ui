@@ -1,7 +1,7 @@
 <div class="oeb tw-relative tw-w-full">
 	<div class="page-padding">
 		<ng-template [bgAwaitPromises]="issuerIdParam">
-			<!-- Embedded View -->
+			<bg-breadcrumbs [linkentries]="crumbs"></bg-breadcrumbs>
 			<oeb-issuer-detail
 				[networks]="networks"
 				[partner_issuers]="partner_issuers"

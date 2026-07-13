@@ -84,6 +84,14 @@ export class LearningPath extends ManagedEntity<ApiLearningPath, LearningPathRef
 		this.apiModel.activated = active;
 	}
 
+	get pdftemplate(): string {
+		return this.apiModel.pdftemplate;
+	}
+
+	set pdftemplate(pdftemplate: string) {
+		this.apiModel.pdftemplate = pdftemplate;
+	}
+
 	get archived(): boolean {
 		return this.apiModel.archived;
 	}

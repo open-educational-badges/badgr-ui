@@ -15,10 +15,8 @@
 							</span>
 						</h1>
 					</div>
-					<div class="tw-flex tw-flex-wrap oeb-standard-padding-bottom">
-						<div
-							class="md:tw-max-w-[300px] tw-max-w-[150px] tw-text-center tw-mr-6 md:tw-h-[300px] tw-h-[200px]"
-						>
+					<div class="tw-flex tw-flex-wrap tw-gap-6 oeb-standard-padding-bottom">
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]">
 							<div
 								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-h-full tw-mb-1 tw-flex"
 							>
@@ -31,27 +29,38 @@
 							</div>
 							<p size="sm" hlmP>{{ 'Issuer.badgePreview' | translate }}</p>
 						</div>
-						<div class="md:tw-max-w-[300px] tw-max-w-[150px] tw-text-center md:tw-h-[300px] tw-h-[200px]">
+						<div class="tw-w-[300px] tw-text-center tw-h-[300px]">
 							<div
-								class="tw-px-6 tw-py-4 tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-relative tw-h-full tw-mb-1 tw-overflow-hidden tw-flex"
+								class="tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-relative tw-h-full tw-mb-1 tw-overflow-hidden tw-flex tw-items-center tw-justify-center"
 							>
-								<img
-									class="tw-inline-block tw-absolute tw-right-0 tw-left-0 tw-m-auto tw-top-0 tw-z-0 tw-h-full"
-									alt="Certificate Preview"
-									src="assets/oeb/images/issuerPage/certificate_preview.svg"
-								/>
-
-								<img
-									class="badge-image badgeimage-center tw-z-10 tw-relative tw-w-[35%] tw-mb-[15%] tw-self-center"
-									[loaded-src]="previewB64Img"
-									[loading-src]="badgeLoadingImageUrl"
-									[error-src]="badgeFailedImageUrl"
-								/>
+								@if (pdfTemplateForPreview) {
+									<canvas
+										id="badgeIssuePreviewCanvas"
+										[attr.width]="pdfTemplateForPreview.format === 0 ? 794 : 1123"
+										[attr.height]="pdfTemplateForPreview.format === 0 ? 1123 : 794"
+										[class.portrait]="pdfTemplateForPreview.format === 0"
+										[class.landscape]="pdfTemplateForPreview.format !== 0"
+									>
+									</canvas>
+								} @else {
+									<img
+										class="tw-inline-block tw-absolute tw-right-0 tw-left-0 tw-m-auto tw-top-0 tw-z-0 tw-h-full"
+										alt="Certificate Preview"
+										src="assets/oeb/images/issuerPage/certificate_preview.svg"
+									/>
+									<img
+										class="badge-image badgeimage-center tw-z-10 tw-relative tw-w-[35%] tw-mb-[15%] tw-self-center"
+										[loaded-src]="previewB64Img"
+										[loading-src]="badgeLoadingImageUrl"
+										[error-src]="badgeFailedImageUrl"
+									/>
+								}
 							</div>
 							<p size="sm" hlmP [innerHTML]="'Issuer.certPreview' | translate"></p>
 						</div>
 					</div>
 				</div>
+
 				<div class="tw-border-purple tw-border-solid tw-border tw-p-6 tw-rounded-[15px] tw-my-6">
 					<span hlmP [innerHTML]="'Issuer.batchAwardText1' | translate"></span>&nbsp;
 					<a
@@ -131,6 +140,7 @@
 						"
 						[loading-promises]="[issueBadgeFinished]"
 						[loading-message]="'Issuer.badgeAwardInProgress' | translate"
+						[id]="'issue-badge-btn'"
 						[text]="'Issuer.giveBadge' | translate"
 					>
 					</oeb-button>

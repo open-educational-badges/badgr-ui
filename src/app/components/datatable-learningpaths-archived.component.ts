@@ -38,7 +38,7 @@ import { NgIcon } from '@ng-icons/core';
 	template: ` <table hlmTable oeb-table-secondary>
 			<thead hlmTHead>
 				@for (headerRow of badgeTable.getHeaderGroups(); track headerRow.id) {
-					<tr hlmTr>
+					<tr hlmTr class="tw-opacity-60 tw-grayscale">
 						@for (headerCell of headerRow.headers; track headerCell.id) {
 							@if (!headerCell.isPlaceholder) {
 								<th hlmTh>
@@ -78,7 +78,7 @@ import { NgIcon } from '@ng-icons/core';
 			</thead>
 			<tbody hlmTBody>
 				@for (row of badgeTable.getRowModel().rows; track row.id) {
-					<tr hlmTr>
+					<tr hlmTr class="tw-opacity-60 tw-grayscale">
 						@for (cell of row.getVisibleCells(); track cell.id) {
 							<td hlmTd>
 								<ng-container

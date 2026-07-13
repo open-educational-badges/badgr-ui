@@ -3,9 +3,7 @@
 		<h1 hlmH1 class="tw-text-purple">{{ 'Issuer.importPreview' | translate }}</h1>
 	</div>
 	<p hlmP class="oeb-standard-padding-bottom">
-		<span
-			>{{ transformedImportData().validRowsTransformed.size }} {{ 'Issuer.rowsWereImported' | translate }}
-			{{ transformedImportData().duplicateRecords.length }} {{ 'Issuer.rowsAreDuplicates' | translate }}</span
+		<span>{{ transformedImportData().validRowsTransformed.size }} {{ 'Issuer.rowsWereImported' | translate }}</span
 		><br />
 		@if (!quotasCanIssue()) {
 			<span class="tw-text-red">
@@ -143,6 +141,7 @@
 		></oeb-button>
 
 		<oeb-button
+			[id]="'bulk-confirm-btn'"
 			[class.button-is-disabled]="buttonDisabledClass"
 			[disabled]="buttonDisabledAttribute || hasInvalidEmails || !quotasCanIssue()"
 			(click)="!hasInvalidEmails && quotasCanIssue() && dataConfirmed()"

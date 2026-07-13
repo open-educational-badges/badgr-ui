@@ -1,0 +1,8 @@
+@media (max-width: 576px) {
+	::ng-deep {
+		hlm-tabs-list {
+			flex-wrap: wrap;
+			height: auto !important;
+		}
+	}
+}

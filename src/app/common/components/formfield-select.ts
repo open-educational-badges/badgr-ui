@@ -260,4 +260,5 @@ export interface FormFieldSelectOption {
 	label: string;
 	value: string;
 	description?: string;
+	icon?: string;
 }

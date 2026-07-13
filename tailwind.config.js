@@ -173,6 +173,7 @@ module.exports = {
 				learningpathsBackpack: 'repeat(auto-fill, minmax(392px, 392px))',
 				badgesLp: 'repeat(auto-fill, minmax(290px, 1fr))',
 				learningpathsSmall: 'repeat(auto-fill, minmax(208px, 1fr))',
+				pdftemplates: 'repeat(auto-fill, minmax(242px, 242px))',
 			},
 			animation: {
 				'spin-slow': 'spin 5000ms linear infinite',

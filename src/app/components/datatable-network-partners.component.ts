@@ -79,7 +79,7 @@ import { Network } from '~/issuer/network.model';
 						</tr>
 					}
 				</thead>
-				@if (approvedInvites().length) {
+				@if (partners().length) {
 					<tbody hlmTBody>
 						@for (row of table.getRowModel().rows; track row.id; let i = $index) {
 							<tr hlmTr>
@@ -204,5 +204,7 @@ export class NetworkPartnersDatatableComponent {
 	acceptedOn(issuer: Issuer) {
 		const inv = this.approvedInvites().find((i) => i.issuer.slug == issuer.slug);
 		if (inv) return formatDate(inv.acceptedOn, 'dd.MM.yyyy', 'de-DE');
+		// Parent issuer has no invite record; use network creation date as its membership start date
+		return formatDate(this.network().createdAt, 'dd.MM.yyyy', 'de-DE');
 	}
 }

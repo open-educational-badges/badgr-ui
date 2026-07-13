@@ -1,31 +1,39 @@
 <header class="tw-relative">
-	<div class="tw-flex tw-justify-between tw-gap-6 tw-items-center">
-		<div class="tw-flex oeb-section-sm md:tw-max-w-[70%]">
-			<figure class="tw-relative">
-				<img
-					[loaded-src]="issuer?.image"
-					[loading-src]="issuerPlaceholderSrc"
-					[error-src]="issuerPlaceholderSrc"
-					alt="{{ issuer.name }} avatar"
-					class="tw-h-[70px] md:tw-h-[100px] tw-w-auto tw-min-w-[70px] md:tw-min-w-[100px] tw-aspect-square"
-				/>
-			</figure>
-			<hgroup class="tw-flex tw-flex-col tw-justify-center tw-pl-8 tw-max-w-[80%] oeb-break-words">
-				<h1 hlmH1 class="tw-text-purple tw-font-semibold md:tw-text-[35px] xl:tw-text-[46px]">
-					{{ issuer.name }}
-				</h1>
-				<ng-container *ngIf="!public && isFullIssuer(issuer)">
-					<p
-						class="tw-text-oebblack tw-mt-2 tw-font-semibold md:tw-text-[20px] md:tw-leading-[24.4px] tw-text-[14px] tw-leading-[19.6px]"
-					>
-						{{ 'Issuer.yourRole' | translate }}
-						{{ issuer.currentUserStaffMember?.roleInfo.label | translate }}
-					</p>
-				</ng-container>
-			</hgroup>
+	<div class="tw-flex tw-justify-between tw-items-start">
+		<div class="tw-flex tw-flex-col oeb-section-sm md:tw-max-w-[50%]">
+			<div class="tw-flex tw-items-center">
+				<figure class="tw-relative">
+					<img
+						[loaded-src]="issuer?.image"
+						[loading-src]="issuerPlaceholderSrc"
+						[error-src]="issuerPlaceholderSrc"
+						alt="{{ issuer.name }} avatar"
+						class="tw-h-[70px] md:tw-h-[100px] tw-w-auto tw-min-w-[70px] md:tw-min-w-[100px] tw-aspect-square"
+						width="100"
+						height="100"
+					/>
+				</figure>
+				<hgroup class="tw-flex tw-flex-col tw-justify-center tw-pl-8 oeb-break-words">
+					<h1 hlmH1 class="tw-text-purple tw-font-semibold md:tw-text-[35px] xl:tw-text-[46px]">
+						{{ issuer.name }}
+					</h1>
+					<ng-container *ngIf="!public && isFullIssuer(issuer)">
+						<p
+							class="tw-text-oebblack tw-mt-2 tw-font-semibold md:tw-text-[20px] md:tw-leading-[24.4px] tw-text-[14px] tw-leading-[19.6px]"
+						>
+							{{ 'Issuer.yourRole' | translate }}
+							{{ issuer.currentUserStaffMember?.roleInfo.label | translate }}
+						</p>
+					</ng-container>
+				</hgroup>
+			</div>
+			<section aria-labelledby="description-heading" class="tw-mt-2">
+				<h2 id="description-heading" class="tw-sr-only">Issuer Description</h2>
+				<p class="tw-text-oebblack tw-text-lg oeb-break-words">{{ issuer.description }}</p>
+			</section>
 		</div>
 
-		<aside class="tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-absolute tw-right-0 tw-top-[17.5%]">
+		<aside class="tw-w-auto tw-hidden md:tw-grid !tw-content-center tw-pt-4">
 			<p
 				*ngIf="isFullIssuer(issuer) && issuer.apiModel && !issuer.apiModel.verified"
 				class="u-margin-top1x u-width-paragraph"
@@ -33,20 +41,38 @@
 				{{ 'Issuer.nichtVerified' | translate }}
 			</p>
 			<div class="tw-flex tw-gap-2">
-				<oeb-button
-					class="tw-whitespace-nowrap"
-					*ngIf="!public"
-					[routerLink]="activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create']"
-					[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
-					[text]="
-						activeTab === 'badges'
-							? ('Issuer.createBadge' | translate)
-							: ('Issuer.myInstitutionsCreateLearningPath' | translate)
-					"
-					[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
-					[umamiEvent]="'create-badge'"
-				>
-				</oeb-button>
+				@if (activeTab === 'badges' || activeTab === 'micro-degrees') {
+					<oeb-button
+						class="tw-whitespace-nowrap"
+						*ngIf="!public"
+						[text]="
+							activeTab === 'badges'
+								? ('Issuer.createBadge' | translate)
+								: ('Issuer.myInstitutionsCreateLearningPath' | translate)
+						"
+						(click)="clickCreateBadge()"
+						[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
+						[umamiEvent]="'create-badge'"
+					>
+					</oeb-button>
+				}
+				@if (
+					isFullIssuer(issuer) &&
+					pdfTemplateManager.pdfEditorAvailable() &&
+					(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) &&
+					activeTab === 'pdf-templates'
+				) {
+					<oeb-button
+						class="tw-whitespace-nowrap"
+						*ngIf="!public"
+						[routerLink]="['./pdftemplates/create']"
+						[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
+						[text]="'PDFTemplate.createPDFTemplate' | translate"
+						[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
+						[umamiEvent]="'create-pdf-template'"
+					>
+					</oeb-button>
+				}
 				<div *ngIf="public" class="tw-flex tw-flex-col tw-gap-2">
 					<oeb-button
 						*ngIf="userIsMember"
@@ -54,6 +80,7 @@
 						(click)="routeToMemberView()"
 						[text]="'Issuer.memberView' | translate"
 						variant="secondary"
+						data-testid="member-view-button"
 					>
 					</oeb-button>
 					<oeb-button
@@ -62,6 +89,7 @@
 						[width]="'full_width'"
 						(click)="routeToUrl(issuer.url)"
 						[text]="'General.website' | translate"
+						data-testid="website-button"
 					>
 					</oeb-button>
 
@@ -83,7 +111,7 @@
 											[attr.aria-label]="'Visit ' + network.name + ' network'"
 										>
 											<img
-												class="tw-w-[33px]"
+												class="tw-w-[33px] tw-h-[33px] tw-aspect-square"
 												[src]="network.image"
 												[alt]="network.name + ' logo'"
 											/>
@@ -115,7 +143,7 @@
 											[attr.aria-label]="'Visit ' + partner.name + ' profile'"
 										>
 											<img
-												class="tw-w-[33px]"
+												class="tw-w-[33px] tw-h-[33px] tw-aspect-square"
 												[src]="partner.image"
 												[alt]="partner.name + ' logo'"
 											/>
@@ -132,10 +160,8 @@
 				<oeb-dropdown
 					[trigger]="svgTrigger"
 					class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
-					*ngIf="
-						(!isFullIssuer(issuer) && menuItemsPublic.length) || (isFullIssuer(issuer) && menuItems.length)
-					"
-					[menuItems]="public ? menuItemsPublic : menuItems"
+					*ngIf="!public && isFullIssuer(issuer) && menuItems.length"
+					[menuItems]="menuItems"
 				></oeb-dropdown>
 				<ng-template #svgTrigger>
 					<svg
@@ -150,11 +176,6 @@
 	</div>
 </header>
 
-<section aria-labelledby="description-heading" class="tw-mt-4 md:tw-pr-[350px]">
-	<h2 id="description-heading" class="tw-sr-only">Issuer Description</h2>
-	<p class="tw-text-oebblack tw-text-lg oeb-break-words">{{ issuer.description }}</p>
-</section>
-
 <quota-information quotas="BADGE_AWARD" class="tw-block tw-mt-6 tw-text-[18px]/[1.3em]" />
 
 <!-- Mobile buttons section -->
@@ -166,22 +187,43 @@
 		{{ 'Issuer.nichtVerified' | translate }}
 	</p>
 	<div class="tw-flex tw-flex-wrap tw-gap-4">
-		<oeb-button
-			*ngIf="!public"
-			width="full_width"
-			[class]="
-				'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
-			"
-			[routerLink]="activeTab === 'badges' ? ['./badges/select'] : ['./learningpaths/create']"
-			[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
-			[text]="
-				activeTab === 'badges'
-					? ('Issuer.createBadge' | translate)
-					: ('Issuer.myInstitutionsCreateLearningPath' | translate)
-			"
-			[umamiEvent]="'create-badge'"
-		>
-		</oeb-button>
+		@if (activeTab === 'badges' || activeTab === 'micro-degrees') {
+			<oeb-button
+				*ngIf="!public"
+				width="full_width"
+				[class]="
+					'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
+				"
+				[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
+				[text]="
+					activeTab === 'badges'
+						? ('Issuer.createBadge' | translate)
+						: ('Issuer.myInstitutionsCreateLearningPath' | translate)
+				"
+				(click)="clickCreateBadge()"
+				[umamiEvent]="'create-badge'"
+			>
+			</oeb-button>
+		}
+		@if (
+			isFullIssuer(issuer) &&
+			pdfTemplateManager.pdfEditorAvailable() &&
+			(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) &&
+			activeTab === 'pdf-templates'
+		) {
+			<oeb-button
+				width="full_width"
+				*ngIf="!public"
+				[routerLink]="['./pdftemplates/create']"
+				[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
+				[text]="'PDFTemplate.createPDFTemplate' | translate"
+				[class]="
+					'tw-flex-grow tw-relative'.concat(isFullIssuer(issuer) && issuer.canCreateBadge ? '' : ' disabled')
+				"
+				[umamiEvent]="'create-pdf-template'"
+			>
+			</oeb-button>
+		}
 		<oeb-button
 			*ngIf="public"
 			(click)="routeToUrl(issuer.url)"
@@ -190,13 +232,13 @@
 			[text]="'Issuer.visitWebsite' | translate"
 		>
 		</oeb-button>
-
 		<oeb-dropdown
-			[trigger]="svgTrigger"
+			[trigger]="svgTriggerMobile"
 			class="tw-items-center tw-justify-center tw-flex tw-cursor-pointer tw-border tw-border-solid tw-border-[var(--color-purple)] tw-rounded-[7px]"
-			[menuItems]="public ? menuItemsPublic : menuItems"
+			*ngIf="!public && isFullIssuer(issuer) && menuItems.length"
+			[menuItems]="menuItems"
 		></oeb-dropdown>
-		<ng-template #svgTrigger>
+		<ng-template #svgTriggerMobile>
 			<svg
 				class="tw-w-[44.8px] tw-h-[44.8px] md:tw-w-[64px] md:tw-h-[64px]"
 				fill="var(--color-purple)"
@@ -215,6 +257,49 @@
 		[tabs]="tabs"
 	></oeb-tabs>
 
+	<ng-template #dashboardTemplate>
+		@if (hasDashboardAccess()) {
+			<app-oeb-dashboard-overview [isNetwork]="false" [networkSlug]="issuer.slug"></app-oeb-dashboard-overview>
+
+			<div class="tw-mt-8">
+				<app-oeb-dashboard-learners
+					[networkSlug]="issuer.slug"
+					[disableClick]="true"
+					[noGeneralStats]="true"
+				></app-oeb-dashboard-learners>
+			</div>
+		} @else {
+			<oeb-feature-teaser imagePosition="right">
+				<h2
+					teaser-heading
+					hlmH2
+					class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-text-[22px]/[1.2em]"
+				>
+					{{ 'DashboardTeaser.heading' | translate }}
+				</h2>
+				<figure teaser-image class="tw-max-w-[260px] tw-m-0">
+					<img [src]="'DashboardTeaser.image' | translate" alt="" class="tw-w-full tw-h-auto" />
+					<figcaption class="tw-mt-2 tw-text-xs tw-text-oebblack tw-leading-snug tw-text-center">
+						{{ 'DashboardTeaser.imageCaption' | translate }}
+					</figcaption>
+				</figure>
+				<div teaser-body class="tw-flex tw-flex-col tw-gap-6">
+					<p hlmP [innerHTML]="'DashboardTeaser.body' | translate"></p>
+					<p
+						hlmP
+						class="tw-font-bold tw-text-purple"
+						[innerHTML]="'DashboardTeaser.upgradeLine' | translate"
+					></p>
+				</div>
+				<oeb-button
+					teaser-action
+					[text]="'DashboardTeaser.buttonLabel' | translate"
+					(click)="emailSalesForDashboard()"
+					[umamiEvent]="'dashboard-teaser-upgrade'"
+				/>
+			</oeb-feature-teaser>
+		}
+	</ng-template>
 	<ng-template #badgesTemplate>
 		@if (env.networksEnabled && !public) {
 			<div class="tw-mt-12">
@@ -302,9 +387,113 @@
 			</ng-template>
 		</div>
 	</ng-template>
+	@if (isFullIssuer(issuer) && pdfTemplateManager.pdfEditorAvailable()) {
+		<ng-template #pdfTemplatesTemplate>
+			<div class="oeb-section-sm">
+				@if (!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota) {
+					<ng-template [bgAwaitPromises]="pdfTemplatesPromise">
+						<div class="md:tw-pr-[280px]">
+							<p class="oeb-break-words" hlmP [innerHTML]="'PDFTemplate.descriptionText' | translate"></p>
+
+							<p hlmP [innerHtml]="'PDFTemplate.exampleZipLink' | translate"></p>
+
+							<div *ngIf="!pdfTemplates?.length" class="tw-mt-8">
+								<oeb-button
+									class="tw-whitespace-nowrap"
+									*ngIf="!public"
+									[routerLink]="['./pdftemplates/create']"
+									[disabled]="isFullIssuer(issuer) && !issuer.canCreateBadge"
+									[text]="'PDFTemplate.createPDFTemplate' | translate"
+									[class]="isFullIssuer(issuer) && issuer.canCreateBadge ? '' : 'disabled'"
+									[umamiEvent]="'create-pdf-template'"
+								>
+								</oeb-button>
+							</div>
+						</div>
+
+						<div *ngIf="pdfTemplates && pdfTemplates.length > 0" class="tw-mt-16">
+							<h2
+								class="tw-font-bold md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-oebblack tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
+							>
+								{{ 'PDFTemplate.createdTemplates' | translate }}
+							</h2>
+
+							<div class="tw-grid tw-grid-cols-pdftemplates tw-gap-6 tw-mt-6">
+								@for (pt of pdfTemplates; track pt) {
+									<bg-pdftemplatecard
+										[name]="pt.name"
+										[slug]="pt.slug"
+										[issuerSlug]="issuer.slug"
+										[created_at]="pt.created_at | date: 'dd.MM.yyyy'"
+										[created_by]="pt.created_by"
+										[pdftemplateImage]="$any(pt).image"
+										[format]="pt.format"
+										(edit)="openEditDialog($event.slug, $event.issuer)"
+										(delete)="openDeletePDFTemplateDialog($event.name, $event.slug, $event.issuer)"
+									></bg-pdftemplatecard>
+								}
+							</div>
+						</div>
+					</ng-template>
+				} @else {
+					<oeb-feature-teaser>
+						<h2
+							teaser-heading
+							hlmH2
+							class="oeb !tw-text-oebblack tw-uppercase tw-font-black tw-text-[22px]/[1.2em]"
+						>
+							{{ 'PDFEditorTeaser.heading' | translate }}
+						</h2>
+						<figure teaser-image class="tw-w-[calc(50%-12px)] tw-max-w-[200px] tw-m-0">
+							<img
+								[src]="'PDFEditorTeaser.defaultImage' | translate"
+								alt=""
+								class="tw-w-full tw-h-auto tw-border tw-border-solid tw-border-purple tw-rounded-md"
+							/>
+							<figcaption class="tw-mt-1 tw-text-xs tw-text-oebblack tw-leading-snug">
+								{{ 'PDFEditorTeaser.defaultCaption' | translate }}
+							</figcaption>
+						</figure>
+						<figure teaser-image class="tw-w-[calc(50%-12px)] tw-max-w-[200px] tw-m-0">
+							<img
+								[src]="'PDFEditorTeaser.customImage' | translate"
+								alt=""
+								class="tw-w-full tw-h-auto tw-border tw-border-solid tw-border-purple tw-rounded-md"
+							/>
+							<figcaption class="tw-mt-1 tw-text-xs tw-text-oebblack tw-leading-snug">
+								{{ 'PDFEditorTeaser.customCaption' | translate }}
+							</figcaption>
+						</figure>
+						<div teaser-body class="tw-flex tw-flex-col tw-gap-6">
+							<p hlmP [innerHTML]="'PDFEditorTeaser.body' | translate"></p>
+							<p
+								hlmP
+								class="tw-font-bold tw-text-purple"
+								[innerHTML]="'PDFEditorTeaser.upgradeLine' | translate"
+							></p>
+						</div>
+						<oeb-button
+							teaser-action
+							[text]="'PDFEditorTeaser.buttonLabel' | translate"
+							(click)="emailSalesForPdfEditor()"
+							[umamiEvent]="'pdf-editor-teaser-upgrade'"
+						/>
+					</oeb-feature-teaser>
+				}
+			</div>
+		</ng-template>
+	}
 
 	<ng-template #issuerBadgesTemplate>
-		<section class="oeb-section-sm" *ngIf="!badges?.length">
+		<section class="oeb-section-sm tw-min-h-[500px]" *ngIf="badgesLoading || !badgeResultsReady">
+			<h2
+				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
+			>
+				{{ 'Issuer.issuerLoadingBadges' | translate }}
+			</h2>
+		</section>
+
+		<section class="oeb-section-sm" *ngIf="!badgesLoading && badgeResultsReady && !badges?.length">
 			<h2
 				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
 			>
@@ -312,7 +501,10 @@
 			</h2>
 		</section>
 
-		<section class="oeb-section-sm tw-relative oeb-break-words" *ngIf="badges?.length">
+		<section
+			class="oeb-section-sm tw-relative oeb-break-words"
+			*ngIf="!badgesLoading && badgeResultsReady && badges?.length"
+		>
 			<h2
 				class="tw-font-medium md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-purple tw-text-[16px] tw-leading-[19.2px] tw-py-4"
 			>
@@ -320,15 +512,13 @@
 					badges.length === 1 ? '' : 's'
 				}}.
 			</h2>
-			<ng-template [bgAwaitPromises]="requestsLoaded">
-				<badges-datatable
-					*ngIf="!public"
-					[badges]="$any(badgeResults)"
-					(directBadgeAward)="routeToBadgeAward($event, issuer)"
-					(qrCodeAward)="routeToQRCodeAward($event, issuer)"
-					(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
-				></badges-datatable>
-			</ng-template>
+			<badges-datatable
+				*ngIf="!public"
+				[badges]="$any(badgeResults)"
+				(directBadgeAward)="routeToBadgeAward($event, issuer)"
+				(qrCodeAward)="routeToQRCodeAward($event, issuer)"
+				(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, issuer, $event.focusRequests)"
+			></badges-datatable>
 
 			<ng-container *ngIf="public">
 				<div *ngIf="badges.length > 0">
@@ -403,12 +593,6 @@
 						></badges-datatable>
 					</div>
 				}
-
-				@if (networkGroupsArray.length === 0) {
-					<div class="tw-px-2 tw-py-8 tw-text-center tw-text-gray-500">
-						{{ 'Issuer.noSharedNetworkBadges' | translate }}
-					</div>
-				}
 			</div>
 		}
 		@if (networkBadgeInstanceResults.length) {
@@ -422,7 +606,11 @@
 						class="tw-px-2 tw-py-2 tw-gap-2 tw-flex tw-items-center tw-font-semibold tw-text-lg tw-leading-[130%] tw-uppercase tw-text-oebblack tw-cursor-pointer"
 						[routerLink]="['/issuer/networks', group.networkIssuer.slug]"
 					>
-						<img class="tw-w-12" [src]="group.networkIssuer.image" alt="Network Logo" />
+						<img
+							class="tw-w-12 tw-h-12 tw-aspect-square"
+							[src]="group.networkIssuer.image"
+							alt="Network Logo"
+						/>
 						<span>{{ group.issuerName }}</span>
 					</div>
 

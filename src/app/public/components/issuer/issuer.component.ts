@@ -12,16 +12,25 @@ import { Title } from '@angular/platform-browser';
 import { AppConfigService } from '../../../common/app-config.service';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { OebIssuerDetailComponent } from '../../../common/components/issuer/oeb-issuer-detail.component';
+import { BgBreadcrumbsComponent } from '../../../common/components/bg-breadcrumbs/bg-breadcrumbs.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
 	templateUrl: './issuer.component.html',
-	imports: [BgAwaitPromises, OebIssuerDetailComponent],
+	imports: [BgAwaitPromises, OebIssuerDetailComponent, BgBreadcrumbsComponent],
 })
 export class PublicIssuerComponent {
 	private injector = inject(Injector);
 	embedService = inject(EmbedService);
 	configService = inject(AppConfigService);
+	protected translate = inject(TranslateService);
 	private title = inject(Title);
+
+	private readonly parentCrumb = {
+		title: this.translate.instant('General.institutionsNav'),
+		routerLink: ['/catalog/issuers'],
+	};
+	crumbs = [this.parentCrumb];
 
 	readonly issuerImagePlaceholderUrl = preloadImageURL(
 		'../../../../breakdown/static/images/placeholderavatar-issuer.svg',
@@ -56,7 +65,13 @@ export class PublicIssuerComponent {
 
 		this.issuerIdParam = new LoadedRouteParam(injector.get(ActivatedRoute), 'issuerId', (paramValue) => {
 			const service: PublicApiService = injector.get(PublicApiService);
-			return service.getIssuerWithRelations(paramValue);
+			return service.getIssuerWithRelations(paramValue).then((result) => {
+				this.crumbs = [
+					this.parentCrumb,
+					{ title: result.issuer.name, routerLink: ['/public/issuers/' + result.issuer.slug] },
+				];
+				return result;
+			});
 		});
 	}
 

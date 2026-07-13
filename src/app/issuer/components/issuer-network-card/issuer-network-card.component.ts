@@ -133,6 +133,7 @@ import { OebButtonComponent } from '~/components/oeb-button.component';
 							[variant]="inputAsPrivateNetwork() ? 'secondary' : 'default'"
 							[routerLink]="['/issuer', inputAsIssuer() ? 'issuers' : 'networks', issuerOrNetwork().slug]"
 							[queryParams]="inputAsPrivateNetwork() ? { tab: 'badges' } : undefined"
+							[fragment]="inputAsPrivateNetwork() ? null : 'badges'"
 							class="tw-whitespace-nowrap"
 						/>
 					}
@@ -202,7 +203,7 @@ export class OebIssuerNetworkCard {
 		if (this.isPublic()) return false;
 		if (this.inputAsPrivateIssuer()) return this.inputAsPrivateIssuer().canCreateBadge;
 		if (this.inputAsPrivateNetwork())
-			return (this.inputAsPrivateNetwork().current_user_network_role ?? '') == 'staff';
+			return (this.inputAsPrivateNetwork().current_user_network_role ?? '') !== 'staff';
 
 		return false;
 	});

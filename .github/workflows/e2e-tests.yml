@@ -1,0 +1,96 @@
+name: 🎭 Playwright Tests
+
+on:
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: 'Environment to test against'
+                required: true
+                default: 'staging'
+                type: choice
+                options:
+                    - staging
+                    - develop
+
+permissions:
+    pages: write
+    id-token: write
+
+jobs:
+    e2e:
+        name: 🧪 Playwright E2E Tests
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deploy.outputs.page_url }}
+        env:
+            STAGING_TEST_EMAIL: ${{ secrets.STAGING_TEST_EMAIL }}
+            STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
+            ISSUER_SLUG: ${{ inputs.environment == 'staging' && secrets.STAGING_ISSUER_SLUG || secrets.DEVELOP_ISSUER_SLUG }}
+
+        steps:
+            - name: 🌍 Set base URL
+              run: |
+                  if [ "${{ inputs.environment }}" = "staging" ]; then
+                    echo "BASE_URL=https://staging.openbadges.education" >> $GITHUB_ENV
+                  else
+                    echo "BASE_URL=https://develop.openbadges.education" >> $GITHUB_ENV
+                  fi
+
+            - name: ⬇️ Checkout repository
+              uses: actions/checkout@v4
+
+            - name: 🔨 Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: '.nvmrc'
+
+            - name: 📲 Install dependencies
+              run: npm ci
+
+            - name: 🎭 Install Playwright browsers
+              run: npx playwright install chromium --with-deps
+
+            - name: ⏱ Record start time
+              id: start
+              run: echo "time=$(date +%s)" >> $GITHUB_OUTPUT
+
+            - name: 🧪 Run E2E tests
+              run: npx playwright test
+
+            - name: 📹 Upload raw results on failure
+              uses: actions/upload-artifact@v4
+              if: failure()
+              with:
+                  name: playwright-results
+                  path: test-results/
+                  retention-days: 7
+
+            - name: 📄 Upload report to GitHub Pages
+              uses: actions/upload-pages-artifact@v3
+              if: always()
+              with:
+                  path: playwright-report/
+
+            - name: 🚀 Deploy report to GitHub Pages
+              id: deploy
+              if: always()
+              uses: actions/deploy-pages@v4
+
+            - name: 📋 Generate Slack payload
+              if: always()
+              env:
+                  ENVIRONMENT: ${{ inputs.environment }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  REPORT_URL: ${{ steps.deploy.outputs.page_url }}
+                  START_TIME: ${{ steps.start.outputs.time }}
+              run: node e2e/generate-slack-payload.js 2>/dev/null || echo '{"text":"⚠️ Could not parse test results."}' > slack-payload.json
+
+            - name: 💬 Notify Slack
+              if: always()
+              uses: slackapi/slack-github-action@v1.27.0
+              with:
+                  payload-file-path: slack-payload.json
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_URL }}
+                  SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

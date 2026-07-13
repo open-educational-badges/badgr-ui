@@ -1,0 +1,60 @@
+<div class="oeb">
+	<div class="page-padding">
+		<div class="oeb-breadcrumbs">
+			<bg-breadcrumbs [linkentries]="breadcrumbLinkEntries"></bg-breadcrumbs>
+		</div>
+		<div class="oeb-section-sm tw-max-w-[1016px] !tw-pb-0">
+			<div class="oeb-headline-container-sm !tw-pb-0">
+				<h1 hlmH1 class="tw-text-purple tw-font-extrabold">
+					{{ 'Issuer.learningPathEditHeadline' | translate }}
+				</h1>
+			</div>
+		</div>
+
+		<div *bgAwaitPromises="[issuerLoaded, learningPathLoaded]">
+			<div class="tw-max-w-[1016px]">
+				<form [formGroup]="learningPathForm.rawControl" #formElem (ngSubmit)="onSubmit()" novalidate>
+					<div class="tw-mt-6 oeb-section section">
+						<h2 hlmH2 class="tw-font-bold">{{ 'PDFTemplate.lpChooseTemplateHeadline' | translate }}</h2>
+						<p hlmP class="tw-italic tw-mt-2">{{ 'PDFTemplate.lpChooseTemplateDesc' | translate }}</p>
+
+						<div class="tw-mt-4">
+							<oeb-select
+								class="tw-block tw-flex-grow"
+								[options]="selectPDFTemplateOptions"
+								[control]="learningPathForm.rawControlMap.pdftemplate"
+								[noTopMargin]="true"
+							></oeb-select>
+						</div>
+					</div>
+
+					<div
+						class="tw-flex tw-justify-between md:tw-justify-end tw-flex-wrap sm:tw-flex-nowrap tw-gap-2 tw-mt-8"
+					>
+						<oeb-button
+							class="tw-mr-4"
+							type="button"
+							variant="secondary"
+							(click)="cancelClicked()"
+							[disabled]="!!savePromise"
+							[class.disabled]="!!savePromise"
+							[disabled-when-requesting]="true"
+							text="{{ 'General.cancel' | translate }}"
+						></oeb-button>
+
+						<oeb-button
+							id="create-learningpath-btn"
+							type="submit"
+							width="max_content"
+							[disabled]="!!savePromise"
+							[loading-promises]="[savePromise]"
+							loading-message="{{ 'General.save' | translate }}"
+							text="{{ 'General.save' | translate }}"
+						>
+						</oeb-button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

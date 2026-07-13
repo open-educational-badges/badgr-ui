@@ -85,6 +85,7 @@
 		></oeb-button>
 
 		<oeb-button
+			[id]="'bulk-preview-btn'"
 			[class.button-is-disabled]="buttonDisabledClass"
 			[disabled]="buttonDisabledAttribute"
 			(click)="generateImportPreview()"

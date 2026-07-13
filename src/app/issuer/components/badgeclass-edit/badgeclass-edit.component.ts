@@ -8,6 +8,7 @@ import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-a
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Issuer } from '../../models/issuer.model';
+import { Network } from '../../network.model';
 
 import { BadgeClassManager } from '../../services/badgeclass-manager.service';
 import { IssuerManager } from '../../services/issuer-manager.service';
@@ -56,7 +57,7 @@ export class BadgeClassEditComponent extends BaseAuthenticatedRoutableComponent 
 	}
 	readonly badgeClassPlaceholderImageUrl = '../../../../breakdown/static/images/placeholderavatar.svg';
 
-	issuer: Issuer;
+	issuer: Issuer | Network;
 	badgeClassEditForm: FormGroup;
 
 	submitted = false;
@@ -108,7 +109,7 @@ export class BadgeClassEditComponent extends BaseAuthenticatedRoutableComponent 
 				),
 		);
 
-		this.issuerLoaded = issuerManager.issuerBySlug(this.issuerSlug).then(
+		this.issuerLoaded = issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
 			(issuer) => {
 				this.issuer = issuer;
 				this.editBadgeCrumbs = [

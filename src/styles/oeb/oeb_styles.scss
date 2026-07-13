@@ -9,6 +9,7 @@
 
 html {
 	font-family: rubik;
+	scrollbar-gutter: stable;
 }
 
 .oeb {
@@ -196,6 +197,33 @@ html {
 
 .menuitem {
 	color: var(--color-black);
+
+	svg {
+		fill: none;
+	}
+	ng-icon {
+		margin-right: var(--gridspacing);
+	}
+}
+
+.oeb-icon-stroke-only {
+	svg {
+		fill: none;
+	}
+}
+
+.oeb-icon-filled-alert {
+	svg {
+		circle {
+			fill: var(--color-red);
+			stroke: var(--color-red);
+		}
+		line,
+		path {
+			stroke: white;
+			fill: none;
+		}
+	}
 }
 
 .menutoggle:focus::before,

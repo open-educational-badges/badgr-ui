@@ -1,0 +1,12 @@
+// PLZ Overview Component Styles
+// Uses OEB design system colors and patterns
+
+.page-padding {
+	padding: 2rem;
+}
+
+@media (max-width: 768px) {
+	.page-padding {
+		padding: 1rem;
+	}
+}

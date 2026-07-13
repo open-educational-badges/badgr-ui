@@ -12,6 +12,9 @@ import { MdImgValidator } from '../../../common/validators/md-img.validator';
 import { BadgeInstanceManager } from '../../services/badgeinstance-manager.service';
 import { BadgeClassManager } from '../../services/badgeclass-manager.service';
 import { IssuerManager } from '../../services/issuer-manager.service';
+import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
+import { PDFTemplate } from '../../models/pdftemplate.model';
+import { PreviewCanvas } from '../../../common/util/pdftemplate-util';
 
 import { Issuer } from '../../models/issuer.model';
 import { BadgeClass } from '../../models/badgeclass.model';
@@ -56,8 +59,23 @@ import { Network } from '~/issuer/network.model';
 	styles: [
 		`
 			:host ::ng-deep {
-				brn-collapsible[data-state='open'] > button > span {
-					font-weight: bold !important;
+				.canvas-container {
+					width: 100% !important;
+					height: 100% !important;
+					align-content: center;
+					justify-items: center;
+
+					.portrait {
+						aspect-ratio: 210 / 297;
+						width: 188px !important;
+						height: 266px !important;
+					}
+
+					.landscape {
+						aspect-ratio: 297 / 210;
+						width: 250px !important;
+						height: 178px !important;
+					}
 				}
 			}
 		`,
@@ -73,7 +91,6 @@ import { Network } from '~/issuer/network.model';
 		HlmP,
 		RouterLink,
 		OebInputComponent,
-		OebSelectComponent,
 		OebCheckboxComponent,
 		SvgIconComponent,
 		FormFieldMarkdown,
@@ -95,9 +112,11 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	protected issuerManager = inject(IssuerManager);
 	protected badgeClassManager = inject(BadgeClassManager);
 	protected badgeInstanceManager = inject(BadgeInstanceManager);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected dialogService = inject(CommonDialogsService);
 	protected configService = inject(AppConfigService);
 	protected translate = inject(TranslateService);
+	protected authService: SessionService;
 
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
 	readonly badgeFailedImageUrl = '../../../breakdown/static/images/badge-failed.svg';
@@ -180,10 +199,10 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 			'evidence_items',
 			typedFormGroup().addControl('narrative', '').addControl('evidence_url', '', UrlValidator.validUrl),
 		);
-
 	badgeClass: BadgeClass;
 
 	previewB64Img: string;
+	pdfTemplateForPreview: PDFTemplate | null = null;
 
 	subscriptions: Subscription[] = [];
 
@@ -203,6 +222,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		const route = inject(ActivatedRoute);
 
 		super(router, route, sessionService);
+		this.authService = sessionService;
 		const title = this.title;
 
 		title.setTitle(`Award Badge - ${this.configService.theme['serviceName'] || 'Badgr'}`);
@@ -225,6 +245,32 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 						.then((img) => {
 							this.previewB64Img = img.image_url;
 						});
+
+					if (badgeClass.pdfTemplate) {
+						this.pdfTemplateManager
+							.getPDFTemplateForIssuer(this.issuerSlug, badgeClass.pdfTemplate)
+							.then((template) => {
+								this.pdfTemplateForPreview = template;
+								const formatStr = template.format === 0 ? 'portrait' : 'landscape';
+								const alignmentStr = template.alignment === 0 ? 'left' : 'center';
+								setTimeout(() => {
+									new PreviewCanvas(
+										this.translate,
+										formatStr,
+										template.scale,
+										alignmentStr,
+										template.posX,
+										template.posY,
+										template.image,
+										1,
+										'badgeIssuePreviewCanvas',
+										this.previewB64Img || '/breakdown/static/images/pdfPreviewBadgeImage.svg',
+										false,
+									);
+								}, 0);
+							})
+							.catch((err) => console.error('Failed to load PDF template preview', err));
+					}
 
 					this.breadcrumbLinkEntries = [
 						{ title: 'Issuers', routerLink: ['/issuer'] },
@@ -250,12 +296,14 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		});
 	}
 
-	ngOnInit() {
+	async ngOnInit() {
 		super.ngOnInit();
 		this.subscriptions.push(...setupActivityOnlineSync(this.issueForm));
 		if (this.issueForm.controls.evidence_items.length === 0) {
 			this.issueForm.controls.evidence_items.addFromTemplate();
 		}
+
+		await this.issuerLoaded;
 	}
 
 	ngOnDestroy() {

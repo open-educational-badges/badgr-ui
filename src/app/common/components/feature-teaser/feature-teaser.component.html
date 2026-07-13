@@ -1,0 +1,22 @@
+<section class="tw-border tw-border-solid tw-border-purple tw-rounded-[10px] tw-p-6 md:tw-p-10 tw-bg-white">
+	<header class="tw-border-0 tw-border-b tw-border-solid tw-border-purple tw-pb-3 tw-mb-8">
+		<ng-content select="[teaser-heading]" />
+	</header>
+
+	<div
+		class="tw-flex tw-flex-col tw-gap-10"
+		[class.md:tw-flex-row]="imagePosition === 'left'"
+		[class.md:tw-flex-row-reverse]="imagePosition === 'right'"
+	>
+		<div class="tw-flex tw-flex-row tw-flex-wrap tw-gap-6 md:tw-shrink-0 tw-items-start">
+			<ng-content select="[teaser-image]" />
+		</div>
+
+		<div class="tw-flex-1 tw-flex tw-flex-col tw-gap-6">
+			<ng-content select="[teaser-body]" />
+			<div>
+				<ng-content select="[teaser-action]" />
+			</div>
+		</div>
+	</div>
+</section>

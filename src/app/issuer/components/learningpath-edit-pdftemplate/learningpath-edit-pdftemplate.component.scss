@@ -1,0 +1,9 @@
+.section {
+	background-color: var(--color-lightgray);
+	border-radius: 10px;
+	margin-bottom: 2em;
+	padding: 1.5em 0.8em;
+	@media (min-width: 768px) {
+		padding: 1.8em;
+	}
+}

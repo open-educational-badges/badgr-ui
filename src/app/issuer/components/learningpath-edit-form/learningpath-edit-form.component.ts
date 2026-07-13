@@ -62,13 +62,19 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
 import { UpperCasePipe } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { NetworkApiService } from '~/issuer/services/network-api.service';
 import { CommonEntityManager } from '~/entity-manager/services/common-entity-manager.service';
 import { NgIcon } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
-import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authentication-service';
+import { AUTH_PROVIDER } from '~/common/services/authentication-service';
 import { Network } from '~/issuer/network.model';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { SessionService } from '~/common/services/session.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { LanguageService, lngs } from '~/common/services/language.service';
 
 type BadgeResult = BadgeClass & { selected?: boolean };
 
@@ -111,7 +117,6 @@ export class LearningPathEditFormComponent
 	extends BaseAuthenticatedRoutableComponent
 	implements OnInit, OnChanges, AfterViewInit
 {
-	protected loginService: AuthenticationService;
 	protected messageService = inject(MessageService);
 	protected learningPathApiService = inject(LearningPathApiService);
 	protected issuerManager = inject(IssuerManager);
@@ -124,6 +129,9 @@ export class LearningPathEditFormComponent
 	protected badgeInstanceManager = inject(BadgeInstanceManager);
 	protected learningPathManager = inject(LearningPathManager);
 	protected configService = inject(AppConfigService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
+	private languageService = inject(LanguageService);
+	protected authService: SessionService;
 
 	@ViewChild(StepperComponent) stepper: StepperComponent;
 
@@ -222,6 +230,7 @@ export class LearningPathEditFormComponent
 
 	badgeResultsByCategory: MatchingBadgeCategory[] = [];
 	badgeResultsByIssuer: MatchingBadgeIssuer[] = [];
+	private activeLpBadgeSlugs = new Set<string>();
 
 	selectedTag: string = null;
 	order = 'asc';
@@ -233,6 +242,13 @@ export class LearningPathEditFormComponent
 		this._searchQuery = query;
 		this.updateResults();
 	}
+
+	private readonly categoryOrder = ['participation', 'competency', 'learningpath'];
+	private sortByCategory = (a: string, b: string) => {
+		const ai = this.categoryOrder.indexOf(a);
+		const bi = this.categoryOrder.indexOf(b);
+		return (ai < 0 ? Infinity : ai) - (bi < 0 ? Infinity : bi);
+	};
 
 	private _groupBy: '---' | 'Category' | 'Issuer' = '---';
 	get groupBy() {
@@ -273,9 +289,18 @@ export class LearningPathEditFormComponent
 
 	selectMinBadgesOptions: FormFieldSelectOption[] = [];
 
+	pdfTemplatesPromise: Promise<void>;
+	pdfTemplates: ApiPDFTemplate[];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
+
 	constructor() {
-		super();
-		this.loginService = inject(AUTH_PROVIDER);
+		const sessionService = inject(SessionService);
+		const router = inject(Router);
+		const route = inject(ActivatedRoute);
+
+		super(router, route, sessionService);
+		this.authService = sessionService;
+
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 		if (!this.issuer)
 			this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
@@ -338,20 +363,21 @@ export class LearningPathEditFormComponent
 		});
 
 		if (!this.initialisedLearningpath) {
-			// restore name and description from sessionStorage
+			// restore name, description and language from sessionStorage
 			const sessionValuesJSON = sessionStorage.getItem('oeb-create-badgeclassvalues');
 			if (sessionValuesJSON) {
 				const sessionValues = JSON.parse(sessionValuesJSON);
 				this.learningPathForm.rawControl.patchValue({
 					name: sessionValues['badge_name'] || '',
 					description: sessionValues['badge_description'] || '',
+					language: sessionValues['badge_language'] || '',
 				});
 			}
-			// save name and description to sessionStorage on Change
+			// save name, description and language to sessionStorage on Change
 			this.learningPathForm.rawControl.valueChanges.subscribe((v) => {
 				let saveableSessionValues = {};
 				for (const [k, v] of Object.entries(this.learningPathForm.rawControl.value)) {
-					if (['name', 'description'].includes(k)) {
+					if (['name', 'description', 'language'].includes(k)) {
 						saveableSessionValues['badge_' + k] = v;
 					}
 				}
@@ -369,6 +395,7 @@ export class LearningPathEditFormComponent
 		this.learningPathForm.setValue({
 			name: lp.name,
 			description: lp.description,
+			language: badge.language,
 			badge_category: 'learningpath',
 			badge_image: badge.imageFrame ? lp.participationBadgeImage : null,
 			badge_customImage: !badge.imageFrame ? lp.participationBadgeImage : null,
@@ -383,6 +410,7 @@ export class LearningPathEditFormComponent
 					legalCode: 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
 				},
 			],
+			pdftemplate: lp.pdftemplate,
 		});
 		this.selectedBadges = lp.badges.map((b) => b.badge);
 
@@ -469,6 +497,7 @@ export class LearningPathEditFormComponent
 	learningPathForm = typedFormGroup([this.imageValidation.bind(this), this.minSelectedBadges.bind(this)])
 		.addControl('name', '', [Validators.required, Validators.maxLength(60)])
 		.addControl('description', '', [Validators.required, Validators.maxLength(700)])
+		.addControl<'language', (typeof lngs)[number]>('language', this.languageService.getSelectedLngValue())
 		.addControl('badge_image', '')
 		.addControl('badge_category', 'learningpath')
 		.addControl('badge_customImage', '')
@@ -487,9 +516,10 @@ export class LearningPathEditFormComponent
 					UrlValidator.validUrl,
 				),
 			Validators.required,
-		);
+		)
+		.addControl('pdftemplate', null);
 
-	ngAfterViewInit() {
+	async ngAfterViewInit() {
 		this.focusActivation = this.route.snapshot.queryParamMap.get('focusActivation') === 'true';
 
 		if (this.focusActivation && this.initialisedLearningpath && this.stepper) {
@@ -510,6 +540,20 @@ export class LearningPathEditFormComponent
 		this.learningPathForm.controls.badges.rawControl.valueChanges.subscribe((value) => {
 			this.selectMinBadgesOptions = this.generateSelectMinBadgesOptions(value);
 		});
+
+		if (this.authService.isLoggedIn) {
+			this.getPDFTemplatesForIssuerApi(this.issuerSlug);
+			await this.pdfTemplatesPromise;
+
+			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
+				label: t.name,
+				value: t.slug,
+			}));
+			this.selectPDFTemplateOptions.push({
+				label: this.translate.instant('PDFTemplate.oebDesign'),
+				value: null,
+			});
+		}
 	}
 
 	private generateSelectMinBadgesOptions(badges: any[]): FormFieldSelectOption[] {
@@ -625,6 +669,9 @@ export class LearningPathEditFormComponent
 				(a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
 			);
 
+			const activeLps = await this.learningPathApiService.getLearningPathsForIssuer(this.issuerSlug);
+			this.activeLpBadgeSlugs = new Set((activeLps ?? []).map((lp) => lp.participationBadge_id).filter(Boolean));
+
 			this.badgeResults = this.badges;
 			this.badgesFormArray = this.learningPathForm.controls.badges.value;
 
@@ -662,7 +709,7 @@ export class LearningPathEditFormComponent
 				.sort((a, b) => a.issuerName.localeCompare(b.issuerName))
 				.forEach((r) => r.badges.sort((a, b) => a.name.localeCompare(b.name)));
 			this.badgeResultsByCategory
-				.sort((a, b) => a.category.localeCompare(b.category))
+				.sort((a, b) => this.sortByCategory(a.category, b.category))
 				.forEach((r) => r.badges.sort((a, b) => a.name.localeCompare(b.name)));
 		} else {
 			this.badgeResults.sort((a, b) => b.name.localeCompare(a.name));
@@ -670,7 +717,7 @@ export class LearningPathEditFormComponent
 				.sort((a, b) => b.issuerName.localeCompare(a.issuerName))
 				.forEach((r) => r.badges.sort((a, b) => b.name.localeCompare(a.name)));
 			this.badgeResultsByCategory
-				.sort((a, b) => b.category.localeCompare(a.category))
+				.sort((a, b) => this.sortByCategory(a.category, b.category))
 				.forEach((r) => r.badges.sort((a, b) => b.name.localeCompare(a.name)));
 		}
 	}
@@ -713,15 +760,25 @@ export class LearningPathEditFormComponent
 			categoryResults.addBadge(item);
 			return true;
 		};
-		this.badges
-			.filter(this.badgeMatcher(this.searchQuery))
-			.filter(this.badgeTagMatcher(this.selectedTag))
-			.filter((i) => !i.apiModel.source_url)
-			.forEach((item) => {
-				this.badgeResults.push(item);
-				addBadgeToResultsByIssuer(item);
-				addBadgeToResultsByCategory(item);
-			});
+
+		if (this.badges) {
+			this.badges
+				.filter(this.badgeMatcher(this.searchQuery))
+				.filter(this.badgeTagMatcher(this.selectedTag))
+				.filter((i) => !i.apiModel.source_url)
+				.filter((i) => !this.existingLpBadge || i.slug !== this.existingLpBadge.slug)
+				.filter(
+					(i) =>
+						i.extension?.['extensions:CategoryExtension']?.Category !== 'learningpath' ||
+						this.activeLpBadgeSlugs.has(i.slug),
+				)
+				.forEach((item) => {
+					this.badgeResults.push(item);
+					addBadgeToResultsByIssuer(item);
+					addBadgeToResultsByCategory(item);
+				});
+			this.badgeResultsByCategory.sort((a, b) => this.sortByCategory(a.category, b.category));
+		}
 	}
 
 	readonly badgeLoadingImageUrl = 'breakdown/static/images/badge-loading.svg';
@@ -832,7 +889,7 @@ export class LearningPathEditFormComponent
 			'*Folgende Kriterien sind auf Basis deiner Eingaben als Metadaten im Badge hinterlegt*: \n\n';
 		const participationText = `Du hast erfolgreich an **${this.learningPathForm.controls.name.value}** teilgenommen.  \n\n `;
 
-		if (this.issuer.quotas) {
+		if (this.issuer.quotas && !this.existingLpBadge) {
 			// recheck quotas and show dialog if something changed while starting the creation process
 			await this.issuer.update();
 			if (!this.checkQuotasDialog('LEARNINGPATH_CREATE')) {
@@ -856,6 +913,7 @@ export class LearningPathEditFormComponent
 			this.existingLpBadge.image = !imageFrame ? formState.badge_image : null;
 			this.existingLpBadge.name = formState.name;
 			this.existingLpBadge.description = formState.description;
+			this.existingLpBadge.language = formState.language;
 			this.existingLpBadge.tags = Array.from(this.lpTags);
 			this.existingLpBadge.criteria_text = criteriaText;
 			this.existingLpBadge.criteria_url = '';
@@ -903,6 +961,7 @@ export class LearningPathEditFormComponent
 			this.initialisedLearningpath.badges = this.draggableList.map((item, index) => {
 				return { badge: item, order: item.order };
 			});
+			this.initialisedLearningpath.pdftemplate = formState.pdftemplate;
 
 			this.savePromise = this.initialisedLearningpath.save();
 
@@ -926,8 +985,8 @@ export class LearningPathEditFormComponent
 						imageFrame: imageFrame,
 						name: this.learningPathForm.controls.name.value,
 						description: this.learningPathForm.controls.description.value,
+						language: this.learningPathForm.controls.language.value,
 						tags: Array.from(this.lpTags),
-						language: this.translate.currentLang,
 						criteria_text: criteriaText,
 						criteria_url: '',
 						extensions: {
@@ -984,6 +1043,7 @@ export class LearningPathEditFormComponent
 						required_badges_count: formState.required_badges_count ?? this.selectedBadges.length,
 						participationBadge_id: participationBadge.slug,
 						activated: formState.activated,
+						pdftemplate: formState.pdftemplate,
 					});
 
 					if (this.issuer.quotas) {
@@ -1023,6 +1083,14 @@ export class LearningPathEditFormComponent
 		return this.selectedBadges.length >= 2
 			? null
 			: { minSelectedBadges: { required: 2, actual: this.selectedBadges.length } };
+	}
+
+	getPDFTemplatesForIssuerApi(issuerSlug) {
+		this.pdfTemplatesPromise = this.pdfTemplateManager.getPDFTemplatesForIssuer(issuerSlug).then((pdfTemplates) => {
+			this.pdfTemplates = pdfTemplates.sort(
+				(a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
+			);
+		});
 	}
 
 	checkQuotasDialog(quota: string) {

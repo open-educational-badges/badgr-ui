@@ -1,0 +1,21 @@
+<div class="oeb tw-relative tw-w-full">
+	<div class="page-padding">
+		<div class="oeb-breadcrumbs">
+			<bg-breadcrumbs [linkentries]="breadcrumbLinkEntries"></bg-breadcrumbs>
+		</div>
+		<form-message></form-message>
+		<h1 hlmH1 class="tw-text-purple tw-font-extrabold">{{ 'PDFTemplate.editor' | translate }}</h1>
+		<h2 hlmH2 class="!tw-text-oebblack tw-font-extrabold tw-mt-10 tw-uppercase">
+			{{ 'PDFTemplate.createHeading' | translate }}
+		</h2>
+		<ng-template [bgAwaitPromises]="[pdfTemplateLoaded]">
+			<pdftemplate-edit-form
+				[submittingText]="('PDFTemplate.saving' | translate) + ' ...'"
+				(save)="pdfTemplateCreated($event)"
+				(cancelEdit)="creationCanceled()"
+				[pdfTemplate]="pdfTemplate"
+			>
+			</pdftemplate-edit-form>
+		</ng-template>
+	</div>
+</div>

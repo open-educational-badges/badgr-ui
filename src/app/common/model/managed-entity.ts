@@ -55,6 +55,10 @@ export abstract class ManagedEntity<ApiModelType, ApiRefType extends ApiEntityRe
 		return this._commonManager.learningpathManager;
 	}
 
+	get pdfTemplateManager() {
+		return this._commonManager.pdfTemplateManager;
+	}
+
 	get badgeInstanceManager() {
 		return this._commonManager.badgeInstanceManager;
 	}

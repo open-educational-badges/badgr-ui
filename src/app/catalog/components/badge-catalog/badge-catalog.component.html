@@ -12,8 +12,8 @@
 
 					<span>
 						{{ badgesPluralWord() }} in
-						@if (issuers().length > 1) {
-							<span [countUp]="issuers().length">{{ issuers().length }}</span>
+						@if (issuerCount() > 1) {
+							<span [countUp]="issuerCount()">{{ issuerCount() }}</span>
 						}
 						{{ issuersPluralWord() }}
 					</span>

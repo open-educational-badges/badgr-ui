@@ -1,5 +1,7 @@
 {
-	"futureSkills": {
+	"uri": "future-skills",
+	"label": "Future Skills",
+	"skills": {
 		"lernkompetenz": {
 			"concept_uri": "lernkompetenz",
 			"de": {
@@ -189,33 +191,79 @@
 		}
 	},
 	"escoMap": {
-		"/esco/skill/9bf266a6-188b-4d17-a22f-2f266d76832b": "initiativ-und-leistungskompetenz",
+		"/esco/skill/9bf266a6-188b-4d17-a22f-2f266d76832b": ["lernkompetenz", "initiativ-und-leistungskompetenz"],
 		"/esco/skill/f78877d1-99f3-4649-addc-2d09c9183a1e": "lernkompetenz",
 		"/esco/skill/135192cb-84e4-4b70-8946-fbe5041b26cd": "lernkompetenz",
 		"/esco/skill/a44c0ed6-68b1-457a-9c6d-ea8487bdfeb2": "lernkompetenz",
-		"/esco/skill/19a64e91-bfe3-4c48-9225-3bb1229b12f0": "sensemaking",
-		"/esco/skill/669b75d8-671c-4a1c-8e0b-6466c513c27d": "zukunfts-und-gestaltungskompetenz",
-		"/esco/skill/409a0245-0e6c-4aac-ba16-0920ecb76a8d": "zukunfts-und-gestaltungskompetenz",
-		"/esco/skill/468135b7-5757-48c3-9509-fde0e13ec5be": "initiativ-und-leistungskompetenz",
+		"/esco/skill/19a64e91-bfe3-4c48-9225-3bb1229b12f0": [
+			"selbstwirksamkeit",
+			"selbstkompetenz",
+			"reflexionskompetenz",
+			"entscheidungskompetenz",
+			"initiativ-und-leistungskompetenz",
+			"sensemaking"
+		],
+		"/esco/skill/669b75d8-671c-4a1c-8e0b-6466c513c27d": [
+			"selbstwirksamkeit",
+			"selbstbestimmtheit",
+			"selbstkompetenz",
+			"reflexionskompetenz",
+			"entscheidungskompetenz",
+			"initiativ-und-leistungskompetenz",
+			"zukunfts-und-gestaltungskompetenz"
+		],
+		"/esco/skill/409a0245-0e6c-4aac-ba16-0920ecb76a8d": [
+			"selbstwirksamkeit",
+			"selbstbestimmtheit",
+			"selbstkompetenz",
+			"reflexionskompetenz",
+			"entscheidungskompetenz",
+			"initiativ-und-leistungskompetenz",
+			"systemkompetenz",
+			"sensemaking",
+			"zukunfts-und-gestaltungskompetenz"
+		],
+		"/esco/skill/468135b7-5757-48c3-9509-fde0e13ec5be": [
+			"selbstwirksamkeit",
+			"selbstbestimmtheit",
+			"selbstkompetenz",
+			"reflexionskompetenz",
+			"initiativ-und-leistungskompetenz"
+		],
 		"/esco/skill/1835a7c1-600e-4b16-a0af-fb4f7d8d77b9": "selbstwirksamkeit",
 		"/esco/skill/5a927fa0-462e-4d54-ae12-97fd6ca45762": "selbstbestimmtheit",
-		"/esco/skill/77b636e8-fab3-41a8-8022-1e0a354059dc": "reflexionskompetenz",
-		"/esco/skill/7dd94ad3-13d6-43fe-8b94-51fcbf67ced9": "ethische-kompetenz",
+		"/esco/skill/77b636e8-fab3-41a8-8022-1e0a354059dc": ["selbstbestimmtheit", "reflexionskompetenz"],
+		"/esco/skill/7dd94ad3-13d6-43fe-8b94-51fcbf67ced9": [
+			"reflexionskompetenz",
+			"entscheidungskompetenz",
+			"ethische-kompetenz"
+		],
 		"/esco/skill/20012caa-b63c-4cb9-b2b8-01a1cfdfc1d1": "reflexionskompetenz",
-		"/esco/skill/cef5c0f8-1e40-4c09-b6a7-aa7811849e5d": "sensemaking",
+		"/esco/skill/cef5c0f8-1e40-4c09-b6a7-aa7811849e5d": [
+			"reflexionskompetenz",
+			"entscheidungskompetenz",
+			"ambiguitätskompetenz",
+			"ethische-kompetenz",
+			"sensemaking"
+		],
 		"/esco/skill/967b60c2-4657-4ffc-bcaf-aab565793f97": "reflexionskompetenz",
-		"/esco/skill/4707da90-9cfc-46ca-8de0-38a0b7bfb137": "entscheidungskompetenz",
+		"/esco/skill/4707da90-9cfc-46ca-8de0-38a0b7bfb137": ["reflexionskompetenz", "entscheidungskompetenz"],
 		"/esco/skill/c54b03a9-fe20-42af-9e8a-f8896af4a4f9": "entscheidungskompetenz",
-		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": "zukunfts-und-gestaltungskompetenz",
+		"/esco/skill/d56e2c2f-3e01-4b76-a7bb-ecb6d430172f": [
+			"entscheidungskompetenz",
+			"design-thinking-kompetenz",
+			"sensemaking",
+			"zukunfts-und-gestaltungskompetenz"
+		],
 		"/esco/skill/fd2d573f-8d35-45ca-b0a4-91cad3b178d1": "entscheidungskompetenz",
 		"/esco/skill/bcf002ce-90f8-42e5-ac1b-5dba208639b0": "entscheidungskompetenz",
 		"/esco/skill/6dc2dfac-3e21-44dd-a71c-9a1c8fe2514c": "entscheidungskompetenz",
 		"/esco/skill/e9575f7f-053a-439e-8074-f93df3334e92": "ethische-kompetenz",
 		"/esco/skill/7cf2762d-32e1-4b21-8ef8-574e40310c18": "ethische-kompetenz",
 		"/esco/skill/0b709c64-a57a-4976-86bd-34d2cf34fa4f": "ethische-kompetenz",
-		"/esco/skill/d97c894e-d330-4bd3-b8ba-138fc11855ee": "innovationskompetenz",
-		"/esco/skill/c624c6a3-b0ba-4a31-a296-0d433fe47e41": "innovationskompetenz",
-		"/esco/skill/c2a0c52c-0b4b-4180-a918-92650ea3b458": "innovationskompetenz",
+		"/esco/skill/d97c894e-d330-4bd3-b8ba-138fc11855ee": ["design-thinking-kompetenz", "innovationskompetenz"],
+		"/esco/skill/c624c6a3-b0ba-4a31-a296-0d433fe47e41": ["design-thinking-kompetenz", "innovationskompetenz"],
+		"/esco/skill/c2a0c52c-0b4b-4180-a918-92650ea3b458": ["design-thinking-kompetenz", "innovationskompetenz"],
 		"/esco/skill/2fb8480e-de3c-462b-b169-e8bbb344da68": "innovationskompetenz",
 		"/esco/skill/8327754d-3990-4056-b07e-4faa49cfcd26": "innovationskompetenz",
 		"/esco/skill/67dbfc2a-3dd4-41a1-90bd-97035e7add60": "digitalkompetenz",

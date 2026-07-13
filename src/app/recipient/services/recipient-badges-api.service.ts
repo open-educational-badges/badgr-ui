@@ -103,7 +103,7 @@ export class RecipientBadgeApiService extends BaseHttpApiService {
 			narrative: importedBadge.narrative || null,
 			evidence_items: [],
 			pending: false,
-			extensions: [],
+			extensions: importedBadge.extensions,
 			json: {
 				id: '',
 				type: 'Assertion',

@@ -192,6 +192,21 @@
 		}
 	}
 
+	@if (networkForm() && !existingIssuer) {
+		@if (networkParentOptionsLoaded && networkParentIssuerOptions.length === 0) {
+			<p class="tw-text-red tw-mt-8">{{ 'Network.noEligibleInstitution' | translate }}</p>
+		} @else {
+			<oeb-select
+				class="tw-mt-8"
+				[control]="issuerForm.rawControlMap.parent_issuer"
+				[label]="'Network.parentInstitution' | translate"
+				[sublabel]="'Network.parentInstitutionInfo' | translate"
+				[placeholder]="networkParentIssuerOptions.length === 1 ? '' : ('Network.selectInstitution' | translate)"
+				[options]="networkParentIssuerOptions"
+			></oeb-select>
+		}
+	}
+
 	@if (networkForm()) {
 		<p class="tw-text-purple tw-text-lg tw-italic tw-mt-14">{{ 'Network.addPartnerNext' | translate }}</p>
 	}

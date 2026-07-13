@@ -23,7 +23,7 @@
 											  }
 								}}</span>
 							}
-							<h2 hlmH2 class="!tw-text-oebblack tw-font-extrabold tw-uppercase">
+							<h2 hlmH2 data-testid="lp-title" class="!tw-text-oebblack tw-font-extrabold tw-uppercase">
 								{{ learningPath.name }}
 							</h2>
 							<p size="sm" hlmP class="tw-text-oebblack">
@@ -100,6 +100,27 @@
 										<span>{{ 'LearningPath.notActivatedYetEnd' | translate }}</span>
 									</p>
 								</div>
+							}
+
+							@if (
+								!issuer.is_network &&
+								learningPath.activated &&
+								pdfTemplateManager.pdfEditorAvailable() &&
+								(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+							) {
+								<oeb-button
+									[text]="'PDFTemplate.editPDF' | translate"
+									width="full_width"
+									[routerLink]="[
+										`/issuer/issuers/${issuer.slug}/learningpaths/${learningPath.slug}/pdftemplate`,
+									]"
+									[disabled]="!issuer.canCreateBadge"
+									[class]="
+										issuer.canCreateBadge
+											? 'tw-whitespace-nowrap tw-hidden md:tw-block'
+											: 'disabled'
+									"
+								></oeb-button>
 							}
 						</div>
 					</div>
@@ -193,9 +214,9 @@
 								[badgeSlug]="badge.badge.slug"
 								[issuerTitle]="badge?.badge.issuerName ? badge.badge.issuerName : issuer.name"
 								[badgeIssueDate]="badge.badge.created_at"
-								[public]="true"
-								[publicUrl]="'/public/badges/' + badge.badge.slug"
+								[publicUrl]="badgeLink(badge.badge)"
 								[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
+								[category]="badge.badge.extensions['extensions:CategoryExtension']?.Category"
 							></bg-badgecard>
 						</div>
 					}

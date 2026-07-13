@@ -1,0 +1,19 @@
+<div class="stats-bar" role="region" aria-label="Dashboard Statistics">
+	<div class="stats-container">
+		@for (stat of stats; track stat.label) {
+			<div class="stat-item">
+				<div class="stat-icon" [attr.aria-hidden]="true">
+					<ng-icon [name]="stat.icon" size="28"></ng-icon>
+				</div>
+				<div class="stat-content">
+					<div class="stat-value" [attr.aria-label]="(stat.label | translate) + ': ' + stat.value">
+						{{ stat.value }}
+					</div>
+					<div class="stat-label">
+						{{ stat.label | translate }}
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

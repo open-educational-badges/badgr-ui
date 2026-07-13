@@ -4,7 +4,6 @@ import { StandaloneEntitySet } from '../model/managed-entity-set';
 import { UserProfile } from '../model/user-profile.model';
 import { ApiUserProfile } from '../model/user-profile-api.model';
 import { CommonEntityManager } from '../../entity-manager/services/common-entity-manager.service';
-import { resolve } from 'dns';
 
 /**
  * Manager for the singleton `UserProfile` instance that provides access to the current user's profile.

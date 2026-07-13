@@ -9,3 +9,9 @@ textarea::placeholder {
 	font-size: 18px;
 	line-height: 23.4px;
 }
+
+input[type='range'] {
+	appearance: auto;
+	accent-color: var(--color-purple);
+	padding: 0;
+}

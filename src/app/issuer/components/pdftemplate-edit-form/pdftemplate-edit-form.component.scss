@@ -1,0 +1,88 @@
+.section {
+	background-color: var(--color-purple);
+	border-radius: 10px;
+	padding: 4px;
+}
+
+.subsection {
+	background-color: var(--color-lightgray);
+	border-radius: 5px;
+	padding: 2rem;
+}
+
+.radio-with-icon {
+	display: block;
+
+	input[type='radio'] {
+		display: none;
+	}
+}
+
+ng-icon[name='lucideHand'] {
+	--ng-icon__stroke-width: 1.5;
+}
+
+::ng-deep {
+	.stepper {
+		header {
+			display: none;
+		}
+	}
+	bg-formfield-image {
+		.forminput {
+			margin-bottom: 0;
+			height: 100%;
+
+			.forminput-x-label {
+				display: none;
+			}
+		}
+
+		.dropzone {
+			background-color: white;
+			border: none;
+			margin-top: 0;
+			height: 100% !important;
+			text-align: center;
+			padding: 0;
+			overflow: hidden;
+
+			.dropzone-x-preview {
+				img {
+					max-width: none;
+					margin-right: 0;
+					border-radius: 8px;
+				}
+
+				.u-text-body {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.canvas-container,
+	canvas {
+		width: 100% !important;
+		height: 100% !important;
+	}
+}
+
+.preview-page-control {
+	font-size: 16px;
+	line-height: 1.2em;
+
+	a {
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.current-page {
+		font-weight: 700;
+		text-decoration: underline;
+		color: var(--color-purple);
+	}
+}

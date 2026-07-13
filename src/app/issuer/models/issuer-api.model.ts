@@ -92,6 +92,7 @@ export interface ApiQuotas {
 		ACCOUNTS_MEMBER: ApiQuotasNumberQuota;
 		AISKILLS_REQUESTS: ApiQuotasNumberQuota;
 		PDFEDITOR: ApiQuotasBooleanQuota;
+		DASHBOARD: ApiQuotasBooleanQuota;
 		NETWORK_MEMBERSHIPS: ApiQuotasNumberQuota;
 		NETWORK_CREATE: ApiQuotasNumberQuota;
 	};
@@ -128,6 +129,7 @@ export interface ApiNetworkForCreation {
 	country: string;
 	state?: string;
 	is_network?: boolean;
+	parent_issuer?: string;
 }
 
 export type IssuerStaffRoleSlug = 'creator' | 'owner' | 'editor' | 'staff';
@@ -151,28 +153,6 @@ export interface ApiIssuerStaffOperation {
 	username?: string;
 	email?: string;
 	role?: IssuerStaffRoleSlug;
-}
-
-export interface ApiIssuerForCreation {
-	name: string;
-	description: string;
-	image?: string;
-	email: string;
-	url: string;
-	category?: string;
-	street?: string;
-	streetnumber?: string;
-	zip?: string;
-	city?: string;
-
-	country?: string;
-	state?: string;
-
-	intendedUseVerified: boolean;
-	linkedinId: string;
-
-	lat?: number;
-	lon?: number;
 }
 
 export interface ApiIssuerForEditing {

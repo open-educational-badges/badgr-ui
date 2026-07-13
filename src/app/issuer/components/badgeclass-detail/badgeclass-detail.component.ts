@@ -269,29 +269,29 @@ export class BadgeClassDetailComponent
 				),
 		);
 
-		try {
-			this.issuerLoaded = issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
-				(issuer) => {
-					this.issuer = issuer;
-					if (this.issuer instanceof Issuer) {
-						this.issuerNetworks = this.issuer.networks.map((n) => {
-							return new Network(this.commonManager, n);
-						});
-					}
-				},
-				(error) => this.messageService.reportLoadingError(`Cannot find issuer ${this.issuerSlug}`, error),
-			);
-		} catch {
-			this.issuerLoaded = networkManager.networkBySlug(this.issuerSlug).then(
-				(network) => {
-					this.issuer = network;
-				},
-				(error) => this.messageService.reportLoadingError(`Cannot find issuer ${this.issuerSlug}`, error),
-			);
-		}
+		this.issuerLoaded = issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then(
+			(issuer) => {
+				this.issuer = issuer;
+				if (this.issuer instanceof Issuer) {
+					this.issuerNetworks = this.issuer.networks.map((n) => {
+						return new Network(this.commonManager, n);
+					});
+				}
+			},
+			(error) => this.messageService.reportLoadingError(`Cannot find issuer ${this.issuerSlug}`, error),
+		);
 
 		Promise.all([this.issuerLoaded, this.badgeClassLoaded])
 			.then(() => {
+				// Render badge header immediately — don't wait for instances or learning paths
+				this.loadConfig(this.badgeClass);
+
+				// Fetch learning paths once in background; update config when done
+				this.learningPathApiService.getLearningPathsForBadgeClass(this.badgeSlug).then((lps) => {
+					this.learningPaths = lps;
+					this.loadConfig(this.badgeClass);
+				});
+
 				if (this.issuer.is_network) {
 					this.loadNetworkQrCodes(this.issuerSlug, this.badgeSlug);
 					this.loadPartnerInstances();
@@ -304,7 +304,6 @@ export class BadgeClassDetailComponent
 							this.qrCodeAwards = qrCodes;
 						});
 					this.loadInstances();
-					// load badgeinstances in the network to show issuers that awarded
 					if (this.badgeClass.sharedOnNetwork) {
 						this.loadPartnerInstances();
 					}
@@ -415,8 +414,6 @@ export class BadgeClassDetailComponent
 	}
 
 	async loadPartnerInstances() {
-		this.learningPaths = await this.learningPathApiService.getLearningPathsForBadgeClass(this.badgeSlug);
-
 		this.badgeInstancesLoaded = this.badgeInstanceApiService
 			.listNetworkBadgeInstances(this.issuer.slug, this.badgeClass.slug)
 			.then(async (res: Record<string, groupedInstances[]>) => {
@@ -553,8 +550,6 @@ export class BadgeClassDetailComponent
 		this.currentPageSize = pageSize;
 
 		const offset = pageIndex * pageSize;
-
-		this.learningPaths = await this.learningPathApiService.getLearningPathsForBadgeClass(this.badgeSlug);
 
 		this.badgeInstancesLoaded = this.badgeInstanceApiService
 			.listBadgeInstancesV3(this.issuerSlug, this.badgeSlug, recipientQuery, pageSize, offset)
@@ -823,13 +818,18 @@ export class BadgeClassDetailComponent
 
 	deleteBadge() {
 		if (this.recipientCount === 0) {
+			const affectedLps = (this.learningPaths ?? []).filter((lp) => lp.badges?.length <= 2);
+			const lpWarning =
+				affectedLps.length > 0 ? `<br><br>${this.translate.instant('Badge.deleteWillDeleteLp')}` : '';
+
 			this.confirmDialog
 				.openResolveRejectDialog({
 					dialogTitle: this.translate.instant('General.warning'),
 					dialogBody:
 						this.translate.instant('Badge.deletePart1') +
 						`<strong>${this.badgeClass.name}</strong>` +
-						this.translate.instant('Badge.deletePart2'),
+						this.translate.instant('Badge.deletePart2') +
+						lpWarning,
 					resolveButtonLabel: this.translate.instant('Badge.deleteConfirm'),
 					rejectButtonLabel: this.translate.instant('General.cancel'),
 				})

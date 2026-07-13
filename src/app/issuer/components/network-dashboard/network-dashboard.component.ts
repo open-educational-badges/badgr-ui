@@ -1,4 +1,14 @@
-import { AfterContentInit, Component, ElementRef, inject, OnInit, signal, TemplateRef, viewChild } from '@angular/core';
+import {
+	AfterContentInit,
+	Component,
+	ElementRef,
+	inject,
+	OnInit,
+	signal,
+	TemplateRef,
+	ViewChild,
+	viewChild,
+} from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SessionService } from '../../../common/services/session.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,6 +20,8 @@ import { AppConfigService } from '../../../common/app-config.service';
 import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { OebTabsComponent, Tab } from '../../../components/oeb-tabs.component';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
+import { OebDropdownComponent } from '../../../components/oeb-dropdown.component';
+import type { MenuItem } from '../../../common/components/badge-detail/badge-detail.component.types';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { DialogComponent } from '../../../components/dialog.component';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
@@ -32,8 +44,14 @@ import { NetworkManager } from '~/issuer/services/network-manager.service';
 import { RouterLink } from '@angular/router';
 import { Network } from '~/issuer/network.model';
 import { ApiBadgeClass } from '~/issuer/models/badgeclass-api.model';
-import { OebDropdownComponent } from '~/components/oeb-dropdown.component';
+import { OebDashboardOverviewComponent } from '~/dashboard/components/oeb-dashboard-overview/oeb-dashboard-overview.component';
+import { OebDashboardLearnersComponent } from '~/dashboard/components/oeb-dashboard-learners/oeb-dashboard-learners.component';
+import {
+	OebDashboardSocialspaceComponent,
+	SocialspaceViewState,
+} from '~/dashboard/components/oeb-dashboard-socialspace/oeb-dashboard-socialspace.component';
 import { SvgIconComponent } from '~/common/components/svg-icon.component';
+import { DashboardApiService } from '~/dashboard/services/dashboard-api.service';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
@@ -45,6 +63,7 @@ import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issu
 		BgAwaitPromises,
 		OebTabsComponent,
 		OebButtonComponent,
+		OebDropdownComponent,
 		FormsModule,
 		HlmH1,
 		NetworkPartnersComponent,
@@ -55,19 +74,24 @@ import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issu
 		RouterLink,
 		NgClass,
 		SvgIconComponent,
-		OebDropdownComponent,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
+		OebDashboardOverviewComponent,
+		OebDashboardLearnersComponent,
+		OebDashboardSocialspaceComponent,
+		SvgIconComponent,
 	],
 })
-export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit, AfterContentInit {
+export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
 	private issuerManager = inject(IssuerManager);
+	private networkManager = inject(NetworkManager);
 	protected title = inject(Title);
 	protected translate = inject(TranslateService);
 	private configService = inject(AppConfigService);
 	private publicApiService = inject(PublicApiService);
 	private messageService = inject(MessageService);
 	private networkApiService = inject(NetworkApiService);
+	private networkDashboardApi = inject(DashboardApiService);
 
 	networkLoaded: Promise<unknown>;
 	networkSlug: string;
@@ -89,9 +113,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	issuerSearchResults = [];
 
 	rightsAndRolesExpanded = false;
-	networkBadges: ApiBadgeClass[] = [];
+	networkActionsMenuItems: MenuItem[] = [];
+	baseCrumbs: LinkEntry[] = [];
 
-	private _networkStaffRoleOptions: FormFieldSelectOption[];
+	learnerSubView: { state: string; gender?: string; residence?: { city: string } } | null = null;
+
+	socialspaceSubView: { state: SocialspaceViewState; city?: string } | null = null;
+
+	networkDashboardAvailable = signal(false);
 
 	readonly overviewTemplate = viewChild<ElementRef>('overviewTemplate');
 	readonly partnerTemplate = viewChild<ElementRef>('partnerTemplate');
@@ -105,6 +134,13 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	readonly inviteSuccessContent = viewChild<TemplateRef<void>>('inviteSuccessContent');
 
 	readonly issuerSearchInputModel = viewChild<NgModel>('issuerSearchInputModel');
+
+	@ViewChild('socialspaceTemplate', { static: true }) socialspaceTemplate: ElementRef;
+	@ViewChild('learnersTemplate', { static: true }) learnersTemplate: ElementRef;
+
+	@ViewChild('learnersComponentRef') learnersComponentRef: OebDashboardLearnersComponent;
+
+	@ViewChild('socialspaceComponentRef') socialspaceComponentRef: OebDashboardSocialspaceComponent;
 
 	constructor() {
 		const loginService = inject(SessionService);
@@ -125,7 +161,7 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this.title.setTitle(
 				`Issuer - ${this.network().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
 			);
-			this.crumbs = [
+			this.baseCrumbs = [
 				{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
 				{
 					title: this.translate.instant('General.networks'),
@@ -134,7 +170,39 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				},
 				{ title: this.network().name, routerLink: ['/issuer/network/' + this.network().slug] },
 			];
+			this.crumbs = [...this.baseCrumbs];
+			this.initializeMenuItems();
+
+			// if quotas allow dashboard, check for dashboard backend availability before initializing tabs
+			if (this.network().quotas.quotas.DASHBOARD.quota) {
+				this.networkDashboardApi.getKpis(this.networkSlug).subscribe({
+					next: (kpis) => {
+						this.networkDashboardAvailable.set(true);
+						this.initializeTabs();
+					},
+					error: () => {
+						this.initializeTabs();
+					},
+				});
+			} else {
+				this.initializeTabs();
+			}
 		});
+	}
+
+	private initializeMenuItems(): void {
+		if (this.role === 'owner' || this.role === 'creator') {
+			this.networkActionsMenuItems.push({
+				title: 'Network.addInstitutions',
+				icon: 'lucideHousePlus',
+				action: () => this.openDialog(),
+			});
+			this.networkActionsMenuItems.push({
+				title: 'General.edit',
+				icon: 'lucideSquarePen',
+				action: () => this.navigateToEditNetwork(),
+			});
+		}
 	}
 
 	ngOnInit(): void {
@@ -145,8 +213,13 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 		});
 	}
 
-	ngAfterContentInit() {
-		this.tabs = [
+	private templatesReady = false;
+
+	private initializeTabs(): void {
+		const userRole = this.network()?.current_user_network_role;
+		const hasDashboardAccess = userRole === 'owner' || userRole === 'creator' || userRole === 'editor';
+
+		const baseTabs: Tab[] = [
 			{
 				key: 'overview',
 				title: 'General.overview',
@@ -168,14 +241,100 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				component: this.learningPathsTemplate(),
 			},
 		];
+
+		const dashboardTabs: Tab[] = [
+			{
+				key: 'socialspace',
+				title: 'Network.Dashboard.socialspace.tabTitle',
+				component: this.socialspaceTemplate,
+			},
+			{
+				key: 'learners',
+				title: 'Dashboard.Tabs.learners',
+				component: this.learnersTemplate,
+			},
+		];
+
+		if (this.networkDashboardAvailable() && hasDashboardAccess) {
+			this.tabs = [...baseTabs, ...dashboardTabs];
+		} else {
+			this.tabs = baseTabs;
+		}
 	}
 
 	onTabChange(tab) {
 		this.activeTab = tab;
+		this.learnerSubView = null;
+		this.socialspaceSubView = null;
+		this.updateBreadcrumbs();
+	}
+
+	onLearnerViewStateChange(event: { state: string; gender?: string; residence?: { city: string } }) {
+		this.learnerSubView = event;
+		this.updateBreadcrumbs();
+	}
+
+	private updateBreadcrumbs() {
+		if (!this.baseCrumbs.length) return;
+
+		this.crumbs = [...this.baseCrumbs];
+
+		if (this.learnerSubView?.state === 'gender-detail' && this.learnerSubView.gender) {
+			this.crumbs.push({
+				title: `${this.translate.instant('Dashboard.genderDetail.competencyAnalysis')}: ${this.learnerSubView.gender}`,
+			});
+		} else if (this.learnerSubView?.state === 'residence-detail' && this.learnerSubView.residence) {
+			this.crumbs.push({
+				title: `${this.translate.instant('Dashboard.residenceDetail.competencyAnalysis')}: ${this.learnerSubView.residence.city}`,
+			});
+		}
+	}
+
+	onBackFromLearnerSubView(): void {
+		if (this.learnersComponentRef) {
+			if (this.learnerSubView?.state === 'gender-detail') {
+				this.learnersComponentRef.onBackFromGenderDetail();
+			} else if (this.learnerSubView?.state === 'residence-detail') {
+				this.learnersComponentRef.onBackFromResidenceDetail();
+			}
+		}
+		this.learnerSubView = null;
+		this.updateBreadcrumbs();
+	}
+
+	onSocialspaceViewStateChange(event: { state: SocialspaceViewState; city?: string }) {
+		if (event.state === 'overview') {
+			this.socialspaceSubView = null;
+		} else {
+			this.socialspaceSubView = event;
+		}
+		this.updateBreadcrumbs();
+	}
+
+	onBackFromSocialspaceSubView(): void {
+		if (this.socialspaceComponentRef) {
+			this.socialspaceComponentRef.onBackFromDetailView();
+		}
+	}
+
+	isInDetailSubView(): boolean {
+		if (
+			this.activeTab === 'learners' &&
+			(this.learnerSubView?.state === 'gender-detail' || this.learnerSubView?.state === 'residence-detail')
+		) {
+			return true;
+		}
+		if (
+			this.activeTab === 'socialspace' &&
+			this.socialspaceSubView &&
+			this.socialspaceSubView.state !== 'overview'
+		) {
+			return true;
+		}
+		return false;
 	}
 
 	issuerSearchInputFocusOut() {
-		// delay hiding for click event
 		setTimeout(() => {
 			this.issuersShowResults = false;
 		}, 200);
@@ -272,6 +431,10 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	get role() {
 		return this.network()?.current_user_network_role;
+	}
+
+	navigateToEditNetwork(): void {
+		this.router.navigate(['/issuer/networks', this.networkSlug, 'edit']);
 	}
 
 	checkQuotasDialog() {

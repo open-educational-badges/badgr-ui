@@ -140,6 +140,7 @@ import { TranslateService } from '@ngx-translate/core';
 										[issuerTitle]="badge.badgeClass.issuer.name"
 										[badgeSlug]="badge.slug"
 										[competencies]="badge.getExtension('extensions:CompetencyExtension', [{}])"
+										[category]="badge.getExtension('extensions:CategoryExtension', '')?.Category"
 										[publicUrl]="this.isEmbedded() ? badge.shareUrl : null"
 										[publicIssuerUrl]="this.isEmbedded() ? badge.badgeClass.issuer.id : null"
 										[useBlankHref]="this.isEmbedded()"

@@ -185,6 +185,13 @@ export class BadgeClass extends ManagedEntity<ApiBadgeClass, BadgeClassRef> {
 		this.apiModel.copy_permissions = permissions;
 	}
 
+	get pdfTemplate(): string | null {
+		return this.apiModel.pdf_template ?? null;
+	}
+	set pdfTemplate(value: string | null) {
+		this.apiModel.pdf_template = value;
+	}
+
 	canCopy(key: BadgeClassCopyPermissions) {
 		return this.copyPermissions.indexOf(key) !== -1;
 	}

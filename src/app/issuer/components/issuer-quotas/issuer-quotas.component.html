@@ -141,21 +141,21 @@
 							}
 						</span>
 					</p>
-				}
-				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
-					<strong>{{ 'Quotas.page.label_ACCOUNTS_MEMBER' | translate }}</strong
-					><span>
-						<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_MEMBER']) ? 'tw-text-red' : ''">
-							<span>{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].used }}</span>
-							@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].max >= 0) {
-								<span>/{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].max }}</span>
+					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2 tw-mb-6">
+						<strong>{{ 'Quotas.page.label_ACCOUNTS_MEMBER' | translate }}</strong
+						><span>
+							<span [class]="quotaWarning(issuer.quotas.quotas['ACCOUNTS_MEMBER']) ? 'tw-text-red' : ''">
+								<span>{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].used }}</span>
+								@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].max >= 0) {
+									<span>/{{ issuer.quotas.quotas['ACCOUNTS_MEMBER'].max }}</span>
+								}
+							</span>
+							@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].custom) {
+								<span>*</span>
 							}
 						</span>
-						@if (issuer.quotas.quotas['ACCOUNTS_MEMBER'].custom) {
-							<span>*</span>
-						}
-					</span>
-				</p>
+					</p>
+				}
 				<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">
 					<strong>{{ 'Quotas.page.label_AISKILLS_REQUESTS' | translate }}</strong
 					><span>
@@ -195,7 +195,7 @@
 						<ng-icon
 							size="24px"
 							hlm
-							[name]="issuer.quotas.quotas['PDFEDITOR'] ? 'lucideCheck' : 'lucideX'"
+							[name]="issuer.quotas.quotas['PDFEDITOR'].quota ? 'lucideCheck' : 'lucideX'"
 						/>
 						{{ 'Quotas.page.featurePdfEditor' | translate }}
 					</li>
@@ -203,7 +203,7 @@
 						<ng-icon
 							size="24px"
 							hlm
-							[name]="issuer.quotas.key === 'ENTERPRISE' ? 'lucideCheck' : 'lucideX'"
+							[name]="issuer.quotas.quotas['DASHBOARD'].quota ? 'lucideCheck' : 'lucideX'"
 						/>
 						{{ 'Quotas.page.featureDashboardInstitution' | translate }}
 					</li>
@@ -211,12 +211,20 @@
 						<ng-icon
 							size="24px"
 							hlm
-							[name]="issuer.quotas.quotas['NETWORK_CREATE'] ? 'lucideCheck' : 'lucideX'"
+							[name]="issuer.quotas.quotas['NETWORK_CREATE'].quota ? 'lucideCheck' : 'lucideX'"
 						/>
 						{{ 'Quotas.page.featureCreateNetwork' | translate }}
 					</li>
 					<li class="tw-flex tw-items-center tw-gap-2">
-						<ng-icon size="24px" hlm [name]="issuer.quotas.key === 'NETWORK' ? 'lucideCheck' : 'lucideX'" />
+						<ng-icon
+							size="24px"
+							hlm
+							[name]="
+								issuer.quotas.key === 'NETWORK' || issuer.quotas.quotas['NETWORK_CREATE'].quota
+									? 'lucideCheck'
+									: 'lucideX'
+							"
+						/>
 						{{ 'Quotas.page.featureDashboardNetwork' | translate }}
 					</li>
 				</ul>
@@ -239,7 +247,7 @@
 						<span><time [date]="issuer.quotas.nextPayment" format="dd.MM.y"></time></span>
 					</p>
 					<p class="tw-text-[18px]/[1.2em] tw-text-purple">
-						{{ 'Quotas.page.renewalNetwork2' | translate }}
+						{{ 'Quotas.page.renewalNetwork2' | translate: { quota: issuer.quotas.name } }}
 					</p>
 				} @else {
 					<p class="tw-text-[18px]/[1.2em] tw-text-oebblack tw-mb-2 tw-flex tw-gap-2">

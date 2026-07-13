@@ -126,8 +126,8 @@ export class ShareBadgeDialogComponent implements AfterViewInit {
 
 		const shareParams = {
 			startTask: 'CERTIFICATION_NAME', // this is the name LinkedIn has given the task
-			name: encodeURIComponent(this.context.badge.badgeClass.name),
-			organizationName: encodeURIComponent(this.context.badge.badgeClass.issuer.name),
+			name: this.context.badge.badgeClass.name,
+			organizationName: this.context.badge.badgeClass.issuer.name,
 			issueYear: `${this.context.badge.issueDate.getFullYear()}`,
 			issueMonth: ('0' + (this.context.badge.issueDate.getMonth() + 1)).slice(-2),
 			expirationYear: this.context.badge.expiresDate
@@ -136,7 +136,7 @@ export class ShareBadgeDialogComponent implements AfterViewInit {
 			expirationMonth: this.context.badge.expiresDate
 				? ('0' + (this.context.badge.expiresDate.getMonth() + 1)).slice(-2)
 				: undefined,
-			certUrl: encodeURIComponent(this.shareUrl),
+			certUrl: this.shareUrl,
 			certId: this.context.badge.slug,
 			organizationId: this.issuer.linkedinId?.length > 0 ? this.issuer.linkedinId : undefined,
 		};

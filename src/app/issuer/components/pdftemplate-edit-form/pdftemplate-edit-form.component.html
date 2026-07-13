@@ -1,0 +1,355 @@
+<div class="tw-max-w-[1056px]">
+	<form-message></form-message>
+
+	<ng-container [formGroup]="pdfTemplateForm.rawControl">
+		<oeb-stepper [linear]="true" [initialStep]="0">
+			<cdk-step
+				[optional]="false"
+				[errorMessage]="'General.validationCompleteForm' | translate"
+				[completed]="validateFields(['format']) && !imageValidation()"
+				[hasError]="
+					(!validateFields(['format']) && dirtyFields(['format'])) || (imageFieldDirty && imageValidation())
+				"
+			>
+				<h3 hlmH3 class="tw-text-oebblack tw-mt-4">{{ 'PDFTemplate.backgroundHeading' | translate }}</h3>
+
+				<section class="tw-max-w-[535px] tw-mt-6 md:tw-mt-8 tw-mb-10 tw-flex tw-flex-col tw-gap-1 section">
+					<div class="subsection tw-flex tw-flex-col tw-gap-6">
+						<p hlmH3 class="tw-text-oebblack tw-font-semibold">{{ 'PDFTemplate.format' | translate }}</p>
+						<div class="tw-flex tw-flex-wrap tw-gap-6 md:tw-gap-10">
+							@for (format of formatOptions; track format; let last = $last) {
+								<bg-formfield-radio
+									[control]="pdfTemplateForm.rawControlMap.format"
+									[name]="'format-type'"
+									label="{{ format.label | translate }}"
+									[value]="format.value"
+									[last]="last"
+									errorMessage="{{ 'PDFTemplate.selectFormat' | translate }}"
+								></bg-formfield-radio>
+							}
+						</div>
+					</div>
+
+					<div class="subsection">
+						<p hlmH3 class="tw-text-oebblack tw-font-semibold">
+							{{ 'PDFTemplate.backgroundLabel' | translate }}
+						</p>
+
+						<div class="tw-mt-4 tw-relative" id="imageSection" #imageSection>
+							<div class="tw-flex tw-flex-col tw-gap-6 lg:tw-flex-row tw-mr-auto tw-h-fit">
+								<div>
+									<p
+										class="tw-text-oebblack tw-text-[18px] tw-leading-[23.4px] tw-font-semibold tw-w-full"
+									>
+										{{ 'PDFTemplate.backgroundUploadDesc1' | translate }}
+									</p>
+									<p class="tw-text-oebblack tw-text-[18px] tw-leading-[23.4px] tw-w-full">
+										{{ 'PDFTemplate.backgroundUploadDesc2' | translate }}
+									</p>
+
+									@if (pdfTemplateForm.controls.format.value === '1') {
+										<div
+											class="tw-w-full tw-max-w-[460px] tw-aspect-[297/210] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative"
+										>
+											<bg-formfield-image
+												#imageField
+												[text_body]="'RecBadge.selectFromMyFiles' | translate"
+												dropZoneInfo1="Drag & Drop"
+												[dropZoneInfo3]="'PDFTemplate.uploadFormatDesc' | translate"
+												imageLoaderName="pdftemplate"
+												[newDropZone]="true"
+												[generateRandom]="false"
+												[enableIconSearch]="false"
+												[type]="'pdftemplate'"
+												[allowedFileFormats]="allowedFileFormats"
+												[control]="pdfTemplateForm.rawControlMap.image"
+											>
+											</bg-formfield-image>
+
+											<div [hidden]="pdfTemplateForm.hasError('imageRequired')">
+												<div
+													class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none"
+												>
+													<ng-icon
+														hlm
+														size="xl"
+														name="lucideCloudUpload"
+														class="tw-w-6 tw-h-6 tw-text-purple"
+														[hidden]="pdfTemplateForm.hasError('imageRequired')"
+													/>
+												</div>
+											</div>
+										</div>
+									} @else {
+										<div
+											class="tw-w-full tw-max-w-[392px] tw-aspect-[210/297] tw-mt-4 tw-bg-white tw-border tw-border-solid tw-border-purple tw-rounded-[8px] tw-relative"
+										>
+											<bg-formfield-image
+												#imageField
+												[text_body]="'RecBadge.selectFromMyFiles' | translate"
+												dropZoneInfo1="Drag & Drop"
+												[dropZoneInfo3]="'PDFTemplate.uploadFormatDesc' | translate"
+												imageLoaderName="pdftemplate"
+												[newDropZone]="true"
+												[generateRandom]="false"
+												[enableIconSearch]="false"
+												[type]="'pdftemplate'"
+												[allowedFileFormats]="allowedFileFormats"
+												[control]="pdfTemplateForm.rawControlMap.image"
+											>
+											</bg-formfield-image>
+											<div [hidden]="pdfTemplateForm.hasError('imageRequired')">
+												<div
+													class="tw-flex tw-items-center tw-justify-center tw-absolute tw-top-0 tw-bottom-0 tw-right-0 tw-left-0 tw-pointer-events-none"
+												>
+													<ng-icon
+														hlm
+														size="xl"
+														name="lucideCloudUpload"
+														class="tw-w-6 tw-h-6 tw-text-purple"
+														[hidden]="pdfTemplateForm.hasError('imageRequired')"
+													/>
+												</div>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+						<p
+							hlmP
+							size="sm"
+							id="imageTextError"
+							[hidden]="!imageFieldDirty || !pdfTemplateForm.hasError('imageRequired')"
+							class="tw-text-center tw-w-full tw-text-red tw-mt-2"
+						>
+							{{ 'PDFTemplate.imageRequiredError' | translate }}
+						</p>
+						<p
+							hlmP
+							size="sm"
+							id="imageRatioError"
+							[hidden]="!pdfTemplateForm.hasError('imageRatioFalse')"
+							class="tw-text-center tw-w-full tw-text-red tw-mt-2"
+						>
+							@if (pdfTemplateForm.controls.format.value === '1') {
+								{{ 'PDFTemplate.imageRatioLandscapeError' | translate }}
+							} @else {
+								{{ 'PDFTemplate.imageRatioPortraitError' | translate }}
+							}
+						</p>
+						<p hlmP size="sm" [hidden]="!isImageLarge" class="tw-text-center tw-w-full tw-text-red tw-mt-2">
+							{{ 'CreateBadge.imageTooLarge' | translate }}
+						</p>
+					</div>
+				</section>
+			</cdk-step>
+
+			<cdk-step>
+				<section class="tw-mt-6 md:tw-mt-8 tw-mb-10 tw-flex tw-flex-col tw-gap-1 section">
+					<div class="tw-flex tw-gap-1 tw-flex-col-reverse md:tw-flex-row">
+						<div class="tw-flex tw-flex-col tw-gap-1 tw-flex-grow tw-justify-between md:tw-max-w-[338px]">
+							<div class="subsection tw-flex tw-flex-col tw-gap-4">
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.alignmentOfBagdeInfos' | translate
+								}}</span>
+								@for (alignment of alignmentOptions; track alignment; let last = $last) {
+									<bg-formfield-icon-radio
+										[control]="pdfTemplateForm.rawControlMap.alignment"
+										[name]="'alignment-type'"
+										label="{{ alignment.label | translate }}"
+										[value]="alignment.value"
+										[last]="last"
+										[icon]="alignment.icon"
+										errorMessage="{{ 'PDFTemplate.selectAlignment' | translate }}"
+									></bg-formfield-icon-radio>
+								}
+							</div>
+							<div class="subsection">
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.positionOfBagdeInfos' | translate
+								}}</span>
+
+								<div class="tw-flex tw-gap-4 tw-mt-6">
+									<div>
+										<span
+											class="oeb-break-words tw-text-oebblack tw-text-[18px]/[1.3em]"
+											[innerHTML]="'PDFTemplate.positionOfBagdeInfosDesc1' | translate"
+										></span>
+									</div>
+
+									<div>
+										<ng-icon hlm size="xl" name="lucideHand" class="tw-text-purple" />
+									</div>
+								</div>
+
+								<div class="tw-mt-6">
+									<span class="oeb-break-words tw-text-oebblack tw-text-[18px]/[1.3em]">{{
+										'PDFTemplate.positionOfBagdeInfosDesc2' | translate
+									}}</span>
+								</div>
+
+								<div class="tw-flex tw-flex-col tw-gap-8 tw-mt-6">
+									<oeb-input
+										class="tw-block tw-w-[119px]"
+										[fieldType]="'number'"
+										[control]="pdfTemplateForm.rawControlMap.posX"
+										[errorMessage]="'PDFTemplate.textBlockOutsideError' | translate"
+										[noTopMargin]="true"
+										[label]="'PDFTemplate.posX' | translate"
+									>
+									</oeb-input>
+
+									<oeb-input
+										class="tw-block tw-w-[119px]"
+										[fieldType]="'number'"
+										[control]="pdfTemplateForm.rawControlMap.posY"
+										errorMessage="{{ 'PDFTemplate.textBlockOutsideError' | translate }}"
+										[noTopMargin]="true"
+										[label]="'PDFTemplate.posY' | translate"
+									>
+									</oeb-input>
+								</div>
+							</div>
+							<div class="subsection tw-flex tw-flex-col tw-gap-4 !tw-pb-5">
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.sizeOfBagdeInfos' | translate
+								}}</span>
+
+								<oeb-input
+									class="tw-block tw-w-[210px]"
+									[fieldType]="'range'"
+									[control]="pdfTemplateForm.rawControlMap.scale"
+									errorMessage="{{ 'PDFTemplate.scaleMinMaxError' | translate }}"
+									[noTopMargin]="true"
+									[label]="'PDFTemplate.scale' | translate"
+									[max]="100"
+									[min]="83"
+								>
+								</oeb-input>
+							</div>
+
+							<div class="subsection tw-flex-grow">
+								<span hlmH3 class="tw-text-oebblack tw-font-semibold">{{
+									'PDFTemplate.showPageTitle' | translate
+								}}</span>
+
+								<div
+									class="preview-page-control tw-text-oebblack tw-flex tw-flex-col tw-gap-[9px] tw-mt-[11px]"
+								>
+									<a (click)="showCoverPage()" [class]="isPreviewPage(1) ? 'current-page' : ''">
+										{{ 'PDFTemplate.showCoverPage' | translate }}
+									</a>
+
+									<a (click)="showCompetencePage()" [class]="isPreviewPage(2) ? 'current-page' : ''">
+										{{ 'PDFTemplate.showCompetencePage' | translate }}
+									</a>
+
+									<a (click)="showOptionalPage()" [class]="isPreviewPage(3) ? 'current-page' : ''">
+										{{ 'PDFTemplate.showOptionalPage' | translate }}
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="subsection tw-flex-grow tw-flex-shrink-0">
+							<p hlmH3 class="tw-text-oebblack tw-font-semibold">
+								{{ 'PDFTemplate.pdfPreview' | translate }}
+							</p>
+
+							@if (pdfTemplateForm.controls.format.value === '1') {
+								<div
+									class="tw-w-full tw-max-w-[642px] tw-aspect-[297/210] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]"
+								>
+									<canvas id="previewCanvas" width="1123" height="794"></canvas>
+								</div>
+							} @else {
+								<div
+									class="tw-w-full tw-max-w-[642px] tw-aspect-[210/297] tw-mt-4 tw-border tw-border-solid tw-border-purple tw-rounded-[8px]"
+								>
+									<canvas id="previewCanvas" width="794" height="1123"></canvas>
+								</div>
+							}
+						</div>
+					</div>
+				</section>
+
+				<p
+					hlmP
+					size="sm"
+					[hidden]="!pdfTemplateForm.hasError('textBlockOutside')"
+					class="tw-text-center tw-w-full tw-text-red tw-mt-2"
+				>
+					{{ 'PDFTemplate.textBlockOutsideError' | translate }}
+				</p>
+
+				<section class="tw-mb-10">
+					<oeb-input
+						[label]="'PDFTemplate.titleLabel' | translate"
+						[control]="pdfTemplateForm.rawControlMap.name"
+						[autofocus]="true"
+						[sublabelRight]="'(max. 50 ' + ('General.characters' | translate) + ')'"
+						[errorMessage]="{ required: 'PDFTemplate.nameRequiredError' | translate }"
+					></oeb-input>
+				</section>
+
+				<section class="tw-mb-10">
+					<p class="tw-text-[18px]/[1.3em] tw-text-purple tw-italic">
+						{{ 'PDFTemplate.variableContentNote' | translate }}
+					</p>
+				</section>
+			</cdk-step>
+		</oeb-stepper>
+	</ng-container>
+
+	<form [formGroup]="pdfTemplateForm.rawControl" #formElem (ngSubmit)="onSubmit()" novalidate>
+		<div class="tw-flex tw-flex-wrap sm:tw-flex-nowrap tw-gap-4 md:tw-gap-6 tw-mt-8">
+			<oeb-button
+				type="button"
+				variant="secondary"
+				(click)="cancelClicked()"
+				[disabled]="!!savePromise"
+				[class.disabled]="!!savePromise"
+				[disabled-when-requesting]="true"
+				text="{{ 'General.cancel' | translate }}"
+				[umamiEvent]="!pdfTemplate ? 'cancel-create-pdf-template' : undefined"
+			></oeb-button>
+
+			@if (!lastStep()) {
+				<oeb-button
+					type="button"
+					[text]="'General.forward' | translate"
+					(click)="nextStep()"
+					[umamiEvent]="!pdfTemplate ? `create-pdf-template-${this.stepper?.selectedIndex + 1}` : undefined"
+					[disabled]="
+						pdfTemplateForm.hasError('imageRequired') || pdfTemplateForm.hasError('imageRatioFalse')
+					"
+				/>
+			}
+
+			@if (lastStep()) {
+				<oeb-button
+					variant="secondary"
+					type="button"
+					[text]="'General.previous' | translate"
+					(click)="previousStep()"
+					[disabled]="!!savePromise"
+					[class.disabled]="!!savePromise"
+					[disabled-when-requesting]="true"
+				>
+				</oeb-button>
+
+				<oeb-button
+					id="create-pdftemplate-btn"
+					type="submit"
+					width="max_content"
+					[disabled]="!!savePromise || pdfTemplateForm.invalid"
+					[loading-promises]="[savePromise]"
+					loading-message="{{ submittingText }}"
+					text="{{ 'PDFTemplate.submitButtonText' | translate }}"
+					[umamiEvent]="!pdfTemplate ? 'create-pdf-template-done' : undefined"
+				>
+				</oeb-button>
+			}
+		</div>
+	</form>
+</div>

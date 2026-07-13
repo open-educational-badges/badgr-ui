@@ -17,6 +17,7 @@ import { HlmH2, HlmP, HlmH3 } from '@spartan-ng/helm/typography';
 import { ApiLearningPathParticipant } from '~/common/model/learningpath-api.model';
 import { Issuer } from '~/issuer/models/issuer.model';
 import { Network } from '~/issuer/network.model';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { DialogComponent } from '~/components/dialog.component';
 import { HlmIconModule } from '@spartan-ng/helm/icon';
 import { BrnDialogRef } from '@spartan-ng/brain/dialog';
@@ -56,6 +57,7 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 	private pdfService = inject(PdfService);
 	router: Router;
 	private translate = inject(TranslateService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	archiveLpTemplate = viewChild.required<TemplateRef<any>>('archiveLpTemplate');
 
@@ -67,6 +69,7 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 	pdfSrc: SafeResourceUrl;
 
 	learningPathEditLink;
+	private participationBadgeToLpSlug = new Map<string, string>();
 
 	dialogRef: BrnDialogRef<any> = null;
 
@@ -95,6 +98,24 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 			this.learningPath.slug,
 			'edit',
 		];
+
+		this.pdfTemplateManager.getPDFTemplatesForIssuer(this.issuer.slug);
+
+		this.learningPathApiService.getLearningPathsForIssuer(this.issuer.slug).then((lps) => {
+			lps.forEach((lp) => {
+				if (lp.participationBadge_id && lp.slug) {
+					this.participationBadgeToLpSlug.set(lp.participationBadge_id, lp.slug);
+				}
+			});
+		});
+	}
+
+	badgeLink(badge: any): string {
+		const lpSlug = this.participationBadgeToLpSlug.get(badge.slug);
+		if (lpSlug) {
+			return `/issuer/issuers/${this.issuer.slug}/learningpaths/${lpSlug}`;
+		}
+		return `/issuer/issuers/${this.issuer.slug}/badges/${badge.slug}`;
 	}
 
 	public deleteLearningPath() {
@@ -115,12 +136,16 @@ export class OebLearningPathDetailComponent extends BaseRoutableComponent implem
 		});
 	}
 
-	private openDeleteDialog() {
+	private openDeleteDialog(extraText?: string) {
+		const text = extraText
+			? `${this.translate.instant('LearningPath.deleteWarning')}<br><br>${extraText}`
+			: this.translate.instant('LearningPath.deleteWarning');
+
 		this.dialogRef = this._hlmDialogService.open(DangerDialogComponent, {
 			context: {
 				delete: () => this.deleteLearningPathApi(this.learningPath.slug, this.issuer),
 				variant: 'danger',
-				text: this.translate.instant('LearningPath.deleteWarning'),
+				text,
 				title: this.translate.instant('General.delete'),
 			},
 		});
