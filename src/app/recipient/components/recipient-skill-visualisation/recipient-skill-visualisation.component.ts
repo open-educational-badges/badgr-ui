@@ -213,7 +213,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	showSingleNode: boolean = false;
 
 	constructor() {
-		fromEvent(window, 'resize')
+		fromEvent<UIEvent>(window, 'resize')
 			.pipe(
 				debounceTime(300),
 				tap((event: UIEvent) => {

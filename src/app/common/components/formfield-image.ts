@@ -448,7 +448,7 @@ export function badgeImageLoader(file: File | string): Promise<string> {
 }
 
 // file can either be file or url to a file
-export function issuerImageLoader(file: File | string): Promise<string> {
+export function issuerImageLoader(this: BgFormFieldImageComponent, file: File | string): Promise<string> {
 	// Max file size from https://github.com/mozilla/openbadges-backpack/blob/1193c04847c5fb9eb105c8fb508e1b7f6a39052c/controllers/backpack.js#L397
 	const maxFileSize = 1024 * 1024 * 2; // 2MB max file size
 	const startingMaxDimension = 512;

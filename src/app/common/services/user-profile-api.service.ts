@@ -99,7 +99,7 @@ export class UserProfileApiService extends BaseHttpApiService {
 	}
 
 	getRedirectUrl() {
-		return this.post('/v1/user/get-redirect-path', {});
+		return this.post<{ success: boolean; redirectPath: string }>('/v1/user/get-redirect-path', {});
 	}
 
 	getIssuerStaffRequests() {

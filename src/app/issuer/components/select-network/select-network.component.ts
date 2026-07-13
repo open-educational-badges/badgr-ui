@@ -15,6 +15,7 @@ import { NgModel, FormsModule, FormControl } from '@angular/forms';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
+import { BadgrApiFailure } from '../../../common/services/api-failure';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { FormFieldSelectOption, OebSelectComponent } from '../../../components/select.component';
 import { NetworkApiService } from '../../../issuer/services/network-api.service';
@@ -117,7 +118,7 @@ export class SelectNetworkComponent implements OnInit {
 				});
 			});
 		} catch (e) {
-			this.messageService.reportAndThrowError(e);
+			this.messageService.reportAndThrowError(BadgrApiFailure.from(e).firstMessage, e);
 		}
 	}
 }
