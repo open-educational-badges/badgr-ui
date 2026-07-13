@@ -216,9 +216,9 @@
 		"multipleBadgeAwardHeadline": "Badge an mehrere Lernende gleichzeitig vergeben",
 		"uploadListText": "Du kannst eine <span class='tw-font-bold'>Liste von Empfänger:innen importieren</span>, die den Badge gleichzeitig erhalten sollen. So geht's:",
 		"downloadExampleCSV": "Lade unsere Datei-Vorlage herunter:",
-		"exampleCSVLink": "<a class='tw-underline tw-text-[#1400FF]' hlmA href='./assets/badgrBulkIssueTemplate.csv' download='CSV-Beispiel-Vorlage.csv''>Download CSV-Beispiel-Vorlage</a>",
+		"exampleCSVLink": "<a class='tw-underline tw-text-[#1400FF]' hlmA href='./assets/badgrBulkIssueTemplate_de.csv' download='CSV-Beispiel-Vorlage.csv''>Download CSV-Beispiel-Vorlage</a>",
 		"openInExcel": "Öffne sie in Excel",
-		"fillInList": "Lösche den Beispiel-Eintrag und fülle die beiden Tabellenspalten entsprechend mit <span class='tw-font-bold'>Vor- und Nachnamen*</span> sowie <span class='tw-font-bold'>E-Mail-Adressen</span> deiner Lernenden aus.",
+		"fillInList": "Lösche den Beispiel-Eintrag und fülle die Tabellenspalten entsprechend mit <span class='tw-font-bold'>Vor- und Nachnamen*</span> sowie <span class='tw-font-bold'>E-Mail-Adressen</span> deiner Lernenden aus. Das <span class='tw-font-bold'>Geburtsdatum</span> ist optional und erscheint auf dem Badge-PDF.",
 		"exportAsCSV": "Exportiere die Vorlage als CSV-Datei (Textcodierung: Unicode (UTF-8).",
 		"uploadCSV": "Lade deine CSV-Datei hoch:",
 		"nameInPdfInfo": "* Zusammen mit dem Badge wird ein entsprechendes Badge-PDF an die Empfänger:innen gesendet. In diesem werden Vor- und Nachname verwendet.",
@@ -316,6 +316,11 @@
 		"partnerBadges": "Partner-Badges",
 		"bulkInvalidEmail": "1 ungültige E-Mail-Adresse gefunden. Bitte korrigiere oder entferne die rot markierte E-Mail-Adresse.",
 		"bulkInvalidEmailsPlural": "{{count}} ungültige E-Mail-Adressen gefunden. Bitte korrigiere oder entferne die rot markierten E-Mail-Adressen.",
+		"bulkInvalidDateOfBirth": "{{count}} ungültige Geburtsdatum-Angabe(n) gefunden (erwartetes Format: TT.MM.JJJJ). Bitte korrigiere deine CSV-Datei oder entferne die rot markierten Zeilen.",
+		"recipientDateOfBirth": "Geburtsdatum Empfänger:in",
+		"csvFirstName": "Vorname",
+		"csvLastName": "Nachname",
+		"csvDateOfBirth": "Geburtsdatum",
 		"bulkReceiveByEmail": "Die Empfänger:innen erhalten den Badge per E-Mail.",
 		"addOptionalDetails": "Optionale Details hinzufügen",
 		"evidence": "Nachweis für erfolgreiche Teilnahme",
@@ -582,6 +587,13 @@
 		"unknownRecipient": "Empfänger:in unbekannt",
 		"badgeLanguage": "Sprache des Badges",
 		"badgeLanguageHint": "(und der Badge-Mail inkl. zugehörigem PDF-Zertifikat)"
+	},
+	"BadgeFilter": {
+		"fromLabel": "Von",
+		"keywordPlaceholder": "Badges durchsuchen",
+		"noResults": "Keine Badges entsprechen deinen Filtereinstellungen.",
+		"resetButton": "Zurücksetzen",
+		"toLabel": "Bis"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Kategorie wählen",
@@ -1029,7 +1041,8 @@
 		"ageConfirmation": "Ich bestätige, dass ich <b>16 Jahre oder älter bin. Wenn ich jünger als 16 Jahre bin:</b> Meine Eltern oder meine Erziehungsberechtigten wissen, dass ich meine persönlichen Daten für die Nutzung der Plattform Open Educational Badges angebe. Ich bestätige, dass sie damit einverstanden sind.",
 		"successMessage": "<span class='tw-font-bold'>Du hast den Badge erfolgreich angefordert.</span><br>",
 		"successMessage2": "Sobald deine Anfrage bestätigt wurde, bekommst du den Badge per E-Mail zugesendet.",
-		"nameValidationError": "Vor- und Nachname dürfen zusammen nicht mehr als 35 Zeichen ergeben."
+		"nameValidationError": "Vor- und Nachname dürfen zusammen nicht mehr als 35 Zeichen ergeben.",
+		"dateOfBirthOptional": "Optional: Geburtsdatum (erscheint auf Badge-PDF)"
 	},
 	"IssueQr": {
 		"list1": "Du füllst die Details für die QR-Code-Vergabe auf dieser Seite aus und klickst auf <span class='tw-italic'>QR-Code generieren</span>. Du wirst zum so generierten QR-Code weitergeleitet und kannst ihn herunterladen oder einen Screenshot machen.",

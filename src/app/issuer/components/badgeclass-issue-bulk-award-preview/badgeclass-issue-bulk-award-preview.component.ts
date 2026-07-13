@@ -19,6 +19,7 @@ import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
 import { NgClass } from '@angular/common';
 import tlds from '../../../../assets/data/tld-list.json';
 import { isValidEmail } from '~/common/util/is-valid-email';
+import { parseDateOfBirth } from '~/common/util/parse-date-of-birth';
 
 @Component({
 	selector: 'Badgeclass-issue-bulk-award-preview',
@@ -127,7 +128,7 @@ export class BadgeClassIssueBulkAwardPreviewComponent extends BaseAuthenticatedR
 				if (cell.length) {
 					return true;
 				} else {
-					return false;
+					return this.importPreviewData.columnHeaders[index]?.destColumn === 'dateOfBirth';
 				}
 			});
 
@@ -155,7 +156,11 @@ export class BadgeClassIssueBulkAwardPreviewComponent extends BaseAuthenticatedR
 
 				const emailInvalid = !isValidEmail(email);
 
-				return { email, name, emailInvalid };
+				const rawDateOfBirth = this.getDateOfBirthFromRow(row);
+				const dateOfBirth = rawDateOfBirth ? parseDateOfBirth(rawDateOfBirth) : null;
+				const dobInvalid = !!rawDateOfBirth && dateOfBirth === null;
+
+				return { email, name, dateOfBirth: dateOfBirth ?? undefined, emailInvalid, dobInvalid };
 			}),
 		);
 	}
@@ -207,7 +212,17 @@ export class BadgeClassIssueBulkAwardPreviewComponent extends BaseAuthenticatedR
 	}
 
 	getNameFromRow(row) {
-		return this.getCellFromRowByDestName('name', row);
+		const name = this.getCellFromRowByDestName('name', row);
+		if (name) return name;
+
+		// new CSV templates ship separate first/last name columns
+		const firstName = this.getCellFromRowByDestName('firstname', row);
+		const lastName = this.getCellFromRowByDestName('lastname', row);
+		return [firstName, lastName].filter(Boolean).join(' ');
+	}
+
+	getDateOfBirthFromRow(row: ParsedRow) {
+		return this.getCellFromRowByDestName('dateOfBirth', row);
 	}
 
 	getCellFromRowByDestName(destName: string, row: ParsedRow) {

@@ -216,9 +216,9 @@
 		"multipleBadgeAwardHeadline": "Award badge to multiple learners simultaneously",
 		"uploadListText": "You can <span class='tw-font-bold'>import a list of recipients</span> who should receive the badge at the same time. Here's how:",
 		"downloadExampleCSV": "Download our file template:",
-		"exampleCSVLink": "<a class='tw-underline tw-text-[#1400FF]' hlmA href='./assets/badgrBulkIssueTemplate.csv' download='CSV-Sample-template.csv''>Download CSV example template</a>",
+		"exampleCSVLink": "<a class='tw-underline tw-text-[#1400FF]' hlmA href='./assets/badgrBulkIssueTemplate_en.csv' download='CSV-Sample-template.csv''>Download CSV example template</a>",
 		"openInExcel": "Open it in Excel",
-		"fillInList": "Delete the example entry and fill in the two table columns with the <span class='tw-font-bold'>first and last names*</span> and <span class='tw-font-bold'>email addresses</span> of your learners accordingly.",
+		"fillInList": "Delete the example entry and fill in the table columns with the <span class='tw-font-bold'>first and last names*</span> and <span class='tw-font-bold'>email addresses</span> of your learners accordingly. The <span class='tw-font-bold'>date of birth</span> is optional and appears on the badge PDF.",
 		"exportAsCSV": "Export the template as a CSV file (text encoding: Unicode (UTF-8).",
 		"uploadCSV": "Upload your CSV file:",
 		"nameInPdfInfo": "* Together with the badge, a corresponding PDF certificate will be sent to the recipients. The first and last name will be used in this certificate.",
@@ -316,6 +316,11 @@
 		"partnerBadges": "Partner badges",
 		"bulkInvalidEmail": "1 invalid email address found. Please correct or remove the email address marked in red.",
 		"bulkInvalidEmailsPlural": "{{count}} invalid email addresses found. Please correct or remove the email addresses marked in red.",
+		"bulkInvalidDateOfBirth": "{{count}} invalid date(s) of birth found (expected format: DD.MM.YYYY). Please correct your CSV file or remove the rows marked in red.",
+		"recipientDateOfBirth": "Recipient's date of birth",
+		"csvFirstName": "First name",
+		"csvLastName": "Surname",
+		"csvDateOfBirth": "Date of birth",
 		"bulkReceiveByEmail": "Recipients will receive the badge by email.",
 		"addOptionalDetails": "Add optional details",
 		"evidence": "Proof of successful participation",
@@ -575,6 +580,13 @@
 		"unknownRecipient": "Recipient unknown",
 		"badgeLanguage": "Language of this badge",
 		"badgeLanguageHint": "(and of the badge email incl. corresponding PDF certificate)"
+	},
+	"BadgeFilter": {
+		"fromLabel": "From",
+		"keywordPlaceholder": "Search badges",
+		"noResults": "No badges match your current filters.",
+		"resetButton": "Reset Filters",
+		"toLabel": "To"
 	},
 	"CreateBadge": {
 		"chooseBadgeCategory": "Choose category",
@@ -986,7 +998,8 @@
 		"ageConfirmation": "I confirm that I am <b>16 years or older. If I am younger than 16 years old:</b> My parents or legal guardians know that I am providing my personal data for the use of the Open Educational Badges platform. I confirm that they agree to this.",
 		"successMessage": "<span class='tw-font-bold'>You have successfully requested the badge.</span><br>",
 		"successMessage2": "As soon as your request has been confirmed, you will receive the badge by email.",
-		"nameValidationError": "First and last name together may not exceed 35 characters."
+		"nameValidationError": "First and last name together may not exceed 35 characters.",
+		"dateOfBirthOptional": "Optional: date of birth (appears on badge PDF)"
 	},
 	"IssueQr": {
 		"list1": "You fill in the details for the QR code award on this page and click on <span class='tw-italic'>Generate QR code</span>. You will be redirected to the QR code thus generated and can download it or take a screenshot.",

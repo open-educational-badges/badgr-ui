@@ -55,6 +55,7 @@ export type RequestedBadge = {
 	status: string;
 	firstName: string;
 	lastName: string;
+	dateOfBirth?: string | null;
 	requestedOn: Date;
 	entity_id: string;
 };
@@ -361,6 +362,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 			status: apiBadge.status,
 			firstName: apiBadge.firstName,
 			lastName: apiBadge.lastName,
+			dateOfBirth: apiBadge.dateOfBirth ?? null,
 			requestedOn: new Date(apiBadge.requestedOn),
 			entity_id: apiBadge.entity_id,
 		};
@@ -404,6 +406,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 				activity_city: qrCode.activity_city,
 				activity_zip: qrCode.activity_zip,
 				activity_online: qrCode.activity_online,
+				date_of_birth: b.dateOfBirth || null,
 				evidence_items: qrCode.evidence_items ?? [],
 				course_url: qrCode.course_url,
 				request_entity_id: b.entity_id,

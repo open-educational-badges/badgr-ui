@@ -30,6 +30,7 @@
 				<tr class="datatable-x-header">
 					<th class="datatable-x-cell" scope="col">E-Mail</th>
 					<th class="datatable-x-cell" scope="col">Name</th>
+					<th class="datatable-x-cell" scope="col">{{ 'Issuer.csvDateOfBirth' | translate }}</th>
 					<th class="datatable-x-cell">
 						<!-- header for remove link-->
 					</th>
@@ -40,7 +41,7 @@
 					<tr
 						class="datatable-x-row"
 						[ngClass]="{
-							'tw-border-red tw-border-solid tw-border-[3px]': row.emailInvalid,
+							'tw-border-red tw-border-solid tw-border-[3px]': row.emailInvalid || row.dobInvalid,
 						}"
 					>
 						<td class="datatable-x-cell">
@@ -64,6 +65,9 @@
 
 						<td class="datatable-x-cell">
 							{{ row.name }}
+						</td>
+						<td class="datatable-x-cell">
+							{{ row.dateOfBirth ? (row.dateOfBirth | date: 'dd.MM.yyyy') : '' }}
 						</td>
 						<td class="datatable-x-cell">
 							<div class="tw-flex tw-gap-4 tw-items-center">
@@ -128,6 +132,11 @@
 				{{ 'Issuer.bulkInvalidEmailsPlural' | translate: { count: invalidEmailCount } }}
 			</span>
 		}
+		@if (invalidDobCount > 0) {
+			<span class="tw-text-red tw-text-lg">
+				{{ 'Issuer.bulkInvalidDateOfBirth' | translate: { count: invalidDobCount } }}
+			</span>
+		}
 		<span class="tw-text-lg tw-text-oebblack">{{ 'Issuer.bulkReceiveByEmail' | translate }}</span>
 	</div>
 
@@ -143,8 +152,8 @@
 		<oeb-button
 			[id]="'bulk-confirm-btn'"
 			[class.button-is-disabled]="buttonDisabledClass"
-			[disabled]="buttonDisabledAttribute || hasInvalidEmails || !quotasCanIssue()"
-			(click)="!hasInvalidEmails && quotasCanIssue() && dataConfirmed()"
+			[disabled]="buttonDisabledAttribute || hasInvalidEmails || hasInvalidDobs || !quotasCanIssue()"
+			(click)="!hasInvalidEmails && !hasInvalidDobs && quotasCanIssue() && dataConfirmed()"
 			text="{{ 'Issuer.giveBadges' | translate }}"
 		>
 		</oeb-button>

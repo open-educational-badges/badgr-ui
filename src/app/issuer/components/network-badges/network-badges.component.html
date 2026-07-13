@@ -11,25 +11,27 @@
 </ng-container>
 
 <ng-template #networkTemplate>
-	@if (badgeResults.length) {
-		<div class="tw-mt-12">
-			<badges-datatable
-				[badges]="badgeResults"
-				(directBadgeAward)="routeToBadgeAward($event)"
-				(qrCodeAward)="routeToQRCodeAward($event)"
-				(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, network().slug, $event.focusRequests)"
-			></badges-datatable>
-		</div>
+	@if (badges.length) {
+		@if (filteredBadgeResults.length) {
+			<div class="tw-mt-12">
+				<badges-datatable
+					[badges]="filteredBadgeResults"
+					(directBadgeAward)="routeToBadgeAward($event)"
+					(qrCodeAward)="routeToQRCodeAward($event)"
+					(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, network().slug, $event.focusRequests)"
+				></badges-datatable>
+			</div>
+		} @else {
+			<span class="tw-text-lg tw-text-oebblack tw-my-6 tw-block">
+				{{ 'BadgeFilter.noResults' | translate }}
+			</span>
+		}
 	} @else {
 		<span
 			class="tw-text-lg tw-text-oebblack tw-my-6 tw-block"
 			[innerHTML]="'Network.noBadgesYet' | translate: { network: network().name }"
 		></span>
-		@if (
-			network().current_user_network_role &&
-			network().current_user_network_role !== 'staff' &&
-			!badgeResults.length
-		) {
+		@if (network().current_user_network_role && network().current_user_network_role !== 'staff') {
 			<oeb-button
 				[text]="'Network.createBadge' | translate"
 				[routerLink]="[`/issuer/issuers/${network().slug}/badges/select/`]"
@@ -88,12 +90,19 @@
 		</div>
 	} @else {
 		<div class="tw-mt-12">
-			<network-shared-badges-datatable
-				[badges]="sharedBadgeResults"
-				(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, network().slug, $event.focusRequests)"
-				(directBadgeAward)="routeToBadgeAward($event)"
-				(qrCodeAward)="routeToQRCodeAward($event)"
-			></network-shared-badges-datatable>
+			<oeb-badge-filter (filterChange)="onSharedFilterChange($event)"></oeb-badge-filter>
+			@if (!filteredSharedBadgeResults.length) {
+				<span class="tw-text-lg tw-text-oebblack tw-my-6 tw-block">
+					{{ 'BadgeFilter.noResults' | translate }}
+				</span>
+			} @else {
+				<network-shared-badges-datatable
+					[badges]="filteredSharedBadgeResults"
+					(redirectToBadgeDetail)="routeToBadgeDetail($event.badge, network().slug, $event.focusRequests)"
+					(directBadgeAward)="routeToBadgeAward($event)"
+					(qrCodeAward)="routeToQRCodeAward($event)"
+				></network-shared-badges-datatable>
+			}
 		</div>
 	}
 </ng-template>

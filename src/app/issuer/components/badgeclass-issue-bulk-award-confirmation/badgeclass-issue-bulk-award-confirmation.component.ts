@@ -34,7 +34,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
-import { NgClass } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { isValidEmail } from '~/common/util/is-valid-email';
 import { DateValidator } from '~/common/validators/date.validator';
@@ -56,6 +56,7 @@ import { Network } from '~/issuer/network.model';
 		OebButtonComponent,
 		TranslatePipe,
 		NgClass,
+		DatePipe,
 		FormsModule,
 		OptionalDetailsComponent,
 		RouterLink,
@@ -222,6 +223,16 @@ export class BadgeclassIssueBulkAwardConformation
 		return Array.from(transformedImportData.validRowsTransformed).filter((row) => row.emailInvalid).length;
 	}
 
+	get hasInvalidDobs(): boolean {
+		return this.invalidDobCount > 0;
+	}
+
+	get invalidDobCount(): number {
+		const transformedImportData = this.transformedImportData();
+		if (!transformedImportData?.validRowsTransformed) return 0;
+		return Array.from(transformedImportData.validRowsTransformed).filter((row) => row.dobInvalid).length;
+	}
+
 	startEditing(row: BulkIssueData) {
 		row.isEditing = true;
 		this.focusedRow = row;
@@ -295,6 +306,7 @@ export class BadgeclassIssueBulkAwardConformation
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
+				date_of_birth: row.dateOfBirth || null,
 				evidence_items: cleanedEvidence,
 				course_url: formState.courseUrl,
 			};
