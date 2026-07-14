@@ -1,4 +1,4 @@
-import { Component, input, ViewChild, ViewEncapsulation, OnChanges, inject } from '@angular/core';
+import { Component, input, ViewChild, ViewEncapsulation, OnChanges, OnInit, OnDestroy, inject } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
 import { DynamicHooksComponent } from 'ngx-dynamic-hooks';
 import { Router } from '@angular/router';
@@ -33,7 +33,7 @@ import { VersionComponent } from '~/public/components/version.component';
 	// intentionally not listed in `imports`.
 	imports: [DynamicHooksComponent, LoadingDotsComponent],
 })
-export class ShadowDomComponent implements OnChanges {
+export class ShadowDomComponent implements OnChanges, OnInit, OnDestroy {
 	private router = inject(Router);
 
 	content = input<string>();
@@ -54,6 +54,20 @@ export class ShadowDomComponent implements OnChanges {
 	constructor(...args: unknown[]);
 
 	constructor() {}
+
+	private tallyMessageHandler = (event: MessageEvent) => {
+		if (event.data?.type === 'tally-form-submitted') {
+			this.contentWrap?.nativeElement?.scrollIntoView({ behavior: 'smooth' });
+		}
+	};
+
+	ngOnInit() {
+		window.addEventListener('message', this.tallyMessageHandler);
+	}
+
+	ngOnDestroy() {
+		window.removeEventListener('message', this.tallyMessageHandler);
+	}
 
 	ngOnChanges() {
 		if (this.assetWrap) {
