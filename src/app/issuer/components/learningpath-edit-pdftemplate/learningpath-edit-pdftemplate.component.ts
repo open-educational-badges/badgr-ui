@@ -18,7 +18,7 @@ import { BgAwaitPromises } from '../../../common/directives/bg-await-promises';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { OebSelectComponent } from '../../../components/select.component';
 import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
-import { FormFieldSelectOption } from '~/common/components/formfield-select';
+
 import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
@@ -54,9 +54,9 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 	learningPath: LearningPath;
 	learningPathLoaded: Promise<unknown>;
 	breadcrumbLinkEntries: LinkEntry[] = [];
-	pdfTemplatesPromise: Promise<unknown>;
+	pdfTemplatesPromise: Promise<void>;
 	pdfTemplates: ApiPDFTemplate[];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 
 	@ViewChild('formElem')
 	formElem: ElementRef<HTMLFormElement>;
@@ -163,13 +163,10 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 	}
 
 	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(issuerSlug)
-			.then(
-				(pdfTemplates) =>
-					(this.pdfTemplates = pdfTemplates.sort(
-						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-					)),
+		this.pdfTemplatesPromise = this.pdfTemplateManager.getPDFTemplatesForIssuer(issuerSlug).then((pdfTemplates) => {
+			this.pdfTemplates = pdfTemplates.sort(
+				(a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
 			);
+		});
 	}
 }

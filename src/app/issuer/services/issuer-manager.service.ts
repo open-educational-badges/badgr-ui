@@ -73,6 +73,26 @@ export class IssuerManager {
 			.then((response) => this.issuersList.remove(issuerToDelete));
 	}
 
+	issuerBySlugDirect(issuerSlug: IssuerSlug): Promise<Issuer> {
+		return this.issuerApiService.getIssuer(issuerSlug).then((apiIssuer) => this.issuersList.addOrUpdate(apiIssuer));
+	}
+
+	networkBySlugDirect(networkSlug: IssuerSlug): Promise<Network> {
+		return this.networkApiService
+			.getNetwork(networkSlug)
+			.then((apiNetwork) => this.networksList.addOrUpdate(apiNetwork));
+	}
+
+	async issuerOrNetworkBySlugDirect(issuerSlug: IssuerSlug): Promise<Issuer | Network> {
+		try {
+			const issuer = await this.issuerBySlugDirect(issuerSlug);
+			if (!issuer.is_network) return issuer;
+			return await this.networkBySlugDirect(issuerSlug);
+		} catch {
+			return this.networkBySlugDirect(issuerSlug);
+		}
+	}
+
 	issuerBySlug(issuerSlug: IssuerSlug): Promise<Issuer> {
 		return firstValueFrom(
 			combineLatest([

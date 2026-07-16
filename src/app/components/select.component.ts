@@ -30,69 +30,77 @@ import { HlmP } from '@spartan-ng/helm/typography';
 		OebSeparatorComponent,
 		TranslateModule,
 	],
-	template: ` <div class="tw-max-w-md" [ngClass]="{ 'tw-mt-6 md:tw-mt-7': !noTopMargin }">
-		@if (label) {
-			<label class="tw-pb-[2px] tw-pl-[3px]" [attr.for]="inputName">
-				<span hlmP class="tw-text-oebblack tw-font-semibold" [innerHTML]="label"></span>
-				@if (formFieldAside) {
-					<span>{{ formFieldAside }}</span>
-				}
-				<ng-content select="[label-additions]"></ng-content>
-			</label>
+	template: ` <div [ngClass]="{ 'tw-mt-6 md:tw-mt-7': !noTopMargin }">
+		<div class="tw-max-w-md">
+			@if (label) {
+				<label class="tw-pb-[2px] tw-pl-[3px]" [attr.for]="inputName">
+					<span hlmP class="tw-text-oebblack tw-font-semibold" [innerHTML]="label"></span>
+					@if (formFieldAside) {
+						<span>{{ formFieldAside }}</span>
+					}
+					<ng-content select="[label-additions]"></ng-content>
+				</label>
+			}
+		</div>
+
+		@if (sublabel) {
+			<p class="tw-text-purple tw-text-lg tw-italic" [innerHTML]="sublabel"></p>
 		}
 
-		@if (ariaLabel) {
-			<label class="visuallyhidden" [attr.for]="inputName">{{ ariaLabel }}</label>
-		}
-
-		@if (description) {
-			<div class="tw-italic">{{ description }}</div>
-		}
-
-		<brn-select
-			[formControl]="control"
-			(focus)="cacheControlState()"
-			(keypress)="handleKeyPress($event)"
-			#selectInput
-			class="tw-text-oebblack"
-			[ngClass]="{ 'tw-pointer-events-none tw-opacity-50': disabled }"
-			[attr.id]="id"
-			[placeholder]="placeholder"
-			[multiple]="multiple"
-			brn-select
-			hlm
-		>
-			@if (placeholder) {
-				<div brnSelectLabel class="tw-hidden"></div>
+		<div class="tw-max-w-md">
+			@if (ariaLabel) {
+				<label class="visuallyhidden" [attr.for]="inputName">{{ ariaLabel }}</label>
 			}
 
-			<hlm-select-trigger
-				[size]="actionBar ? 'actionBar' : 'default'"
-				class="tw-w-full tw-border-solid tw-border-purple tw-bg-white "
-			>
-				@if (!multiple) {
-					<hlm-select-value class="tw-text-base " />
-				}
-				@if (multiple) {
-					<div class="tw-text-base">{{ placeholder }}</div>
-				}
-			</hlm-select-trigger>
-			<hlm-select-content [ngStyle]="{ 'max-height.px': dropdownMaxHeight }">
-				@for (option of options; track option) {
-					<hlm-option [value]="option.value">{{ option.label | translate }}</hlm-option>
-				}
-				@if (template) {
-					<div>
-						<oeb-separator [separatorStyle]="'!tw-border-dashed'"></oeb-separator>
-						<ng-content *ngTemplateOutlet="template"></ng-content>
-					</div>
-				}
-			</hlm-select-content>
-		</brn-select>
+			@if (description) {
+				<div class="tw-italic">{{ description }}</div>
+			}
 
-		@if (isErrorState) {
-			<oeb-input-error class="tw-text-red tw-pl-[3px]" [error]="errorMessageForDisplay"></oeb-input-error>
-		}
+			<brn-select
+				[formControl]="control"
+				(focus)="cacheControlState()"
+				(keypress)="handleKeyPress($event)"
+				#selectInput
+				class="tw-text-oebblack"
+				[ngClass]="{ 'tw-pointer-events-none tw-opacity-50': disabled }"
+				[attr.id]="id"
+				[placeholder]="placeholder"
+				[multiple]="multiple"
+				brn-select
+				hlm
+			>
+				@if (placeholder) {
+					<div brnSelectLabel class="tw-hidden"></div>
+				}
+
+				<hlm-select-trigger
+					[size]="actionBar ? 'actionBar' : 'default'"
+					class="tw-w-full tw-border-solid tw-border-purple tw-bg-white "
+				>
+					@if (!multiple) {
+						<hlm-select-value class="tw-text-base " />
+					}
+					@if (multiple) {
+						<div class="tw-text-base">{{ placeholder }}</div>
+					}
+				</hlm-select-trigger>
+				<hlm-select-content [ngStyle]="{ 'max-height.px': dropdownMaxHeight }">
+					@for (option of options; track option) {
+						<hlm-option [value]="option.value">{{ option.label | translate }}</hlm-option>
+					}
+					@if (template) {
+						<div>
+							<oeb-separator [separatorStyle]="'!tw-border-dashed'"></oeb-separator>
+							<ng-content *ngTemplateOutlet="template"></ng-content>
+						</div>
+					}
+				</hlm-select-content>
+			</brn-select>
+
+			@if (isErrorState) {
+				<oeb-input-error class="tw-text-red tw-pl-[3px]" [error]="errorMessageForDisplay"></oeb-input-error>
+			}
+		</div>
 	</div>`,
 })
 export class OebSelectComponent implements AfterViewInit, OnChanges {
@@ -104,6 +112,7 @@ export class OebSelectComponent implements AfterViewInit, OnChanges {
 	@Input() formFieldAside: string; // Displays additional text above the field. I.E (optional)
 	@Input() errorMessage: CustomValidatorMessages;
 	@Input() multiline = false;
+	@Input() sublabel: string;
 	@Input() description: string;
 	@Input() placeholder: string;
 	@Input() multiple: boolean = false;

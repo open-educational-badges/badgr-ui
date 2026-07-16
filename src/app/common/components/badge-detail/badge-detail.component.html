@@ -12,6 +12,7 @@
 					>
 						<h1
 							hlmH1
+							data-testid="badge-title"
 							class="tw-text-purple tw-font-extrabold tw-hyphens-auto tw- break-words oeb-break-words"
 						>
 							{{ config.badgeTitle }}
@@ -389,32 +390,6 @@
 										</div>
 									}
 
-									@if (config.license) {
-										<div class="tw-mt-1 tw-pt-1 tw-flex tw-flex-row">
-											<dt class="tw-text-sm tw-text-darkgray">
-												{{ 'General.license' | translate }}
-											</dt>
-											<dd class="tw-text-sm tw-text-oebblack tw-ml-2 tw-flex">
-												<div
-													class="tw-ml-1 tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-border-solid tw-border-[1px] tw-border-oebblack tw-rounded-full"
-												>
-													<span class="tw-text-[11px]">CC</span>
-												</div>
-												<div
-													class="tw-ml-1 tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center tw-border-solid tw-border-[1px] tw-border-oebblack tw-rounded-full"
-												>
-													<span class="tw-text-[11px]">0</span>
-												</div>
-												<a
-													class="tw-ml-2 tw-underline tw-text-[#1400FF]"
-													target="_blank"
-													href="https://creativecommons.org/publicdomain/zero/1.0/legalcode.de"
-												>
-													CC0 1.0</a
-												>
-											</dd>
-										</div>
-									}
 									@if (config.tags.length > 0) {
 										<div class="tw-flex tw-items-start tw-flex-col tw-mt-4">
 											<dt class="tw-text-darkgray md:tw-py-2 md:tw-mr-2 tw-mb-1">Tags</dt>

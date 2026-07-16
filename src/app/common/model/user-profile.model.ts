@@ -74,6 +74,18 @@ export class UserProfile extends ManagedEntity<ApiUserProfile, UserProfileRef> {
 		this.apiModel.marketing_opt_in = secure;
 	}
 
+	get totpEnabled() {
+		return this.apiModel.totp_enabled;
+	}
+
+	get mfaReminderDismissed() {
+		return this.apiModel.mfa_reminder_dismissed;
+	}
+
+	set mfaReminderDismissed(dismissed: boolean) {
+		this.apiModel.mfa_reminder_dismissed = dismissed;
+	}
+
 	static currentProfileId = 'currentUserProfile';
 	/**
 	 * List of emails associated with this user's account.

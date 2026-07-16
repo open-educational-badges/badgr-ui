@@ -8,6 +8,8 @@ import { SessionService } from '../../../common/services/session.service';
 import { Title } from '@angular/platform-browser';
 
 import { CommonDialogsService } from '../../../common/services/common-dialogs.service';
+import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
+import { DisableTwoFactorDialogComponent } from '../../../common/dialogs/oeb-dialogs/disable-two-factor-dialog.component';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { BadgrApiFailure } from '../../../common/services/api-failure';
 import { UserProfileManager } from '../../../common/services/user-profile-manager.service';
@@ -71,6 +73,7 @@ export class ProfileComponent extends BaseAuthenticatedRoutableComponent impleme
 	protected dialogService = inject(CommonDialogsService);
 	protected configService = inject(AppConfigService);
 	private translate = inject(TranslateService);
+	private hlmDialogService = inject(HlmDialogService);
 
 	emails = signal<UserProfileEmail[]>([]);
 	menuItems = computed(() => this.emails().map((x) => this.menuItemsForEmail(x)));
@@ -291,6 +294,27 @@ export class ProfileComponent extends BaseAuthenticatedRoutableComponent impleme
 						true,
 					),
 			);
+		}
+	}
+
+	manage2FA() {
+		if (!this.profile.totpEnabled) {
+			this.router.navigate(['/profile/2fa']);
+		} else {
+			this.hlmDialogService.open(DisableTwoFactorDialogComponent, {
+				closeOnBackdropClick: false,
+				closeOnOutsidePointerEvents: false,
+				contentClass: 'tw-max-w-[600px] tw-border-4 tw-min-h-[614px]',
+				context: {
+					onDisabled: async () => {
+						await this.profile.update();
+						this.messageService.reportMajorSuccess(
+							this.translate.instant('TwoFactor.profile.disabledSuccess'),
+							true,
+						);
+					},
+				},
+			});
 		}
 	}
 

@@ -593,32 +593,38 @@
 			}
 
 			@if (!lastStep()) {
-				<oeb-button
-					type="button"
-					[text]="'General.next' | translate"
-					(click)="nextStep()"
-					[umamiEvent]="
-						!existingLpBadge ? `create-micro-degree-${this.stepper?.selectedIndex + 1}` : undefined
-					"
-				/>
+				<span data-testid="lp-next-btn">
+					<oeb-button
+						type="button"
+						[text]="'General.next' | translate"
+						(click)="nextStep()"
+						[umamiEvent]="
+							!existingLpBadge ? `create-micro-degree-${this.stepper?.selectedIndex + 1}` : undefined
+						"
+					/>
+				</span>
 			}
 
 			@if (lastStep()) {
-				<oeb-button
-					type="submit"
-					width="max_content"
-					[disabled]="!!savePromise || learningPathForm.invalid || selectedBadges.length < 2"
-					[loading-promises]="[savePromise]"
-					loading-message="{{ submittingText }}"
-					text="{{
-						(initialisedLearningpath ? 'General.saveChanges' : 'Issuer.myInstitutionsCreateLearningPath')
-							| translate
-					}}"
-					[umamiEvent]="
-						!existingLpBadge ? `create-micro-degree-done-${this.stepper?.selectedIndex + 1}` : undefined
-					"
-				>
-				</oeb-button>
+				<span data-testid="lp-submit-btn">
+					<oeb-button
+						type="submit"
+						width="max_content"
+						[disabled]="!!savePromise || learningPathForm.invalid || selectedBadges.length < 2"
+						[loading-promises]="[savePromise]"
+						loading-message="{{ submittingText }}"
+						text="{{
+							(initialisedLearningpath
+								? 'General.saveChanges'
+								: 'Issuer.myInstitutionsCreateLearningPath'
+							) | translate
+						}}"
+						[umamiEvent]="
+							!existingLpBadge ? `create-micro-degree-done-${this.stepper?.selectedIndex + 1}` : undefined
+						"
+					>
+					</oeb-button>
+				</span>
 			}
 		</div>
 	</form>

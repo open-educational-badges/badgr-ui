@@ -270,7 +270,7 @@ export class IssuerCatalogComponent extends BaseRoutableComponent implements OnI
 			// Add an image to use as a custom marker
 			this.mapObject.loadImage(
 				'https://maplibre.org/maplibre-gl-js-docs/assets/osgeo-logo.png',
-				function (error, image) {
+				(error, image) => {
 					if (error) throw error;
 					this.mapObject.addImage('custom-marker', image);
 				},

@@ -64,6 +64,15 @@
 						>
 							></oeb-input
 						>
+						<oeb-input
+							[label]="'RequestBadge.dateOfBirthOptional' | translate"
+							[placeholder]=""
+							fieldType="date"
+							[errorMessage]="{
+								invalidDate: 'QrCode.invalidDate' | translate,
+							}"
+							[control]="requestForm.rawControlMap.dateOfBirth"
+						></oeb-input>
 						<oeb-input fieldType="hidden" [control]="requestForm.rawControlMap.qrCodeId"></oeb-input>
 					</div>
 

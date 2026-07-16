@@ -57,6 +57,7 @@ import * as d3 from 'd3';
 import d3ForceBoundary from 'd3-force-boundary';
 
 import futureSkills from './recipient-skill-visualisation.future.json';
+import bneSkills from './recipient-skill-visualisation.bne.json';
 
 interface ExtendedApiSkill extends Partial<ApiSkill> {
 	id: string;
@@ -126,7 +127,7 @@ const skillIconMap = {
 	'/esco/skill/43f425aa-f45d-4bb4-a200-6f82fa211b66': lucideMessageSquare,
 	'/esco/skill/e434e71a-f068-44ed-8059-d1af9eb592d7': lucideLanguages,
 	'future-skills': lucideRocket,
-	bne: lucideEarth,
+	'bne-skills': lucideEarth,
 };
 
 @Component({
@@ -199,13 +200,11 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	areaClick = output<CompetencyAreaClickData>();
 
 	skillTree: Map<string, ExtendedApiSkill>;
-	d3data: { nodes: ExtendedApiSkill[]; links: SkillLink[] } = {
-		nodes: [],
-		links: [],
-	};
+	d3data: { nodes: ExtendedApiSkill[]; links: SkillLink[] } = { nodes: [], links: [] };
 
 	mobile = window.innerWidth <= VISUALISATION_BREAKPOINT_MAX_WIDTH;
 	hasFutureSkills = false;
+	hasBNE = false;
 
 	resizeSubject$ = new Subject<void>();
 
@@ -214,7 +213,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	showSingleNode: boolean = false;
 
 	constructor() {
-		fromEvent(window, 'resize')
+		fromEvent<UIEvent>(window, 'resize')
 			.pipe(
 				debounceTime(300),
 				tap((event: UIEvent) => {
@@ -244,48 +243,54 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	prepareData(skills: ApiRootSkill[]) {
 		this.skillTree = new Map();
 		this.hasFutureSkills = false;
+		this.hasBNE = false;
 
 		// DEBUG: add your own future skill for testing
 		// futureSkills['escoMap']['/esco/skill/2c6439c2-77a5-436a-b222-5e12d435c3eb'] = 'lernkompetenz';
+		// bneSkills['escoMap']['/esco/skill/2c6439c2-77a5-436a-b222-5e12d435c3eb'] = 'weltoffen';
+
+		const extraSkills = [futureSkills, bneSkills];
 
 		skills.forEach((s) => {
-			const breadcrumbs = s.breadcrumb_paths;
+			const breadcrumbs = [...s.breadcrumb_paths];
 
-			// add future skills to breadcrumbs if applicable
-			if (futureSkills['escoMap'][s.concept_uri]) {
-				const emptyFs = {
-					preferred_label: '',
-					concept_uri: '',
-					description: '',
-					type: '',
-					alt_labels: [],
-					reuse_level: null,
-				};
-				const baseFs = futureSkills['futureSkills'][futureSkills['escoMap'][s.concept_uri]];
-				const futureSkill = {
-					...emptyFs,
-					...{
-						concept_uri: baseFs['concept_uri'],
-						preferred_label: baseFs[this.translate.currentLang]['preferred_label'],
-						description: baseFs[this.translate.currentLang]['description'],
-					},
-				};
+			// add future/BNE skills to breadcrumbs if applicable
+			extraSkills.forEach((skillMap) => {
+				const mapping = skillMap['escoMap'][s.concept_uri];
+				if (mapping) {
+					const emptyFs = {
+						preferred_label: '',
+						concept_uri: '',
+						description: '',
+						type: '',
+						alt_labels: [],
+						reuse_level: '',
+					};
+					const slugs: string[] = Array.isArray(mapping) ? mapping : [mapping];
+					slugs.forEach((slug) => {
+						const baseFs = skillMap['skills'][slug];
+						const extraSkill = {
+							...emptyFs,
+							...{
+								concept_uri: baseFs['concept_uri'],
+								preferred_label: baseFs[this.translate.currentLang]['preferred_label'],
+								description: baseFs[this.translate.currentLang]['description'],
+							},
+						};
 
-				breadcrumbs.push([
-					emptyFs,
-					{
-						...emptyFs,
-						...{
-							preferred_label: 'future skills',
-							concept_uri: 'future-skills',
-						},
-					},
-					futureSkill,
-					s,
-				]);
-
-				this.hasFutureSkills = true;
-			}
+						const label =
+							typeof skillMap['label'] === 'object'
+								? (skillMap['label'][this.translate.currentLang] ?? skillMap['label']['de'])
+								: skillMap['label'];
+						breadcrumbs.push([
+							emptyFs,
+							{ ...emptyFs, ...{ preferred_label: label, concept_uri: skillMap['uri'] } },
+							extraSkill,
+							s,
+						]);
+					});
+				}
+			});
 
 			// loop breadcrumbs to augment skill data
 			breadcrumbs.forEach((breadcrumb) => {
@@ -326,9 +331,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 							entry.ancestors.add(ancestor);
 						}
 
-						Object.assign(entry, {
-							height: Math.max(breadcrumb.length - j, entry.height),
-						});
+						Object.assign(entry, { height: Math.max(breadcrumb.length - j, entry.height) });
 
 						if (j == 1) {
 							ancestor = id;
@@ -354,20 +357,28 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		const hasFuture = Array.from(this.skillTree.values()).reduce((c, s) => {
 			return s.id == 'future-skills' || c;
 		}, false);
-		// find top level nodes with highest studyLoad, either top 5 or 4 if future skills exist
+		const hasBNE = Array.from(this.skillTree.values()).reduce((c, s) => {
+			return s.id == 'bne-skills' || c;
+		}, false);
+		// find top level nodes with highest studyLoad, leaving room for extra framework bubbles
 		const topAncestors = new Set(
 			Array.from(this.skillTree.values())
-				.filter((s) => !s.ancestors.size && s.id != 'future-skills')
+				.filter((s) => !s.ancestors.size && s.id != 'future-skills' && s.id != 'bne-skills')
 				.sort((a, b) => {
 					return b.studyLoad - a.studyLoad;
 				})
 				.map((s) => s.id)
-				.slice(0, hasFuture ? 4 : 5),
+				.slice(0, hasFuture && hasBNE ? 3 : hasFuture || hasBNE ? 4 : 5),
 		);
-		// add future skills if available
+		// add extra framework bubbles if available
 		if (hasFuture) {
 			topAncestors.add('future-skills');
 		}
+		if (hasBNE) {
+			topAncestors.add('bne-skills');
+		}
+		this.hasFutureSkills = hasFuture;
+		this.hasBNE = hasBNE;
 
 		// add nodes that either are topAncestors or have a topAncestor or are in future skills
 		this.d3data.nodes = Array.from(this.skillTree.values()).filter((s) => {
@@ -382,6 +393,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		const d3NodeIds = this.d3data.nodes.map((n) => n.id);
 
 		this.d3data.links = [];
+		const linkSet = new Set<string>();
 		this.d3data.nodes.forEach((node) => {
 			if (node.leaf) {
 				for (let ancestor of node.ancestors.values()) {
@@ -393,11 +405,12 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				if (parent) {
 					// parents might have been removed in topancestors filter
 					if (d3NodeIds.includes(parent.id)) {
-						parent.children.push(node.id);
-						this.d3data.links.push({
-							source: node.id,
-							target: parentId,
-						});
+						const linkKey = `${node.id}→${parentId}`;
+						if (!linkSet.has(linkKey)) {
+							linkSet.add(linkKey);
+							parent.children.push(node.id);
+							this.d3data.links.push({ source: node.id, target: parentId });
+						}
 					}
 				}
 			});
@@ -504,25 +517,24 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 		// Create a simulation with several forces.
 		// Compact mode: tighter packing, stronger center force, smaller boundary
-		const boundaryFactor = this.compactMode() ? 0.42 : 0.46;
 		const chargeStrength = this.compactMode() ? -300 : -1000;
 		const collisionMultiplier = this.compactMode() ? 1.05 : 1.1;
 
 		const simulation = d3
 			.forceSimulation(nodes)
 			// center all nodes on the middle
-			.force('center', d3.forceCenter(0, 0).strength(this.compactMode() ? 1.5 : 1))
-			// keep nodes inside SVG bounds
+			.force('center', d3.forceCenter(0, 0).strength(1))
+			// keep nodes inside SVG bounds — boundary inset by max node radius so edges stay visible
 			.force(
 				'bounds',
 				d3ForceBoundary(
-					width * -boundaryFactor,
-					height * -boundaryFactor,
-					width * boundaryFactor,
-					height * boundaryFactor,
+					-(width / 2 - nodeBaseSize - nodeMaxAdditionalSize / 2 - 15),
+					-(height / 2 - nodeBaseSize - nodeMaxAdditionalSize / 2 - 15),
+					width / 2 - nodeBaseSize - nodeMaxAdditionalSize / 2 - 15,
+					height / 2 - nodeBaseSize - nodeMaxAdditionalSize / 2 - 15,
 				)
-					.strength(this.compactMode() ? 0.2 : 0.1)
-					.border(this.compactMode() ? 5 : 10),
+					.strength(0.2)
+					.border(nodeBaseSize),
 			)
 			// force between links
 			.force(
@@ -674,56 +686,9 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 				level-${d.depth}
 				${d.clickable ? 'clickable' : ''}
 				${d.id == 'future-skills' ? 'future' : ''}
-			`,
-		);
-
-		node.sort((d1, d2) => {
-			return d1.depth - d2.depth;
-		});
-
-		node.on('click', (e, d) => {
-			if (d.description) {
-				const others = d3
-					.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-					.filter((d2) => d2.id != d.id);
-				others.data().forEach((d2) => {
-					d2.mouseover = false;
-				});
-				others.nodes().forEach((n) => {
-					n.classList.remove('show-description');
-				});
-
-				const n = d3
-					.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-					.filter((d2) => d2.id == d.id)
-					.node();
-				if (n.classList.contains('show-description')) {
-					n.classList.remove('show-description');
-					d.mouseover = false;
-				} else {
-					n.classList.add('show-description');
-					d.mouseover = true;
-				}
-
-				// needed to reset node order?
-				simulation.alphaTarget(0).restart();
-			} else {
-				const descriptionNodes = d3.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
-				for (const n of descriptionNodes) n.classList.remove('show-description');
-			}
-		})
-			.attr('style', (d) => `font-size: 12px;`)
-			.attr('text-anchor', 'top')
-			.attr('class', 'description');
-
-		node.attr(
-			'class',
-			(d) => `
-				${d.leaf ? 'leaf' : 'group'}
-				level-${d.depth}
-				${d.clickable ? 'clickable' : ''}
-				${d.id == 'future-skills' ? 'future' : ''}
 				${d.parents.has('future-skills') ? 'future-sub' : ''}
+				${d.id == 'bne-skills' ? 'bne' : ''}
+				${d.parents.has('bne-skills') ? 'bne-sub' : ''}
 			`,
 		);
 
@@ -794,54 +759,96 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 		// Only add hover effects if not in compactMode
 		if (!this.compactMode()) {
-			node.on('mouseenter', (e, d) => {
-				// find all node parents and links to toggle show
-				let ancestors = [d.id];
-				if (d.depth > 1) {
-					ancestors = Array.from(d.ancestors.values());
-				}
-				// in case of multiple ancestors show all breadcrumb paths
-				ancestors.forEach((id) => {
-					d = this.skillTree.get(id);
-					const children = svg
-						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-						.filter((d2) => d2.ancestors.has(d.id));
-					const linkedIds = [d.id, ...children.data().map((c) => c.id)];
-					children.nodes().forEach((n) => {
-						n.classList.add('show');
-					});
-					const links = svg
-						.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-						.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
-					links.nodes().forEach((n) => {
-						n.classList.add('show');
-					});
-				});
-			}).on('mouseout', (e, d) => {
-				let ancestors = [d.id];
-				if (d.depth > 1) {
-					ancestors = Array.from(d.ancestors.values());
-				}
-				ancestors.forEach((id) => {
-					d = this.skillTree.get(id);
-					const children = svg
-						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-						.filter((d2) => d2.ancestors.has(d.id));
-					const linkedIds = [d.id, ...children.data().map((c) => c.id)];
-					children.nodes().forEach((n) => {
-						n.classList.remove('show');
-					});
-					const links = svg
-						.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-						.filter((l) => [l.target.id, l.source.id].every((i) => linkedIds.includes(i)));
-					links.nodes().forEach((n) => {
-						n.classList.remove('show');
-					});
-				});
+			let hoverOutTimer: ReturnType<typeof setTimeout> | null = null;
+			let hoverIntentTimer: ReturnType<typeof setTimeout> | null = null;
 
-				// hide all descriptions
-				const descriptionNodes = svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description').nodes();
-				for (const n of descriptionNodes) n.classList.remove('show-description');
+			const clearAllShow = () => {
+				svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.remove('dimmed'));
+				svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.remove('show'));
+				svg.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.remove('show'));
+				svg.selectAll<SVGElement, ExtendedApiSkill>('.show-description')
+					.nodes()
+					.forEach((n: SVGElement) => n.classList.remove('show-description'));
+			};
+
+			node.on('mouseenter', (e, d) => {
+				// Cancel any pending cleanup so crossing gaps between nodes feels seamless
+				if (hoverOutTimer) {
+					clearTimeout(hoverOutTimer);
+					hoverOutTimer = null;
+				}
+				// Cancel any previous intent that hasn't fired yet
+				if (hoverIntentTimer) {
+					clearTimeout(hoverIntentTimer);
+					hoverIntentTimer = null;
+				}
+
+				const intentDelay = 500;
+
+				hoverIntentTimer = setTimeout(() => {
+					hoverIntentTimer = null;
+
+					// Clear previous show state before applying new state for this node
+					clearAllShow();
+
+					const ancestors = d.depth > 1 ? Array.from(d.ancestors.values()) : [d.id];
+
+					// Dim all level-1 nodes not in this node's top-level ancestry
+					const activeTopIds = new Set(ancestors.filter((id) => (this.skillTree.get(id)?.depth ?? 0) === 1));
+					svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
+						.nodes()
+						.forEach((n: SVGElement) => {
+							const nd = d3.select(n).datum() as ExtendedApiSkill;
+							if (!activeTopIds.has(nd.id)) n.classList.add('dimmed');
+						});
+
+					// Show the hovered node and its direct parents (keeps the path to root visible)
+					const selfAndParents = new Set([d.id, ...(d.depth > 1 ? Array.from(d.parents) : [])]);
+					svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+						.nodes()
+						.forEach((n: SVGElement) => {
+							const nd = d3.select(n).datum() as ExtendedApiSkill;
+							if (selfAndParents.has(nd.id)) n.classList.add('show');
+						});
+
+					// Show only direct children of the hovered node
+					const children = svg
+						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
+						.filter((d2: ExtendedApiSkill) => d2.parents.has(d.id));
+					children.nodes().forEach((n: SVGElement) => n.classList.add('show'));
+
+					// Show links connecting the hovered node, its parents, its depth-1 ancestors,
+					// and its children. Including ancestors ensures the full chain stays connected
+					// (e.g. Überkategorie → big bubble link is visible when hovering a skill).
+					const linkedIds = [
+						...selfAndParents,
+						...(d.depth > 1 ? Array.from(d.ancestors) : []),
+						...children.data().map((c: ExtendedApiSkill) => c.id),
+					];
+					svg.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
+						.filter((l: d3.HierarchyLink<ExtendedApiSkill>) =>
+							[l.target.id, l.source.id].every((i) => linkedIds.includes(i)),
+						)
+						.nodes()
+						.forEach((n: SVGElement) => n.classList.add('show'));
+				}, intentDelay);
+			}).on('mouseout', () => {
+				// Mouse left before intent threshold — cancel without triggering
+				if (hoverIntentTimer) {
+					clearTimeout(hoverIntentTimer);
+					hoverIntentTimer = null;
+				}
+				// Delay cleanup so the mouse has time to reach the next node across a gap
+				hoverOutTimer = setTimeout(() => {
+					hoverOutTimer = null;
+					clearAllShow();
+				}, 400);
 			});
 		}
 

@@ -68,7 +68,7 @@ export class BadgeClassCreateComponent extends BaseAuthenticatedRoutableComponen
 			this.issuerLoaded = Promise.resolve(this.issuer);
 		} else {
 			this.issuerLoaded = this.issuerManager
-				.issuerOrNetworkBySlug(this.issuerSlug)
+				.issuerOrNetworkBySlugDirect(this.issuerSlug)
 				.then((issuer) => {
 					this.issuer = issuer;
 					return issuer;

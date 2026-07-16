@@ -2,7 +2,7 @@ import { AbstractControl } from '@angular/forms';
 
 export class IssuerNameValidator {
 	static validIssuerName(control: AbstractControl): { [errorName: string]: string } {
-		const nonAsciiRegex = /[^\x00-\x7Fäöüß]/;
+		const nonAsciiRegex = /[^\x00-\x7FäöüßÄÖÜ]/;
 
 		const atIndex = control.value.indexOf('@');
 		const nonAsciiMatch = control.value.match(nonAsciiRegex);

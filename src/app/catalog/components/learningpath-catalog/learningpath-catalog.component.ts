@@ -265,8 +265,8 @@ export class LearningPathsCatalogComponent extends BaseRoutableComponent impleme
 		);
 
 		this.pageSubscriptions.push(
-			this.sortControl.valueChanges.subscribe((value: 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc') => {
-				this.sortOption.set(value);
+			this.sortControl.valueChanges.subscribe((value) => {
+				this.sortOption.set(value as 'name_asc' | 'name_desc' | 'date_asc' | 'date_desc');
 				if (this.currentPage() > 0) this.currentPage.set(0);
 			}),
 		);

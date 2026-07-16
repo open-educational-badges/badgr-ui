@@ -29,6 +29,7 @@ import * as states from '../../../../assets/data/german-states.json';
 import { HlmDialogService } from '@spartan-ng/helm/dialog';
 import { DialogComponent } from '~/components/dialog.component';
 import { Network } from '~/issuer/network.model';
+import { take } from 'rxjs';
 
 @Component({
 	selector: 'issuer-edit-form',
@@ -70,6 +71,8 @@ export class IssuerEditFormComponent implements OnInit {
 	emails: UserProfileEmail[];
 	primaryEmail: UserProfileEmail;
 	emailsOptions: FormFieldSelectOption[];
+	networkParentIssuerOptions: FormFieldSelectOption[] = [];
+	networkParentOptionsLoaded = false;
 	addPromiseFinished: Promise<unknown>;
 	editPromiseFinished: Promise<unknown>;
 	_countriesOptions: FormFieldSelectOption[];
@@ -147,6 +150,34 @@ export class IssuerEditFormComponent implements OnInit {
 	ngOnInit() {
 		this.buildForm();
 
+		if (this.networkForm() && !this.issuerOrNetworkSlug) {
+			this.emailsLoaded.then(() => {
+				this.issuerManager.myIssuers$.pipe(take(1)).subscribe((issuers) => {
+					const qualifying = issuers
+						.filter((i) => {
+							if (!i.currentUserStaffMember?.isOwner && !i.currentUserStaffMember?.isEditor) {
+								return false;
+							}
+							if (!i.quotas) {
+								return true;
+							}
+							return !!i.quotas.quotas?.['NETWORK_CREATE']?.quota;
+						})
+						.sort((a, b) => a.name.localeCompare(b.name));
+
+					this.networkParentIssuerOptions = qualifying.map((i) => ({
+						label: i.name,
+						value: i.slug,
+					}));
+					this.networkParentOptionsLoaded = true;
+
+					if (qualifying.length === 1) {
+						this.issuerForm.rawControlMap.parent_issuer.setValue(qualifying[0].slug);
+					}
+				});
+			});
+		}
+
 		this.translate.get('Issuer.enterDescription').subscribe((translatedText: string) => {
 			this.enterDescription = translatedText;
 		});
@@ -204,6 +235,8 @@ export class IssuerEditFormComponent implements OnInit {
 				.addControl('issuer_zip', '', Validators.required)
 				.addControl('issuer_city', '', Validators.required)
 				.addControl('verify_intended_use', false, Validators.requiredTrue);
+		} else if (!this.issuerOrNetworkSlug) {
+			this.issuerForm.addControl('parent_issuer', '', Validators.required);
 		}
 
 		if (this.configService.theme.dataProcessorTermsLink) {
@@ -344,6 +377,7 @@ export class IssuerEditFormComponent implements OnInit {
 			country: formState.country,
 			state: formState.state,
 			image: formState.issuer_image,
+			parent_issuer: formState.parent_issuer,
 		};
 
 		if (this.existingIssuer) {
@@ -362,10 +396,15 @@ export class IssuerEditFormComponent implements OnInit {
 		} else {
 			this.addPromiseFinished = this.networkManager
 				.createNetwork(network)
-				.then((network) => {
-					this.router.navigate(['issuer/networks', network.slug]);
-					this.messageService.setMessage('Network created successfully.', 'success');
-				})
+				.then(
+					(network) => {
+						this.router.navigate(['issuer/networks', network.slug]);
+						this.messageService.setMessage('Network created successfully.', 'success');
+					},
+					(error) => {
+						this.messageService.setMessage('Unable to create network: ' + error, 'error');
+					},
+				)
 				.then(() => (this.addPromiseFinished = null));
 		}
 	}

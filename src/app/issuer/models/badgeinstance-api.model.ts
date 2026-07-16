@@ -42,8 +42,8 @@ export interface ApiBadgeInstanceForCreation {
 	activity_city?: string;
 	activity_online?: boolean;
 	name?: string;
-	pdftemplate?: string;
 	course_url?: string;
+	date_of_birth?: string | null;
 }
 
 export type RecipientIdentifierType = 'email' | 'openBadgeId' | 'telephone' | 'url';
@@ -85,11 +85,11 @@ export interface BadgeInstanceBatchAssertion {
 	extensions?: object;
 	activity_start_date?: string;
 	activity_end_date?: string;
-	pdftemplate?: string;
 	activity_zip?: string;
 	activity_city?: string;
 	activity_online?: boolean;
 	course_url?: string;
+	date_of_birth?: string | null;
 	request_entity_id?: string;
 }
 

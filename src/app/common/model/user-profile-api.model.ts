@@ -15,6 +15,8 @@ export interface ApiUserProfile {
 	secure_password_set: boolean;
 	date_joined: string;
 	quota_release_informed: boolean;
+	totp_enabled: boolean;
+	mfa_reminder_dismissed: boolean;
 }
 export type UserProfileRef = ApiEntityRef;
 

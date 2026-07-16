@@ -6,7 +6,6 @@ import { UserProfileManager } from '../../../common/services/user-profile-manage
 import { IssuerManager } from '../../../issuer/services/issuer-manager.service';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { BgImageStatusPlaceholderDirective } from '../../directives/bg-image-status-placeholder.directive';
-import { NgIf } from '@angular/common';
 import { PublicApiIssuer } from '../../../public/models/public-api.model';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
@@ -23,9 +22,7 @@ import { BadgeClassManager } from '~/issuer/services/badgeclass-manager.service'
 import { BadgeClass } from '~/issuer/models/badgeclass.model';
 import { Router } from '@angular/router';
 import { SessionService } from '~/common/services/session.service';
-import { NgClass } from '@angular/common';
 import { NgTemplateOutlet } from '@angular/common';
-import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
 
 @Component({
 	selector: 'oeb-network-detail',
@@ -33,7 +30,6 @@ import { QuotaInformationComponent } from '~/issuer/components/quota-information
 	imports: [
 		BgImageStatusPlaceholderDirective,
 		HlmH1,
-		NgIf,
 		HlmP,
 		OebButtonComponent,
 		TranslatePipe,
@@ -41,9 +37,7 @@ import { QuotaInformationComponent } from '~/issuer/components/quota-information
 		BgBreadcrumbsComponent,
 		OebTabsComponent,
 		BgBadgecard,
-		NgClass,
 		NgTemplateOutlet,
-		QuotaInformationComponent,
 	],
 })
 export class OebNetworkDetailComponent implements OnInit {
@@ -72,7 +66,7 @@ export class OebNetworkDetailComponent implements OnInit {
 	linkentries: LinkEntry[] = [];
 
 	partnerBadges: ApiBadgeClassNetworkShare[] = [];
-	networkBadges: BadgeClass[];
+	networkBadges: BadgeClass[] = [];
 
 	tabs: Tab[] = undefined;
 

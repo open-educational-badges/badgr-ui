@@ -20,3 +20,13 @@ temp/
 .vscode
 
 src/environments/timestamp.ts
+
+# Claude Code
+.agents/
+.claude/
+skills-lock.json
+
+# Playwright
+e2e/.auth/
+playwright-report/
+test-results/

@@ -78,7 +78,7 @@
 					<div class="tw-ml-auto">
 						@switch (activeTab) {
 							@case ('partners') {
-								@if (network().current_user_network_role !== 'staff' && networkInvites().length) {
+								@if (network().current_user_network_role !== 'staff') {
 									<oeb-button
 										[text]="'Network.shortInviteInstitutions' | translate"
 										(click)="openDialog()"

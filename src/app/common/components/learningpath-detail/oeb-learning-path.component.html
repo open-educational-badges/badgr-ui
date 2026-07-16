@@ -23,7 +23,7 @@
 											  }
 								}}</span>
 							}
-							<h2 hlmH2 class="!tw-text-oebblack tw-font-extrabold tw-uppercase">
+							<h2 hlmH2 data-testid="lp-title" class="!tw-text-oebblack tw-font-extrabold tw-uppercase">
 								{{ learningPath.name }}
 							</h2>
 							<p size="sm" hlmP class="tw-text-oebblack">
@@ -216,6 +216,7 @@
 								[badgeIssueDate]="badge.badge.created_at"
 								[publicUrl]="badgeLink(badge.badge)"
 								[competencies]="badge.badge.extensions['extensions:CompetencyExtension']"
+								[category]="badge.badge.extensions['extensions:CategoryExtension']?.Category"
 							></bg-badgecard>
 						</div>
 					}

@@ -14,9 +14,9 @@ import { FormFieldRadio } from '../../../common/components/formfield-radio';
 import { FormFieldSelectOption } from '../../../common/components/formfield-select';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmDialogModule, HlmDialogService } from '@spartan-ng/helm/dialog';
-import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
+import { HlmH2 } from '@spartan-ng/helm/typography';
 import { QuotaRequestApiService } from '../../services/quotarequest-api.service';
-import { CurrencyPipe, DecimalPipe, TitleCasePipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { QuotaManager } from '~/issuer/services/quota-manager.service';
 import { ApiQuota } from '~/issuer/models/quotas.model';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
@@ -64,8 +64,6 @@ export const quotaPackages = [
 		FormFieldRadio,
 		HlmDialogModule,
 		HlmH2,
-		HlmP,
-		TitleCasePipe,
 		DecimalPipe,
 	],
 })

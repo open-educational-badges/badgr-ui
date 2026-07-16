@@ -23,6 +23,7 @@ import {
 	ReactiveFormsModule,
 } from '@angular/forms';
 import { Md5 } from 'ts-md5';
+import { RouterLink } from '@angular/router';
 import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-authenticated-routable.component';
 import { MessageService } from '../../../common/services/message.service';
 import {
@@ -71,6 +72,8 @@ import { LanguageService, lngs } from '~/common/services/language.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
+import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 
 const MAX_STUDYLOAD_HRS: number = 10_000;
 const MAX_HRS_PER_COMPETENCY: number = 999;
@@ -107,6 +110,7 @@ const MAX_HRS_PER_COMPETENCY: number = 999;
 		UpperCasePipe,
 		QuotaInformationComponent,
 		QuotaExceededDialog,
+		RouterLink,
 	],
 })
 export class BadgeClassEditFormComponent
@@ -123,8 +127,12 @@ export class BadgeClassEditFormComponent
 	protected catalogService = inject(CatalogService);
 	private languageService = inject(LanguageService);
 	private readonly _hlmDialogService = inject(HlmDialogService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	baseUrl: string;
+	pdfTemplatesPromise: Promise<void>;
+	pdfTemplates: ApiPDFTemplate[] = [];
+	selectPDFTemplateOptions: Array<{ label: string; value: string | null }> = [];
 	badgeCategory: string;
 
 	aiCompetenciesLoading = false;
@@ -197,6 +205,12 @@ export class BadgeClassEditFormComponent
 			this.existingBadgeClass = badgeClass;
 			this.existing = true;
 			this.initFormFromExisting(this.existingBadgeClass);
+			// If templates already loaded, re-trigger writeValue so the select shows the saved template.
+			// This handles the race where loadPDFTemplates() resolved before this @Input arrived.
+			if (this.selectPDFTemplateOptions.length > 0) {
+				const ctrl = this.badgeClassForm.rawControl.controls['pdf_template'];
+				setTimeout(() => ctrl.setValue(badgeClass.pdfTemplate ?? null, { emitEvent: false }), 0);
+			}
 		}
 	}
 
@@ -441,7 +455,8 @@ export class BadgeClassEditFormComponent
 		.addControl('expiration_unit', 'days', Validators.required)
 		.addArray('criteria', this.criteriaForm)
 
-		.addControl('copy_permissions_allow_others', false);
+		.addControl('copy_permissions_allow_others', false)
+		.addControl('pdf_template', null);
 
 	@ViewChild('badgeStudio')
 	badgeStudio: BadgeStudioComponent;
@@ -565,7 +580,7 @@ export class BadgeClassEditFormComponent
 		}
 
 		// transform minutes into hours and minutes
-		let competencies = badgeClass.extension['extensions:CompetencyExtension'].map((comp) => {
+		let competencies = (badgeClass.extension['extensions:CompetencyExtension'] || []).map((comp) => {
 			return { ...comp, hours: Math.floor(comp.studyLoad / 60), minutes: comp.studyLoad % 60 };
 		});
 
@@ -573,9 +588,14 @@ export class BadgeClassEditFormComponent
 			? badgeClass.extension['extensions:CategoryExtension'].Category
 			: 'participation';
 
+		// When copying a badge from a *different* institution, the source badge's own
+		// image must not be pre-filled (the copying institution provides its own image).
+		// Editing an existing badge, or copying within the same institution, keeps it.
+		const isForeignCopy = !this.existing && this.issuer != null && badgeClass.issuerSlug !== this.issuer.slug;
+
 		this.badgeClassForm.setValue({
 			badge_name: badgeClass.name,
-			badge_image: badgeClass.imageFrame ? badgeClass.image : null,
+			badge_image: !isForeignCopy && badgeClass.imageFrame ? badgeClass.image : null,
 			badge_customImage: null,
 			useIssuerImageInBadge: this.badgeClassForm.value.useIssuerImageInBadge,
 			badge_description: badgeClass.description,
@@ -616,7 +636,7 @@ export class BadgeClassEditFormComponent
 			aiCompetencies: [],
 			keywordCompetencies: [],
 			competencies: badgeClass.extension['extensions:CompetencyExtension'] ? competencies : [],
-			alignments: this.badgeClass.alignments.map((alignment) => ({
+			alignments: (this.badgeClass.alignments || []).map((alignment) => ({
 				target_name: alignment.target_name,
 				target_url: alignment.target_url,
 				target_description: alignment.target_description,
@@ -626,34 +646,57 @@ export class BadgeClassEditFormComponent
 			courseUrl: badgeClass.courseUrl,
 			expiration: badgeClass.expiration,
 			expiration_unit: 'days', // api always returns expiration in days
-			criteria: badgeClass.apiModel.criteria.map((c) => ({
+			criteria: (badgeClass.apiModel.criteria || []).map((c) => ({
 				name: c.name,
 				description: c.description,
 				translationKey: null,
 			})),
 			copy_permissions_allow_others: this.existing ? badgeClass.canCopy('others') : false,
+			pdf_template: badgeClass.pdfTemplate ?? null,
 		});
+
+		// Keep the badge category in sync directly from the source badge. The `category`
+		// @Input arrives asynchronously when copying (the source badge is fetched after
+		// the form initializes), so the equivalent sync in ngOnInit can run too early and
+		// leave the category (e.g. competency) showing as the default. Deriving it here,
+		// tied to the loaded badge, makes it independent of input/promise ordering.
+		if (this.category && this.categoryOptions.hasOwnProperty(this.category)) {
+			this.badgeClassForm.rawControl.controls['badge_category'].setValue(this.category);
+		}
+		this.badgeCategory = this.badgeClassForm.rawControl.controls['badge_category'].value;
 
 		if (this.badgeClassForm.controls.competencies.controls.length > 0) {
 			this.collapsedCompetenciesOpen = true;
 		}
 
-		this.currentImage = badgeClass.extension['extensions:OrgImageExtension']
-			? badgeClass.extension['extensions:OrgImageExtension'].OrgImage
-			: undefined;
+		this.currentImage =
+			!isForeignCopy && badgeClass.extension['extensions:OrgImageExtension']
+				? badgeClass.extension['extensions:OrgImageExtension'].OrgImage
+				: undefined;
 
-		setTimeout(async () => {
-			if (badgeClass.imageFrame) {
-				// regenerating the upload image for the issuer image in case it changed via copying
-				// or if it was not part of the badge image yet
-				this.generateUploadImage(this.currentImage, this.badgeClassForm.value, !this.issuer?.is_network, true);
-			} else if (badgeClass.image) {
-				const dataUrl = await this.urlToDataUrl(badgeClass.image);
-				this.currentImage = dataUrl;
+		// Skip carrying over the source image when copying across institutions (see above).
+		if (!isForeignCopy) {
+			setTimeout(async () => {
+				if (badgeClass.imageFrame) {
+					// regenerating the upload image for the issuer image in case it changed via copying
+					// or if it was not part of the badge image yet
+					this.generateUploadImage(
+						this.currentImage,
+						this.badgeClassForm.value,
+						!this.issuer?.is_network,
+						true,
+					);
+				} else if (badgeClass.image) {
+					const imageUrl = badgeClass.image.startsWith('/')
+						? `${this.baseUrl}${badgeClass.image}`
+						: badgeClass.image;
+					const dataUrl = await this.urlToDataUrl(imageUrl);
+					this.currentImage = dataUrl;
 
-				this.customImageField.useDataUrl(dataUrl, 'BADGE', false, true);
-			}
-		}, 1);
+					this.customImageField.useDataUrl(dataUrl, 'BADGE', false, true);
+				}
+			}, 1);
+		}
 
 		this.tags = new Set();
 		this.badgeClass.tags.forEach((t) => this.tags.add(t));
@@ -664,6 +707,7 @@ export class BadgeClassEditFormComponent
 	ngOnInit() {
 		super.ngOnInit();
 		this.fetchTags();
+		this.loadPDFTemplates();
 
 		this.durationOptions = getDurationOptions(this.translate);
 
@@ -791,7 +835,7 @@ export class BadgeClassEditFormComponent
 	}
 
 	private urlToDataUrl(url: string): Promise<string> {
-		return fetch(url, { credentials: 'include' })
+		return fetch(url)
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error(`Failed to fetch image: ${url}`);
@@ -990,6 +1034,24 @@ export class BadgeClassEditFormComponent
 		);
 	}
 
+	loadPDFTemplates() {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(this.issuer.slug)
+			.then((pdfTemplates) => {
+				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
+				this.selectPDFTemplateOptions = [
+					{ label: this.translate.instant('PDFTemplate.oebDesign'), value: null },
+					...this.pdfTemplates.map((t) => ({ label: t.name, value: t.slug })),
+				];
+				// Defer so Angular's render cycle creates the oeb-select before writeValue fires.
+				// Use existingBadgeClass.pdfTemplate as source of truth (handles race where badge class
+				// @Input hasn't arrived yet; the @Input setter re-triggers setValue if it arrives later).
+				const ctrl = this.badgeClassForm.rawControl.controls['pdf_template'];
+				const savedValue = this.existingBadgeClass?.pdfTemplate ?? ctrl.value;
+				setTimeout(() => ctrl.setValue(savedValue ?? null, { emitEvent: false }), 0);
+			});
+	}
+
 	addTag() {
 		const newTag = (this.newTagInput['query'] || '').trim().toLowerCase();
 
@@ -1104,7 +1166,10 @@ export class BadgeClassEditFormComponent
 					this.badgeClassForm.rawControlMap.badge_language.value,
 				);
 			} catch (error) {
-				this.messageService.reportAndThrowError(`Failed to obtain ai skills: ${error.message}`, error);
+				this.messageService.reportAndThrowError(
+					`Failed to obtain ai skills: ${error instanceof Error ? error.message : String(error)}`,
+					error,
+				);
 			}
 			this.keywordCompetenciesLoading = false;
 			this.keywordCompetenciesLoaded = true;
@@ -1497,6 +1562,7 @@ export class BadgeClassEditFormComponent
 					};
 				}
 				this.existingBadgeClass.copyPermissions = copy_permissions;
+				this.existingBadgeClass.pdfTemplate = formState.pdf_template ?? null;
 
 				this.savePromise = this.existingBadgeClass.save();
 			} else {
@@ -1548,6 +1614,7 @@ export class BadgeClassEditFormComponent
 						),
 					},
 					copy_permissions: copy_permissions,
+					pdf_template: formState.pdf_template ?? null,
 				} as ApiBadgeClassForCreation;
 				if (this.currentImage) {
 					badgeClassData.extensions = {
@@ -1593,7 +1660,10 @@ export class BadgeClassEditFormComponent
 					map((t) => {
 						return criteria.map((c) => {
 							const name =
-								c.translationKey?.split('.').reduce((obj, key) => (obj ? obj[key] : null), t) || c.name;
+								(c.translationKey
+									?.split('.')
+									.reduce((obj, key) => (obj ? obj[key] : null), t) as unknown as string | null) ||
+								c.name;
 							return {
 								name: name,
 								description: c.description,
@@ -1632,7 +1702,7 @@ export class BadgeClassEditFormComponent
 				'@context': competencyExtensionContextUrl,
 				type: ['Extension', 'extensions:CompetencyExtension'],
 				name: String(competency.name),
-				description: String(competency.description),
+				description: this.cleanDescription(String(competency.description)),
 				studyLoad: Number(competency.hours * 60) + Number(competency.minutes),
 				hours: Number(competency.hours),
 				minutes: Number(competency.minutes),
@@ -1647,7 +1717,7 @@ export class BadgeClassEditFormComponent
 						'@context': competencyExtensionContextUrl,
 						type: ['Extension', 'extensions:CompetencyExtension'],
 						name: aiCompetenciesSuggestions[index].preferred_label,
-						description: aiCompetenciesSuggestions[index].description,
+						description: this.cleanDescription(aiCompetenciesSuggestions[index].description),
 						framework_identifier: 'http://data.europa.eu' + aiCompetenciesSuggestions[index].concept_uri,
 						studyLoad: Number(aiCompetency.hours * 60) + Number(aiCompetency.minutes),
 						hours: Number(aiCompetency.hours),
@@ -1663,7 +1733,7 @@ export class BadgeClassEditFormComponent
 					'@context': competencyExtensionContextUrl,
 					type: ['Extension', 'extensions:CompetencyExtension'],
 					name: keywordCompetenciesResults[index].preferred_label,
-					description: keywordCompetenciesResults[index].description,
+					description: this.cleanDescription(keywordCompetenciesResults[index].description),
 					framework_identifier: 'http://data.europa.eu' + keywordCompetenciesResults[index].concept_uri,
 					studyLoad: Number(keywordCompetency.hours * 60) + Number(keywordCompetency.minutes),
 					hours: Number(keywordCompetency.hours),
@@ -1675,6 +1745,15 @@ export class BadgeClassEditFormComponent
 			);
 	}
 
+	//   Removes leading/trailing whitespace and tabs.
+	private cleanDescription(desc: string): string {
+		return desc
+			.replace(/\t/g, ' ')
+			.split('\n')
+			.map((line) => line.trimEnd())
+			.join('\n')
+			.trim();
+	}
 	cancelClicked() {
 		this.cancelEdit.emit();
 	}

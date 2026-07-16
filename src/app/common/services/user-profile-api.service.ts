@@ -33,10 +33,16 @@ export class UserProfileApiService extends BaseHttpApiService {
 		this.messageService = messageService;
 	}
 
+	private _profilePromise: Promise<ApiUserProfile> | null = null;
+
 	getProfile() {
 		if (this.sessionService.isLoggedIn) {
-			return this.get<ApiUserProfile>('/v1/user/profile').then((r) => r.body);
+			if (!this._profilePromise) {
+				this._profilePromise = this.get<ApiUserProfile>('/v1/user/profile').then((r) => r.body);
+			}
+			return this._profilePromise;
 		} else {
+			this._profilePromise = null;
 			return Promise.reject('No user logged in');
 		}
 	}
@@ -49,6 +55,7 @@ export class UserProfileApiService extends BaseHttpApiService {
 	}
 
 	updateProfile(profile: ApiUserProfile) {
+		this._profilePromise = null;
 		return this.put<ApiUserProfile>('/v1/user/profile', profile).then((r) => r.body);
 	}
 
@@ -56,8 +63,13 @@ export class UserProfileApiService extends BaseHttpApiService {
 		return this.delete('/v1/user/profile');
 	}
 
+	private _emailsPromise: Promise<ApiUserProfileEmail[]> | null = null;
+
 	fetchEmails() {
-		return this.get<ApiUserProfileEmail[]>('/v1/user/emails').then((r) => r.body);
+		if (!this._emailsPromise) {
+			this._emailsPromise = this.get<ApiUserProfileEmail[]>('/v1/user/emails').then((r) => r.body);
+		}
+		return this._emailsPromise;
 	}
 
 	fetchSocialAccounts() {
@@ -65,10 +77,12 @@ export class UserProfileApiService extends BaseHttpApiService {
 	}
 
 	addEmail(email: string) {
+		this._emailsPromise = null;
 		return this.post<ApiUserProfileEmail>('/v1/user/emails', { email: email }).then((r) => r.body);
 	}
 
 	removeEmail(emailId: number) {
+		this._emailsPromise = null;
 		return this.delete('/v1/user/emails/' + emailId);
 	}
 
@@ -85,7 +99,7 @@ export class UserProfileApiService extends BaseHttpApiService {
 	}
 
 	getRedirectUrl() {
-		return this.post('/v1/user/get-redirect-path', {});
+		return this.post<{ success: boolean; redirectPath: string }>('/v1/user/get-redirect-path', {});
 	}
 
 	getIssuerStaffRequests() {
@@ -94,5 +108,17 @@ export class UserProfileApiService extends BaseHttpApiService {
 
 	revokeIssuerStaffRequest(requestId: string) {
 		return this.delete(`/v1/user/issuerStaffRequest/${requestId}`);
+	}
+
+	disable2FA(password: string): Promise<void> {
+		return this.post('/v1/user/2fa/disable', { password }).then(() => undefined);
+	}
+
+	setup2FA(): Promise<{ qr_code: string; secret: string }> {
+		return this.post<{ qr_code: string; secret: string }>('/v1/user/2fa/setup', {}).then((r) => r.body);
+	}
+
+	confirm2FA(code: string): Promise<{ backup_codes: string[] }> {
+		return this.post<{ backup_codes: string[] }>('/v1/user/2fa/confirm', { code }).then((r) => r.body);
 	}
 }

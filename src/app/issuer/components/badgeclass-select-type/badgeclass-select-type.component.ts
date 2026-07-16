@@ -28,7 +28,6 @@ import { HlmDialogService } from '@spartan-ng/helm/dialog';
 		TranslatePipe,
 		BgAwaitPromises,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 	],
 })
 export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComponent {
@@ -51,7 +50,7 @@ export class BadgeClassSelectTypeComponent extends BaseAuthenticatedRoutableComp
 		});
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 			this.breadcrumbLinkEntries = [
 				{ title: 'Issuers', routerLink: ['/issuer'] },

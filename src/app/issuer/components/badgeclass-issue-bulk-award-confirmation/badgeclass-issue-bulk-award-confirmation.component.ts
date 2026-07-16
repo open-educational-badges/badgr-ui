@@ -34,17 +34,13 @@ import { Subscription } from 'rxjs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
-import { NgClass } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { isValidEmail } from '~/common/util/is-valid-email';
 import { DateValidator } from '~/common/validators/date.validator';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { Issuer } from '../../models/issuer.model';
-import { OebSelectComponent } from '../../../components/select.component';
-import { FormFieldSelectOption } from '~/common/components/formfield-select';
-import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
-import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { UrlValidator } from '~/common/validators/url.validator';
@@ -60,9 +56,9 @@ import { Network } from '~/issuer/network.model';
 		OebButtonComponent,
 		TranslatePipe,
 		NgClass,
+		DatePipe,
 		FormsModule,
 		OptionalDetailsComponent,
-		OebSelectComponent,
 		RouterLink,
 	],
 })
@@ -81,7 +77,6 @@ export class BadgeclassIssueBulkAwardConformation
 	protected taskService = inject(TaskPollingManagerService);
 	protected translate = inject(TranslateService);
 	protected issuerManager = inject(IssuerManager);
-	protected pdfTemplateManager = inject(PDFTemplateManager);
 
 	readonly transformedImportData = input<TransformedImportData>(undefined);
 	readonly badgeSlug = input<string>(undefined);
@@ -113,8 +108,7 @@ export class BadgeclassIssueBulkAwardConformation
 		.addArray(
 			'evidence_items',
 			typedFormGroup().addControl('narrative', '').addControl('evidence_url', '', UrlValidator.validUrl),
-		)
-		.addControl('pdftemplate', null);
+		);
 
 	buttonDisabledClass = true;
 	buttonDisabledAttribute = true;
@@ -156,10 +150,6 @@ export class BadgeclassIssueBulkAwardConformation
 
 	private focusedRow: BulkIssueData | null = null;
 
-	pdfTemplatesPromise: Promise<unknown>;
-	pdfTemplates: ApiPDFTemplate[];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
-
 	constructor() {
 		const sessionService = inject(SessionService);
 		const router = inject(Router);
@@ -182,26 +172,8 @@ export class BadgeclassIssueBulkAwardConformation
 		this.optionalDetailsForm.controls.courseUrl.setValue(this.badgeClass().courseUrl ?? null);
 		this.badgeInstanceCourseUrl.set(this.optionalDetailsForm.controls.courseUrl.value);
 
-		this.issuerManager.myIssuers$.subscribe(async (issuers) => {
+		this.issuerManager.myIssuers$.subscribe((issuers) => {
 			this.issuer.set(issuers.find((i) => i.slug === this.issuerSlug()));
-
-			if (
-				this.authService.isLoggedIn &&
-				this.issuer() instanceof Issuer &&
-				this.issuer().currentUserStaffMember
-			) {
-				this.getPDFTemplatesForIssuerApi(this.issuer().slug);
-				await this.pdfTemplatesPromise;
-
-				this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
-					label: t.name,
-					value: t.slug,
-				}));
-				this.selectPDFTemplateOptions.push({
-					label: this.translate.instant('PDFTemplate.oebDesign'),
-					value: null,
-				});
-			}
 		});
 
 		if (this.badgeClass().isNetworkBadge) {
@@ -249,6 +221,16 @@ export class BadgeclassIssueBulkAwardConformation
 		const transformedImportData = this.transformedImportData();
 		if (!transformedImportData?.validRowsTransformed) return 0;
 		return Array.from(transformedImportData.validRowsTransformed).filter((row) => row.emailInvalid).length;
+	}
+
+	get hasInvalidDobs(): boolean {
+		return this.invalidDobCount > 0;
+	}
+
+	get invalidDobCount(): number {
+		const transformedImportData = this.transformedImportData();
+		if (!transformedImportData?.validRowsTransformed) return 0;
+		return Array.from(transformedImportData.validRowsTransformed).filter((row) => row.dobInvalid).length;
 	}
 
 	startEditing(row: BulkIssueData) {
@@ -321,10 +303,10 @@ export class BadgeclassIssueBulkAwardConformation
 				extensions: extensions,
 				activity_start_date: activityStartDate,
 				activity_end_date: activityEndDate,
-				pdftemplate: formState.pdftemplate,
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
+				date_of_birth: row.dateOfBirth || null,
 				evidence_items: cleanedEvidence,
 				course_url: formState.courseUrl,
 			};
@@ -397,16 +379,5 @@ export class BadgeclassIssueBulkAwardConformation
 		if (!this.transformedImportData().validRowsTransformed.size) {
 			this.disableActionButton();
 		}
-	}
-
-	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(issuerSlug)
-			.then(
-				(pdfTemplates) =>
-					(this.pdfTemplates = pdfTemplates.sort(
-						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-					)),
-			);
 	}
 }

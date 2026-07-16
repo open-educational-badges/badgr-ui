@@ -55,6 +55,7 @@ export type PatternLibraryIconName =
 	| 'icon_revert'
 	| 'icon_search'
 	| 'icon_server'
+	| 'icon_lock'
 	| 'icon_settings'
 	| 'icon_share'
 	| 'icon_sign_out'

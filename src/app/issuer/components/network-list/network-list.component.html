@@ -11,7 +11,7 @@
 			@case (2) {
 				<div class="tw-pb-4 tw-mt-10 lg:tw-flex lg:tw-gap-8 lg:tw-items-center tw-max-w-[800px]">
 					<div class="tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]">
-						<span class="tw-font-bold tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
+						<span class="tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
 						<span class="tw-mt-1 tw-mb-2" [innerHTML]="'Network.networkDashboard' | translate"></span>
 						<span class="tw-pb-4" [innerHTML]="'Network.networkLogoOnBadge' | translate"></span>
 						<img
@@ -19,14 +19,8 @@
 							src="assets/oeb/images/network/badge-network.svg"
 							alt=""
 						/>
-						<span
-							class="tw-italic tw-pb-4"
-							[innerHTML]="'Network.canBeInvitedToExisting' | translate"
-						></span>
-						<span
-							class="tw-text-purple tw-font-bold"
-							[innerHTML]="'Network.upgradeToUse' | translate"
-						></span>
+						<span class="tw-pb-4" [innerHTML]="'Network.canBeInvitedToExisting' | translate"></span>
+						<span class="tw-text-purple" [innerHTML]="'Network.upgradeToUse' | translate"></span>
 					</div>
 					<img
 						class="tw-hidden lg:tw-block lg:tw-w-[260px] lg:tw-flex-shrink-0"
@@ -48,10 +42,7 @@
 				}}</span>
 				<ng-container *ngTemplateOutlet="networkCardGrid"></ng-container>
 				<div class="tw-mt-16 tw-text-[18px]/[1.3em] tw-max-w-[535px]">
-					<p
-						class="tw-mb-6 tw-text-purple tw-font-bold"
-						[innerHTML]="'Network.upgradeToUseNew' | translate"
-					></p>
+					<p class="tw-mb-6 tw-text-purple" [innerHTML]="'Network.upgradeToUseNew' | translate"></p>
 					@if (issuerOwnerOrEditor()) {
 						<oeb-button
 							variant="secondary"
@@ -74,12 +65,9 @@
 				<div
 					class="tw-pb-4 tw-mt-10 tw-flex tw-flex-col tw-text-lg tw-text-oebblack tw-leading-[130%] tw-max-w-[584px]"
 				>
-					<span class="tw-font-bold tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
+					<span class="tw-mb-2" [innerHTML]="'Network.noIssuerInNetwork' | translate"></span>
 					<span class="tw-pb-4" [innerHTML]="'Network.canBeInvitedToExisting' | translate"></span>
-					<span
-						class="tw-italic tw-text-purple"
-						[innerHTML]="'Network.youCanAddInstitutions' | translate"
-					></span>
+					<span class="tw-text-purple" [innerHTML]="'Network.youCanAddInstitutions' | translate"></span>
 				</div>
 				<oeb-button
 					[routerLink]="['/issuer/networks/create']"

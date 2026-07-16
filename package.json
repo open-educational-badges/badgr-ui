@@ -21,7 +21,10 @@
 		"test": "ng test",
 		"test-intellij": "ng test 2>&1 | perl -e '$|++; while (<>) { s/((ERROR|WARNING) in\\s*)(.*)/$1\\n$3/g; print $_; }'",
 		"test-headless": "ng test --source-map=false --watch=false --browsers=ChromeHeadless",
+		"e2e": "playwright test",
 		"lint": "ng lint --quiet web-components-cli && ng lint --quiet badgr-ui-cli",
+		"typecheck": "node scripts/typecheck-ratchet.mjs",
+		"typecheck:update": "node scripts/typecheck-ratchet.mjs --update",
 		"postversion": "git push && git push --tags",
 		"prepare": "husky"
 	},
@@ -87,6 +90,7 @@
 		"zone.js": "~0.15.0"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.44.0",
 		"@angular-builders/dev-server": "^7.3.1",
 		"@angular-devkit/build-angular": "20.3.7",
 		"@angular-eslint/builder": "^20.5.0",

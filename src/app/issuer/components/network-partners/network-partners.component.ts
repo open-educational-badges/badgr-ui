@@ -15,18 +15,11 @@ import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Network } from '~/issuer/network.model';
 import { Router } from '@angular/router';
-import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 
 @Component({
 	selector: 'network-partners',
 	templateUrl: './network-partners.component.html',
-	imports: [
-		TranslatePipe,
-		OebButtonComponent,
-		NetworkPartnersDatatableComponent,
-		NetworkInvitesDatatableComponent,
-		QuotaInformationComponent,
-	],
+	imports: [TranslatePipe, OebButtonComponent, NetworkPartnersDatatableComponent, NetworkInvitesDatatableComponent],
 })
 export class NetworkPartnersComponent {
 	private networkApiService = inject(NetworkApiService);
@@ -103,7 +96,10 @@ export class NetworkPartnersComponent {
 				this.issuerSearchResults = [];
 				this.issuerSearchResults = await this.publicApiService.searchIssuers(this.issuerSearchQuery);
 			} catch (error) {
-				this.messageService.reportAndThrowError(`Failed to issuers: ${error.message}`, error);
+				this.messageService.reportAndThrowError(
+					`Failed to issuers: ${error instanceof Error ? error.message : String(error)}`,
+					error,
+				);
 			}
 			this.issuersLoading = false;
 			this.issuerSearchLoaded = true;

@@ -75,7 +75,6 @@ import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issu
 		NgClass,
 		SvgIconComponent,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 		OebDashboardOverviewComponent,
 		OebDashboardLearnersComponent,
 		OebDashboardSocialspaceComponent,
@@ -385,7 +384,10 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 				this.issuerSearchResults = [];
 				this.issuerSearchResults = await this.publicApiService.searchIssuers(this.issuerSearchQuery);
 			} catch (error) {
-				this.messageService.reportAndThrowError(`Failed to issuers: ${error.message}`, error);
+				this.messageService.reportAndThrowError(
+					`Failed to issuers: ${error instanceof Error ? error.message : String(error)}`,
+					error,
+				);
 			}
 			this.issuersLoading = false;
 			this.issuerSearchLoaded = true;
