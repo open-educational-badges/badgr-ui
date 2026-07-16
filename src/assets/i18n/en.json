@@ -235,6 +235,7 @@
 			"schule": "School",
 			"hochschule": "College",
 			"jugendhilfe": "Youth Welfare Organization",
+			"unternehmen": "Company",
 			"andere": "Others"
 		},
 		"learningPathParticipants": "Participants",
@@ -275,7 +276,8 @@
 		"websiteUrl": "Website-URL",
 		"schoolLabel": "School (elementary school, secondary schools, vocational schools, institutions of formal education)",
 		"universityLabel": "University (universities, universities of applied sciences, ...)",
-		"othersLabel": "Other educational providers (libraries, makerspaces, museums, associations, companies, etc.)",
+		"companyLabel": "Company",
+		"othersLabel": "Other educational providers (libraries, makerspaces, museums, associations, etc.)",
 		"imageRequiredError": "Please choose an image.",
 		"csvPreview": "Here you can see a preview of the first",
 		"rowsOfYourFile": "rows of your file.",

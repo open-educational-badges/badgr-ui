@@ -235,6 +235,7 @@
 			"schule": "Schule",
 			"hochschule": "Hochschule",
 			"jugendhilfe": "Freier Träger der Jugendhilfe",
+			"unternehmen": "Unternehmen",
 			"andere": "andere"
 		},
 		"learningPathParticipants": "Teilnehmer:innen",
@@ -275,7 +276,8 @@
 		"websiteUrl": "Webseiten-URL",
 		"schoolLabel": "Schule (Grundschulen, weiterführende Schulen, Berufsschulen, Institutionen formaler schulischer Bildung)",
 		"universityLabel": "Hochschule (Universitäten. Fachhochschulen, ...)",
-		"othersLabel": "Anderer Bildungsanbieter (Bibliotheken, Makerspaces, Museen, Vereine, Unternehmen, ...)",
+		"companyLabel": "Unternehmen",
+		"othersLabel": "Anderer Bildungsanbieter (Bibliotheken, Makerspaces, Museen, Vereine, ...)",
 		"imageRequiredError": "Bitte wähle ein Bild aus.",
 		"csvPreview": "Hier siehst du eine Vorschau der ersten",
 		"rowsOfYourFile": "Zeilen deiner Datei.",
