@@ -57,6 +57,8 @@ import { CommonEntityManager } from '~/entity-manager/services/common-entity-man
 import { IssuerApiService } from '~/issuer/services/issuer-api.service';
 import { CommonModule } from '@angular/common';
 import { PublicApiService } from '~/public/services/public-api.service';
+import { BadgeFilter, EMPTY_BADGE_FILTER } from '../badge-filter/badge-filter.types';
+import { BadgeFilterComponent } from '../badge-filter/badge-filter.component';
 
 interface NetworkBadgeGroup {
 	issuerName: string;
@@ -91,6 +93,7 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		OebTabsComponent,
 		BgAwaitPromises,
 		DatatableComponent,
+		BadgeFilterComponent,
 		FormsModule,
 		HlmInput,
 		NgFor,
@@ -104,7 +107,6 @@ import { LearningPath } from '~/issuer/models/learningpath.model';
 		NgTemplateOutlet,
 		CommonModule,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 		OebDashboardOverviewComponent,
 		OebDashboardLearnersComponent,
 		OebFeatureTeaserComponent,
@@ -208,6 +210,9 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	networkBadgeInstanceResults: NetworkBadgeGroup[] = [];
 	maxDisplayedResults = 100;
 
+	currentFilter: BadgeFilter = { ...EMPTY_BADGE_FILTER };
+	private cachedRequestMap: Map<string, ApiQRCode[]> = new Map();
+
 	private _searchQuery = '';
 	get searchQuery() {
 		return this._searchQuery;
@@ -217,12 +222,16 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 		this.updateResults();
 	}
 
+	onFilterChange(filter: BadgeFilter): void {
+		this.currentFilter = filter;
+		this._searchQuery = filter.keyword;
+		this.applyBadgeFilter();
+	}
+
 	apiLearningPaths: ApiLearningPath[] = [];
 	archivedLearningPaths: ApiLearningPath[] = [];
 
 	private async updateResults() {
-		this.badgeResults.length = 0;
-
 		if (this.sessionService.isLoggedIn) {
 			this.requestsLoaded = Promise.all(
 				this.badges.map((b) =>
@@ -237,37 +246,49 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 				}, new Map<string, ApiQRCode[]>()),
 			);
 		}
-		const requestMap = await this.requestsLoaded;
+		this.cachedRequestMap = (await this.requestsLoaded) ?? new Map();
+		this.applyBadgeFilter();
+	}
 
-		const addBadgeToResults = async (badge: BadgeClass | PublicApiBadgeClass) => {
-			if (this.badgeResults.length > this.maxDisplayedResults) {
-				return false;
-			}
+	private applyBadgeFilter(): void {
+		const results: BadgeResult[] = [];
+		this.badges
+			.filter(MatchingAlgorithm.badgeMatcher(this._searchQuery))
+			.filter((badge) => this.matchesDateRange(badge))
+			.forEach((badge) => {
+				if (results.length > this.maxDisplayedResults) return;
 
-			if (badge instanceof BadgeClass) {
-				if (badge.extension && badge.extension['extensions:CategoryExtension']?.Category === 'learningpath') {
-					return false;
+				if (badge instanceof BadgeClass) {
+					if (badge.extension && badge.extension['extensions:CategoryExtension']?.Category === 'learningpath')
+						return;
+					if (badge.isNetworkBadge || badge.sharedOnNetwork) return;
 				}
 
-				if (badge.isNetworkBadge || badge.sharedOnNetwork) {
-					return false;
-				}
-			}
+				results.push(
+					new BadgeResult(
+						badge,
+						this.issuer.name,
+						badge instanceof BadgeClass ? this.getRequestCount(badge, this.cachedRequestMap) : 0,
+						badge instanceof BadgeClass ? badge.recipientCount : 0,
+					),
+				);
+			});
+		results.sort(this.sortBadgeResult);
+		this.badgeResults = results;
+	}
 
-			this.badgeResults.push(
-				new BadgeResult(
-					badge,
-					this.issuer.name,
-					badge instanceof BadgeClass ? this.getRequestCount(badge, requestMap) : 0,
-					badge instanceof BadgeClass ? badge.recipientCount : 0,
-				),
-			);
-
+	private matchesDateRange(badge: BadgeClass | PublicApiBadgeClass): boolean {
+		const created = (badge as BadgeClass).createdAt;
+		if (!(created instanceof Date)) {
+			if (ngDevMode)
+				console.warn(
+					`[BadgeFilter] Badge "${(badge as BadgeClass).name}" has no valid createdAt — skipping date filter`,
+				);
 			return true;
-		};
-
-		this.badges.filter(MatchingAlgorithm.badgeMatcher(this._searchQuery)).forEach(addBadgeToResults);
-		this.badgeResults.sort(this.sortBadgeResult);
+		}
+		if (this.currentFilter.fromDate !== null && created < this.currentFilter.fromDate) return false;
+		if (this.currentFilter.toDate !== null && created > this.currentFilter.toDate) return false;
+		return true;
 	}
 
 	private async updateNetworkResults() {

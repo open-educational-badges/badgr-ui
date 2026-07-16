@@ -278,6 +278,46 @@
 					</oeb-collapsible>
 				</li>
 			}
+
+			<!-- Date of Birth Item -->
+			@if (showDateOfBirth() && hasControl('date_of_birth')) {
+				@if (showEvidence() && evidenceItems) {
+					<oeb-separator
+						[separatorStyle]="'tw-block tw-my-4 !tw-border !tw-border-dashed tw-border-darkgrey'"
+					></oeb-separator>
+				}
+				<li>
+					<ng-template #dateOfBirthTrigger>
+						<ng-icon size="24px" hlm name="lucideCake" class="tw-mr-1 tw-text-oebblack"></ng-icon>
+						<span
+							[class.tw-font-semibold]="dateOfBirthCollapsible.expanded"
+							[class.tw-font-normal]="!dateOfBirthCollapsible.expanded"
+							class="tw-text-lg tw-text-oebblack tw-mr-auto"
+							[innerHTML]="'Issuer.recipientDateOfBirth' | translate"
+						></span>
+					</ng-template>
+					<oeb-collapsible
+						#dateOfBirthCollapsible
+						[trigger]="dateOfBirthTrigger"
+						[defaultOpen]="false"
+						[closeIcon]="'lucideChevronDown'"
+						[iconStyle]="'tw-text-oebblack'"
+						[iconSize]="'lg'"
+					>
+						<div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4 tw-pt-4">
+							<oeb-input
+								[noTopMargin]="true"
+								[labelStyle]="'tw-text-oebblack tw-font-normal tw-text-lg'"
+								[errorMessage]="{
+									invalidDate: 'QrCode.invalidDate' | translate,
+								}"
+								[control]="getRawControl('date_of_birth')"
+								fieldType="date"
+							></oeb-input>
+						</div>
+					</oeb-collapsible>
+				</li>
+			}
 		</ul>
 	</div>
 </div>

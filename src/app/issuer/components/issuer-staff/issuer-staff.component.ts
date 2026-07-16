@@ -42,7 +42,6 @@ import {
 	FlexRenderDirective,
 	Header,
 } from '@tanstack/angular-table';
-import { TitleCasePipe } from '@angular/common';
 import { UserProfileManager } from '~/common/services/user-profile-manager.service';
 import { UserProfile } from '~/common/model/user-profile.model';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
@@ -85,9 +84,7 @@ import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issu
 		HlmIconModule,
 		FlexRenderDirective,
 		TranslatePipe,
-		TitleCasePipe,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 	],
 })
 export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent implements OnInit {

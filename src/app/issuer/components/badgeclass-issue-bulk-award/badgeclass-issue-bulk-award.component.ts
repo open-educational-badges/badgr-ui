@@ -23,6 +23,7 @@ import { BadgeclassIssueBulkAwardError } from '../badgeclass-issue-bulk-award-er
 export interface ParsedRow {
 	cells: string[];
 	emailInvalid?: boolean;
+	dobInvalid?: boolean;
 }
 
 export interface TransformedImportData {
@@ -42,11 +43,14 @@ export interface BulkIssueImportPreviewData {
 export interface BulkIssueData {
 	email: string;
 	name: string;
+	/** ISO date (yyyy-mm-dd) or undefined when the CSV has no value */
+	dateOfBirth?: string;
 	emailInvalid?: boolean;
+	dobInvalid?: boolean;
 	isEditing?: boolean;
 }
 
-export type DestSelectOptions = 'email' | 'name' | 'NA';
+export type DestSelectOptions = 'email' | 'name' | 'firstname' | 'lastname' | 'dateOfBirth' | 'NA';
 
 export type ViewState = 'import' | 'importPreview' | 'importError' | 'importConfirmation' | 'cancel' | 'exit';
 

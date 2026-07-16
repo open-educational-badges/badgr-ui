@@ -34,7 +34,6 @@ import { TimePeriodPipe } from '../../util/expiration-util';
 import { AUTH_PROVIDER } from '~/common/services/authentication-service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { QuotaInformationComponent } from '~/issuer/components/quota-information/quota-information.component';
-import { QuotaExceededDialog } from '~/issuer/components/issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
 
 type NormalizedEvidenceItem = {
 	url?: string;
@@ -68,7 +67,6 @@ type NormalizedEvidenceItem = {
 		HlmH3,
 		TimePeriodPipe,
 		QuotaInformationComponent,
-		QuotaExceededDialog,
 	],
 })
 export class BgBadgeDetail {
@@ -99,7 +97,7 @@ export class BgBadgeDetail {
 	}
 
 	getLearningPaths(): PublicApiLearningPath[] {
-		return (this.config.learningPaths as PublicApiLearningPath[]).filter((l) => l.activated);
+		return ((this.config.learningPaths as PublicApiLearningPath[]) ?? []).filter((l) => l.activated);
 	}
 
 	get hasCriteria(): boolean {

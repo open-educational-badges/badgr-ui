@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { UpdatableSubject } from '../util/updatable-subject';
 import { ApiEntityRef, EntityRef } from './entity-ref';
 import { CommonEntityManager } from '../../entity-manager/services/common-entity-manager.service';
@@ -10,15 +11,20 @@ export type AnyManagedEntity = ManagedEntity<unknown, ApiEntityRef>;
 // TODO: Managed Entities - provide mechanism for delegating to a "detail" entity when it is loaded
 
 export abstract class ManagedEntity<ApiModelType, ApiRefType extends ApiEntityRef> {
-	get loaded$() {
-		return this.loadedSubject.asObservable();
+	// The subjects below are typed as AnyManagedEntity (not `this`) so that the
+	// polymorphic `this` type does not leak into their contravariant positions
+	// (rxjs `observers` / `subscribe`), which would otherwise make no subtype
+	// satisfy the ManagedEntity constraint under strictFunctionTypes. The public
+	// API still exposes the precise `this` type via the casts below.
+	get loaded$(): Observable<this> {
+		return this.loadedSubject.asObservable() as Observable<this>;
 	}
-	get changed$() {
-		return this.changedSubject.asObservable();
+	get changed$(): Observable<this> {
+		return this.changedSubject.asObservable() as Observable<this>;
 	}
 
 	get loadedPromise(): Promise<this> {
-		return this.loadedSubject.pipe(first()).toPromise();
+		return this.loadedSubject.pipe(first()).toPromise() as Promise<this>;
 	}
 
 	get slug() {
@@ -96,15 +102,15 @@ export abstract class ManagedEntity<ApiModelType, ApiRefType extends ApiEntityRe
 
 	private _ref: EntityRef<ApiRefType>;
 
-	private loadedSubject: UpdatableSubject<this>;
+	private loadedSubject: UpdatableSubject<AnyManagedEntity>;
 
-	private changedSubject: UpdatableSubject<this> = new UpdatableSubject<this>();
+	private changedSubject: UpdatableSubject<AnyManagedEntity> = new UpdatableSubject<AnyManagedEntity>();
 
 	constructor(
 		private _commonManager: CommonEntityManager,
 		onUpdateSubscribed: () => void = undefined,
 	) {
-		this.loadedSubject = new UpdatableSubject<this>(onUpdateSubscribed);
+		this.loadedSubject = new UpdatableSubject<AnyManagedEntity>(onUpdateSubscribed);
 		this.changedSubject.subscribe(this.loadedSubject);
 	}
 

@@ -213,7 +213,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	showSingleNode: boolean = false;
 
 	constructor() {
-		fromEvent(window, 'resize')
+		fromEvent<UIEvent>(window, 'resize')
 			.pipe(
 				debounceTime(300),
 				tap((event: UIEvent) => {
@@ -523,8 +523,8 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			const n = depth1Nodes.length;
 			depth1Nodes.sort((a: any, b: any) => b.studyLoad - a.studyLoad);
 			if (n === 1) {
-				depth1Nodes[0].fx = 0;
-				depth1Nodes[0].fy = 0;
+				(depth1Nodes[0] as any).fx = 0;
+				(depth1Nodes[0] as any).fy = 0;
 			} else {
 				const maxNodeRadius = nodeBaseSize + nodeMaxAdditionalSize / 2;
 				const circleRadius = Math.min(width / 6, (maxNodeRadius + 15) / Math.sin(Math.PI / n));

@@ -69,58 +69,6 @@
 					/>
 				</div>
 
-				<!-- PDF Template Section -->
-				@if (
-					issuer.currentUserStaffMember.canEditBadge &&
-					pdfTemplateManager.pdfEditorAvailable() &&
-					(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
-				) {
-					<div
-						class="tw-mb-10 tw-flex tw-bg-white tw-border-purple tw-border-solid tw-border tw-rounded-[15px] tw-p-6 tw-flex-col tw-gap-2"
-					>
-						<span
-							class="tw-text-oebblack tw-text-lg tw-uppercase tw-font-semibold md:tw-leading-[28px] md:tw-text-[20px] tw-leading-[19px] tw-text-[14px]"
-						>
-							@if (!editing) {
-								<span class="tw-font-normal tw-italic">Optional:</span>
-							}
-							{{ 'PDFTemplate.ownPDFBackground' | translate }}
-						</span>
-
-						<span class="tw-text-purple tw-italic tw-leading-[18.2px]">
-							{{ 'PDFTemplate.noTemplateDefaultDesign' | translate }}
-						</span>
-
-						<div class="tw-flex tw-flex-col tw-gap-6 tw-max-w-[300px]">
-							<oeb-select
-								class="tw-block tw-flex-grow"
-								[options]="selectPDFTemplateOptions"
-								[control]="qrForm.rawControlMap.pdftemplate"
-								[noTopMargin]="true"
-							></oeb-select>
-
-							<oeb-button
-								[id]="'create-new-pdftemplate-btn'"
-								[class.disabled]="!issuer.canCreateBadge"
-								class="tw-whitespace-nowrap tw-flex-grow"
-								[routerLink]="['/issuer/issuers', issuer.slug]"
-								fragment="pdf-templates"
-								[disabled]="!issuer.currentUserStaffMember"
-								[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
-								width="full_width"
-								size="sm"
-								variant="secondary"
-								weight="normal"
-								icon="lucidePlus"
-								iconSize="sm"
-								[iconLeft]="true"
-								[umamiEvent]="'create-pdftemplate'"
-							>
-							</oeb-button>
-						</div>
-					</div>
-				}
-
 				<!-- Notifications Section -->
 				@if (editing) {
 					<span

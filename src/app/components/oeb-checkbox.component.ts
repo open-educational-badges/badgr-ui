@@ -8,11 +8,10 @@ import { NgClass } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OebInputErrorComponent } from './input.error.component';
 import { TranslateService } from '@ngx-translate/core';
-import { HlmP } from '@spartan-ng/helm/typography';
 
 @Component({
 	selector: 'oeb-checkbox',
-	imports: [HlmP, HlmCheckbox, OebInputErrorComponent, ReactiveFormsModule, NgClass],
+	imports: [HlmCheckbox, OebInputErrorComponent, ReactiveFormsModule, NgClass],
 	providers: [
 		{
 			provide: NG_VALUE_ACCESSOR,

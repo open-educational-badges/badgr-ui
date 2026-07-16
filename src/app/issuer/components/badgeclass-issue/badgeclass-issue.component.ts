@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, OnDestroy, signal } from '@angular/core';
-import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, Validators, FormsModule, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { SessionService } from '../../../common/services/session.service';
@@ -12,6 +12,9 @@ import { MdImgValidator } from '../../../common/validators/md-img.validator';
 import { BadgeInstanceManager } from '../../services/badgeinstance-manager.service';
 import { BadgeClassManager } from '../../services/badgeclass-manager.service';
 import { IssuerManager } from '../../services/issuer-manager.service';
+import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
+import { PDFTemplate } from '../../models/pdftemplate.model';
+import { PreviewCanvas } from '../../../common/util/pdftemplate-util';
 
 import { Issuer } from '../../models/issuer.model';
 import { BadgeClass } from '../../models/badgeclass.model';
@@ -21,7 +24,7 @@ import { RecipientIdentifierType } from '../../models/badgeinstance-api.model';
 import { typedFormGroup } from '../../../common/util/typed-forms';
 import { TelephoneValidator } from '../../../common/validators/telephone.validator';
 import { EventsService } from '../../../common/services/events.service';
-import { FormFieldTextInputType, FormFieldText } from '../../../common/components/formfield-text';
+import { FormFieldTextInputType } from '../../../common/components/formfield-text';
 import striptags from 'striptags';
 import { DateValidator } from '../../../common/validators/date.validator';
 import { AppConfigService } from '../../../common/app-config.service';
@@ -34,21 +37,11 @@ import { FormMessageComponent } from '../../../common/components/form-message.co
 import { BgImageStatusPlaceholderDirective } from '../../../common/directives/bg-image-status-placeholder.directive';
 import { OebInputComponent } from '../../../components/input.component';
 import { OebSelectComponent } from '../../../components/select.component';
-import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component';
-import { NgClass, DatePipe } from '@angular/common';
-import { SvgIconComponent } from '../../../common/components/svg-icon.component';
-import { FormFieldMarkdown } from '../../../common/components/formfield-markdown';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
-import { OebCollapsibleComponent } from '~/components/oeb-collapsible.component';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
-import { FormFieldSelectOption } from '~/common/components/formfield-select';
-import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
-import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
-import { PreviewCanvas } from '~/common/util/pdftemplate-util';
-import { PDFTemplate } from '~/issuer/models/pdftemplate.model';
-import { NgIcon } from '@ng-icons/core';
-import { OebSeparatorComponent } from '~/components/oeb-separator.component';
+import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component';
+import { SvgIconComponent } from '../../../common/components/svg-icon.component';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
@@ -61,10 +54,6 @@ import { Network } from '~/issuer/network.model';
 	styles: [
 		`
 			:host ::ng-deep {
-				brn-collapsible[data-state='open'] > button > span {
-					font-weight: bold !important;
-				}
-
 				.canvas-container {
 					width: 100% !important;
 					height: 100% !important;
@@ -100,15 +89,8 @@ import { Network } from '~/issuer/network.model';
 		OebSelectComponent,
 		OebCheckboxComponent,
 		SvgIconComponent,
-		FormFieldMarkdown,
-		FormFieldText,
-		NgClass,
 		OebButtonComponent,
-		DatePipe,
 		TranslatePipe,
-		OebCollapsibleComponent,
-		NgIcon,
-		OebSeparatorComponent,
 		OptionalDetailsComponent,
 	],
 })
@@ -119,10 +101,10 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 	protected issuerManager = inject(IssuerManager);
 	protected badgeClassManager = inject(BadgeClassManager);
 	protected badgeInstanceManager = inject(BadgeInstanceManager);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected dialogService = inject(CommonDialogsService);
 	protected configService = inject(AppConfigService);
 	protected translate = inject(TranslateService);
-	protected pdfTemplateManager = inject(PDFTemplateManager);
 	protected authService: SessionService;
 
 	readonly badgeLoadingImageUrl = '../../../breakdown/static/images/badge-loading.svg';
@@ -200,17 +182,17 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		.addControl('activity_zip', '')
 		.addControl('activity_city', '')
 		.addControl('activity_online', false)
+		.addControl('date_of_birth', '', DateValidator.validDate as ValidatorFn)
 		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('notify_earner', true)
 		.addArray(
 			'evidence_items',
 			typedFormGroup().addControl('narrative', '').addControl('evidence_url', '', UrlValidator.validUrl),
-		)
-		.addControl('pdftemplate', null);
-
+		);
 	badgeClass: BadgeClass;
 
 	previewB64Img: string;
+	pdfTemplateForPreview: PDFTemplate | null = null;
 
 	subscriptions: Subscription[] = [];
 
@@ -223,11 +205,6 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		url: 'URL',
 		// telephone: "Telephone",
 	};
-
-	pdfTemplatesPromise: Promise<unknown>;
-	pdfTemplates: ApiPDFTemplate[];
-	selectPDFTemplateOptions: FormFieldSelectOption[] = [];
-	pdfTemplatePreviewCanvas: PreviewCanvas;
 
 	constructor() {
 		const sessionService = inject(SessionService);
@@ -258,6 +235,32 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 						.then((img) => {
 							this.previewB64Img = img.image_url;
 						});
+
+					if (badgeClass.pdfTemplate) {
+						this.pdfTemplateManager
+							.getPDFTemplateForIssuer(this.issuerSlug, badgeClass.pdfTemplate)
+							.then((template) => {
+								this.pdfTemplateForPreview = template;
+								const formatStr = template.format === 0 ? 'portrait' : 'landscape';
+								const alignmentStr = template.alignment === 0 ? 'left' : 'center';
+								setTimeout(() => {
+									new PreviewCanvas(
+										this.translate,
+										formatStr,
+										template.scale,
+										alignmentStr,
+										template.posX,
+										template.posY,
+										template.image,
+										1,
+										'badgeIssuePreviewCanvas',
+										this.previewB64Img || '/breakdown/static/images/pdfPreviewBadgeImage.svg',
+										false,
+									);
+								}, 0);
+							})
+							.catch((err) => console.error('Failed to load PDF template preview', err));
+					}
 
 					this.breadcrumbLinkEntries = [
 						{ title: 'Issuers', routerLink: ['/issuer'] },
@@ -291,83 +294,10 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		}
 
 		await this.issuerLoaded;
-
-		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
-			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
-			await this.pdfTemplatesPromise;
-
-			this.selectPDFTemplateOptions = this.pdfTemplates.map((t) => ({
-				label: t.name,
-				value: t.slug,
-			}));
-			this.selectPDFTemplateOptions.push({
-				label: this.translate.instant('PDFTemplate.oebDesign'),
-				value: null,
-			});
-		}
-
-		this.issueForm.rawControl.controls['pdftemplate'].valueChanges.subscribe((v) => {
-			if (v != null) {
-				for (let pt of this.pdfTemplates) {
-					if (pt.slug == v) {
-						if (this.pdfTemplatePreviewCanvas === undefined) {
-							this.setHTMLCanvasDimensions(pt);
-
-							this.pdfTemplatePreviewCanvas = new PreviewCanvas(
-								this.translate,
-								pt.format == 0 ? 'portrait' : 'landscape',
-								pt.scale,
-								pt.alignment == 0 ? 'left' : 'center',
-								pt.posX,
-								pt.posY,
-								pt.image,
-								1,
-								'previewCanvas',
-								this.previewB64Img || this.badgeClass.image,
-								false,
-							);
-						} else {
-							this.setHTMLCanvasDimensions(pt);
-
-							this.pdfTemplatePreviewCanvas.updateValues(
-								pt.format == 0 ? 'portrait' : 'landscape',
-								pt.scale,
-								pt.alignment == 0 ? 'left' : 'center',
-								pt.posX,
-								pt.posY,
-								pt.image,
-							);
-						}
-
-						break;
-					}
-				}
-			}
-		});
 	}
 
 	ngOnDestroy() {
 		this.subscriptions.forEach((s) => s.unsubscribe());
-	}
-
-	setHTMLCanvasDimensions(pt: ApiPDFTemplate) {
-		let canvas = document.querySelector<HTMLCanvasElement>('#previewCanvas');
-
-		if (pt.format == 0) {
-			canvas.width = 794;
-			canvas.height = 1123;
-			canvas.classList.remove('landscape');
-			canvas.classList.add('portrait');
-		} else {
-			canvas.width = 1123;
-			canvas.height = 794;
-			canvas.classList.remove('portrait');
-			canvas.classList.add('landscape');
-		}
-	}
-
-	pdfTemplateSelected() {
-		return this.issueForm.controls.pdftemplate.value != null;
 	}
 
 	addEvidence() {
@@ -433,10 +363,10 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				extensions,
 				activity_start_date: activityStartDate,
 				activity_end_date: activityEndDate,
-				pdftemplate: formState.pdftemplate,
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
+				date_of_birth: formState.date_of_birth || null,
 				course_url: formState.courseUrl,
 			})
 			.then(() => this.badgeClass.update())
@@ -497,17 +427,6 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				variant: 'success',
 			},
 		});
-	}
-
-	getPDFTemplatesForIssuerApi(issuerSlug) {
-		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(issuerSlug)
-			.then(
-				(pdfTemplates) =>
-					(this.pdfTemplates = pdfTemplates.sort(
-						(a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-					)),
-			);
 	}
 
 	async checkQuotasDialog(quota: string) {

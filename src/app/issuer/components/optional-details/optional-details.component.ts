@@ -32,6 +32,7 @@ export class OptionalDetailsComponent implements OnInit {
 	readonly showLocation = input<boolean>(false);
 	readonly showCourseDate = input<boolean>(false);
 	readonly showCourseUrl = input<boolean>(false);
+	readonly showDateOfBirth = input<boolean>(false);
 	readonly courseUrlDefaultOpen = input<boolean>(false);
 	readonly isOptional = input<boolean>(true);
 

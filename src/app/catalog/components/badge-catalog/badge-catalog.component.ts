@@ -178,7 +178,9 @@ export class BadgeCatalogComponent extends BaseRoutableComponent implements OnIn
 		},
 	];
 
-	sortControl = new FormControl('date_desc');
+	sortControl = new FormControl<'name_asc' | 'name_desc' | 'date_asc' | 'date_desc'>('date_desc', {
+		nonNullable: true,
+	});
 	tagsControl = new FormControl();
 	intersectionObserver: IntersectionObserver | undefined;
 	pageSubscriptions: Subscription[] = [];

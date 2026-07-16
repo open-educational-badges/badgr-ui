@@ -23,6 +23,8 @@
 		"test-headless": "ng test --source-map=false --watch=false --browsers=ChromeHeadless",
 		"e2e": "playwright test",
 		"lint": "ng lint --quiet web-components-cli && ng lint --quiet badgr-ui-cli",
+		"typecheck": "node scripts/typecheck-ratchet.mjs",
+		"typecheck:update": "node scripts/typecheck-ratchet.mjs --update",
 		"postversion": "git push && git push --tags",
 		"prepare": "husky"
 	},

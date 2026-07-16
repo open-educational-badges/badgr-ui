@@ -37,7 +37,7 @@ export class ExportPdfDialog extends BaseDialog {
 	pdfSrc: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
 	doc: any = null;
 	themeColor: string;
-	pdfError: Error;
+	pdfError: unknown;
 
 	profile: UserProfile;
 	emailsLoaded: Promise<unknown>;
