@@ -134,6 +134,17 @@
 								"src/breakdown/static/images/badge-failed.svg"
 							]
 						},
+						"oeb-dashboard": {
+							"main": "src/app/dashboard/oeb-dashboard.web-component.ts",
+							"outputPath": "dist/webcomponents/oeb-dashboard",
+							"styles": [
+								"src/assets/@concentricsky/badgr-style/dist/css/screen.css",
+								"src/styles/oeb/oeb_styles.scss",
+								"src/styles/google-webfonts/nunito.scss",
+								"src/styles/google-webfonts/rubik.scss"
+							],
+							"assets": ["src/favicon.ico", "src/assets/@concentricsky/badgr-style/dist/images/icons.svg"]
+						},
 						"production": {
 							"fileReplacements": [
 								{

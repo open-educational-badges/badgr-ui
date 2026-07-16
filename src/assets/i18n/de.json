@@ -1292,9 +1292,6 @@
 			"institutions": "Institutionen",
 			"learners": "Lernende"
 		},
-		"Tabs": {
-			"learners": "Lernende"
-		},
 		"Overview": {
 			"loading": "Daten werden geladen...",
 			"error": {

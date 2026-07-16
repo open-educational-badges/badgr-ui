@@ -1249,9 +1249,6 @@
 			"institutions": "Institutions",
 			"learners": "Learners"
 		},
-		"Tabs": {
-			"learners": "Learners"
-		},
 		"Overview": {
 			"loading": "Loading dashboard...",
 			"error": {
