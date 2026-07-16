@@ -259,7 +259,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 				if (results.length > this.maxDisplayedResults) return;
 
 				if (badge instanceof BadgeClass) {
-					if (badge.extension && badge.extension['extensions:CategoryExtension'].Category === 'learningpath')
+					if (badge.extension && badge.extension['extensions:CategoryExtension']?.Category === 'learningpath')
 						return;
 					if (badge.isNetworkBadge || badge.sharedOnNetwork) return;
 				}
