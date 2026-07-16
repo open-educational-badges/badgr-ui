@@ -15,6 +15,7 @@ import { stripQueryParamsFromUrl } from '../../common/util/url-util';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiV2Wrapper } from '../../common/model/api-v2-wrapper';
 import { Issuer } from '../../issuer/models/issuer.model';
+import { ApiQRCode } from '../../issuer/models/qrcode-api.model';
 import { AUTH_PROVIDER, AuthenticationService } from '~/common/services/authentication-service';
 
 @Injectable({ providedIn: 'root' })
@@ -180,7 +181,7 @@ export class PublicApiService extends BaseHttpApiService {
 	}
 
 	getQrCode(qrCodeSlug: string) {
-		return this.get(`/public/qrcode/${qrCodeSlug}`).then((response) => response.body);
+		return this.get<ApiQRCode>(`/public/qrcode/${qrCodeSlug}`).then((response) => response.body);
 	}
 
 	searchIssuers(searchterm: string) {

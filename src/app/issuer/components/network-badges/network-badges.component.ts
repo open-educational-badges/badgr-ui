@@ -27,6 +27,10 @@ import { ApiBadgeClassNetworkShare } from '~/issuer/models/badgeclass-api.model'
 import { ActivatedRoute } from '@angular/router';
 import { LinkEntry } from '~/common/components/bg-breadcrumbs/bg-breadcrumbs.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { BadgeFilter, EMPTY_BADGE_FILTER } from '~/common/components/badge-filter/badge-filter.types';
+import { BadgeFilterComponent } from '~/common/components/badge-filter/badge-filter.component';
+import { MatchingAlgorithm } from '~/common/util/matching-algorithm';
+import { PublicApiBadgeClass } from '~/public/models/public-api.model';
 
 export interface SharedBadgeWithRequests extends ApiBadgeClassNetworkShare {
 	requestCount: number;
@@ -41,6 +45,7 @@ export interface SharedBadgeWithRequests extends ApiBadgeClassNetworkShare {
 		OebTabsComponent,
 		RouterLink,
 		DatatableComponent,
+		BadgeFilterComponent,
 		FormsModule,
 		TranslateModule,
 		NetworkSharedBadgesDatatableComponent,
@@ -98,6 +103,10 @@ export class NetworkBadgesComponent implements OnInit {
 
 	sharedBadges: ApiBadgeClassNetworkShare[] = [];
 	sharedBadgeResults: SharedBadgeWithRequests[] = [];
+	filteredSharedBadgeResults: SharedBadgeWithRequests[] = [];
+	filteredBadgeResults: DatatableBadgeResult[] = [];
+	currentFilter: BadgeFilter = { ...EMPTY_BADGE_FILTER };
+	currentSharedFilter: BadgeFilter = { ...EMPTY_BADGE_FILTER };
 
 	@ViewChild('networkTemplate', { static: true }) networkTemplate: ElementRef;
 	@ViewChild('partnerTemplate', { static: true }) partnerTemplate: ElementRef;
@@ -163,6 +172,7 @@ export class NetworkBadgesComponent implements OnInit {
 			requestCount: this.getRequestCount(badge, requestMap),
 			awardedCount: badge.recipientCount,
 		}));
+		this.applyBadgeFilter();
 	}
 
 	private async loadSharedBadgesAndRequests() {
@@ -192,6 +202,7 @@ export class NetworkBadgesComponent implements OnInit {
 		});
 
 		this.sharedBadgeResults = await Promise.all(sharedBadgePromises);
+		this.applySharedFilter();
 	}
 
 	private sortBadgesByCreatedAt(badges: BadgeClass[]) {
@@ -220,6 +231,44 @@ export class NetworkBadgesComponent implements OnInit {
 			map.set(key, value);
 			return map;
 		}, new Map<string, ApiQRCode[]>());
+	}
+
+	private applyBadgeFilter(): void {
+		const { keyword, fromDate, toDate } = this.currentFilter;
+		this.filteredBadgeResults = this.badgeResults.filter((result) => {
+			if (!MatchingAlgorithm.badgeMatcher<BadgeClass | PublicApiBadgeClass>(keyword)(result.badge)) return false;
+			const created = (result.badge as BadgeClass).createdAt;
+			if (created instanceof Date) {
+				if (fromDate !== null && created < fromDate) return false;
+				if (toDate !== null && created > toDate) return false;
+			}
+			return true;
+		});
+	}
+
+	onFilterChange(filter: BadgeFilter): void {
+		this.currentFilter = filter;
+		this.applyBadgeFilter();
+	}
+
+	onSharedFilterChange(filter: BadgeFilter): void {
+		this.currentSharedFilter = filter;
+		this.applySharedFilter();
+	}
+
+	private applySharedFilter(): void {
+		const { keyword, fromDate, toDate } = this.currentSharedFilter;
+		this.filteredSharedBadgeResults = this.sharedBadgeResults.filter((badge) => {
+			if (keyword) {
+				const name = badge.badgeclass.name?.toLowerCase() ?? '';
+				const desc = badge.badgeclass.description?.toLowerCase() ?? '';
+				if (!name.includes(keyword.toLowerCase()) && !desc.includes(keyword.toLowerCase())) return false;
+			}
+			const shared = new Date(badge.shared_at);
+			if (fromDate !== null && shared < fromDate) return false;
+			if (toDate !== null && shared > toDate) return false;
+			return true;
+		});
 	}
 
 	onTabChange(tab) {

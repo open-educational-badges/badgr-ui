@@ -20,6 +20,7 @@ const components = [
 	'oeb-competency-overview',
 	'oeb-learningpaths-overview',
 	'oeb-backpack',
+	'oeb-dashboard',
 ];
 
 if (component && !components.includes(component)) {

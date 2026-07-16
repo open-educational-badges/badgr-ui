@@ -117,7 +117,7 @@ export class BadgeInstanceApiService extends BaseHttpApiService {
 		if (query) {
 			url += `&recipient=${query}`;
 		}
-		return this.get(url).then(this.handleAssertionResult);
+		return this.get<ApiBadgeInstance[]>(url).then(this.handleAssertionResult);
 	}
 
 	listBadgeInstancesV3(
@@ -147,7 +147,7 @@ export class BadgeInstanceApiService extends BaseHttpApiService {
 	}
 
 	getBadgeInstancePage(paginationUrl: string): Promise<BadgeInstanceResultSet> {
-		return this.get(paginationUrl).then(this.handleAssertionResult);
+		return this.get<ApiBadgeInstance[]>(paginationUrl).then(this.handleAssertionResult);
 	}
 
 	revokeBadgeInstance(issuerSlug: string, badgeSlug: string, badgeInstanceSlug: string, revocationReason: string) {

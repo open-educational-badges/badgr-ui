@@ -213,7 +213,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	showSingleNode: boolean = false;
 
 	constructor() {
-		fromEvent(window, 'resize')
+		fromEvent<UIEvent>(window, 'resize')
 			.pipe(
 				debounceTime(300),
 				tap((event: UIEvent) => {
@@ -515,6 +515,27 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			}
 		}
 
+		// Pin depth-1 nodes to evenly-spaced positions on a circle so layout is
+		// identical across all accounts regardless of badge count or studyLoad distribution.
+		const usePinnedLayout = !this.compactMode() && !this.mobile;
+		if (usePinnedLayout) {
+			const depth1Nodes = nodes.filter((d: any) => d.depth === 1);
+			const n = depth1Nodes.length;
+			depth1Nodes.sort((a: any, b: any) => b.studyLoad - a.studyLoad);
+			if (n === 1) {
+				(depth1Nodes[0] as any).fx = 0;
+				(depth1Nodes[0] as any).fy = 0;
+			} else {
+				const maxNodeRadius = nodeBaseSize + nodeMaxAdditionalSize / 2;
+				const circleRadius = Math.min(width / 6, (maxNodeRadius + 15) / Math.sin(Math.PI / n));
+				depth1Nodes.forEach((node: any, i: number) => {
+					const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+					node.fx = circleRadius * Math.cos(angle);
+					node.fy = circleRadius * Math.sin(angle);
+				});
+			}
+		}
+
 		// Create a simulation with several forces.
 		// Compact mode: tighter packing, stronger center force, smaller boundary
 		const chargeStrength = this.compactMode() ? -300 : -1000;
@@ -569,6 +590,9 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 						return ((d as ExtendedApiSkill).depth - 1) * (nodeBaseSize * 3);
 					})
 					.strength((d) => {
+						// With pinned layout parents are off-center, so origin-centered rings
+						// would pull children behind their parent — disable entirely
+						if (usePinnedLayout) return 0;
 						return (d as ExtendedApiSkill).depth == 1 ? 3 : 0.1;
 					}),
 			);

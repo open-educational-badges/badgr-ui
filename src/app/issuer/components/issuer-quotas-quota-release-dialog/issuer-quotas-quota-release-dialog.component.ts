@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, computed, ElementRef, inject, Renderer2, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { NgIcon } from '@ng-icons/core';
+import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BaseDialog } from '~/common/dialogs/base-dialog';
 import { OebButtonComponent } from '~/components/oeb-button.component';
@@ -8,15 +7,11 @@ import { Issuer } from '~/issuer/models/issuer.model';
 import { Network } from '~/issuer/network.model';
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { typedFormGroup } from '../../../common/util/typed-forms';
-import { OebInputComponent } from '../../../components/input.component';
-import { OebSelectComponent } from '../../../components/select.component';
-import { FormFieldRadio } from '../../../common/components/formfield-radio';
 import { FormFieldSelectOption } from '../../../common/components/formfield-select';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { HlmDialogModule } from '@spartan-ng/helm/dialog';
-import { HlmH2, HlmP } from '@spartan-ng/helm/typography';
+import { HlmH2 } from '@spartan-ng/helm/typography';
 import { QuotaRequestApiService } from '../../services/quotarequest-api.service';
-import { TitleCasePipe } from '@angular/common';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { QuotaManager } from '~/issuer/services/quota-manager.service';
 
@@ -31,21 +26,7 @@ import { QuotaManager } from '~/issuer/services/quota-manager.service';
 			list-style-type: disc;
 		}
 	`,
-	imports: [
-		OebButtonComponent,
-		TranslatePipe,
-		RouterLink,
-		NgIcon,
-		FormsModule,
-		ReactiveFormsModule,
-		OebInputComponent,
-		OebSelectComponent,
-		FormFieldRadio,
-		HlmDialogModule,
-		HlmH2,
-		HlmP,
-		TitleCasePipe,
-	],
+	imports: [OebButtonComponent, TranslatePipe, FormsModule, ReactiveFormsModule, HlmDialogModule, HlmH2],
 })
 export class QuotaReleaseDialog extends BaseDialog {
 	protected translate = inject(TranslateService);

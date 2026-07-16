@@ -43,7 +43,8 @@ export class AppConfigService {
 	constructor() {
 		const ngZone = this.ngZone;
 
-		window['initializeBadgrConfig'] = (...args) => ngZone.run(() => this.initializeConfig.apply(this, args));
+		window['initializeBadgrConfig'] = (configOverrides?: Partial<BadgrConfig>) =>
+			ngZone.run(() => this.initializeConfig(configOverrides));
 	}
 
 	async initializeConfig(configOverrides?: Partial<BadgrConfig>) {
