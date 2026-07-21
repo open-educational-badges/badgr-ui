@@ -29,7 +29,7 @@ import { NgModel, FormsModule } from '@angular/forms';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { PublicApiService } from '../../../public/services/public-api.service';
 import { MessageService } from '../../../common/services/message.service';
-import { NgClass } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormFieldSelectOption } from '../../../components/select.component';
 import { NetworkApiService } from '../../../issuer/services/network-api.service';
@@ -55,6 +55,13 @@ import { DashboardApiService } from '~/dashboard/services/dashboard-api.service'
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { QuotaInformationComponent } from '../quota-information/quota-information.component';
 import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issuer-quotas-quota-exceeded-dialog.component';
+import { BgPDFTemplateCard } from '~/common/components/bg-pdftemplatecard';
+import { PDFTemplateManager } from '~/issuer/services/pdftemplate-manager.service';
+import { PDFTemplateApiService } from '~/common/services/pdftemplate-api.service';
+import { ApiPDFTemplate } from '~/common/model/pdftemplate-api.model';
+import { DangerDialogComponentTemplate } from '~/common/dialogs/oeb-dialogs/danger-dialog-template.component';
+import { InfoDialogComponent } from '~/common/dialogs/oeb-dialogs/info-dialog.component';
+import { HlmP } from '@spartan-ng/helm/typography';
 @Component({
 	selector: 'network-dashboard',
 	templateUrl: './network-dashboard.component.html',
@@ -79,6 +86,9 @@ import { QuotaExceededDialog } from '../issuer-quotas-quota-exceeded-dialog/issu
 		OebDashboardLearnersComponent,
 		OebDashboardSocialspaceComponent,
 		SvgIconComponent,
+		BgPDFTemplateCard,
+		HlmP,
+		DatePipe,
 	],
 })
 export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponent implements OnInit {
@@ -91,6 +101,8 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 	private messageService = inject(MessageService);
 	private networkApiService = inject(NetworkApiService);
 	private networkDashboardApi = inject(DashboardApiService);
+	protected pdfTemplateManager = inject(PDFTemplateManager);
+	private pdfTemplateApiService = inject(PDFTemplateApiService);
 
 	networkLoaded: Promise<unknown>;
 	networkSlug: string;
@@ -121,10 +133,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	networkDashboardAvailable = signal(false);
 
+	pdfTemplates: ApiPDFTemplate[] = [];
+	pdfTemplatesPromise: Promise<unknown> = Promise.resolve();
+
 	readonly overviewTemplate = viewChild<ElementRef>('overviewTemplate');
 	readonly partnerTemplate = viewChild<ElementRef>('partnerTemplate');
 	readonly badgesTemplate = viewChild<ElementRef>('badgesTemplate');
 	readonly learningPathsTemplate = viewChild<ElementRef>('learningPathsTemplate');
+	readonly pdfTemplatesTemplate = viewChild<ElementRef>('pdfTemplatesTemplate');
 
 	readonly headerTemplate = viewChild<TemplateRef<void>>('headerTemplate');
 
@@ -154,12 +170,14 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this.networkInvites.set(invites);
 		});
 
-		this.networkLoaded = this.issuerManager.networkBySlug(this.networkSlug).then((network) => {
+		this.networkLoaded = this.issuerManager.networkBySlug(this.networkSlug).then(async (network) => {
 			this.network.set(network);
 			this.partnerIssuers.set(network.partner_issuers.entities);
 			this.title.setTitle(
 				`Issuer - ${this.network().name} - ${this.configService.theme['serviceName'] || 'Badgr'}`,
 			);
+			// Load the network's PDF templates so the availability signal is set before tabs init.
+			await this.loadPDFTemplates(this.networkSlug);
 			this.baseCrumbs = [
 				{ title: this.translate.instant('NavItems.myInstitutions'), routerLink: ['/issuer/issuers'] },
 				{
@@ -258,6 +276,16 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 			this.tabs = [...baseTabs, ...dashboardTabs];
 		} else {
 			this.tabs = baseTabs;
+		}
+
+		// Every network gets a PDF templates section (no empty-state gating), as long as
+		// the PDF editor plugin is installed on the backend.
+		if (this.pdfTemplateManager.pdfEditorAvailable()) {
+			this.tabs.push({
+				key: 'pdf-templates',
+				title: 'PDFTemplate.pdfTemplates',
+				component: this.pdfTemplatesTemplate(),
+			});
 		}
 	}
 
@@ -437,6 +465,69 @@ export class NetworkDashboardComponent extends BaseAuthenticatedRoutableComponen
 
 	navigateToEditNetwork(): void {
 		this.router.navigate(['/issuer/networks', this.networkSlug, 'edit']);
+	}
+
+	loadPDFTemplates(networkSlug: string) {
+		this.pdfTemplatesPromise = this.pdfTemplateManager
+			.getPDFTemplatesForIssuer(networkSlug)
+			.then(
+				(pdfTemplates) =>
+					(this.pdfTemplates = pdfTemplates.sort(
+						(a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime(),
+					)),
+			);
+		return this.pdfTemplatesPromise;
+	}
+
+	async openEditPDFTemplateDialog(pdfTemplateSlug: string, networkSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(networkSlug, pdfTemplateSlug);
+
+		if (pt?.used) {
+			const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
+				context: {
+					variant: 'info',
+					caption: this.translate.instant('PDFTemplate.openEditDialogTitle'),
+					text: this.translate.instant('PDFTemplate.openEditDialogText'),
+					cancelText: this.translate.instant('General.cancel'),
+					forwardText: this.translate.instant('PDFTemplate.openEditDialogForward'),
+				},
+			});
+			dialogRef.closed$.subscribe((result) => {
+				if (result === 'continue')
+					this.router.navigate(['/issuer/issuers/', networkSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+			});
+		} else {
+			this.router.navigate(['/issuer/issuers/', networkSlug, 'pdftemplates', pdfTemplateSlug, 'edit']);
+		}
+	}
+
+	async openDeletePDFTemplateDialog(pdfTemplateName: string, pdfTemplateSlug: string, networkSlug: string) {
+		const pt = await this.pdfTemplateApiService.getPDFTemplate(networkSlug, pdfTemplateSlug);
+
+		if (pt?.used) {
+			this._hlmDialogService.open(DialogComponent, {
+				context: {
+					variant: 'failure',
+					message: this.translate.instant('PDFTemplate.deleteNotPossibleDialogTitle'),
+				},
+			});
+		} else {
+			this._hlmDialogService.open(DangerDialogComponentTemplate, {
+				context: {
+					delete: () => this.deletePDFTemplateApi(pdfTemplateSlug, networkSlug),
+					variant: 'danger',
+					title: this.translate.instant('PDFTemplate.openDeleteDialogTitle', {
+						title: pdfTemplateName,
+					}),
+				},
+			});
+		}
+	}
+
+	deletePDFTemplateApi(pdfTemplateSlug: string, networkSlug: string) {
+		this.pdfTemplateApiService
+			.deletePDFTemplate(networkSlug, pdfTemplateSlug)
+			.then(() => (this.pdfTemplates = this.pdfTemplates.filter((value) => value.slug != pdfTemplateSlug)));
 	}
 
 	checkQuotasDialog() {
