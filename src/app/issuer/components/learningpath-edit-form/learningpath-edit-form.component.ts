@@ -885,7 +885,11 @@ export class LearningPathEditFormComponent
 	getAggregatedCompetencies(competencyExtensionContextUrl: string) {
 		const aggregated = new Map<string, any>();
 		for (const badge of this.selectedBadges) {
-			const extensions = badge.extension as Record<string, any>;
+			// selectedBadges may hold BadgeClass instances (creation flow, exposes the
+			// `.extension` getter) or raw serialized badge dicts from an existing
+			// learning path (edit flow, `.extensions`). Support both shapes and guard
+			// against badges without any extensions so onSubmit never throws.
+			const extensions = (badge.extension ?? (badge as any).extensions ?? {}) as Record<string, any>;
 			const competencies: any[] = extensions['extensions:CompetencyExtension'] || [];
 			for (const competency of competencies) {
 				const key = competency.framework_identifier || `${competency.framework}:${competency.name}`;
