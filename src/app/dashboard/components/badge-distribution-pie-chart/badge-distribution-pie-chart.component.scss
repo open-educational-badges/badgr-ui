@@ -12,6 +12,26 @@
 		flex-direction: row;
 	}
 
+	// Layout variant: labels on right (chart left, legend right).
+	// Left-align the pair so the donut sits flush-left in wide cards, and use
+	// `order` to place the chart before the legend (legend is first in the DOM).
+	&--right {
+		flex-direction: row;
+		justify-content: flex-start;
+		gap: 48px;
+	}
+
+	&--right &__legend {
+		order: 1;
+	}
+
+	// Single-line legend rows for the right layout: "Label 8 (25%)"
+	&--right &__legend-text {
+		flex-direction: row;
+		align-items: baseline;
+		gap: 6px;
+	}
+
 	// Layout variant: labels on bottom
 	&--bottom {
 		flex-direction: column;
@@ -30,6 +50,12 @@
 			gap: 16px;
 		}
 
+		// Vertical legend (for right position)
+		&--right {
+			flex-direction: column;
+			gap: 8px;
+		}
+
 		// Horizontal legend (for bottom position)
 		&--bottom {
 			flex-direction: row;
@@ -45,7 +71,9 @@
 		gap: 12px;
 		padding: 8px;
 		border-radius: 8px;
-		transition: background-color 0.2s ease;
+		transition:
+			background-color 0.2s ease,
+			opacity 0.2s ease;
 
 		// Clickable variant
 		&--clickable {
@@ -132,6 +160,12 @@
 		height: 100%;
 		transform: rotate(-90deg);
 		overflow: visible;
+
+		circle,
+		line,
+		g {
+			transition: opacity 0.2s ease;
+		}
 	}
 
 	// ==========================================
@@ -200,7 +234,12 @@
 			flex-direction: column;
 		}
 
-		&__legend--left {
+		&--right {
+			flex-direction: column;
+		}
+
+		&__legend--left,
+		&__legend--right {
 			flex-direction: row;
 			flex-wrap: wrap;
 			justify-content: center;

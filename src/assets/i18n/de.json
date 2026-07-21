@@ -1434,6 +1434,11 @@
 		"total": "Gesamt",
 		"badgesAwarded": "Badges vergeben",
 		"badgeDistributionByType": "Vergebene Badges nach Typ",
+		"badgeDistributionByTags": "Badge-Vergaben nach Themenbereich (Tags)",
+		"tags": {
+			"others": "Sonstige",
+			"notSpecified": "Keine Angabe"
+		},
 		"badgesAwardedInYear": "Vergebene Badges im Jahr",
 		"allMonths": "Alle Monate",
 		"zipCode": "PLZ",

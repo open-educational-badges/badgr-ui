@@ -76,14 +76,27 @@ export class BadgeDistributionPieChartComponent {
 	/**
 	 * Position of the legend/labels
 	 * - 'left': Labels appear to the left of the chart
+	 * - 'right': Labels appear to the right of the chart
 	 * - 'bottom': Labels appear below the chart
 	 */
-	@Input() labelPosition: 'left' | 'bottom' = 'left';
+	@Input() labelPosition: 'left' | 'right' | 'bottom' = 'left';
+
+	/**
+	 * Maximum number of segments to render in the chart and legend.
+	 * Defaults to 3 to preserve the original behavior for existing callers.
+	 */
+	@Input() maxSegments: number = 3;
 
 	/**
 	 * Whether labels are clickable (shows arrow and hover effect)
 	 */
 	@Input() labelsClickable: boolean = false;
+
+	/**
+	 * Whether hovering a legend row highlights the matching chart segment
+	 * (and dims the others). Off by default to preserve existing callers.
+	 */
+	@Input() highlightOnHover: boolean = false;
 
 	/**
 	 * Size variant of the chart
@@ -130,17 +143,17 @@ export class BadgeDistributionPieChartComponent {
 	}
 
 	/**
-	 * All segments for legend display (including 0 count, limited to 3)
+	 * All segments for legend display (including 0 count, limited to maxSegments)
 	 */
 	get allSegments(): PieChartSegment[] {
-		return this.segments.slice(0, 3);
+		return this.segments.slice(0, this.maxSegments);
 	}
 
 	/**
 	 * Filter segments to only show those with count > 0 for the pie chart
 	 */
 	get activeSegments(): PieChartSegment[] {
-		return this.segments.filter((s) => s.count > 0).slice(0, 3);
+		return this.segments.filter((s) => s.count > 0).slice(0, this.maxSegments);
 	}
 
 	/**
@@ -228,5 +241,29 @@ export class BadgeDistributionPieChartComponent {
 		if (this.labelsClickable) {
 			this.labelClick.emit(segment);
 		}
+	}
+
+	/** Id of the segment currently hovered via its legend row (null = none). */
+	hoveredSegmentId: string | null = null;
+
+	/**
+	 * Track the hovered legend row so the chart can emphasize it.
+	 */
+	onSegmentHover(id: string | null): void {
+		if (this.highlightOnHover) {
+			this.hoveredSegmentId = id;
+		}
+	}
+
+	/**
+	 * Opacity for a segment (fill arc and legend row) given the current hover.
+	 * Returns 1 when hover highlighting is off or nothing is hovered; otherwise
+	 * dims every segment except the hovered one.
+	 */
+	getSegmentOpacity(segment: PieChartSegment): number {
+		if (!this.highlightOnHover || this.hoveredSegmentId === null) {
+			return 1;
+		}
+		return segment.id === this.hoveredSegmentId ? 1 : 0.3;
 	}
 }
