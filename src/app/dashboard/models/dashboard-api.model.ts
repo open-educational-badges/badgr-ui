@@ -556,6 +556,89 @@ export interface BadgeTypeStatsExtended {
 }
 
 // ==========================================
+// Network Tag Distribution Endpoint Types
+// ==========================================
+
+/**
+ * Category of a tag distribution segment.
+ * - 'tag': one of the top tags
+ * - 'others': aggregation of all tags ranked 6th and below ("Sonstige")
+ * - 'notSpecified': badges whose badge class has no tags ("Keine Angabe")
+ */
+export type TagDistributionCategory = 'tag' | 'others' | 'notSpecified';
+
+/**
+ * Response from GET /v1/issuer/dashboard/{issuerSlug}/tag-distribution
+ */
+export interface NetworkTagDistributionResponse {
+	metadata?: {
+		totalBadges: number;
+		year: number | null;
+		lastUpdated: string;
+	};
+	distribution: NetworkTagDistributionEntry[];
+}
+
+export interface NetworkTagDistributionEntry {
+	/** Stable id: normalized tag key, 'others' or 'notSpecified' */
+	id: string;
+	/** Display label (server default label for others/notSpecified is overridden via i18n) */
+	label: string;
+	count: number;
+	/** Percentage of total badges (may exceed 100 across segments due to multi-tag badges) */
+	percentage: number;
+	category: TagDistributionCategory;
+}
+
+/**
+ * Fill/border color pair for a tag distribution segment.
+ */
+export interface TagSegmentColor {
+	color: string;
+	borderColor: string;
+}
+
+/**
+ * Ordered fill/border colors for the top tags, using the OEB purple scale
+ * (light -> dark) defined in src/styles/oeb/oeb_styles.scss.
+ */
+export const TAG_SEGMENT_COLORS: TagSegmentColor[] = [
+	{ color: '#e2daf3', borderColor: '#cbbdea' }, // purple-100 / purple-200
+	{ color: '#cbbdea', borderColor: '#b4a1e1' }, // purple-200 / purple-300
+	{ color: '#b4a1e1', borderColor: '#9d84d8' }, // purple-300 / purple-400
+	{ color: '#9d84d8', borderColor: '#8567cf' }, // purple-400 / purple-500
+	{ color: '#8567cf', borderColor: '#6c4ac7' }, // purple-500 / purple-600
+];
+
+/** Color for the aggregated "Sonstige" / "Others" segment */
+export const TAG_SEGMENT_OTHERS_COLOR: TagSegmentColor = {
+	color: '#e0e0e0',
+	borderColor: '#bdbdbd',
+};
+
+/** Color for the standalone "Keine Angabe" / "Not Specified" segment */
+export const TAG_SEGMENT_NOT_SPECIFIED_COLOR: TagSegmentColor = {
+	color: '#432b88', // purple-900
+	borderColor: '#3d2979', // purple-950
+};
+
+/**
+ * Resolve the fill/border color for a tag distribution segment.
+ *
+ * @param index - Index of the segment within the top-tag list (0-based)
+ * @param category - Segment category
+ */
+export function getTagSegmentColor(index: number, category: TagDistributionCategory): TagSegmentColor {
+	if (category === 'others') {
+		return TAG_SEGMENT_OTHERS_COLOR;
+	}
+	if (category === 'notSpecified') {
+		return TAG_SEGMENT_NOT_SPECIFIED_COLOR;
+	}
+	return TAG_SEGMENT_COLORS[index % TAG_SEGMENT_COLORS.length];
+}
+
+// ==========================================
 // Network Delivery Method Distribution Endpoint Types
 // ==========================================
 

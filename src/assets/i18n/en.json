@@ -1391,6 +1391,11 @@
 		"total": "Total",
 		"badgesAwarded": "Badges awarded",
 		"badgeDistributionByType": "Badges Awarded by Type",
+		"badgeDistributionByTags": "Badges Awarded by Tag",
+		"tags": {
+			"others": "Others",
+			"notSpecified": "Not Specified"
+		},
 		"badgesAwardedInYear": "Badges Awarded in Year",
 		"allMonths": "All Months",
 		"zipCode": "ZIP Code",
