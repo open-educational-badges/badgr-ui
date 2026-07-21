@@ -117,8 +117,12 @@ export class SelectNetworkComponent implements OnInit {
 		// (it becomes a partner badge). Warn the user before proceeding.
 		if (this.badge().pdfTemplate) {
 			const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
+				// Override the 'info' variant's blue square frame to the rounded
+				// purple border from the design, for this warning only.
+				contentClass: 'tw-border-purple tw-border-2 tw-rounded-[10px]',
 				context: {
 					variant: 'info',
+					filledIcon: true,
 					caption: this.translate.instant('PDFTemplate.shareInstitutionTemplateTitle'),
 					subtitle: this.translate.instant('PDFTemplate.shareInstitutionTemplateText'),
 					text: this.translate.instant('PDFTemplate.shareInstitutionTemplateNote'),
