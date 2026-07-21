@@ -1035,8 +1035,12 @@ export class BadgeClassEditFormComponent
 	}
 
 	loadPDFTemplates() {
+		// A partner badge (shared into a network) may only use that network's PDF
+		// templates — not the institution's — so pull templates from the network.
+		// Network Badges and ordinary institution badges use their own issuer.
+		const templateOwnerSlug = this.existingBadgeClass?.sharedOnNetwork?.slug ?? this.issuer.slug;
 		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(this.issuer.slug)
+			.getPDFTemplatesForIssuer(templateOwnerSlug)
 			.then((pdfTemplates) => {
 				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
 				this.selectPDFTemplateOptions = [

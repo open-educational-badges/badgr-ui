@@ -17,13 +17,27 @@ import { provideIcons } from '@ng-icons/core';
 	imports: [OebDialogComponent, OebButtonComponent, HlmP, HlmH3, NgIcon, HlmIcon, TranslateModule],
 	providers: [TranslateService, provideIcons({ lucideInfo })],
 	template: `
-		<oeb-dialog [variant]="variant" class="tw-text-center tw-text-oebblack">
+		<oeb-dialog
+			[variant]="variant"
+			class="tw-text-center tw-text-oebblack"
+			[class.tw-block]="filledIcon"
+			[class.tw-px-12]="filledIcon"
+		>
 			<div class="tw-flex tw-justify-center">
-				<div class="oeb-icon-circle tw-my-4">
-					<ng-icon hlm class="tw-text-link" size="xl" name="lucideInfo" />
-				</div>
+				@if (filledIcon) {
+					<div class="oeb-icon-circle tw-my-4 tw-bg-purple tw-w-[76px] tw-h-[76px]">
+						<svg viewBox="0 0 24 24" class="tw-w-[48px] tw-h-[48px]" fill="white" aria-hidden="true">
+							<circle cx="12" cy="6" r="1.9" />
+							<rect x="10.1" y="10" width="3.8" height="9" rx="1.9" />
+						</svg>
+					</div>
+				} @else {
+					<div class="oeb-icon-circle tw-my-4">
+						<ng-icon hlm class="tw-text-link" size="xl" name="lucideInfo" />
+					</div>
+				}
 			</div>
-			<h3 hlmH3 class="tw-font-bold !tw-text-black tw-uppercase">
+			<h3 hlmH3 class="tw-font-bold !tw-text-black" [class.tw-uppercase]="!filledIcon">
 				{{ caption }}
 			</h3>
 			<div class="tw-flex tw-flex-col tw-gap-2 tw-my-2">
@@ -33,19 +47,24 @@ import { provideIcons } from '@ng-icons/core';
 					</p>
 				}
 				@if (text) {
-					<p hlmP class="tw-italic" [innerHTML]="text"></p>
+					<p hlmP class="tw-italic" [class.tw-text-purple]="filledIcon" [innerHTML]="text"></p>
 				}
 			</div>
 			@if (singleButtonText) {
 				<oeb-button (click)="clickSingleButton()" size="sm" [text]="singleButtonText"> </oeb-button>
 			} @else {
-				<div class="tw-flex tw-justify-around tw-mt-6">
-					<oeb-button size="md" variant="secondary" [text]="cancelText" (click)="cancel()"></oeb-button>
+				<div class="tw-flex tw-mt-6" [class]="filledIcon ? 'tw-justify-center tw-gap-4' : 'tw-justify-around'">
+					<oeb-button
+						[size]="filledIcon ? 'sm' : 'md'"
+						variant="secondary"
+						[text]="cancelText"
+						(click)="cancel()"
+					></oeb-button>
 					<oeb-button
 						[id]="'confirm-award-badge'"
 						width="max_content"
-						size="md"
-						class="tw-mr-4"
+						[size]="filledIcon ? 'sm' : 'md'"
+						[class]="filledIcon ? '' : 'tw-mr-4'"
 						[text]="forwardText"
 						(click)="continue()"
 					></oeb-button>
@@ -67,11 +86,13 @@ export class InfoDialogComponent {
 		forwardText: string;
 		singleButtonText?: string;
 		singleButtonAction?: any;
+		filledIcon?: boolean;
 	}>();
 	protected readonly caption = this._dialogContext.caption;
 	protected readonly subtitle = this._dialogContext.subtitle;
 	protected readonly text = this._dialogContext.text;
 	protected readonly variant = this._dialogContext.variant;
+	protected readonly filledIcon = this._dialogContext.filledIcon;
 	protected readonly singleButtonText = this._dialogContext.singleButtonText;
 	protected readonly cancelText = this._dialogContext.cancelText;
 	protected readonly forwardText = this._dialogContext.forwardText;

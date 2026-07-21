@@ -23,6 +23,7 @@ import { PDFTemplate, pdfTemplateAlignments, pdfTemplateFormats } from '../../mo
 import { TranslateService, TranslatePipe, TranslateModule } from '@ngx-translate/core';
 import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
 import { Issuer } from '../../models/issuer.model';
+import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
 import { OebInputComponent } from '../../../components/input.component';
@@ -67,7 +68,7 @@ export class PDFTemplateEditFormComponent
 	extends BaseAuthenticatedRoutableComponent
 	implements OnInit, OnChanges, AfterViewInit
 {
-	issuer: Issuer;
+	issuer: Issuer | Network;
 	issuerLoaded: Promise<unknown>;
 	savePromise: Promise<PDFTemplate> | null = null;
 
@@ -130,7 +131,7 @@ export class PDFTemplateEditFormComponent
 		protected pdfTemplateManager: PDFTemplateManager,
 	) {
 		super(router, route, loginService);
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 		});
 
