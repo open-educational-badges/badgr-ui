@@ -33,7 +33,7 @@
 							@if (issuer?.currentUserStaffMember?.canEditBadge) {
 								<oeb-button
 									class="tw-whitespace-nowrap tw-flex-grow"
-									[routerLink]="['/issuer/issuers', issuerSlug]"
+									[routerLink]="['/issuer/issuers', templateOwnerSlug]"
 									fragment="pdf-templates"
 									[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
 									width="full_width"
