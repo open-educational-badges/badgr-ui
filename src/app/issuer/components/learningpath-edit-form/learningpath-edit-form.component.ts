@@ -876,6 +876,40 @@ export class LearningPathEditFormComponent
 		this.lpTags.delete(tag);
 	}
 
+	/**
+	 * Aggregates the competencies of all selected badges into the participation
+	 * badge's CompetencyExtension. Competencies appearing in multiple badges are
+	 * merged, summing their studyLoad. Mirrors the aggregation badgr-server
+	 * applies when issuing the micro degree badge.
+	 */
+	getAggregatedCompetencies(competencyExtensionContextUrl: string) {
+		const aggregated = new Map<string, any>();
+		for (const badge of this.selectedBadges) {
+			// selectedBadges may hold BadgeClass instances (creation flow, exposes the
+			// `.extension` getter) or raw serialized badge dicts from an existing
+			// learning path (edit flow, `.extensions`). Support both shapes and guard
+			// against badges without any extensions so onSubmit never throws.
+			const extensions = (badge.extension ?? (badge as any).extensions ?? {}) as Record<string, any>;
+			const competencies: any[] = extensions['extensions:CompetencyExtension'] || [];
+			for (const competency of competencies) {
+				const key = competency.framework_identifier || `${competency.framework}:${competency.name}`;
+				const existing = aggregated.get(key);
+				if (existing) {
+					existing.studyLoad = (existing.studyLoad || 0) + (competency.studyLoad || 0);
+					existing.hours = Math.floor(existing.studyLoad / 60);
+					existing.minutes = existing.studyLoad % 60;
+				} else {
+					aggregated.set(key, {
+						...competency,
+						'@context': competencyExtensionContextUrl,
+						type: ['Extension', 'extensions:CompetencyExtension'],
+					});
+				}
+			}
+		}
+		return Array.from(aggregated.values());
+	}
+
 	async onSubmit() {
 		const studyLoadExtensionContextUrl = `${this.baseUrl}/static/extensions/StudyLoadExtension/context.json`;
 		const categoryExtensionContextUrl = `${this.baseUrl}/static/extensions/CategoryExtension/context.json`;
@@ -933,7 +967,7 @@ export class LearningPathEditFormComponent
 					name: this.learningPathForm.value.license[0].name,
 					legalCode: this.learningPathForm.value.license[0].legalCode,
 				},
-				'extensions:CompetencyExtension': [],
+				'extensions:CompetencyExtension': this.getAggregatedCompetencies(competencyExtensionContextUrl),
 			};
 
 			if (this.currentImage) {
@@ -1005,7 +1039,8 @@ export class LearningPathEditFormComponent
 								name: this.learningPathForm.value.license[0].name,
 								legalCode: this.learningPathForm.value.license[0].legalCode,
 							},
-							'extensions:CompetencyExtension': [],
+							'extensions:CompetencyExtension':
+								this.getAggregatedCompetencies(competencyExtensionContextUrl),
 						},
 						copy_permissions: ['issuer'],
 					} as ApiBadgeClassForCreation;

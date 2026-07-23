@@ -15,6 +15,7 @@ import {
 	NetworkBadgeAwardsTimelineResponse,
 	NetworkBadgeAwardsTimelineParams,
 	NetworkBadgeTypeDistributionResponse,
+	NetworkTagDistributionResponse,
 	NetworkDeliveryMethodDistributionResponse,
 	DashboardRecentBadgeAwardsResponse,
 	DashboardRecentBadgeAwardsParams,
@@ -563,6 +564,43 @@ export class DashboardApiService extends BaseHttpApiService {
 						error,
 					);
 					return throwError(() => this.mapError(error, 'getBadgeTypeDistribution'));
+				}),
+			);
+	}
+
+	// ==========================================
+	// Network Tag Distribution Endpoint
+	// ==========================================
+
+	/**
+	 * Get Badge Distribution by Tag
+	 *
+	 * Returns the distribution of issued badges by tag (Themenbereich) for
+	 * pie/donut chart visualization. Returns the top 5 tags plus optional
+	 * "others" and "notSpecified" segments.
+	 *
+	 * @param issuerSlug - Issuer or Network identifier
+	 * @param year - Optional year filter
+	 * @returns Observable with tag distribution data
+	 */
+	getTagDistribution(issuerSlug: string, year?: number): Observable<NetworkTagDistributionResponse> {
+		let params = new HttpParams();
+		if (year) {
+			params = params.set('year', year.toString());
+		}
+
+		return this.http
+			.get<NetworkTagDistributionResponse>(this.buildDashboardApiUrl(issuerSlug, 'tag-distribution'), {
+				params,
+				withCredentials: true,
+			})
+			.pipe(
+				catchError((error) => {
+					console.error(
+						`[DashboardApiService] GET /issuer/dashboard/${issuerSlug}/tag-distribution failed:`,
+						error,
+					);
+					return throwError(() => this.mapError(error, 'getTagDistribution'));
 				}),
 			);
 	}

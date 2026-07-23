@@ -137,17 +137,26 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 		this.loadPDFTemplates();
 	}
 
-	loadPDFTemplates() {
+	/**
+	 * A partner badge (shared into a network) may only use that network's PDF
+	 * templates — not the institution's. Ordinary badges use their own issuer.
+	 */
+	get templateOwnerSlug(): string {
+		return this.badgeClass?.sharedOnNetwork?.slug ?? this.issuerSlug;
+	}
+
+	async loadPDFTemplates() {
+		// Wait for the badge so we know whether it is shared on a network before
+		// deciding which issuer's PDF templates to offer.
+		await this.badgeClassLoaded;
 		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(this.issuerSlug)
-			.then(async (pdfTemplates) => {
+			.getPDFTemplatesForIssuer(this.templateOwnerSlug)
+			.then((pdfTemplates) => {
 				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
 				this.selectPDFTemplateOptions = [
 					{ label: this.translate.instant('PDFTemplate.oebDesign'), value: null },
 					...this.pdfTemplates.map((t) => ({ label: t.name, value: t.slug })),
 				];
-				// Ensure badge class has loaded so the form value is set before we re-trigger writeValue.
-				await this.badgeClassLoaded;
 				const ctrl = this.badgeClassForm.rawControl.controls['pdf_template'];
 				const savedValue = ctrl.value;
 				setTimeout(() => ctrl.setValue(savedValue, { emitEvent: false }), 0);

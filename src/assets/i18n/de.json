@@ -1184,6 +1184,10 @@
 		"createdTemplates": "Erstellte Vorlagen",
 		"editor": "PDF-Vorlagen-Editor",
 		"createPDFTemplate": "PDF-Vorlage anlegen",
+		"shareInstitutionTemplateTitle": "Dieser Badge verwendet aktuell eine PDF-Vorlage deiner Institution.",
+		"shareInstitutionTemplateText": "Diese Vorlage kann nur innerhalb deiner Institution verwendet werden und wird beim Freigeben für das Netzwerk entfernt.",
+		"shareInstitutionTemplateNote": "Nach der Freigabe kannst du dem Badge eine PDF-Vorlage des Netzwerks zuweisen.",
+		"shareInstitutionTemplateConfirm": "Verstanden",
 		"createHeading": "Neue Vorlage anlegen",
 		"backgroundHeading": "Lade einen eigenen PDF-Hintergrund hoch:",
 		"createdSuccessfully": "Deine PDF Vorlage wurde erfolgreich erstellt.",
@@ -1434,6 +1438,11 @@
 		"total": "Gesamt",
 		"badgesAwarded": "Badges vergeben",
 		"badgeDistributionByType": "Vergebene Badges nach Typ",
+		"badgeDistributionByTags": "Badge-Vergaben nach Themenbereich (Tags)",
+		"tags": {
+			"others": "Sonstige",
+			"notSpecified": "Keine Angabe"
+		},
 		"badgesAwardedInYear": "Vergebene Badges im Jahr",
 		"allMonths": "Alle Monate",
 		"zipCode": "PLZ",

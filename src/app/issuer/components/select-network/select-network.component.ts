@@ -9,8 +9,10 @@ import {
 	ViewChild,
 	inject,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
+import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
+import { InfoDialogComponent } from '../../../common/dialogs/oeb-dialogs/info-dialog.component';
 import { NgModel, FormsModule, FormControl } from '@angular/forms';
 import { Issuer } from '../../../issuer/models/issuer.model';
 import { PublicApiService } from '../../../public/services/public-api.service';
@@ -40,6 +42,8 @@ export class SelectNetworkComponent implements OnInit {
 	private badgeClassApiService = inject(BadgeClassApiService);
 	private badgeClassManager = inject(BadgeClassManager);
 	private router = inject(Router);
+	private translate = inject(TranslateService);
+	private readonly _hlmDialogService = inject(HlmDialogService);
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -109,6 +113,32 @@ export class SelectNetworkComponent implements OnInit {
 	}
 
 	shareBadge() {
+		// A badge that still carries an institution PDF template loses it on share
+		// (it becomes a partner badge). Warn the user before proceeding.
+		if (this.badge().pdfTemplate) {
+			const dialogRef = this._hlmDialogService.open(InfoDialogComponent, {
+				// Override the 'info' variant's blue square frame to the rounded
+				// purple border from the design, for this warning only.
+				contentClass: 'tw-border-purple tw-border-2 tw-rounded-[10px]',
+				context: {
+					variant: 'info',
+					filledIcon: true,
+					caption: this.translate.instant('PDFTemplate.shareInstitutionTemplateTitle'),
+					subtitle: this.translate.instant('PDFTemplate.shareInstitutionTemplateText'),
+					text: this.translate.instant('PDFTemplate.shareInstitutionTemplateNote'),
+					cancelText: this.translate.instant('General.cancel'),
+					forwardText: this.translate.instant('PDFTemplate.shareInstitutionTemplateConfirm'),
+				},
+			});
+			dialogRef.closed$.subscribe((result) => {
+				if (result === 'continue') this.performShare();
+			});
+		} else {
+			this.performShare();
+		}
+	}
+
+	private performShare() {
 		try {
 			this.badgeClassApiService.shareOnNetwork(this.selectedNetwork.slug, this.badge().slug).then((s) => {
 				this.badgeClassManager.badgesList.updateList();
