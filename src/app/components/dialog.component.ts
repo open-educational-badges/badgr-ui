@@ -65,7 +65,9 @@ interface DialogContext {
 				</div>
 			}
 
-			@if (!context.variant || context.variant === 'default') {
+			<!-- Header and content for every variant that does not render them itself.
+			     'failure' and 'danger' have their own layout above/below. -->
+			@if (context.variant !== 'failure' && context.variant !== 'danger') {
 				@if (isTemplate(context.headerTemplate)) {
 					<ng-container
 						*ngTemplateOutlet="context.headerTemplate; context: context.templateContext || {}"
