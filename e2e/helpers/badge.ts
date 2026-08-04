@@ -75,8 +75,8 @@ export async function createBadge(
 	await form.locator('#badgeclass_description_input textarea').fill('Automated E2E test badge');
 
 	if (lang) {
-		// The language oeb-select label is "SPRACHE DES BADGES" (DE) or "LANGUAGE OF THIS BADGE" (EN)
-		const langSelect = form.locator('oeb-select').filter({ hasText: /sprache|language of this/i });
+		// Identify the language select by its hint text (inside the component): "Badge-Mail" (DE) / "badge email" (EN)
+		const langSelect = form.locator('oeb-select').filter({ hasText: /badge-mail|badge email/i });
 		await langSelect.locator('hlm-select-trigger').click();
 		const optionText = lang === 'de' ? /deutsch|german/i : /englisch|english/i;
 		await page
