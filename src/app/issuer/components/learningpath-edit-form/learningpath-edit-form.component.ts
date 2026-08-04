@@ -301,7 +301,7 @@ export class LearningPathEditFormComponent
 
 		this.baseUrl = this.configService.apiConfig.baseUrl;
 		if (!this.issuer)
-			this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+			this.issuerManager.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 				this.issuer = issuer;
 				this.badgesLoaded = this.loadBadges();
 			});

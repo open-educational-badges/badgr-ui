@@ -121,7 +121,7 @@ export class BadgeClassEditIssuedComponent extends BaseAuthenticatedRoutableComp
 				),
 		);
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 			this.breadcrumbLinkEntries = [
 				{ title: 'Issuers', routerLink: ['/issuer'] },

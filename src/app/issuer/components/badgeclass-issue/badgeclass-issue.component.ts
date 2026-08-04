@@ -217,7 +217,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 		title.setTitle(`Award Badge - ${this.configService.theme['serviceName'] || 'Badgr'}`);
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 
 			this.badgeClassLoaded = this.badgeClassManager
