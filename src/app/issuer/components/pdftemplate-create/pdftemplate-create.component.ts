@@ -41,7 +41,7 @@ export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableCompone
 		super(router, route, loginService);
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 			this.isNetwork = issuer.is_network;
 			this.breadcrumbLinkEntries = [

@@ -94,7 +94,7 @@ export class IssuerLearningPathComponent extends BaseAuthenticatedRoutableCompon
 			},
 		];
 
-		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then(
 			(issuer) => {
 				this.issuer = issuer;
 				this.title.setTitle(

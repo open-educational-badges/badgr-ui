@@ -109,7 +109,7 @@ export class BadgeClassEditComponent extends BaseAuthenticatedRoutableComponent 
 				),
 		);
 
-		this.issuerLoaded = issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
+		this.issuerLoaded = issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then(
 			(issuer) => {
 				this.issuer = issuer;
 				return issuer;

@@ -81,7 +81,7 @@ export class LearningPathEditComponent extends BaseAuthenticatedRoutableComponen
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 		this.lpSlug = this.route.snapshot.params['learningPathSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 			this.breadcrumbLinkEntries = [
 				{ title: 'Issuers', routerLink: ['/issuer'] },

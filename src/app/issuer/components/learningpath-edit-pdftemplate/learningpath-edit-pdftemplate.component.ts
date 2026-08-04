@@ -101,7 +101,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 					),
 			);
 
-		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 		});
 
