@@ -131,7 +131,7 @@ export class PDFTemplateEditFormComponent
 		protected pdfTemplateManager: PDFTemplateManager,
 	) {
 		super(router, route, loginService);
-		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 		});
 

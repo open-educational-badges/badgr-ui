@@ -227,7 +227,7 @@ export class IssuerStaffComponent extends BaseAuthenticatedRoutableComponent imp
 		);
 
 		this.issuerLoaded.set(
-			this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+			this.issuerManager.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 				this.issuer.set(issuer);
 				return issuer;
 			}),
