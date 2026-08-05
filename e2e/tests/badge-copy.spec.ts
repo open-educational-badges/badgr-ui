@@ -10,11 +10,12 @@ test('copies a competency badge and saves it with a new name', async ({ page }) 
 	await menuTrigger.waitFor({ state: 'visible', timeout: 10_000 });
 	await menuTrigger.click();
 
-	const copyItem = page
-		.locator('[hlmmenuitem], [role="menuitem"]')
+	const menu = page.locator('hlm-menu');
+	await menu.waitFor({ state: 'visible', timeout: 10_000 });
+	const copyItem = menu
+		.locator('button')
 		.filter({ hasText: /kopieren|copy/i })
 		.first();
-	await copyItem.waitFor({ state: 'visible', timeout: 10_000 });
 	await copyItem.click();
 
 	const issuerDialog = page.locator('[role="dialog"]');
