@@ -213,7 +213,7 @@ export class RecipientBadgeCollectionEditFormComponent extends BaseAuthenticated
 			.map((g) => g.values[0].badgeClass.issuer);
 
 		this.allBadges = allBadges.filter(
-			(badge) => badge.apiModel.extensions['extensions:CategoryExtension'].Category !== 'learningpath',
+			(badge) => badge.apiModel.extensions?.['extensions:CategoryExtension']?.Category !== 'learningpath',
 		);
 
 		this.hasMultipleIssuers = !this.restrictToIssuerId && new Set(allBadges.map((b) => b.issuerId)).size > 1;
@@ -261,7 +261,7 @@ export class RecipientBadgeCollectionEditFormComponent extends BaseAuthenticated
 			if (badge.mostRelevantStatus !== 'pending') issuerResults.addBadge(badge);
 
 			if (!this.badgeResults.find((r) => r.badge === badge)) {
-				if (badge.apiModel.extensions['extensions:CategoryExtension'].Category !== 'learningpath') {
+				if (badge.apiModel.extensions?.['extensions:CategoryExtension']?.Category !== 'learningpath') {
 					this.badgeResults.push(new BadgeResult(badge, issuerResults.issuer, false));
 				}
 			}
@@ -387,7 +387,7 @@ class MatchingIssuerBadges {
 	addBadge(badge: RecipientBadgeInstance) {
 		if (
 			badge.issuerId === this.issuerId &&
-			badge.apiModel.extensions['extensions:CategoryExtension'].Category !== 'learningpath'
+			badge.apiModel.extensions?.['extensions:CategoryExtension']?.Category !== 'learningpath'
 		) {
 			if (this.badges.indexOf(badge) < 0) {
 				this.badges.push(badge);
