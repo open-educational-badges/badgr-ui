@@ -25,18 +25,14 @@ const BASELINE = path.join(ROOT, 'typecheck-baseline.json');
 
 // One entry per flag (or bundle) we plan to roll out. strictPropertyInitialization
 // is inert without strictNullChecks, so it enables both.
+//
+// The cheap-flags bundle (strictFunctionTypes, strictBindCallApply, noImplicitThis,
+// useUnknownInCatchVariables, noFallthroughCasesInSwitch) has been burned down to
+// zero and promoted into tsconfig.json, so it is no longer tracked here.
 const FLAG_SETS = {
 	strictNullChecks: { strictNullChecks: true },
 	noImplicitAny: { noImplicitAny: true },
 	strictPropertyInitialization: { strictNullChecks: true, strictPropertyInitialization: true },
-	// Cheap flags (few or zero errors each) rolled out as one bundle.
-	cheapFlags: {
-		strictFunctionTypes: true,
-		strictBindCallApply: true,
-		noImplicitThis: true,
-		useUnknownInCatchVariables: true,
-		noFallthroughCasesInSwitch: true,
-	},
 	noUnusedLocals: { noUnusedLocals: true },
 };
 

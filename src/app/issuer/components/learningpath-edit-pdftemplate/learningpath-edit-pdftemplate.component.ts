@@ -6,6 +6,7 @@ import { BaseAuthenticatedRoutableComponent } from '../../../common/pages/base-a
 import { SessionService } from '../../../common/services/session.service';
 import { MessageService } from '../../../common/services/message.service';
 import { Issuer } from '../../models/issuer.model';
+import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { BadgrApiFailure } from '../../../common/services/api-failure';
 import { LearningPath } from '~/issuer/models/learningpath.model';
@@ -49,7 +50,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 
 	issuerSlug: string;
 	learningPathSlug: string;
-	issuer: Issuer;
+	issuer: Issuer | Network;
 	issuerLoaded: Promise<unknown>;
 	learningPath: LearningPath;
 	learningPathLoaded: Promise<unknown>;
@@ -100,7 +101,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 					),
 			);
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 		});
 
@@ -126,7 +127,7 @@ export class LearningPathEditPDFTemplateComponent extends BaseAuthenticatedRouta
 
 		await this.issuerLoaded;
 
-		if (this.authService.isLoggedIn && this.issuer instanceof Issuer && this.issuer.currentUserStaffMember) {
+		if (this.authService.isLoggedIn && this.issuer.currentUserStaffMember) {
 			this.getPDFTemplatesForIssuerApi(this.issuer.slug);
 			await this.pdfTemplatesPromise;
 

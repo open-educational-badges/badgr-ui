@@ -12,8 +12,7 @@ test('badge detail page shows name, description, category and tags after creatio
 	await form.locator('input[type="text"]').first().fill(name);
 	await form.locator('#badgeclass_description_input textarea').fill(description);
 
-	// Select German language
-	const langSelect = form.locator('oeb-select').filter({ hasText: /sprache|language of this/i });
+	const langSelect = form.locator('oeb-select').filter({ hasText: /badge-mail|badge email/i });
 	await langSelect.locator('hlm-select-trigger').click();
 	await page
 		.locator('hlm-option')
@@ -32,7 +31,7 @@ test('badge detail page shows name, description, category and tags after creatio
 	// Tags step — add a tag if the autocomplete input is visible
 	const tagInput = page.locator('div.ng-autocomplete input[type="text"]');
 	await tagInput.waitFor({ state: 'visible', timeout: 5_000 });
-	await tagInput.pressSequentially('nachhaltig');
+	await tagInput.pressSequentially('nachhaltig', { delay: 100 });
 	await tagInput.press('Enter');
 
 	await advanceToSubmit(page);

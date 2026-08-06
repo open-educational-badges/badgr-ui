@@ -49,7 +49,7 @@ export class IssuerEditComponent extends BaseAuthenticatedRoutableComponent {
 
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then(
+		this.issuerLoaded = this.issuerManager.issuerBySlugDirect(this.issuerSlug).then(
 			(issuer) => {
 				this.issuer = issuer;
 

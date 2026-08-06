@@ -1,6 +1,15 @@
 import { Page } from '@playwright/test';
 import path from 'path';
 
+async function waitForStepTransition(page: Page, prevBullet: string | null): Promise<void> {
+	if (prevBullet === null) return;
+	await page.waitForFunction(
+		(prev) => document.querySelector('button.step.active .step-bullet')?.textContent?.trim() !== prev,
+		prevBullet,
+		{ timeout: 5_000 },
+	);
+}
+
 const ISSUER_SLUG = () => process.env.ISSUER_SLUG!;
 
 export const urls = {
@@ -28,15 +37,15 @@ export async function selectIconFromLibrary(page: Page, imagePath?: string): Pro
 	// await page.locator('#forminput').waitFor({ state: 'hidden', timeout: 10_000 });
 	const pngPath = imagePath ?? path.resolve(__dirname, '..', 'fixtures', 'test-badge.png');
 	await page.locator('#imageSection input[type="file"]').nth(1).setInputFiles(pngPath);
-	// The file is read as a data URL asynchronously — wait for it to complete
-	await page.waitForTimeout(2000);
+	await page.locator('#imageSection div.dropzone-x-preview').waitFor({ state: 'visible', timeout: 10_000 });
 }
 
 export async function clickNext(page: Page): Promise<void> {
 	const btn = page.getByTestId('next-step-btn').locator('button');
 	await btn.waitFor({ state: 'visible', timeout: 10_000 });
+	const prevBullet = await page.locator('button.step.active .step-bullet').textContent();
 	await btn.click();
-	await page.waitForTimeout(600);
+	await waitForStepTransition(page, prevBullet?.trim() ?? null);
 }
 
 // Advances through all remaining steps until the submit button is visible.
@@ -51,8 +60,9 @@ export async function advanceToSubmit(page: Page): Promise<void> {
 			break;
 		const nextBtn = page.getByTestId('next-step-btn').locator('button');
 		if (await nextBtn.isVisible({ timeout: 500 }).catch(() => false)) {
+			const prevBullet = await page.locator('button.step.active .step-bullet').textContent();
 			await nextBtn.click();
-			await page.waitForTimeout(600);
+			await waitForStepTransition(page, prevBullet?.trim() ?? null);
 		} else {
 			break;
 		}
@@ -75,8 +85,8 @@ export async function createBadge(
 	await form.locator('#badgeclass_description_input textarea').fill('Automated E2E test badge');
 
 	if (lang) {
-		// The language oeb-select label is "SPRACHE DES BADGES" (DE) or "LANGUAGE OF THIS BADGE" (EN)
-		const langSelect = form.locator('oeb-select').filter({ hasText: /sprache|language of this/i });
+		// Identify the language select by its hint text (inside the component): "Badge-Mail" (DE) / "badge email" (EN)
+		const langSelect = form.locator('oeb-select').filter({ hasText: /badge-mail|badge email/i });
 		await langSelect.locator('hlm-select-trigger').click();
 		const optionText = lang === 'de' ? /deutsch|german/i : /englisch|english/i;
 		await page

@@ -57,7 +57,7 @@ export class IssuerQuotasComponent extends BaseAuthenticatedRoutableComponent {
 
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then(
 			(issuer) => {
 				// redirect if quotas not active
 				if (!issuer.quotas) {

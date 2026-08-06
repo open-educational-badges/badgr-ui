@@ -109,23 +109,26 @@ export class BadgeClassEditComponent extends BaseAuthenticatedRoutableComponent 
 				),
 		);
 
-		this.issuerLoaded = issuerManager.issuerOrNetworkBySlug(this.issuerSlug).then(
+		this.issuerLoaded = issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then(
 			(issuer) => {
 				this.issuer = issuer;
-				this.editBadgeCrumbs = [
-					{ title: 'Issuers', routerLink: ['/issuer'] },
-					{ title: issuer.name, routerLink: ['/issuer/issuers/', this.issuerSlug] },
-					{ title: 'badges', routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/'] },
-					{
-						title: this.badgeClass ? this.badgeClass.name : '',
-						routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/' + this.badgeSlug],
-					},
-					{ title: 'Edit Badge Class' },
-				];
 				return issuer;
 			},
 			(error) => this.messageService.reportLoadingError(`Cannot find issuer ${this.issuerSlug}`, error),
 		);
+
+		Promise.all([this.badgeClassLoaded, this.issuerLoaded]).then(() => {
+			this.editBadgeCrumbs = [
+				{ title: 'Issuers', routerLink: ['/issuer'] },
+				{ title: this.issuer.name, routerLink: ['/issuer/issuers/', this.issuerSlug] },
+				{ title: 'Badges', routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/'] },
+				{
+					title: this.badgeClass?.name || '',
+					routerLink: ['/issuer/issuers/' + this.issuerSlug + '/badges/' + this.badgeSlug],
+				},
+				{ title: 'Edit Badge Class' },
+			];
+		});
 	}
 
 	badgeClassSaved(promise: Promise<BadgeClass>) {
@@ -150,7 +153,9 @@ export class BadgeClassEditComponent extends BaseAuthenticatedRoutableComponent 
 	onWindowScroll() {
 		var top = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
 
-		this.scrolled = this.badgeImage && top > this.badgeImage.componentElem.nativeElement.offsetTop;
+		this.scrolled = this.badgeImage?.componentElem?.nativeElement
+			? top > this.badgeImage.componentElem.nativeElement.offsetTop
+			: false;
 	}
 }
 

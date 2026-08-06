@@ -32,7 +32,7 @@ import { OebSpinnerComponent } from './oeb-spinner.component';
 import { BadgeInstanceBatchAssertion } from '../issuer/models/badgeinstance-api.model';
 import { BadgeInstanceApiService } from '../issuer/services/badgeinstance-api.service';
 import { TaskPollingManagerService, TaskResult, TaskStatus } from '../common/task-manager.service';
-import { formatDate, TitleCasePipe } from '@angular/common';
+import { formatDate } from '@angular/common';
 import {
 	ColumnDef,
 	createAngularTable,
@@ -55,6 +55,7 @@ export type RequestedBadge = {
 	status: string;
 	firstName: string;
 	lastName: string;
+	dateOfBirth?: string | null;
 	requestedOn: Date;
 	entity_id: string;
 };
@@ -77,8 +78,6 @@ export type RequestedBadge = {
 		OebCheckboxComponent,
 		FlexRenderDirective,
 		OebCheckboxComponent,
-		TitleCasePipe,
-		QuotaExceededDialog,
 	],
 	template: `
 		@if (this.isTaskProcessing() || this.isTaskPending()) {
@@ -361,6 +360,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 			status: apiBadge.status,
 			firstName: apiBadge.firstName,
 			lastName: apiBadge.lastName,
+			dateOfBirth: apiBadge.dateOfBirth ?? null,
 			requestedOn: new Date(apiBadge.requestedOn),
 			entity_id: apiBadge.entity_id,
 		};
@@ -404,6 +404,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 				activity_city: qrCode.activity_city,
 				activity_zip: qrCode.activity_zip,
 				activity_online: qrCode.activity_online,
+				date_of_birth: b.dateOfBirth || null,
 				evidence_items: qrCode.evidence_items ?? [],
 				course_url: qrCode.course_url,
 				request_entity_id: b.entity_id,

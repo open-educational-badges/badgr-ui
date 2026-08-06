@@ -103,9 +103,6 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit, Af
 	}
 
 	ngOnInit() {
-		const scriptElement = this.renderer.createElement('script');
-		scriptElement.src = 'https://sibforms.com/forms/end-form/build/main.js';
-		this.renderer.appendChild(this.elementRef.nativeElement, scriptElement);
 		if (this.sessionService.isLoggedIn) {
 			this.router.navigate(['/issuer']);
 		}
@@ -114,6 +111,12 @@ export class SignupComponent extends BaseRoutableComponent implements OnInit, Af
 	}
 
 	ngAfterViewInit(): void {
+		if (!document.querySelector('script[src*="sibforms.com/forms/end-form/build/main.js"]')) {
+			const scriptElement = this.renderer.createElement('script');
+			scriptElement.src = 'https://sibforms.com/forms/end-form/build/main.js';
+			this.renderer.appendChild(this.elementRef.nativeElement, scriptElement);
+		}
+
 		const captchaElement = document.querySelector('#altcha');
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		captchaElement.addEventListener('statechange', (ev: any) => {

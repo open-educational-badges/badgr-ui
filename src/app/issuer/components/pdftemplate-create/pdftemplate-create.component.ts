@@ -9,30 +9,24 @@ import { BadgrApiFailure } from '../../../common/services/api-failure';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { SuccessDialogComponent } from '../../../common/dialogs/oeb-dialogs/success-dialog.component';
 import { Issuer } from '../../models/issuer.model';
+import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { FormMessageComponent } from '../../../common/components/form-message.component';
 import { PDFTemplate } from '../../models/pdftemplate.model';
 import { PDFTemplateEditFormComponent } from '../pdftemplate-edit-form/pdftemplate-edit-form.component';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
-import { HlmH1, HlmH2, HlmH3 } from '@spartan-ng/helm/typography';
+import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 
 @Component({
 	selector: 'pdftemplate-create',
 	templateUrl: './pdftemplate-create.component.html',
-	imports: [
-		BgBreadcrumbsComponent,
-		FormMessageComponent,
-		HlmH1,
-		HlmH2,
-		HlmH3,
-		PDFTemplateEditFormComponent,
-		TranslatePipe,
-	],
+	imports: [BgBreadcrumbsComponent, FormMessageComponent, HlmH1, HlmH2, PDFTemplateEditFormComponent, TranslatePipe],
 })
 export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableComponent {
 	breadcrumbLinkEntries: LinkEntry[] = [];
 	issuerSlug: string;
-	issuer: Issuer;
+	issuer: Issuer | Network;
+	isNetwork = false;
 
 	issuerLoaded: Promise<unknown>;
 
@@ -47,16 +41,25 @@ export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableCompone
 		super(router, route, loginService);
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
+			this.isNetwork = issuer.is_network;
 			this.breadcrumbLinkEntries = [
 				{ title: 'Issuers', routerLink: ['/issuer'] },
 				{
 					title: this.issuer.name,
-					routerLink: ['/issuer/issuers', this.issuerSlug],
+					routerLink: this.isNetwork
+						? ['/issuer/networks', this.issuerSlug]
+						: ['/issuer/issuers', this.issuerSlug],
 				},
 			];
 		});
+	}
+
+	private navigateBackToTemplates(): Promise<boolean> {
+		return this.isNetwork
+			? this.router.navigate(['/issuer/networks', this.issuerSlug], { queryParams: { tab: 'pdf-templates' } })
+			: this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' });
 	}
 
 	private readonly _hlmDialogService = inject(HlmDialogService);
@@ -72,7 +75,7 @@ export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableCompone
 	pdfTemplateCreated(promise: Promise<PDFTemplate | ApiPDFTemplate>) {
 		promise.then(
 			(pt) => {
-				this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' }).then(() => {
+				this.navigateBackToTemplates().then(() => {
 					this.openSuccessDialog();
 				});
 			},
@@ -85,6 +88,6 @@ export class PDFTemplateCreateComponent extends BaseAuthenticatedRoutableCompone
 	}
 
 	creationCanceled() {
-		this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' });
+		this.navigateBackToTemplates();
 	}
 }

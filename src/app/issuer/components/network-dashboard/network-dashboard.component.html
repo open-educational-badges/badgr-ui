@@ -109,6 +109,17 @@
 									</oeb-button>
 								}
 							}
+							@case ('pdf-templates') {
+								@if (pdfTemplates.length) {
+									<oeb-button
+										variant="secondary"
+										[text]="'PDFTemplate.createPDFTemplate' | translate"
+										[routerLink]="[`/issuer/issuers/${network().slug}/pdftemplates/create`]"
+										[umamiEvent]="'create-network-pdf-template'"
+									>
+									</oeb-button>
+								}
+							}
 						}
 					</div>
 				}
@@ -254,6 +265,56 @@
 
 <ng-template #learningPathsTemplate>
 	<network-learningpaths [network]="network()"> </network-learningpaths>
+</ng-template>
+
+<ng-template #pdfTemplatesTemplate>
+	<div class="oeb-section-sm">
+		<ng-template [bgAwaitPromises]="[pdfTemplatesPromise]">
+			<div class="md:tw-pr-[280px]">
+				<p class="oeb-break-words" hlmP [innerHTML]="'PDFTemplate.descriptionText' | translate"></p>
+
+				<p hlmP [innerHtml]="'PDFTemplate.exampleZipLink' | translate"></p>
+
+				@if (!pdfTemplates.length) {
+					<div class="tw-mt-8">
+						<oeb-button
+							class="tw-whitespace-nowrap"
+							[routerLink]="[`/issuer/issuers/${network().slug}/pdftemplates/create`]"
+							[text]="'PDFTemplate.createPDFTemplate' | translate"
+							[umamiEvent]="'create-network-pdf-template'"
+						>
+						</oeb-button>
+					</div>
+				}
+			</div>
+
+			@if (pdfTemplates.length > 0) {
+				<div class="tw-mt-16">
+					<h2
+						class="tw-font-bold md:tw-text-[22px] md:tw-leading-[26.4px] tw-text-oebblack tw-text-[16px] tw-leading-[19.2px] oeb-break-words"
+					>
+						{{ 'PDFTemplate.createdTemplates' | translate }}
+					</h2>
+
+					<div class="tw-grid tw-grid-cols-pdftemplates tw-gap-6 tw-mt-6">
+						@for (pt of pdfTemplates; track pt) {
+							<bg-pdftemplatecard
+								[name]="pt.name"
+								[slug]="pt.slug"
+								[issuerSlug]="network().slug"
+								[created_at]="pt.created_at | date: 'dd.MM.yyyy'"
+								[created_by]="pt.created_by"
+								[pdftemplateImage]="$any(pt).image"
+								[format]="pt.format"
+								(edit)="openEditPDFTemplateDialog($event.slug, $event.issuer)"
+								(delete)="openDeletePDFTemplateDialog($event.name, $event.slug, $event.issuer)"
+							></bg-pdftemplatecard>
+						}
+					</div>
+				</div>
+			}
+		</ng-template>
+	</div>
 </ng-template>
 
 <ng-template #socialspaceTemplate>

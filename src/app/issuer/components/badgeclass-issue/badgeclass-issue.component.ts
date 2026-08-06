@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, OnDestroy, signal } from '@angular/core';
-import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, Validators, FormsModule, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { SessionService } from '../../../common/services/session.service';
@@ -24,7 +24,7 @@ import { RecipientIdentifierType } from '../../models/badgeinstance-api.model';
 import { typedFormGroup } from '../../../common/util/typed-forms';
 import { TelephoneValidator } from '../../../common/validators/telephone.validator';
 import { EventsService } from '../../../common/services/events.service';
-import { FormFieldTextInputType, FormFieldText } from '../../../common/components/formfield-text';
+import { FormFieldTextInputType } from '../../../common/components/formfield-text';
 import striptags from 'striptags';
 import { DateValidator } from '../../../common/validators/date.validator';
 import { AppConfigService } from '../../../common/app-config.service';
@@ -37,16 +37,11 @@ import { FormMessageComponent } from '../../../common/components/form-message.co
 import { BgImageStatusPlaceholderDirective } from '../../../common/directives/bg-image-status-placeholder.directive';
 import { OebInputComponent } from '../../../components/input.component';
 import { OebSelectComponent } from '../../../components/select.component';
-import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component';
-import { NgClass, DatePipe } from '@angular/common';
-import { SvgIconComponent } from '../../../common/components/svg-icon.component';
-import { FormFieldMarkdown } from '../../../common/components/formfield-markdown';
 import { OebButtonComponent } from '../../../components/oeb-button.component';
 import { HlmH1, HlmP } from '@spartan-ng/helm/typography';
-import { OebCollapsibleComponent } from '~/components/oeb-collapsible.component';
 import { DateRangeValidator } from '~/common/validators/date-range.validator';
-import { NgIcon } from '@ng-icons/core';
-import { OebSeparatorComponent } from '~/components/oeb-separator.component';
+import { OebCheckboxComponent } from '../../../components/oeb-checkbox.component';
+import { SvgIconComponent } from '../../../common/components/svg-icon.component';
 import { OptionalDetailsComponent } from '../optional-details/optional-details.component';
 import { setupActivityOnlineSync } from '~/common/util/activity-place-sync-helper';
 import { Subscription } from 'rxjs';
@@ -91,17 +86,11 @@ import { Network } from '~/issuer/network.model';
 		HlmP,
 		RouterLink,
 		OebInputComponent,
+		OebSelectComponent,
 		OebCheckboxComponent,
 		SvgIconComponent,
-		FormFieldMarkdown,
-		FormFieldText,
-		NgClass,
 		OebButtonComponent,
-		DatePipe,
 		TranslatePipe,
-		OebCollapsibleComponent,
-		NgIcon,
-		OebSeparatorComponent,
 		OptionalDetailsComponent,
 	],
 })
@@ -193,6 +182,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 		.addControl('activity_zip', '')
 		.addControl('activity_city', '')
 		.addControl('activity_online', false)
+		.addControl('date_of_birth', '', DateValidator.validDate as ValidatorFn)
 		.addControl('courseUrl', null, UrlValidator.validUrl)
 		.addControl('notify_earner', true)
 		.addArray(
@@ -227,7 +217,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 
 		title.setTitle(`Award Badge - ${this.configService.theme['serviceName'] || 'Badgr'}`);
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 
 			this.badgeClassLoaded = this.badgeClassManager
@@ -376,6 +366,7 @@ export class BadgeClassIssueComponent extends BaseAuthenticatedRoutableComponent
 				activity_zip: formState.activity_zip,
 				activity_city: formState.activity_city,
 				activity_online: formState.activity_online,
+				date_of_birth: formState.date_of_birth || null,
 				course_url: formState.courseUrl,
 			})
 			.then(() => this.badgeClass.update())

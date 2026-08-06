@@ -58,16 +58,20 @@
 								</div>
 							</div>
 
-							<oeb-select
-								[control]="badgeClassForm.rawControlMap.badge_language"
-								[label]="'Badge.badgeLanguage' | translate | uppercase"
-								[description]="'Badge.badgeLanguageHint' | translate"
-								[options]="[
-									{ label: 'General.language.de' | translate, value: 'de' },
-									{ label: 'General.language.en' | translate, value: 'en' },
-								]"
-								[noTopMargin]="true"
-							/>
+							<div>
+								<span class="tw-font-bold tw-text-black tw-uppercase md:tw-text-lg md:tw-leading-7">{{
+									'Badge.badgeLanguage' | translate
+								}}</span>
+								<oeb-select
+									[control]="badgeClassForm.rawControlMap.badge_language"
+									[description]="'Badge.badgeLanguageHint' | translate"
+									[options]="[
+										{ label: 'General.language.de' | translate, value: 'de' },
+										{ label: 'General.language.en' | translate, value: 'en' },
+									]"
+									[noTopMargin]="true"
+								/>
+							</div>
 
 							<div class="">
 								<span class="input-label md:tw-flex-[0_0_10em]">{{
@@ -124,8 +128,7 @@
 
 							<div class="">
 								<span class="input-label tw-break-words md:tw-flex-[0_0_10em]">
-									{{ 'CreateBadge.short' | translate }}&shy;{{ 'General.description' | translate }}
-									{{ 'CreateBadge.forLearners' | translate }}
+									{{ 'LearningPath.description' | translate }}
 								</span>
 								<span class="tw-text-oebblack tw-italic">
 									(max. 700 {{ 'General.characters' | translate }})
@@ -144,7 +147,7 @@
 
 							<div class="" id="imageSection" #imageSection>
 								<span class="input-label md:tw-flex-[0_0_10em]">
-									Badge-{{ 'Issuer.image' | translate }}</span
+									Badge {{ 'Issuer.image' | translate }}</span
 								>
 								<div
 									class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row tw-bg-white tw-border tw-border-solid tw-border-[var(--color-purple)] tw-p-8 tw-justify-evenly tw-mr-auto tw-rounded-[10px]"
@@ -1027,8 +1030,7 @@
 
 					@if (
 						pdfTemplateManager.pdfEditorAvailable() &&
-						!issuer?.is_network &&
-						(!issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
+						(issuer?.is_network || !issuer?.quotas || issuer?.quotas?.quotas['PDFEDITOR'].quota)
 					) {
 						<section class="section tw-text-oebblack tw-mt-6">
 							<h2 hlmH2 class="!tw-text-oebblack tw-pb-4">
@@ -1042,11 +1044,16 @@
 									[noTopMargin]="true"
 									label="{{ 'PDFTemplate.backgroundLabel' | translate }}"
 								></oeb-select>
-								@if (issuer?.currentUserStaffMember?.canEditBadge) {
+								@if (issuer?.currentUserStaffMember?.canEditBadge || issuer?.is_network) {
 									<oeb-button
 										class="tw-whitespace-nowrap tw-flex-grow"
-										[routerLink]="['/issuer/issuers', issuer.slug]"
-										fragment="pdf-templates"
+										[routerLink]="
+											issuer?.is_network
+												? ['/issuer/networks', issuer.slug]
+												: ['/issuer/issuers', issuer.slug]
+										"
+										[fragment]="issuer?.is_network ? null : 'pdf-templates'"
+										[queryParams]="issuer?.is_network ? { tab: 'pdf-templates' } : null"
 										[text]="'PDFTemplate.createCustomPDFTemplate' | translate"
 										width="full_width"
 										size="sm"

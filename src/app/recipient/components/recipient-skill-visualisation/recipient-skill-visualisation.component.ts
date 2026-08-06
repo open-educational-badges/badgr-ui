@@ -213,7 +213,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 	showSingleNode: boolean = false;
 
 	constructor() {
-		fromEvent(window, 'resize')
+		fromEvent<UIEvent>(window, 'resize')
 			.pipe(
 				debounceTime(300),
 				tap((event: UIEvent) => {
@@ -294,7 +294,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 			// loop breadcrumbs to augment skill data
 			breadcrumbs.forEach((breadcrumb) => {
-				let ancestor = null;
+				let ancestor: string | null = null;
 				breadcrumb.forEach((bc, j) => {
 					const previous = breadcrumb[j - 1];
 					// skips esco top level 'skills'
@@ -349,7 +349,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		Array.from(this.skillTree.values()).forEach((v) => {
 			if (v.leaf) {
 				for (let a of v.ancestors.values()) {
-					this.skillTree.get(a).studyLoad += v.studyLoad;
+					this.skillTree.get(a)!.studyLoad += v.studyLoad;
 				}
 			}
 		});
@@ -397,7 +397,7 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 		this.d3data.nodes.forEach((node) => {
 			if (node.leaf) {
 				for (let ancestor of node.ancestors.values()) {
-					this.skillTree.get(ancestor).leafs.push(node.id);
+					this.skillTree.get(ancestor)!.leafs.push(node.id);
 				}
 			}
 			node.parents.forEach((parentId) => {
@@ -498,8 +498,8 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 
 		// The force simulation mutates links and nodes, so create a copy
 		// so that re-evaluating this cell produces the same result.
-		let links = [];
-		let nodes = [];
+		let links: { source: string; target: string }[] = [];
+		let nodes: ExtendedApiSkill[] = [];
 		// compactMode: only show top-level (depth 1) nodes without links
 		if (this.compactMode()) {
 			nodes = this.d3data.nodes.filter((d) => d.depth == 1).map((d) => ({ ...d }));
@@ -763,9 +763,6 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 			let hoverIntentTimer: ReturnType<typeof setTimeout> | null = null;
 
 			const clearAllShow = () => {
-				svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
-					.nodes()
-					.forEach((n: SVGElement) => n.classList.remove('dimmed'));
 				svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
 					.nodes()
 					.forEach((n: SVGElement) => n.classList.remove('show'));
@@ -797,44 +794,45 @@ export class RecipientSkillVisualisationComponent implements OnChanges, OnDestro
 					// Clear previous show state before applying new state for this node
 					clearAllShow();
 
-					const ancestors = d.depth > 1 ? Array.from(d.ancestors.values()) : [d.id];
+					// BFS over the resolved simulation links to collect the full ancestor chain
+					// and direct children. Using links (not skillTree) guarantees IDs match
+					// the line elements, handling multi-parent nodes correctly.
+					// Links were created as {source: child, target: parent} so walking
+					// source→target moves up the tree.
+					const linkedIds = new Set<string>([d.id]);
+					let frontier = new Set<string>([d.id]);
+					while (frontier.size > 0) {
+						const next = new Set<string>();
+						for (const l of links as any[]) {
+							const srcId = l.source?.id as string;
+							const tgtId = l.target?.id as string;
+							if (frontier.has(srcId) && !linkedIds.has(tgtId)) {
+								linkedIds.add(tgtId);
+								next.add(tgtId);
+							}
+						}
+						frontier = next;
+					}
+					// Add direct children (links where target === d, source is child)
+					for (const l of links as any[]) {
+						const srcId = l.source?.id as string;
+						const tgtId = l.target?.id as string;
+						if (tgtId === d.id) linkedIds.add(srcId);
+					}
 
-					// Dim all level-1 nodes not in this node's top-level ancestry
-					const activeTopIds = new Set(ancestors.filter((id) => (this.skillTree.get(id)?.depth ?? 0) === 1));
-					svg.selectAll<SVGElement, ExtendedApiSkill>('g.level-1')
-						.nodes()
-						.forEach((n: SVGElement) => {
-							const nd = d3.select(n).datum() as ExtendedApiSkill;
-							if (!activeTopIds.has(nd.id)) n.classList.add('dimmed');
-						});
-
-					// Show the hovered node and its direct parents (keeps the path to root visible)
-					const selfAndParents = new Set([d.id, ...(d.depth > 1 ? Array.from(d.parents) : [])]);
 					svg.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
 						.nodes()
 						.forEach((n: SVGElement) => {
 							const nd = d3.select(n).datum() as ExtendedApiSkill;
-							if (selfAndParents.has(nd.id)) n.classList.add('show');
+							if (linkedIds.has(nd.id)) n.classList.add('show');
 						});
 
-					// Show only direct children of the hovered node
-					const children = svg
-						.selectAll<SVGElement, ExtendedApiSkill>('g.leaf, g.group')
-						.filter((d2: ExtendedApiSkill) => d2.parents.has(d.id));
-					children.nodes().forEach((n: SVGElement) => n.classList.add('show'));
-
-					// Show links connecting the hovered node, its parents, its depth-1 ancestors,
-					// and its children. Including ancestors ensures the full chain stays connected
-					// (e.g. Überkategorie → big bubble link is visible when hovering a skill).
-					const linkedIds = [
-						...selfAndParents,
-						...(d.depth > 1 ? Array.from(d.ancestors) : []),
-						...children.data().map((c: ExtendedApiSkill) => c.id),
-					];
-					svg.selectAll<SVGElement, d3.HierarchyLink<ExtendedApiSkill>>('line')
-						.filter((l: d3.HierarchyLink<ExtendedApiSkill>) =>
-							[l.target.id, l.source.id].every((i) => linkedIds.includes(i)),
-						)
+					svg.selectAll<SVGElement, any>('line')
+						.filter((l: any) => {
+							const srcId = (l.source as any)?.id ?? l.source;
+							const tgtId = (l.target as any)?.id ?? l.target;
+							return linkedIds.has(srcId) && linkedIds.has(tgtId);
+						})
 						.nodes()
 						.forEach((n: SVGElement) => n.classList.add('show'));
 				}, intentDelay);

@@ -2,9 +2,9 @@ import { BadgrApiError } from './base-http-api.service';
 import { HttpErrorResponse, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 export class BadgrApiFailure {
-	private readonly payload: HttpResponseBase | Error | string;
+	private readonly payload: unknown;
 
-	static from(error: BadgrApiFailure | HttpResponseBase | Error | string | null | undefined): BadgrApiFailure {
+	static from(error: unknown): BadgrApiFailure {
 		if (error instanceof BadgrApiFailure) {
 			return error;
 		} else {
@@ -22,7 +22,7 @@ export class BadgrApiFailure {
 		}
 	}
 
-	constructor(payload: HttpResponseBase | Error | string | null | undefined) {
+	constructor(payload: unknown) {
 		this.payload = payload;
 	}
 

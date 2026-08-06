@@ -22,7 +22,6 @@ import { HorizontalBarChartComponent, HorizontalBarItem } from '../horizontal-ba
 import { DashboardTopBadgesComponent, Top3Badge } from '../dashboard-stats-bar/dashboard-top-badges.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideAward, lucideSchool, lucideUserStar, lucideClock, lucideClockFading } from '@ng-icons/lucide';
-import { OebButtonComponent } from '../../../components/oeb-button.component';
 import {
 	BadgeDistributionPieChartComponent,
 	PieChartSegment,
@@ -57,7 +56,6 @@ export type SocialspaceViewState = 'overview' | 'city-detail' | 'city-learner-de
 		HorizontalBarChartComponent,
 		DashboardTopBadgesComponent,
 		NgIcon,
-		OebButtonComponent,
 		BadgeDistributionPieChartComponent,
 		InfoIcon,
 	],

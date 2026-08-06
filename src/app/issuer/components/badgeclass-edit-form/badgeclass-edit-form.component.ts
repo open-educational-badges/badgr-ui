@@ -1035,8 +1035,12 @@ export class BadgeClassEditFormComponent
 	}
 
 	loadPDFTemplates() {
+		// A partner badge (shared into a network) may only use that network's PDF
+		// templates — not the institution's — so pull templates from the network.
+		// Network Badges and ordinary institution badges use their own issuer.
+		const templateOwnerSlug = this.existingBadgeClass?.sharedOnNetwork?.slug ?? this.issuer.slug;
 		this.pdfTemplatesPromise = this.pdfTemplateManager
-			.getPDFTemplatesForIssuer(this.issuer.slug)
+			.getPDFTemplatesForIssuer(templateOwnerSlug)
 			.then((pdfTemplates) => {
 				this.pdfTemplates = pdfTemplates.sort((a, b) => a.name.localeCompare(b.name));
 				this.selectPDFTemplateOptions = [
@@ -1166,7 +1170,10 @@ export class BadgeClassEditFormComponent
 					this.badgeClassForm.rawControlMap.badge_language.value,
 				);
 			} catch (error) {
-				this.messageService.reportAndThrowError(`Failed to obtain ai skills: ${error.message}`, error);
+				this.messageService.reportAndThrowError(
+					`Failed to obtain ai skills: ${error instanceof Error ? error.message : String(error)}`,
+					error,
+				);
 			}
 			this.keywordCompetenciesLoading = false;
 			this.keywordCompetenciesLoaded = true;
@@ -1657,7 +1664,10 @@ export class BadgeClassEditFormComponent
 					map((t) => {
 						return criteria.map((c) => {
 							const name =
-								c.translationKey?.split('.').reduce((obj, key) => (obj ? obj[key] : null), t) || c.name;
+								(c.translationKey
+									?.split('.')
+									.reduce((obj, key) => (obj ? obj[key] : null), t) as unknown as string | null) ||
+								c.name;
 							return {
 								name: name,
 								description: c.description,

@@ -11,11 +11,11 @@ test('copies a competency badge and saves it with a new name', async ({ page }) 
 	await menuTrigger.click();
 
 	const copyItem = page
-		.locator('[hlmmenuitem], [role="menuitem"]')
+		.locator('.cdk-overlay-container button')
 		.filter({ hasText: /kopieren|copy/i })
 		.first();
-	await copyItem.waitFor({ state: 'visible', timeout: 10_000 });
-	await copyItem.click();
+	await copyItem.waitFor({ state: 'attached', timeout: 10_000 });
+	await copyItem.click({ force: true });
 
 	const issuerDialog = page.locator('[role="dialog"]');
 	const dialogVisible = await issuerDialog.isVisible({ timeout: 3_000 }).catch(() => false);

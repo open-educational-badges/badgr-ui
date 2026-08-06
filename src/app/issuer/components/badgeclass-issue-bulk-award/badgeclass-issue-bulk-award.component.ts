@@ -23,6 +23,7 @@ import { BadgeclassIssueBulkAwardError } from '../badgeclass-issue-bulk-award-er
 export interface ParsedRow {
 	cells: string[];
 	emailInvalid?: boolean;
+	dobInvalid?: boolean;
 }
 
 export interface TransformedImportData {
@@ -42,11 +43,14 @@ export interface BulkIssueImportPreviewData {
 export interface BulkIssueData {
 	email: string;
 	name: string;
+	/** ISO date (yyyy-mm-dd) or undefined when the CSV has no value */
+	dateOfBirth?: string;
 	emailInvalid?: boolean;
+	dobInvalid?: boolean;
 	isEditing?: boolean;
 }
 
-export type DestSelectOptions = 'email' | 'name' | 'NA';
+export type DestSelectOptions = 'email' | 'name' | 'firstname' | 'lastname' | 'dateOfBirth' | 'NA';
 
 export type ViewState = 'import' | 'importPreview' | 'importError' | 'importConfirmation' | 'cancel' | 'exit';
 
@@ -103,7 +107,7 @@ export class BadgeClassIssueBulkAwardComponent extends BaseAuthenticatedRoutable
 
 		this.updateViewState('import');
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
 			this.badgeClassLoaded = this.badgeClassManager
 				.badgeByIssuerUrlAndSlug(issuer.issuerUrl, this.badgeSlug)

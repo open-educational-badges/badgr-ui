@@ -11,11 +11,12 @@ import { BadgrApiFailure } from '../../../common/services/api-failure';
 import { HlmDialogService } from '../../../components/spartan/ui-dialog-helm/src/lib/hlm-dialog.service';
 import { SuccessDialogComponent } from '../../../common/dialogs/oeb-dialogs/success-dialog.component';
 import { Issuer } from '../../models/issuer.model';
+import { Network } from '~/issuer/network.model';
 import { IssuerManager } from '../../services/issuer-manager.service';
 import { PDFTemplate } from '../../models/pdftemplate.model';
 import { PDFTemplateEditFormComponent } from '../pdftemplate-edit-form/pdftemplate-edit-form.component';
 import { ApiPDFTemplate } from '../../../common/model/pdftemplate-api.model';
-import { HlmH1, HlmH2, HlmH3 } from '@spartan-ng/helm/typography';
+import { HlmH1, HlmH2 } from '@spartan-ng/helm/typography';
 import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
 
 @Component({
@@ -26,7 +27,6 @@ import { PDFTemplateManager } from '../../services/pdftemplate-manager.service';
 		FormMessageComponent,
 		HlmH1,
 		HlmH2,
-		HlmH3,
 		BgAwaitPromises,
 		PDFTemplateEditFormComponent,
 		TranslatePipe,
@@ -36,7 +36,8 @@ export class PDFTemplateEditComponent extends BaseAuthenticatedRoutableComponent
 	breadcrumbLinkEntries: LinkEntry[] = [];
 	issuerSlug: string;
 	ptSlug: string;
-	issuer: Issuer;
+	issuer: Issuer | Network;
+	isNetwork = false;
 
 	issuerLoaded: Promise<unknown>;
 	pdfTemplateLoaded: Promise<unknown>;
@@ -56,18 +57,27 @@ export class PDFTemplateEditComponent extends BaseAuthenticatedRoutableComponent
 		this.issuerSlug = this.route.snapshot.params['issuerSlug'];
 		this.ptSlug = this.route.snapshot.params['pdfTemplateSlug'];
 
-		this.issuerLoaded = this.issuerManager.issuerBySlug(this.issuerSlug).then((issuer) => {
+		this.issuerLoaded = this.issuerManager.issuerOrNetworkBySlugDirect(this.issuerSlug).then((issuer) => {
 			this.issuer = issuer;
+			this.isNetwork = issuer.is_network;
 			this.breadcrumbLinkEntries = [
 				{ title: 'Issuers', routerLink: ['/issuer'] },
 				{
 					title: this.issuer.name,
-					routerLink: ['/issuer/issuers', this.issuerSlug],
+					routerLink: this.isNetwork
+						? ['/issuer/networks', this.issuerSlug]
+						: ['/issuer/issuers', this.issuerSlug],
 				},
 			];
 		});
 
 		this.pdfTemplateLoaded = this.loadPDFTemplate();
+	}
+
+	private navigateBackToTemplates(): Promise<boolean> {
+		return this.isNetwork
+			? this.router.navigate(['/issuer/networks', this.issuerSlug], { queryParams: { tab: 'pdf-templates' } })
+			: this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' });
 	}
 
 	async loadPDFTemplate() {
@@ -92,7 +102,7 @@ export class PDFTemplateEditComponent extends BaseAuthenticatedRoutableComponent
 	pdfTemplateCreated(promise: Promise<PDFTemplate | ApiPDFTemplate>) {
 		promise.then(
 			(pt) => {
-				this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' }).then(() => {
+				this.navigateBackToTemplates().then(() => {
 					this.openSuccessDialog();
 				});
 			},
@@ -105,6 +115,6 @@ export class PDFTemplateEditComponent extends BaseAuthenticatedRoutableComponent
 	}
 
 	creationCanceled() {
-		this.router.navigate(['issuer/issuers', this.issuerSlug], { fragment: 'pdf-templates' });
+		this.navigateBackToTemplates();
 	}
 }

@@ -31,7 +31,6 @@ import { HlmIconModule } from '@spartan-ng/helm/icon';
 import {
 	ColumnDef,
 	createAngularTable,
-	FlexRenderDirective,
 	getCoreRowModel,
 	getSortedRowModel,
 	SortingState,
@@ -80,8 +79,14 @@ import {
 	getBadgeRankDisplayConfig,
 	getBadgeTypeDisplayConfig,
 	getCompetencyAreaDisplayConfig,
+	getTagSegmentColor,
 	BadgeTypeStatsExtended,
+	NetworkTagDistributionEntry,
 } from '../../../dashboard/models/dashboard-api.model';
+import {
+	BadgeDistributionPieChartComponent,
+	PieChartSegment,
+} from '../../../dashboard/components/badge-distribution-pie-chart/badge-distribution-pie-chart.component';
 import { IssuerManager } from '~/issuer/services/issuer-manager.service';
 import { Issuer } from '~/issuer/models/issuer.model';
 
@@ -161,9 +166,9 @@ export interface MonthlyBadgeData {
 		OebTabsComponent,
 		BadgesYearlyLineChartComponent,
 		HorizontalBarChartComponent,
+		BadgeDistributionPieChartComponent,
 		...HlmTableImports,
 		...OebTableImports,
-		FlexRenderDirective,
 		HlmIconModule,
 	],
 	providers: [
@@ -223,8 +228,24 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 
 	badgeTypeStats: BadgeTypeStatsExtended[] = [];
 
+	tagStats: PieChartSegment[] = [];
+
 	get totalBadges(): number {
 		return this.badgeTypeStats.reduce((sum, stat) => sum + stat.count, 0);
+	}
+
+	/**
+	 * Total badges represented by the tag distribution (shown in the donut center).
+	 * Uses the endpoint's total (via notSpecified + tag counts) rather than summing
+	 * segments, since multi-tag badges make segment counts overlap.
+	 */
+	tagTotalBadges: number = 0;
+
+	/**
+	 * Check if the tag distribution chart has any data.
+	 */
+	get hasTagData(): boolean {
+		return this.tagStats.some((stat) => stat.count > 0);
 	}
 
 	/**
@@ -473,6 +494,12 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 					return of({ distribution: [] });
 				}),
 			),
+			tagDistribution: this.networkDashboardApi.getTagDistribution(this.networkSlug).pipe(
+				catchError((error) => {
+					console.error('[NETWORK-BADGE-ANALYSIS] Error loading tag distribution:', error);
+					return of({ distribution: [] });
+				}),
+			),
 			recentBadgeAwards: this.networkDashboardApi.getRecentBadgeAwards(this.networkSlug, { limit: 50 }).pipe(
 				catchError((error) => {
 					console.error('[NETWORK-BADGE-ANALYSIS] Error loading recent badge awards:', error);
@@ -493,6 +520,7 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 					topBadges,
 					badgeAwardsTimeline,
 					badgeTypeDistribution,
+					tagDistribution,
 					recentBadgeAwards,
 					deliveryMethodDistribution,
 				}) => {
@@ -524,6 +552,14 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 					if (badgeTypeDistribution?.distribution && badgeTypeDistribution.distribution.length > 0) {
 						this.badgeTypeStats = this.transformBadgeTypeDistribution(badgeTypeDistribution.distribution);
 					}
+
+					if (tagDistribution?.distribution && tagDistribution.distribution.length > 0) {
+						this.tagStats = this.transformTagDistribution(tagDistribution.distribution);
+					} else {
+						this.tagStats = [];
+					}
+					this.tagTotalBadges =
+						'metadata' in tagDistribution ? (tagDistribution.metadata?.totalBadges ?? 0) : 0;
 
 					if (recentBadgeAwards?.awards && recentBadgeAwards.awards.length > 0) {
 						this.monthlyBadges = this.transformRecentBadgeAwardsToMonthlyBadges(recentBadgeAwards.awards);
@@ -655,6 +691,37 @@ export class NetworkBadgeAnalysisComponent extends BaseAuthenticatedRoutableComp
 				percentage: entry.percentage,
 				color: displayConfig.color,
 				borderColor: displayConfig.borderColor,
+			};
+		});
+	}
+
+	/**
+	 * Transform tag distribution from API to PieChartSegment[] for the donut chart.
+	 * Resolves colors from the purple palette and localizes the labels for the
+	 * "others" and "notSpecified" categories.
+	 */
+	private transformTagDistribution(distribution: NetworkTagDistributionEntry[]): PieChartSegment[] {
+		let tagIndex = 0;
+		return distribution.map((entry) => {
+			const color = getTagSegmentColor(tagIndex, entry.category);
+			if (entry.category === 'tag') {
+				tagIndex++;
+			}
+
+			let label = entry.label;
+			if (entry.category === 'others') {
+				label = this.translate.instant('Dashboard.tags.others');
+			} else if (entry.category === 'notSpecified') {
+				label = this.translate.instant('Dashboard.tags.notSpecified');
+			}
+
+			return {
+				id: entry.id,
+				label,
+				count: entry.count,
+				percentage: entry.percentage,
+				color: color.color,
+				borderColor: color.borderColor,
 			};
 		});
 	}

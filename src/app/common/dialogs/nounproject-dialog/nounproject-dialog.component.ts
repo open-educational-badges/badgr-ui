@@ -77,7 +77,7 @@ export class NounprojectDialog extends BaseDialog implements AfterViewInit {
 
 	ngAfterViewInit(): void {
 		// debounce the input to prevent spamming of requests
-		fromEvent(this.searchbar.nativeElement, 'input')
+		fromEvent<Event>(this.searchbar.nativeElement, 'input')
 			.pipe(map((event: Event) => (event.target as HTMLInputElement).value))
 			.pipe(debounceTime(300))
 			.pipe(distinctUntilChanged())

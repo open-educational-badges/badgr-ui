@@ -97,7 +97,7 @@ export class BadgeStudioComponent implements OnInit {
 
 						// Re-color any non-white elements
 						Array.from(svgRoot.querySelectorAll('*'))
-							.filter((e) => 'style' in e) // Filter out elements that don't have a style to change (this fixes a bug in IE)
+							.filter((e): e is HTMLElement => 'style' in e) // Filter out elements that don't have a style to change (this fixes a bug in IE)
 							.forEach((e: HTMLElement) => {
 								const fill = window.getComputedStyle(e)['fill'];
 
@@ -201,7 +201,7 @@ export class BadgeStudioComponent implements OnInit {
 
 			// Recolor non-white elements in the badge shape SVG
 			Array.from(svgRoot.querySelectorAll('*'))
-				.filter((e) => 'style' in e)
+				.filter((e): e is HTMLElement => 'style' in e)
 				.forEach((e: HTMLElement) => {
 					const fill = window.getComputedStyle(e)['fill'];
 					if (!fill.match(/^rgb\(255,\s*255,\s*255\s*\)$/)) {
@@ -287,7 +287,7 @@ export class BadgeStudioComponent implements OnInit {
 
 							// Re-color any non-white elements
 							Array.from(svgRoot.querySelectorAll('*'))
-								.filter((e) => 'style' in e) // Filter out elements that don't have a style to change (this fixes a bug in IE)
+								.filter((e): e is HTMLElement => 'style' in e) // Filter out elements that don't have a style to change (this fixes a bug in IE)
 								.forEach((e: HTMLElement) => {
 									const fill = window.getComputedStyle(e)['fill'];
 

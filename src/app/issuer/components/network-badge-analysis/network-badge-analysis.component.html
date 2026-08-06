@@ -501,6 +501,35 @@
 									<app-dashboard-top-badges [top3Badges]="top3Badges"> </app-dashboard-top-badges>
 								</div>
 							</div>
+
+							<div class="tw-grid tw-grid-cols-1 lg:tw-grid-cols-3 tw-gap-6 tw-mt-6">
+								<div
+									class="lg:tw-col-span-2 tw-bg-white tw-rounded-lg tw-p-6 tw-border-solid"
+									style="border-width: 1px; border-color: var(--color-purple)"
+								>
+									<h3 class="tw-text-xl tw-font-semibold tw-mb-6" style="color: var(--color-black)">
+										{{ 'Dashboard.badgeDistributionByTags' | translate }}
+									</h3>
+
+									@if (hasTagData) {
+										<app-badge-distribution-pie-chart
+											[segments]="tagStats"
+											[total]="tagTotalBadges"
+											totalLabel="Network.Dashboard.unit.badges"
+											labelPosition="right"
+											[maxSegments]="7"
+											[highlightOnHover]="true"
+										>
+										</app-badge-distribution-pie-chart>
+									} @else {
+										<div
+											class="tw-flex tw-flex-1 tw-items-center tw-justify-center tw-min-h-48 tw-text-gray-500"
+										>
+											{{ 'Dashboard.noDataAvailable' | translate }}
+										</div>
+									}
+								</div>
+							</div>
 						</div>
 					</div>
 
