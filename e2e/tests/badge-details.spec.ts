@@ -31,7 +31,7 @@ test('badge detail page shows name, description, category and tags after creatio
 	// Tags step — add a tag if the autocomplete input is visible
 	const tagInput = page.locator('div.ng-autocomplete input[type="text"]');
 	await tagInput.waitFor({ state: 'visible', timeout: 5_000 });
-	await tagInput.pressSequentially('nachhaltig');
+	await tagInput.pressSequentially('nachhaltig', { delay: 100 });
 	await tagInput.press('Enter');
 
 	await advanceToSubmit(page);
