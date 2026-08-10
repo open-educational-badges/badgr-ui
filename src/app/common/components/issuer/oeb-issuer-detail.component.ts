@@ -232,7 +232,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	archivedLearningPaths: ApiLearningPath[] = [];
 
 	private async updateResults() {
-		if (this.sessionService.isLoggedIn) {
+		if (this.sessionService.isLoggedIn && !this.public) {
 			this.requestsLoaded = Promise.all(
 				this.badges.map((b) =>
 					this.qrCodeApiService
@@ -309,7 +309,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 			}
 
 			let requestMap = new Map<string, ApiQRCode[]>();
-			if (this.sessionService.isLoggedIn && allBadgeClasses.length > 0) {
+			if (this.sessionService.isLoggedIn && !this.public && allBadgeClasses.length > 0) {
 				this.networkRequestsLoaded = Promise.all(
 					allBadgeClasses.map((badge) =>
 						this.qrCodeApiService
