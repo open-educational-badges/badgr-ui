@@ -17,6 +17,7 @@ export interface ApiQRCode {
 	issuer_id?: string;
 	request_count?: number;
 	notifications?: boolean;
+	auto_issuance?: boolean;
 	course_url?: string;
 }
 

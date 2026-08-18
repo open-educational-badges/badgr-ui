@@ -120,7 +120,8 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 		.addControl('badgeclass_id', '', Validators.required)
 		.addControl('issuer_id', '', Validators.required)
 		.addControl('courseUrl', null, UrlValidator.validUrl)
-		.addControl('notifications', false);
+		.addControl('notifications', false)
+		.addControl('autoIssuance', false);
 
 	constructor() {
 		const route = inject(ActivatedRoute);
@@ -205,6 +206,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					badgeclass_id: qrCode.badgeclass_id,
 					issuer_id: qrCode.issuer_id,
 					notifications: qrCode.notifications,
+					autoIssuance: qrCode.auto_issuance,
 					courseUrl: qrCode.course_url,
 				});
 			});
@@ -305,6 +307,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					badgeclass_id: this.badgeSlug,
 					issuer_id: this.issuerSlug,
 					notifications: formState.notifications,
+					auto_issuance: formState.autoIssuance,
 					course_url: formState.courseUrl,
 				})
 				.then((qrcode) => {
@@ -345,6 +348,7 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 					expires_at: formState.expires_at ? expiresDate.toISOString() : undefined,
 					valid_from: formState.valid_from ? new Date(formState.valid_from).toISOString() : undefined,
 					notifications: formState.notifications,
+					auto_issuance: formState.autoIssuance,
 					course_url: formState.courseUrl,
 				})
 				.then((qrcode) => {
