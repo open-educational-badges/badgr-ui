@@ -144,14 +144,14 @@ export class EditQrFormComponent extends BaseAuthenticatedRoutableComponent impl
 						.then((img) => {
 							this.previewB64Img = img.image_url;
 						});
-					return this.issuerManager.issuerBySlug(this.partnerIssuerSlug);
+					return this.issuerManager.issuerBySlugDirect(this.partnerIssuerSlug);
 				})
 				.then((partnerIssuer) => {
 					this.issuer = partnerIssuer;
 				});
 		} else {
 			this.issuerLoaded = this.issuerManager
-				.issuerBySlug(this.issuerSlug)
+				.issuerBySlugDirect(this.issuerSlug)
 				.then((issuer) => {
 					this.issuer = issuer;
 				})

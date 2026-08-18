@@ -129,7 +129,7 @@ export class BadgeClassGenerateQrComponent extends BaseAuthenticatedRoutableComp
 					});
 
 				let im = this.badgeClass.issuerManager;
-				im.issuerBySlug(this.issuerSlug).then((issuer) => {
+				im.issuerBySlugDirect(this.issuerSlug).then((issuer) => {
 					this.issuer = issuer.name;
 				});
 
