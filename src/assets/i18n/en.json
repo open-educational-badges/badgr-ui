@@ -1018,6 +1018,7 @@
 		"deleteQrAward": "Delete QR code award",
 		"deleteQrAwardConfirm": "Do you really want to delete the QR code award?",
 		"receiveEmails": "I would like to be notified by email about new QR code requests",
+		"autoIssuance": "Activate automatic issuance (badges are awarded immediately without manual approval)",
 		"description": "If you create a QR code here, your learners can scan the generated QR code and collect the badge themselves.",
 		"howItWorks": "How it works:",
 		"create": "Create QR Code for",

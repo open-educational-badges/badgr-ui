@@ -1061,6 +1061,7 @@
 		"deleteQrAward": "QR-Code-Vergabe löschen",
 		"deleteQrAwardConfirm": "Möchtest du die QR-Code-Vergabe wirklich löschen?",
 		"receiveEmails": "Ich möchte per E-Mail über neue QR-Code-Anfragen benachrichtigt werden",
+		"autoIssuance": "Automatische Vergabe aktivieren (Badges werden ohne manuelle Freigabe direkt vergeben)",
 		"description": "Wenn du hier eine QR-Code-Vergabe anlegst, können deine Lernenden den so generierten QR-Code abscannen und sich den Badge darüber selbst abholen.",
 		"howItWorks": "So funktioniert's:",
 		"create": "QR-Code-Vergabe erstellen für",
