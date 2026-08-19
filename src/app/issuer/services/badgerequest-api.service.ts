@@ -32,7 +32,7 @@ export class BadgeRequestApiService extends BaseHttpApiService {
 	}
 
 	requestBadge(qrCodeId: string, userData: BadgeRequest) {
-		return this.post(`/request-badge/${qrCodeId}`, JSON.stringify(userData), null, new HttpHeaders(), false, false);
+		return this.post(`/request-badge/${qrCodeId}`, userData, null, new HttpHeaders(), false, false);
 	}
 
 	getBadgeRequestsByQrCode(qrCodeId: string) {

@@ -86,6 +86,14 @@
 				>
 				</oeb-checkbox>
 
+				<oeb-checkbox
+					class="oeb-standard-padding-bottom"
+					type="checkbox"
+					[text]="'QrCode.autoIssuance' | translate"
+					[control]="qrForm.rawControlMap.autoIssuance"
+				>
+				</oeb-checkbox>
+
 				<!-- Action Buttons -->
 				@if (editing) {
 					<div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4 tw-mt-2 tw-w-full">

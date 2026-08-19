@@ -232,21 +232,26 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 	archivedLearningPaths: ApiLearningPath[] = [];
 
 	private async updateResults() {
-		if (this.sessionService.isLoggedIn) {
-			this.requestsLoaded = Promise.all(
-				this.badges.map((b) =>
-					this.qrCodeApiService
-						.getQrCodesForIssuerByBadgeClass(b.issuerSlug, b.slug)
-						.then((p) => ({ key: b.slug, value: p })),
-				),
-			).then((d) =>
-				d.reduce((map, obj) => {
-					map.set(obj.key, obj.value);
-					return map;
-				}, new Map<string, ApiQRCode[]>()),
-			);
-		}
 		this.cachedRequestMap = (await this.requestsLoaded) ?? new Map();
+		this.applyBadgeFilter();
+	}
+
+	private async loadQrCodes() {
+		if (!this.sessionService.isLoggedIn || this.public) return;
+		this.requestsLoaded = Promise.all(
+			this.badges.map((b) =>
+				this.qrCodeApiService
+					.getQrCodesForIssuerByBadgeClass(b.issuerSlug, b.slug)
+					.then((p) => ({ key: b.slug, value: p }))
+					.catch(() => ({ key: b.slug, value: [] })),
+			),
+		).then((d) =>
+			d.reduce((map, obj) => {
+				map.set(obj.key, obj.value);
+				return map;
+			}, new Map<string, ApiQRCode[]>()),
+		);
+		this.cachedRequestMap = await this.requestsLoaded;
 		this.applyBadgeFilter();
 	}
 
@@ -309,7 +314,7 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 			}
 
 			let requestMap = new Map<string, ApiQRCode[]>();
-			if (this.sessionService.isLoggedIn && allBadgeClasses.length > 0) {
+			if (this.sessionService.isLoggedIn && !this.public && allBadgeClasses.length > 0) {
 				this.networkRequestsLoaded = Promise.all(
 					allBadgeClasses.map((badge) =>
 						this.qrCodeApiService
@@ -602,6 +607,10 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 		if (fragment && this.tabs.find((tab) => tab.key === fragment)) {
 			this.activeTab = fragment;
 		}
+
+		if (this.activeTab === 'badges') {
+			this.loadQrCodes();
+		}
 	}
 
 	delete(event) {
@@ -854,6 +863,9 @@ export class OebIssuerDetailComponent implements OnInit, OnChanges {
 
 	onTabChange(tab) {
 		this.activeTab = tab;
+		if (tab === 'badges') {
+			this.loadQrCodes();
+		}
 	}
 
 	onNestedTabChange(tab) {
