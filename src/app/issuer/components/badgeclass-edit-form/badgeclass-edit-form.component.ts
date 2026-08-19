@@ -1122,6 +1122,16 @@ export class BadgeClassEditFormComponent
 			.getAiSkillsForIssuer(this.aiCompetenciesDescription, this.issuer.slug)
 			.then((skills) => {
 				let aiCompetencies = this.badgeClassForm.controls.aiCompetencies;
+				const savedDurations = new Map<string, { hours: number; minutes: number; studyLoad: number }>();
+				aiCompetencies.value.forEach((c, i) => {
+					if (c.selected) {
+						savedDurations.set(this.aiCompetenciesSuggestions[i].concept_uri, {
+							hours: c.hours,
+							minutes: c.minutes,
+							studyLoad: c.studyLoad,
+						});
+					}
+				});
 				const selectedAiCompetencies = aiCompetencies.value
 					.map((c, i) => (c.selected ? this.aiCompetenciesSuggestions[i] : null))
 					.filter(Boolean);
@@ -1139,9 +1149,11 @@ export class BadgeClassEditFormComponent
 				this.aiCompetenciesSuggestions.forEach((skill, i) => {
 					aiCompetencies.addFromTemplate();
 					if (selectedAiCompetencies.includes(skill)) {
+						const saved = savedDurations.get(skill.concept_uri);
 						this.badgeClassForm.controls.aiCompetencies.controls[i].setValue({
 							...this.badgeClassForm.controls.aiCompetencies.controls[i].value,
 							selected: true,
+							...(saved || {}),
 						});
 					}
 				});
