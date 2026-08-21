@@ -448,7 +448,7 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 					if (taskResult.status === TaskStatus.FAILURE) {
 						this.handleTaskFailure(taskResult);
 					} else if (taskResult.status === TaskStatus.SUCCESS) {
-						this.handleTaskSuccess();
+						this.handleTaskSuccess(taskResult);
 					}
 				},
 				error: (error) => {
@@ -458,27 +458,65 @@ export class QrCodeDatatableComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	private handleTaskSuccess() {
-		const awardedCount = this.processedRequests.length;
+	private handleTaskSuccess(taskResult: TaskResult) {
+		// The celery task can report an overall SUCCESS status while individual
+		// assertions inside it failed (e.g. a transient error building the OB3
+		// JSON) — those never got a BadgeInstance, so their request must stay
+		// in the queue instead of being deleted as if they'd been awarded.
+		const result = taskResult.result || {};
+
+		// process_batch_assertions' outer exception handler returns a
+		// different shape entirely — {success, status, error} with no
+		// data/errors arrays — when the task fails before per-assertion
+		// processing even starts. Detect that case explicitly so it isn't
+		// silently treated as "nothing succeeded, nothing failed".
+		const hasPerAssertionResult = Array.isArray(result.data) || Array.isArray(result.errors);
+
+		const succeededIds: string[] = hasPerAssertionResult
+			? (result.data || []).map((d: any) => d.request_entity_id).filter((id: string) => !!id)
+			: [];
+		const errors: any[] = hasPerAssertionResult ? result.errors || [] : [];
+
+		const awardedRequests = this.processedRequests.filter((b) => succeededIds.includes(b.entity_id));
+		const awardedCount = awardedRequests.length;
 
 		if (awardedCount === 1) {
-			this.openSuccessDialog([this.processedRequests[0].email]);
-		} else {
+			this.openSuccessDialog([awardedRequests[0].email]);
+		} else if (awardedCount > 1) {
 			this.openSuccessDialog(
 				null,
 				awardedCount + ' ' + this.translate.instant('QrCode.badgesAwardedSuccessfully'),
 			);
 		}
 
-		const ids = this.processedRequests.map((b) => b.entity_id);
+		if (!hasPerAssertionResult) {
+			this.messageService.reportHandledError(
+				this.translate.instant('Issuer.batchAwardFailed'),
+				result.error || 'Unknown error',
+			);
+		} else if (errors.length > 0) {
+			this.messageService.reportHandledError(
+				this.translate.instant('Issuer.batchAwardFailed'),
+				errors.map((e) => (typeof e.error === 'string' ? e.error : JSON.stringify(e.error))).join('; '),
+			);
+		}
 
-		this.badgeRequestApiService.deleteRequests(this.issuerSlug(), this.badgeSlug(), ids).then((res) => {
+		const resetSelectionState = () => {
 			this.qrBadgeAward.emit(this.rowSelectionCount());
-			this.requestedBadges.update((current) => current.filter((r) => !ids.includes(r.entity_id)));
-			this.requestCountChanged.emit(this.requestedBadges().length);
 			this.rowSelection.set({});
 			this.processedAwardedEntityIds.clear();
 			this.processedRequests = [];
+		};
+
+		if (succeededIds.length === 0) {
+			resetSelectionState();
+			return;
+		}
+
+		this.badgeRequestApiService.deleteRequests(this.issuerSlug(), this.badgeSlug(), succeededIds).then((res) => {
+			this.requestedBadges.update((current) => current.filter((r) => !succeededIds.includes(r.entity_id)));
+			this.requestCountChanged.emit(this.requestedBadges().length);
+			resetSelectionState();
 		});
 	}
 

@@ -1043,6 +1043,12 @@
 		"ageConfirmation": "Ich bestätige, dass ich <b>16 Jahre oder älter bin. Wenn ich jünger als 16 Jahre bin:</b> Meine Eltern oder meine Erziehungsberechtigten wissen, dass ich meine persönlichen Daten für die Nutzung der Plattform Open Educational Badges angebe. Ich bestätige, dass sie damit einverstanden sind.",
 		"successMessage": "<span class='tw-font-bold'>Du hast deine Badge-Anfrage erfolgreich übermittelt.</span><br>",
 		"successMessage2": "Du bekommst deinen Badge per E-Mail zugesendet.",
+		"alreadyReceivedTitle": "Du hast den Badge bereits angefragt und erhalten.",
+		"alreadyReceivedText": "Schau in deinem E-Mail-Postfach nach.",
+		"alreadyPendingTitle": "Du hast den Badge bereits angefragt.",
+		"alreadyPendingText": "Die Institution muss deine Anfrage noch bestätigen.",
+		"understood": "Verstanden",
+		"submitError": "Beim Absenden deiner Anfrage ist ein Fehler aufgetreten. Bitte versuche es erneut.",
 		"nameValidationError": "Vor- und Nachname dürfen zusammen nicht mehr als 35 Zeichen ergeben.",
 		"dateOfBirthOptional": "Optional: Geburtsdatum (erscheint auf Badge-PDF)"
 	},

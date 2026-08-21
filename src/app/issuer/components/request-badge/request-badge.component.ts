@@ -6,8 +6,10 @@ import { BadgeRequestApiService } from '../../services/badgerequest-api.service'
 import { BaseRoutableComponent } from '../../../common/pages/base-routable.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SuccessDialogComponent } from '../../../common/dialogs/oeb-dialogs/success-dialog.component';
+import { InfoDialogComponent } from '../../../common/dialogs/oeb-dialogs/info-dialog.component';
 import { HlmDialogService } from './../../../components/spartan/ui-dialog-helm/src';
 import { PublicApiService } from '../../../public/services/public-api.service';
+import { MessageService } from '../../../common/services/message.service';
 import { BadgeRequest } from '../../models/badgerequest-api.model';
 import { PublicApiBadgeClassWithIssuer } from '../../../public/models/public-api.model';
 import { EmailValidator } from '../../../common/validators/email.validator';
@@ -43,6 +45,7 @@ export class RequestBadgeComponent extends BaseRoutableComponent implements OnIn
 	private translate = inject(TranslateService);
 	private badgeRequestApiService = inject(BadgeRequestApiService);
 	protected publicApiService = inject(PublicApiService);
+	private messageService = inject(MessageService);
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
@@ -70,6 +73,18 @@ export class RequestBadgeComponent extends BaseRoutableComponent implements OnIn
 					this.translate.instant('RequestBadge.successMessage') +
 					this.translate.instant('RequestBadge.successMessage2'),
 				variant: 'success',
+			},
+		});
+	}
+
+	public openDuplicateDialog(captionKey: string, textKey: string) {
+		this._hlmDialogService.open(InfoDialogComponent, {
+			context: {
+				variant: 'info',
+				filledIcon: true,
+				caption: this.translate.instant(captionKey),
+				text: this.translate.instant(textKey),
+				singleButtonText: this.translate.instant('RequestBadge.understood'),
 			},
 		});
 	}
@@ -172,13 +187,25 @@ export class RequestBadgeComponent extends BaseRoutableComponent implements OnIn
 			dateOfBirth: formState.dateOfBirth || undefined,
 		};
 
-		this.badgeRequestApiService.requestBadge(this.qrSlug, userData).then((response) => {
-			if (response.ok) {
-				this.openSuccessDialog();
-				// TODO: check if this is correct
-				this.router.navigate(['/catalog/badges']);
-			}
-		});
+		this.badgeRequestApiService
+			.requestBadge(this.qrSlug, userData)
+			.then((response) => {
+				if (!response.ok) return;
+
+				const status = response.body?.status;
+				if (status === 'duplicate_issued') {
+					this.openDuplicateDialog('RequestBadge.alreadyReceivedTitle', 'RequestBadge.alreadyReceivedText');
+				} else if (status === 'duplicate_pending') {
+					this.openDuplicateDialog('RequestBadge.alreadyPendingTitle', 'RequestBadge.alreadyPendingText');
+				} else {
+					this.openSuccessDialog();
+					// TODO: check if this is correct
+					this.router.navigate(['/catalog/badges']);
+				}
+			})
+			.catch((error) => {
+				this.messageService.reportHandledError(this.translate.instant('RequestBadge.submitError'), error);
+			});
 	}
 
 	nameValidation() {
