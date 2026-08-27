@@ -8,6 +8,10 @@ export interface BadgeRequest {
 	dateOfBirth?: string;
 }
 
+export interface ApiRequestBadgeResponse {
+	status: 'issued' | 'pending' | 'duplicate_issued' | 'duplicate_pending';
+}
+
 export interface ApiRequestedBadge {
 	id?: number;
 	entity_version?: number;
